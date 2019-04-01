@@ -3,7 +3,7 @@
 namespace App\com\adventure\school\admission;
 
 use Illuminate\Database\Eloquent\Model;
-
+use App\com\adventure\school\program\Session;
 class Applicant extends Model
 {
     protected $table="applicants";
@@ -233,5 +233,149 @@ class Applicant extends Model
 			return true;
 		}
 		return false;
+	}
+	// ===============================================For Dorpdown ==============
+	public function getProgramsOnSession($sessionid){
+		if($sessionid==0){
+			$yearName = date('Y');
+			$aSession=new Session();
+			$sessionid=$aSession->getSessionId($yearName);
+		}
+		$sql="SELECT programs.* FROM(SELECT * FROM `applicants`GROUP BY applicants.programofferid) AS ap 
+		INNER JOIN admission_programs ON ap.programofferid=admission_programs.programofferid
+		INNER JOIN programoffers AS t1 ON ap.programofferid=t1.id
+		INNER JOIN programs ON  t1.programid=programs.id 
+		WHERE t1.sessionid=? GROUP BY programs.id";
+		$qResult=\DB::select($sql,[$sessionid]);
+		return collect($qResult);
+	}
+	public function getGroupsOnSession($sessionid){
+			if($sessionid==0){
+				$yearName = date('Y');
+				$aSession=new Session();
+				$sessionid=$aSession->getSessionId($yearName);
+			}
+			$sql="SELECT groups.* FROM(SELECT * FROM `applicants`GROUP BY applicants.programofferid) AS ap 
+			INNER JOIN admission_programs ON ap.programofferid=admission_programs.programofferid
+			INNER JOIN programoffers AS t1 ON ap.programofferid=t1.id
+			INNER JOIN groups ON  t1.groupid=groups.id
+			WHERE t1.sessionid=? GROUP BY groups.id";
+			$qResult=\DB::select($sql,[$sessionid]);
+			return collect($qResult);
+	}
+	public function getMediumsOnSession($sessionid){
+			if($sessionid==0){
+				$yearName = date('Y');
+				$aSession=new Session();
+				$sessionid=$aSession->getSessionId($yearName);
+			}
+			$sql="SELECT mediums.* FROM(SELECT * FROM `applicants`GROUP BY applicants.programofferid) AS ap 
+			INNER JOIN admission_programs ON ap.programofferid=admission_programs.programofferid
+			INNER JOIN programoffers AS t1 ON ap.programofferid=t1.id
+			INNER JOIN mediums ON  t1.mediumid=mediums.id
+			WHERE t1.sessionid=? GROUP BY mediums.id";
+			$qResult=\DB::select($sql,[$sessionid]);
+			return collect($qResult);
+	}
+	public function getShiftsOnSession($sessionid){
+			if($sessionid==0){
+				$yearName = date('Y');
+				$aSession=new Session();
+				$sessionid=$aSession->getSessionId($yearName);
+			}
+			$sql="SELECT shifts.* FROM(SELECT * FROM `applicants`GROUP BY applicants.programofferid) AS ap 
+			INNER JOIN admission_programs ON ap.programofferid=admission_programs.programofferid
+			INNER JOIN programoffers AS t1 ON ap.programofferid=t1.id
+			INNER JOIN shifts ON  t1.shiftid=shifts.id
+			WHERE t1.sessionid=? GROUP BY shifts.id";
+			$qResult=\DB::select($sql,[$sessionid]);
+			return collect($qResult);
+	}
+	// =========================
+	public function getGroupsOnSessionAndProgram($sessionid,$programid){
+			if($sessionid==0){
+				$yearName = date('Y');
+				$aSession=new Session();
+				$sessionid=$aSession->getSessionId($yearName);
+			}
+			$sql="SELECT groups.* FROM(SELECT * FROM `applicants`GROUP BY applicants.programofferid) AS ap 
+			INNER JOIN admission_programs ON ap.programofferid=admission_programs.programofferid
+			INNER JOIN programoffers AS t1 ON ap.programofferid=t1.id
+			INNER JOIN groups ON  t1.groupid=groups.id
+			WHERE t1.sessionid=? AND t1.programid=? GROUP BY groups.id";
+			$qResult=\DB::select($sql,[$sessionid,$programid]);
+			return collect($qResult);
+	}
+	public function getMediumsOnSessionAndProgram($sessionid,$programid){
+			if($sessionid==0){
+				$yearName = date('Y');
+				$aSession=new Session();
+				$sessionid=$aSession->getSessionId($yearName);
+			}
+			$sql="SELECT mediums.* FROM(SELECT * FROM `applicants`GROUP BY applicants.programofferid) AS ap 
+			INNER JOIN admission_programs ON ap.programofferid=admission_programs.programofferid
+			INNER JOIN programoffers AS t1 ON ap.programofferid=t1.id
+			INNER JOIN mediums ON  t1.mediumid=mediums.id
+			WHERE t1.sessionid=? AND t1.programid=? GROUP BY mediums.id";
+			$qResult=\DB::select($sql,[$sessionid,$programid]);
+			return collect($qResult);
+	}
+	public function getShiftsOnSessionAndProgram($sessionid,$programid){
+			if($sessionid==0){
+				$yearName = date('Y');
+				$aSession=new Session();
+				$sessionid=$aSession->getSessionId($yearName);
+			}
+			$sql="SELECT shifts.* FROM(SELECT * FROM `applicants`GROUP BY applicants.programofferid) AS ap 
+			INNER JOIN admission_programs ON ap.programofferid=admission_programs.programofferid
+			INNER JOIN programoffers AS t1 ON ap.programofferid=t1.id
+			INNER JOIN shifts ON  t1.shiftid=shifts.id
+			WHERE t1.sessionid=? AND t1.programid=? GROUP BY shifts.id";
+			$qResult=\DB::select($sql,[$sessionid,$programid]);
+			return collect($qResult);
+	}
+	// =================================
+	public function getMediumsOnSessionAndPrograAndGroup($sessionid,$programid,$groupid){
+			if($sessionid==0){
+				$yearName = date('Y');
+				$aSession=new Session();
+				$sessionid=$aSession->getSessionId($yearName);
+			}
+			$sql="SELECT mediums.* FROM(SELECT * FROM `applicants`GROUP BY applicants.programofferid) AS ap 
+			INNER JOIN admission_programs ON ap.programofferid=admission_programs.programofferid
+			INNER JOIN programoffers AS t1 ON ap.programofferid=t1.id
+			INNER JOIN mediums ON  t1.mediumid=mediums.id
+			WHERE t1.sessionid=? AND t1.programid=? AND t1.groupid=? GROUP BY mediums.id";
+			$qResult=\DB::select($sql,[$sessionid,$programid,$groupid]);
+			return collect($qResult);
+	}
+	public function getShiftsOnSessionAndPrograAndGroup($sessionid,$programid,$groupid){
+			if($sessionid==0){
+				$yearName = date('Y');
+				$aSession=new Session();
+				$sessionid=$aSession->getSessionId($yearName);
+			}
+			$sql="SELECT shifts.* FROM(SELECT * FROM `applicants`GROUP BY applicants.programofferid) AS ap 
+			INNER JOIN admission_programs ON ap.programofferid=admission_programs.programofferid
+			INNER JOIN programoffers AS t1 ON ap.programofferid=t1.id
+			INNER JOIN shifts ON  t1.shiftid=shifts.id
+			WHERE t1.sessionid=? AND t1.programid=? AND t1.groupid=? GROUP BY shifts.id";
+			$qResult=\DB::select($sql,[$sessionid,$programid,$groupid]);
+			return collect($qResult);
+	}
+	// ============================================
+	public function getShiftsOnSessionAndPrograAndGroupAndMedium($sessionid,$programid,$groupid,$mediumid){
+			if($sessionid==0){
+				$yearName = date('Y');
+				$aSession=new Session();
+				$sessionid=$aSession->getSessionId($yearName);
+			}
+			$sql="SELECT shifts.* FROM(SELECT * FROM `applicants`GROUP BY applicants.programofferid) AS ap 
+			INNER JOIN admission_programs ON ap.programofferid=admission_programs.programofferid
+			INNER JOIN programoffers AS t1 ON ap.programofferid=t1.id
+			INNER JOIN shifts ON  t1.shiftid=shifts.id
+			WHERE t1.sessionid=? AND t1.programid=? AND t1.groupid=? AND t1.mediumid=? GROUP BY shifts.id";
+			$qResult=\DB::select($sql,[$sessionid,$programid,$groupid,$mediumid]);
+			return collect($qResult);
 	}
 }

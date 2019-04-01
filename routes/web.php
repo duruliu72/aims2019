@@ -58,6 +58,8 @@ Route::resource('markcategory', 'com\adventure\school\program\MarkCategoryContro
 Route::resource('gradeletter', 'com\adventure\school\program\GradeLetterController');
 Route::get('gradepoint', 'com\adventure\school\program\GradePointController@createGratePoint');
 Route::post('gradepoint', 'com\adventure\school\program\GradePointController@createGratePoint');
+Route::get('gradepoint/edit', 'com\adventure\school\program\GradePointController@editGratePoint');
+Route::post('gradepoint/edit', 'com\adventure\school\program\GradePointController@editGratePoint');
 Route::get('gradepoint/getValue', 'com\adventure\school\program\GradePointController@getValue');
 // Route::resource('gradepoint', 'com\adventure\school\program\GradePointController');
 

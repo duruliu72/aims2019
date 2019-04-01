@@ -27,4 +27,15 @@ class GradePoint extends Model
         $qResult=\DB::select($sql,[$programofferid]);
         return collect($qResult);
     }
+    public function getEditedGradeLetter($programofferid){
+        $sql="SELECT t1.* ,
+        IFNULL(t2.gradeletterid,0) AS gradeletterid,
+        t2.from_mark,
+        t2.to_mark,
+        t2.gradepoint
+        FROM `grade_letter` AS t1
+        INNER JOIN (SELECT * FROM grade_point WHERE grade_point.programofferid=?) AS t2 ON t1.id=t2.gradeletterid";
+        $qResult=\DB::select($sql,[$programofferid]);
+        return collect($qResult);
+    }
 }

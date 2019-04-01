@@ -44,12 +44,13 @@ class AdmissionResultController extends Controller
         	$programinfo=$aVAdmissionSubject->getAdmissioninfo($programofferid);
         	$applicantResults=$aAdmissionResult->getMeritList($programofferid);
         }
+        $aApplicant=new Applicant();
         $dataList=[
             'sidebarMenu'=>$sidebarMenu,
-            'programList'=>$aAdmission->getAllProgram($sessionid),
-            'groupList'=>array(),
-            'mediumList'=>$aAdmission->getAllMedium($sessionid),
-            'shiftList'=>$aAdmission->getAllShift($sessionid),
+            'programList'=>$aApplicant->getProgramsOnSession($sessionid),
+            'groupList'=>$aApplicant->getGroupsOnSession($sessionid),
+            'mediumList'=>$aApplicant->getMediumsOnSession($sessionid),
+            'shiftList'=>$aApplicant->getShiftsOnSession($sessionid),
             'programinfo'=>$programinfo,
             'results'=>$applicantResults,
             'msg'=>$msg

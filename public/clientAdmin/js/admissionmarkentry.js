@@ -12,42 +12,60 @@ function getChange(thisref,option){
 	}
 }
 function getChangeOnProgram(id,option,output,methodid){
-  	var idvalue=$("#"+id).val();
-	var programid=0;
+	var programid=$("#"+id).val();
 	var groupid=0;
+	var mediumid=0;
+	var shiftid=0;
 	$.ajax({
 		type:'get',
 		url: "http://localhost/school2019/public/admissionmarkentry/getValue",
 		dataType: "html",
-		data: {'programid':programid,'groupid':groupid,'idvalue':idvalue,'option':option,'methodid':methodid},
+		data: {'programid':programid,'groupid':groupid,'mediumid':mediumid,'shiftid':shiftid,'option':option,'methodid':methodid},
 		success: function( result ) {
 			$(output).empty().append(result);
 		}
 	});
 }
 function getChangeOnGroup(id,option,output,methodid){
-	var idvalue=$("#"+id).val();
 	var programid=$("#programid").val();
-	var groupid=0;
+	var groupid=$("#"+id).val();
+	var mediumid=0;
+	var shiftid=0;
 	$.ajax({
 		type:'get',
 		url: "http://localhost/school2019/public/admissionmarkentry/getValue",
 		dataType: "html",
-		data: {'programid':programid,'groupid':groupid,'idvalue':idvalue,'option':option,'methodid':methodid},
+		data: {'programid':programid,'groupid':groupid,'mediumid':mediumid,'shiftid':shiftid,'option':option,'methodid':methodid},
 		success: function( result ) {
 			$(output).empty().append(result);
 		}
 	});
 }
 function getChangeOnMedium(id,option,output,methodid){
-	var idvalue=$("#"+id).val();
 	var programid=$("#programid").val();
 	var groupid=$("#groupid").val();
+	var mediumid=$("#"+id).val();
+	var shiftid=0;
 	$.ajax({
 		type:'get',
 		url: "http://localhost/school2019/public/admissionmarkentry/getValue",
 		dataType: "html",
-		data: {'programid':programid,'groupid':groupid,'idvalue':idvalue,'option':option,'methodid':methodid},
+		data: {'programid':programid,'groupid':groupid,'mediumid':mediumid,'shiftid':shiftid,'option':option,'methodid':methodid},
+		success: function( result ) {
+			$(output).empty().append(result);
+		}
+	});
+}
+function getChangeOnShift(id,option,output,methodid){
+	var programid=$("#programid").val();
+	var groupid=$("#groupid").val();
+	var mediumid=$("#mediumid").val();
+	var shiftid=$("#"+id).val();
+	$.ajax({
+		type:'get',
+		url: "http://localhost/school2019/public/admissionmarkentry/getValue",
+		dataType: "html",
+		data: {'programid':programid,'groupid':groupid,'mediumid':mediumid,'shiftid':shiftid,'option':option,'methodid':methodid},
 		success: function( result ) {
 			$(output).empty().append(result);
 		}

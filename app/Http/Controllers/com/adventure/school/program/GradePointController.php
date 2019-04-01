@@ -49,7 +49,7 @@ class GradePointController extends Controller
                     $from_mark=$from_markList[$key];
                     $to_mark=$to_markList[$key];
                     $gradepoint=$gradepointList[$key];
-                    if($from_mark!=null&&$from_mark!=null&&$to_mark!=null){
+                    if($from_mark!=null&&$to_mark!=null&&$gradepoint!=null){
                         $gradePointObj=new GradePoint();
                         $gradePointObj->programofferid=$programofferid;
                         $gradePointObj->gradeletterid=$gradeletterid;
@@ -80,6 +80,74 @@ class GradePointController extends Controller
             'msg'=>$msg
         ];
         return view('admin.programsettings.gradepoint.create',$dataList);
+    }
+    public function editGratePoint(Request $request){
+        $msg="";
+        $yearName = date('Y');
+        $aSession=new Session();
+        $sessionid=$aSession->getSessionId($yearName);
+        $programid=$request->programid;
+        $groupid=$request->groupid;
+        $mediumid=$request->mediumid;
+        $shiftid=$request->shiftid;
+        $aMenu=new Menu();
+        $hasMenu=$aMenu->hasMenu('courseoffercreate');
+        if($hasMenu==false){
+            return redirect('error');
+        }
+        $sidebarMenu=$aMenu->getSidebarMenu();
+        $aProgramOffer=new ProgramOffer();
+        $programofferinfo=null;
+        $gradeList=null;
+        if($request->isMethod('post')&&$request->search_btn=='search_btn' || $request->edit_btn=='edit_btn'){
+            $programofferid=$aProgramOffer->getProgramOfferId($sessionid,$programid,$groupid,$mediumid,$shiftid);
+            if($request->programofferid!=null){
+                $programofferid=$request->programofferid;
+            }
+            if(isset($request->checkbox) && $request->checkbox!=null && $request->edit_btn=='edit_btn'){
+                $checkboxList=$request->checkbox;
+                $gradeletteridList=$request->gradeletterid;
+                $from_markList=$request->from_mark;
+                $to_markList=$request->to_mark;
+                $gradepointList=$request->gradepoint;
+                foreach ($checkboxList as $key => $value) {
+                    $gradeletterid=$gradeletteridList[$key];
+                    $from_mark=$from_markList[$key];
+                    $to_mark=$to_markList[$key];
+                    $gradepoint=$gradepointList[$key];
+                    if($from_mark!=null&&$to_mark!=null&&$gradepoint!=null){
+                        $gradePointObj=new GradePoint();
+                        if($gradePointObj->checkValue($programofferid,$gradeletterid)){
+                            \DB::table('grade_point')
+                                ->where('programofferid',$programofferid)
+                                ->where('gradeletterid',$gradeletterid)
+                                ->update([
+                                    'from_mark' => $from_mark,
+                                    'to_mark'=>$to_mark,
+                                    'gradepoint' => $gradepoint,
+                                ]);
+                        }
+                    }
+                }
+                $msg="Grate Point Update Successfuly";
+            }elseif($request->checkbox==null&&$request->save_btn=='edit_btn'){
+                $msg="Select  Course";
+            }
+            $programofferinfo=$aProgramOffer->getProgramOfferinfo($programofferid);
+            $gradePointObj=new GradePoint();
+            $gradeList=$gradePointObj->getEditedGradeLetter($programofferid);
+        }
+        $dataList=[
+            'sidebarMenu'=>$sidebarMenu,
+            'programList'=>$aProgramOffer->getProgramsOnSession($sessionid),
+            'groupList'=>$aProgramOffer->getGroupsOnSession($sessionid),
+            'mediumList'=>$aProgramOffer->getMediumsOnSession($sessionid),
+            'shiftList'=>$aProgramOffer->getShiftsOnSession($sessionid),
+            'programofferinfo'=>$programofferinfo,
+            'gradeList'=>$gradeList,
+            'msg'=>$msg
+        ];
+        return view('admin.programsettings.gradepoint.edit',$dataList);
     }
      // For Ajax Call ===============
    //    ================================================================

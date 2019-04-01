@@ -9,7 +9,7 @@
           <div class="col-lg-12">
             <h3 class="page-header"><i class="fa fa-laptop"></i>Horinagor High School</h3>
              <ol class="breadcrumb">
-                <li>Course Offer</li>
+                <li>Create Grade Point</li>
                 @if($msg!="")
                 <span style="float: right;font-size: 15px;">
                   {{ $msg }}
