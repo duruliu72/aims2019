@@ -1,0 +1,1 @@
+result.blade.php
