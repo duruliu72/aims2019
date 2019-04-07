@@ -1,10 +1,12 @@
 <?php
+
 namespace App\Http\Controllers\com\adventure\school\program;
+
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\com\adventure\school\program\Course;
+use App\com\adventure\school\program\CourseType;
 use App\com\adventure\school\menu\Menu;
-class CourseController extends Controller
+class CourseTypeController extends Controller
 {
     public function __construct()
     {
@@ -12,25 +14,25 @@ class CourseController extends Controller
     }
     public function index(){
         $aMenu=new Menu();
-        $hasMenu=$aMenu->hasMenu('course');
+        $hasMenu=$aMenu->hasMenu('coursetype');
         if($hasMenu==false){
             return redirect('error');
         }
         $sidebarMenu=$aMenu->getSidebarMenu();
-        $pList=$aMenu->getPermissionOnMenu('course');
-    	$aList=Course::all();
-    	return view('admin.programsettings.course.index',['sidebarMenu'=>$sidebarMenu,'pList'=>$pList,'result'=>$aList]);
+        $pList=$aMenu->getPermissionOnMenu('coursetype');
+    	$aList=CourseType::all();
+    	return view('admin.programsettings.coursetype.index',['sidebarMenu'=>$sidebarMenu,'pList'=>$pList,'result'=>$aList]);
     }
     public function create(){
         $aMenu=new Menu();
-        $hasMenu=$aMenu->hasMenu('course');
+        $hasMenu=$aMenu->hasMenu('coursetype');
         if($hasMenu==false){
             return redirect('error');
         }
         $sidebarMenu=$aMenu->getSidebarMenu();
-        $pList=$aMenu->getPermissionOnMenu('course');
+        $pList=$aMenu->getPermissionOnMenu('coursetype');
         if($pList[2]->id==2){
-            return view('admin.programsettings.course.create',['sidebarMenu'=>$sidebarMenu]);
+            return view('admin.programsettings.coursetype.create',['sidebarMenu'=>$sidebarMenu]);
         }else{
             return redirect('error');
         }
@@ -38,30 +40,30 @@ class CourseController extends Controller
     }
     public function store(Request $request){
      	 $validatedData = $request->validate([
-        'name' => 'required|unique:courses|max:255',
+        'name' => 'required|unique:course_type|max:255',
     	]);
      	$name=$request->name;
-     	$aCourse=new Course();
-     	$aCourse->name=$name;
-     	$status=$aCourse->save();
+     	$aCourseType=new CourseType();
+     	$aCourseType->name=$name;
+     	$status=$aCourseType->save();
      	if($status){
-     		$msg="Course Created Successfully";
+     		$msg="Course Type Created Successfully";
 		  }else{
-		    $msg="Course not Created";
+		    $msg="Course Type not Created";
 		}
      	return redirect()->back()->with('msg',$msg);
     }
     public function edit($id){
         $aMenu=new Menu();
-        $hasMenu=$aMenu->hasMenu('course');
+        $hasMenu=$aMenu->hasMenu('coursetype');
         if($hasMenu==false){
             return redirect('error');
         }
         $sidebarMenu=$aMenu->getSidebarMenu();
-        $pList=$aMenu->getPermissionOnMenu('course');
-    	$aCourse=Course::findOrfail($id);
+        $pList=$aMenu->getPermissionOnMenu('coursetype');
+    	$aCourseType=CourseType::findOrfail($id);
         if($pList[3]->id==3){
-           return view('admin.programsettings.course.edit',['sidebarMenu'=>$sidebarMenu,'bean'=>$aCourse]); 
+           return view('admin.programsettings.coursetype.edit',['sidebarMenu'=>$sidebarMenu,'bean'=>$aCourseType]); 
        }else{
             return redirect('error');
        }
@@ -69,16 +71,16 @@ class CourseController extends Controller
     }
     public function update(Request $request, $id){
     	$validatedData = $request->validate([
-        'name' => 'required|unique:courses|max:255',
+        'name' => 'required|unique:course_type|max:255',
     	]);
     	$name=$request->name;
-     	$aCourse=Course::findOrfail($id);
-     	$aCourse->name=$name;
-     	$status=$aCourse->update();
+     	$aCourseType=CourseType::findOrfail($id);
+     	$aCourseType->name=$name;
+     	$status=$aCourseType->update();
      	if($status){
-     		$msg="Course Updated Successfully";
+     		$msg="Course Type Updated Successfully";
 		  }else{
-		    $msg="Course not Updated";
+		    $msg="Course Type not Updated";
 		}
      	return redirect()->back()->with('msg',$msg);
     }

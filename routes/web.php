@@ -61,7 +61,7 @@ Route::post('gradepoint', 'com\adventure\school\program\GradePointController@cre
 Route::get('gradepoint/edit', 'com\adventure\school\program\GradePointController@editGratePoint');
 Route::post('gradepoint/edit', 'com\adventure\school\program\GradePointController@editGratePoint');
 Route::get('gradepoint/getValue', 'com\adventure\school\program\GradePointController@getValue');
-// Route::resource('gradepoint', 'com\adventure\school\program\GradePointController');
+Route::resource('coursetype', 'com\adventure\school\program\CourseTypeController');
 
 // Admission program settings
 Route::resource('admissionprogram', 'com\adventure\school\admission\AdmissionProgramController');
@@ -98,6 +98,9 @@ Route::get('markdistribution','com\adventure\school\courseoffer\MarkDistribution
 Route::post('markdistribution','com\adventure\school\courseoffer\MarkDistributionController@createMarkdistribution');
 Route::get('markdistribution/edit','com\adventure\school\courseoffer\MarkDistributionController@editMarkdistribution');
 Route::post('markdistribution/edit','com\adventure\school\courseoffer\MarkDistributionController@editMarkdistribution');
+// Academic Settings
+Route::get('student', 'com\adventure\school\academic\StudentController@index1');
+Route::post('student', 'com\adventure\school\academic\StudentController@index1');
 // Menu Settings
 Route::resource('menu', 'com\adventure\school\menu\MenuController');
 
