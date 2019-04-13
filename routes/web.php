@@ -99,8 +99,12 @@ Route::post('markdistribution','com\adventure\school\courseoffer\MarkDistributio
 Route::get('markdistribution/edit','com\adventure\school\courseoffer\MarkDistributionController@editMarkdistribution');
 Route::post('markdistribution/edit','com\adventure\school\courseoffer\MarkDistributionController@editMarkdistribution');
 // Academic Settings
-Route::get('student', 'com\adventure\school\academic\StudentController@index1');
-Route::post('student', 'com\adventure\school\academic\StudentController@index1');
+Route::get('student', 'com\adventure\school\academic\StudentController@applicantSearch');
+Route::get('student/create', 'com\adventure\school\academic\StudentController@goback');
+Route::post('student/create', 'com\adventure\school\academic\StudentController@create1');
+Route::get('students/getValue','com\adventure\school\admission\StudentController@getValue');
+Route::get('students', 'com\adventure\school\academic\StudentController@allStudentReg');
+Route::post('students', 'com\adventure\school\academic\StudentController@allStudentReg');
 // Menu Settings
 Route::resource('menu', 'com\adventure\school\menu\MenuController');
 

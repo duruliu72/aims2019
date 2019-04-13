@@ -18,6 +18,7 @@ class CreateApplicantsTable extends Migration
             $table->integer('programofferid')->length(11);
             $table->integer('applicantid')->length(11)->unique();
             $table->integer('admssion_roll')->length(11)->nullable()->unique();
+            $table->integer('studentregid')->length(11)->nullable()->unique();
             $table->string('name',150);
             $table->string('fatherName',150);
             $table->string('motherName',150);

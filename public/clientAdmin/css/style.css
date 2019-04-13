@@ -10031,3 +10031,27 @@ span.customSelect.changed {
    
     padding: 0px 15px 15px 15px;
 }
+/* ============================ */
+.student{
+
+}
+.student .student__photo{
+   width: 170px;
+   float: left;
+   padding-right: 15px;
+}
+.student .student__photo img{
+    width: 100%;
+}
+.student .student__info td span{
+    float: right;
+    margin-right: 5px;
+    margin-left: 5px;
+}
+.student .student__form tr td{
+    padding:0px 5px;
+    margin:0px;
+}
+.student .student__form tr td .form-control{
+    height: 30px;
+}

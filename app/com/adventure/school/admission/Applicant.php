@@ -7,7 +7,7 @@ use App\com\adventure\school\program\Session;
 class Applicant extends Model
 {
     protected $table="applicants";
-	protected $fillable = ['programofferid','admssion_roll','name','fatherName','motherName','f_occupation','m_occupation','father_nid','mother_nid','father_Phone','mother_Phone','dob','age','birthregno','birthpalace','genderid','bloodgroupid','marital_status','religionid','nationalityid','ethnicty','quotaid','abled','email','parent_income','present_addressid','permanent_addressid','guardianName','g_religion','g_contactno','g_occupation','g_income','gurdian_addressid','prevschool','lastclass','result','passingyear','tcno','tcissueddate','picture','signature','father_picture','mother_picture','username','password'];
+	protected $fillable = ['programofferid','admssion_roll','studentregid','name','fatherName','motherName','f_occupation','m_occupation','father_nid','mother_nid','father_Phone','mother_Phone','dob','age','birthregno','birthpalace','genderid','bloodgroupid','marital_status','religionid','nationalityid','ethnicty','quotaid','abled','email','parent_income','present_addressid','permanent_addressid','guardianName','g_religion','g_contactno','g_occupation','g_income','gurdian_addressid','prevschool','lastclass','result','passingyear','tcno','tcissueddate','picture','signature','father_picture','mother_picture','username','password'];
 	public function getApplicant($username,$password){
 		$sql="SELECT t1.* ,
         t2.sessionid,
