@@ -14,6 +14,7 @@ use App\com\adventure\school\admission\AdmissionResult;
 use App\com\adventure\school\program\CourseType;
 use App\com\adventure\school\academic\Student;
 use App\com\adventure\school\academic\StudentCourse;
+
 class StudentController extends Controller
 {
     public function __construct()
@@ -21,9 +22,8 @@ class StudentController extends Controller
         $this->middleware('auth');
     }
     public function allStudentReg(Request $request){
-        $yearName = date('Y');
         $aSession=new Session();
-        $sessionid=$aSession->getSessionId($yearName);
+        $sessionid=$aSession->getSessionId();
         $aMenu=new Menu();
         $hasMenu=$aMenu->hasMenu('student');
         if($hasMenu==false){
@@ -34,24 +34,66 @@ class StudentController extends Controller
         $applicantsinfo=null;
         $sectionList=null;
         $courseList=null;
-        if($request->isMethod('post')&&$request->search_btn=='search_btn'){
-            $aAdmissionResult=new AdmissionResult();
+        $courseTypeList=null;
+        if($request->isMethod('post')){
             $aProgramOffer=new ProgramOffer();
+            if($request->search_btn=='search_btn'){
+                $programid=$request->programid;
+                $groupid=$request->groupid;
+                $mediumid=$request->mediumid;
+                $shiftid=$request->shiftid;
+                $programofferid=$aProgramOffer->getProgramOfferId($sessionid,$programid,$groupid,$mediumid,$shiftid);       
+            }
+            if($request->save_btn=='save_btn'){
+                $programofferid=$request->programofferid;
+                $aStudent=new Student();
+                $aStudentCourse= new StudentCourse();
+                $applicantcheckLst=$request->applicantcheck;
+                $coursecheckList=$request->coursecheck;
+                $sectionid=$request->sectionid;
+                $classrollList=$request->classroll;
+                $coursetypeidList=$request->coursetypeid;
+                if($applicantcheckLst==null || $coursecheckList==null){
+                   
+                }
+                foreach ($applicantcheckLst as $applicantid => $value) {
+                    $aStudent=new Student();
+                    $registerOrNot=$aStudent->checkRegisterOrNot($programofferid,$applicantid);
+                    if(!$registerOrNot){
+                        $aStudent->programofferid=$programofferid;
+                        $aStudent->sectionid=$sectionid;
+                        $studentregid=$aStudent->generateStudentRegID($programofferid);
+                        $aStudent->studentregid=$studentregid;
+                        $aStudent->classroll=$classrollList[$applicantid];
+                        $aStudent->studenttype=1;
+                        \DB::table('applicants')
+                        ->where('programofferid', $programofferid)
+                        ->where('applicantid', $applicantid)
+                        ->update(['studentregid' => $studentregid]);
+                        $aStudent->save();
+                        $studentid=$aStudent->getLastID();
+                        foreach ($coursecheckList as $coursecodeid => $value) {
+                            $aStudentCourse= new StudentCourse();
+                            $aStudentCourse->studentid=$studentid;
+                            $aStudentCourse->coursecodeid=$coursecodeid;
+                            $aStudentCourse->coursetypeid=$coursetypeidList[$coursecodeid];
+                            $aStudentCourse->save();
+                        }
+                    }
+                }
+                
+            }
+            $aAdmissionResult=new AdmissionResult();
+            $courseTypeList=CourseType::all();
             $aCourseOffer=new CourseOffer();
-        	$programid=$request->programid;
-	        $groupid=$request->groupid;
-	        $mediumid=$request->mediumid;
-            $shiftid=$request->shiftid;
-            $programofferid=$aProgramOffer->getProgramOfferId($sessionid,$programid,$groupid,$mediumid,$shiftid);
-            $programinfo=$aProgramOffer->getProgramOfferinfo($programofferid);
             $aSectionOffer=new SectionOffer();
+            $programinfo=$aProgramOffer->getProgramOfferinfo($programofferid);
             $sectionList=$aSectionOffer->getSectionsOnPO($programofferid);
-            $applicantsinfo=$aAdmissionResult->getAdmissionApplicants($programofferid);
+            $applicantsinfo=$aAdmissionResult->getAdmissionApplicantsCommon($programofferid);
             $courseList=$aCourseOffer->getStudentCoursesOnProgramOffer($programofferid);
         }
         $msg="";
         $aApplicant=new Applicant();
-        $courseTypeList=CourseType::all();
         $dataList=[
             'sidebarMenu'=>$sidebarMenu,
             'programList'=>$aApplicant->getProgramsOnSession($sessionid),
@@ -82,7 +124,6 @@ class StudentController extends Controller
         $aApplicant=new Applicant();
         $aAdmissionResult=new AdmissionResult();
         $applicantid=$request->applicantid;
-        
         if($request->isMethod('post')&&$request->save=='student_save'){
             $programofferid=$request->programofferid;
             $applicantid=$request->applicantid;
@@ -119,11 +160,14 @@ class StudentController extends Controller
                 }
             }
         }
-        $aObj=$aAdmissionResult->getApplicantinfo($applicantid);
+        $applicant=$aApplicant->getApplicantx($applicantid);
+        $aObj=$aAdmissionResult->getMeritPosition($applicant->programofferid,$applicantid);
         if($aObj==null) {
             $msg="Wrong Appicant Id";
             return redirect()->back()->with('msg',$msg)->withInput($request->input());
         }
+        $aProgramOffer=new ProgramOffer();
+        $programofferinfo=$aProgramOffer->getProgramofferDetails($applicant->programofferid);
         $aCourseOffer=new CourseOffer();
         $aSectionOffer=new SectionOffer();
         $courseList=$aCourseOffer->getStudentCourses($applicantid,$aObj->programofferid);
@@ -135,6 +179,7 @@ class StudentController extends Controller
                 'courseList'=>$courseList,
                 'courseTypeList'=>$courseTypeList,
                 'sectionList'=>$sectionList,
+                'programofferinfo'=>$programofferinfo,
                 'bean'=>$aObj,
                 'msg'=>$msg
         ];

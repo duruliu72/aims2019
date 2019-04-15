@@ -42,7 +42,7 @@ class AdmissionResultController extends Controller
 	        $shiftid=$request->shiftid;
         	$programofferid=$aVAdmissionSubject->getProgramOfferId($sessionid,$programid,$groupid,$mediumid,$shiftid);
         	$programinfo=$aVAdmissionSubject->getAdmissioninfo($programofferid);
-        	$applicantResults=$aAdmissionResult->getMeritList($programofferid);
+        	$applicantResults=$aAdmissionResult->getAdmissionApplicantsCommon($programofferid);
         }
         $aApplicant=new Applicant();
         $dataList=[

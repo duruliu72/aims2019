@@ -30,120 +30,62 @@ class AdmissionResult extends Model
 		return $result;
 	}
 	public function getMeritPosition($programofferid,$applicantid){
-		$sql="SELECT finaltable.* 
-		from(SELECT 
+		$sql="SELECT meritap.*,
+		students.classroll,
+		religions.name AS religionName
+		from (select 
+		totalap.*,
 		@row_number:=CASE
-			WHEN @temp_no=table1.programofferid THEN @row_number + 1 ELSE 1
-		END AS serialno,
-		@temp_no:=table1.programofferid AS temp,
-		table1.*
-		FROM(SELECT
-		applicants.*,
-		sum(admissionresult.marks) AS total_obtain_mark,
-		admission_programs.exam_marks
-		FROM `admissionresult`
-		INNER JOIN applicants ON admissionresult.applicantid=applicants.applicantid
-		INNER JOIN admission_programs ON applicants.programofferid=admission_programs.programofferid
-		GROUP BY admissionresult.applicantid ORDER BY applicants.programofferid,marks DESC) AS table1,
-		(SELECT @temp_no:=0,@row_number:=0) as t) AS finaltable WHERE finaltable.programofferid=? And finaltable.applicantid=? AND finaltable.total_obtain_mark>=(finaltable.exam_marks*(0/100))";
+		WHEN @temp_no=totalap.programofferid THEN @row_number+1 ELSE 1
+		END as serialno,
+		@temp_no:=totalap.programofferid AS temp
+		FROM(SELECT 
+		ap.programofferid,
+		ap.applicantid,
+		IFNULL(ap.studentregid,0) AS studentregid,
+		ap.name,
+		ap.religionid,
+		ap.picture,
+		SUM(admissionresult.marks) AS totalmark
+		FROM(SELECT * FROM `applicants`
+		WHERE programofferid=?) AS ap
+		LEFT JOIN admissionresult ON ap.applicantid=admissionresult.applicantid
+		WHERE ap.admssion_roll IS NOT NULL GROUP BY ap.applicantid ORDER BY totalmark DESC) AS totalap,
+		(SELECT @temp_no:=0,@row_number:=0) AS t) AS meritap
+		LEFT JOIN students ON meritap.programofferid=students.programofferid AND meritap.studentregid=students.studentregid
+		INNER JOIN religions ON meritap.religionid=religions.id
+		WHERE meritap.applicantid=?
+		ORDER BY meritap.applicantid";
 		$qresult=\DB::select($sql,[$programofferid,$applicantid]);
 		$result=collect($qresult)->first();
 		return $result;
 	}
-	public function getApplicantinfo($applicantid){
-		$sql="SELECT finaltable.*,
-		sessions.name AS sessionName,
-		programlevels.name AS levelName,
-		programs.name AS programName,
-		groups.name AS groupName,
-		mediums.name AS mediumName,
-		shifts.name AS shiftName
-		FROM (SELECT 
-		outertable.applicantid,
-        IFNULL(outertable.studentregid,0) AS studentregid,
-		outertable.fullName,
-		outertable.picture,
+	public function getAdmissionApplicantsCommon($programofferid){
+		$sql="SELECT meritap.*,
+		students.classroll,
+		religions.name AS religionName
+		from (select 
+		totalap.*,
 		@row_number:=CASE
-			WHEN @temp_no=outertable.programofferid THEN @row_number+1 ELSE 1
+		WHEN @temp_no=totalap.programofferid THEN @row_number+1 ELSE 1
 		END as serialno,
-		@temp_no:=outertable.programofferid AS programofferid,
-		outertable.result
-		FROM(select 
-		table1.programofferid,
-		table1.applicantid,
-        table1.studentregid,
-		table1.fullName,
-		table1.picture,
-		SUM(table1.marks) AS result
+		@temp_no:=totalap.programofferid AS temp
 		FROM(SELECT 
-		applicants.programofferid,
-        applicants.studentregid,
-		CONCAT(applicants.name,' ') AS fullName,
-		applicants.picture,
-		admissionresult.applicantid,
-		admissionresult.subjectid,
-		(vadmission_subjects.marks*admission_programs.exam_marks)/100 AS subjectmark,
-		admissionresult.marks,
-		((SELECT subjectmark)*50)/100 AS passMark,
-		IF(admissionresult.marks>=(select passMark),'pass','fail') AS status
-		FROM `admissionresult`
-		INNER JOIN applicants ON admissionresult.applicantid=applicants.applicantid
-		INNER JOIN admission_programs ON applicants.programofferid=admission_programs.programofferid
-		INNER JOIN vadmission_subjects ON applicants.programofferid=vadmission_subjects.programofferid AND admissionresult.subjectid=vadmission_subjects.subjectid) AS table1 GROUP BY table1.programofferid,table1.applicantid
-		ORDER BY table1.programofferid DESC,result DESC) AS outertable,(SELECT @temp_no:=0,@row_number:=0) as t) AS finaltable
-		INNER JOIN programoffers ON finaltable.programofferid=programoffers.id
-		INNER JOIN sessions ON programoffers.sessionid=sessions.id
-		INNER JOIN programs ON programoffers.programid=programs.id
-		INNER JOIN vlevel_programs on programs.id=vlevel_programs.programid
-		INNER JOIN programlevels on vlevel_programs.programlevelid=programlevels.id
-		INNER JOIN groups ON programoffers.groupid=groups.id
-		INNER JOIN mediums ON programoffers.mediumid=mediums.id
-		INNER JOIN shifts ON programoffers.shiftid=shifts.id
-		WHERE finaltable.applicantid=?";
-		$qresult=\DB::select($sql,[$applicantid]);
-		$result=collect($qresult)->first();
-		return $result;
-	}
-	public function getAdmissionApplicants($programofferid){
-		$sql="SELECT 
-		table1.programofferid,
-		table1.applicantid,
-		table1.serialno,
-		IFNULL(table1.studentregid,0) AS studentregid,
-		table1.name,
-		table1.genderid,
-		table1.genderName,
-		table1.religionid,
-		table1.religionName,
-		table1.picture,
-		table1.totalmark,
-		students.classroll
-		FROM(select t1.* ,
-				@row_number:=CASE
-					WHEN @temp_no=t1.programofferid THEN @row_number+1 ELSE 1
-					END as serialno,
-					@temp_no:=t1.programofferid AS temp
-				FROM
-				(SELECT 
-				applicants.programofferid,
-				applicants.applicantid,
-				applicants.studentregid,
-				applicants.name,
-				applicants.genderid,
-				genders.name AS genderName,
-				applicants.religionid,
-				religions.name AS religionName,
-				applicants.picture,
-				sum(admissionresult.marks) AS totalmark
-				FROM `admissionresult`
-				INNER JOIN applicants ON admissionresult.applicantid=applicants.applicantid
-				INNER JOIN genders ON applicants.genderid=genders.id
-				INNER JOIN religions ON applicants.religionid=religions.id
-				WHERE applicants.programofferid=?
-				GROUP BY applicants.programofferid,applicants.applicantid
-				ORDER BY applicants.programofferid,totalmark DESC) AS t1,
-				(SELECT @temp_no:=0,@row_number:=0) AS t) AS table1
-				LEFT JOIN students ON table1.studentregid=students.studentregid ORDER BY table1.serialno";
+		ap.programofferid,
+		ap.applicantid,
+		IFNULL(ap.studentregid,0) AS studentregid,
+		ap.name,
+		ap.religionid,
+		ap.picture,
+		SUM(admissionresult.marks) AS totalmark
+		FROM(SELECT * FROM `applicants`
+		WHERE programofferid=?) AS ap
+		LEFT JOIN admissionresult ON ap.applicantid=admissionresult.applicantid
+		WHERE ap.admssion_roll IS NOT NULL GROUP BY ap.applicantid ORDER BY totalmark DESC) AS totalap,
+		(SELECT @temp_no:=0,@row_number:=0) AS t) AS meritap
+		LEFT JOIN students ON meritap.programofferid=students.programofferid AND meritap.studentregid=students.studentregid
+		INNER JOIN religions ON meritap.religionid=religions.id
+		ORDER BY meritap.applicantid";
 		$qresult=\DB::select($sql,[$programofferid]);
 		$result=collect($qresult);
 		return $result;

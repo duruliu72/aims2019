@@ -206,6 +206,29 @@ class ProgramOffer extends Model
 		$result=\DB::select($sql,[$sessionid,$programid,$groupid,$mediumid]);
 		return $result;
 	}
+	public function getProgramofferDetails($programofferid){
+		$sql="SELECT
+		programoffers.id,
+		sessions.name AS sessionName,
+		programlevels.name AS levelName,
+		programs.name AS programName,
+		groups.name AS groupName,
+		mediums.name AS mediumName,
+		shifts.name AS shiftName
+		FROM `programoffers`
+		INNER JOIN sessions ON programoffers.sessionid=sessions.id
+		INNER JOIN programs ON programoffers.programid=programs.id
+		INNER JOIN vlevel_programs on programs.id=vlevel_programs.programid
+		INNER JOIN programlevels on vlevel_programs.programlevelid=programlevels.id
+		INNER JOIN groups ON programoffers.groupid=groups.id
+		INNER JOIN mediums ON programoffers.mediumid=mediums.id
+		INNER JOIN shifts ON programoffers.shiftid=shifts.id
+		WHERE programoffers.id=?
+		ORDER BY programoffers.id";
+		$qresult=\DB::select($sql,[$programofferid]);
+		$result=collect($qresult)->first();
+		return $result;
+	}
 		// ===============================================For Dorpdown ==============
 		public function getProgramsOnSession($sessionid){
 			if($sessionid==0){

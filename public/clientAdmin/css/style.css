@@ -10004,6 +10004,9 @@ span.customSelect.changed {
     color: #FFF!important;
     margin-right: 25px;
 }
+.result-btn-margin-zero{
+    margin-right: 0px;
+}
 .refresh-btn{
     display: inline-block;
     background-color: #6fb3e0!important;

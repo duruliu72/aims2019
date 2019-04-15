@@ -91,14 +91,18 @@
                       </div>
                     </div>
                     <div class="row print-row">
+                    <form action="{{URL::to('students')}}" method="POST">
+                      {{csrf_field()}}
                       <div class="col-sm-7 print-col">
                         <div class="applicant_info">
+                            <input type="hidden" name="programofferid" value="{{$programinfo->id}}">
                             <table>
                               <thead>
                                 <tr>
                                   <th>SL NO</th>
                                   <th>Applicantid</th>
                                   <th>Name</th>
+                                  <th>Merit</th>
                                   <th>Religion</th>
                                   <th width="80px;">Picture</th>
                                   <th width="100px">Class Roll</th>
@@ -112,14 +116,15 @@
                                   <td>{{++$i}}</td>
                                   <td>{{$applicant->applicantid}}</td>
                                   <td>{{$applicant->name}}</td>
+                                  <td>{{$applicant->serialno}}</td>
                                   <td>{{$applicant->religionName}}</td>
                                   <td style="margin:0px;padding:0px;"> <img style="width:80px;height:60px;" src="{{asset('clientAdmin/image/picture')}}/{{$applicant->picture}}"></td>
                                   @if($applicant->studentregid!=0)
                                     <td>{{$applicant->classroll}}</td>
                                     <td><span style='font-size:18px;'>&#10003;</span></td>
                                    @else
-                                    <td><input type="text" class="form-control" name="classroll" id="classroll"></td>
-                                    <td><input class="applicantcheck" type="checkbox" name="checkbox[]"></td>
+                                    <td><input type="text" class="form-control" name="classroll[{{$applicant->applicantid}}]" id="classroll"></td>
+                                    <td><input class="applicantcheck" type="checkbox" name="applicantcheck[{{$applicant->applicantid}}]"></td>
                                   @endif
                                 </tr>
                                @endforeach
@@ -145,13 +150,13 @@
                                     <td>{{++$id}}</td>
                                     <td>{{$course->courseNameWithCode}}</td>
                                     <td>
-                                        <select class="form-control" name="coursetypeid[]" id="coursetypeid">
+                                        <select class="form-control" name="coursetypeid[{{$course->coursecodeid}}]" id="coursetypeid">
                                         @foreach($courseTypeList as $x)
                                         <option value="{{$x->id}}">{{$x->name}}</option>
                                         @endforeach
                                         </select>
                                     </td>
-                                    <td><input class="coursecheck" type="checkbox" name="checkbox[]"></td>
+                                    <td><input class="coursecheck" type="checkbox" name="coursecheck[{{$course->coursecodeid}}]"></td>
                                   </tr>
                                   @endforeach
                               </tbody>
@@ -166,8 +171,12 @@
                               </select>
                             </div>
                           </div>
+                          <div style="text-align:right;">
+                             <button type="submit" class="btn btn-success result-btn result-btn-margin-zero" name="save_btn" value="save_btn">Save</button>
+                          </div>
                         </div>
                       </div>
+                      </form>
                     </div>
                   </div>
                 @endif

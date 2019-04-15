@@ -43,29 +43,29 @@
                                 </tr>
                                 <tr>
                                     <td>Name <span>:</span></td>
-                                    <td>{{$bean->fullName}}</td>
+                                    <td>{{$bean->name}}</td>
                                 </tr>
                                
                                 
                                 <tr>
                                     <td>Class <span>:</span></td>
-                                    <td>{{$bean->programName}}</td>
+                                    <td>{{$programofferinfo->programName}}</td>
                                 </tr>
                                 <tr>
                                     <td>Group <span>:</span></td>
-                                    <td>{{$bean->groupName}}</td>
+                                    <td>{{$programofferinfo->groupName}}</td>
                                 </tr>
                                 <tr>
                                     <td>Shift <span>:</span></td>
-                                    <td>{{$bean->shiftName}}</td>
+                                    <td>{{$programofferinfo->shiftName}}</td>
                                 </tr>
                                 <tr>
                                     <td>Class <span>:</span></td>
-                                    <td>{{$bean->mediumName}}</td>
+                                    <td>{{$programofferinfo->mediumName}}</td>
                                 </tr>
                                  <tr>
                                     <td>Session <span>:</span></td>
-                                    <td>{{$bean->sessionName}}</td>
+                                    <td>{{$programofferinfo->sessionName}}</td>
                                 </tr>
                                 <tr>
                                     <td>Merit Position <span>:</span></td>

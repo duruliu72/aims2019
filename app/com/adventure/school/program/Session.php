@@ -8,7 +8,10 @@ class Session extends Model
 {
     protected  $table='sessions';
     protected $fillable = ['name','status'];
-    public function getSessionId($name){
+    public function getSessionId($name=null){
+		if($name==null){
+			$name = date('Y');
+		}
     	$sql="SELECT * FROM `sessions` WHERE name=?";
 			$qresult=\DB::select($sql,[$name]);
 			$result = collect($qresult);
