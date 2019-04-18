@@ -105,6 +105,11 @@ Route::post('student/create', 'com\adventure\school\academic\StudentController@c
 Route::get('students/getValue','com\adventure\school\admission\StudentController@getValue');
 Route::get('students', 'com\adventure\school\academic\StudentController@allStudentReg');
 Route::post('students', 'com\adventure\school\academic\StudentController@allStudentReg');
+// Class Exam Settings
+Route::get('masterexam', 'com\adventure\school\exam\MasterExamController@masterExamCrete');
+Route::post('masterexam', 'com\adventure\school\exam\MasterExamController@masterExamCrete');
+Route::resource('childexam', 'com\adventure\school\exam\ChildExamController');
+Route::resource('examname', 'com\adventure\school\exam\ExamNameController');
 // Menu Settings
 Route::resource('menu', 'com\adventure\school\menu\MenuController');
 

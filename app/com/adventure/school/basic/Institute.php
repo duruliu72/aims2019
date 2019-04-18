@@ -49,7 +49,10 @@ class Institute extends Model
 		$result=collect($qresult)->first();
 		return $result;
    	}
-   	public function getInstituteInfo(){
-   		
+   	public static function getInstituteName(){
+		$sql="SELECT institutes.name FROM `institutes` WHERE id=1";
+		$qresult=\DB::select($sql);
+		$result=collect($qresult)->first();
+		return $result;
    	}
 }

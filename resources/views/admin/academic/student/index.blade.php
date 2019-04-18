@@ -161,14 +161,14 @@
                                   @endforeach
                               </tbody>
                             </table>
-                            <div class="from-group row" style="margin-bottom:15px;">
-                          <label class="col-sm-4 control-label" for="sectionid">Section</label>
-                          <div class="col-sm-8">
-                              <select class="form-control" name="sectionid" id="sectionid">
-                                @foreach($sectionList as $x)
-                                    <option value="{{$x->id}}">{{$x->name}}</option>
-                                @endforeach
-                              </select>
+                          <div class="from-group row" style="margin-bottom:15px;">
+                            <label class="col-sm-4 control-label" for="sectionid">Section</label>
+                            <div class="col-sm-8">
+                                <select class="form-control" name="sectionid" id="sectionid">
+                                  @foreach($sectionList as $x)
+                                      <option value="{{$x->id}}">{{$x->name}}</option>
+                                  @endforeach
+                                </select>
                             </div>
                           </div>
                           <div style="text-align:right;">

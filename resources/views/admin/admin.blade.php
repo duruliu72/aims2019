@@ -8,7 +8,7 @@
 <body>
   <!-- container section start -->
   <section id="container" class="">
-
+  
     <!--header Start-->
     @include('admin.header')
     <!--header end-->
