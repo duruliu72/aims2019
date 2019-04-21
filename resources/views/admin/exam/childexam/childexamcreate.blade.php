@@ -11,7 +11,7 @@
       <div class="col-lg-12">
         <h3 class="page-header"><i class="fa fa-laptop"></i>{{$instituteName->name}}</h3>
         <ol class="breadcrumb">
-              <li>Master Exam</li>
+              <li>Child Exam</li>
               @if($pList[2]->id==2 && $editObj!=null)
               <li><a href="{{URL::to('/masterexam')}}">New</a></li>
               @endif
@@ -31,7 +31,7 @@
         <section class="panel margin-bottom-zero">
           <div class="master-exam">
             @if($editObj==null)
-            <form action="{{URL::to('masterexam')}}" method="POST">
+            <form action="{{URL::to('childexam')}}" method="POST">
               {{csrf_field()}}
               <div class="form-group row">
                 <label class="col-sm-2 control-label" for="programid">Program</label>
@@ -65,7 +65,7 @@
                 </div>
                 <label class="col-sm-2 control-label" for="shiftid">Shift</label>
                 <div class="col-sm-4">
-                  <select class="form-control" name="shiftid" id="shiftid">
+                  <select onchange="getChange(this,'shift')" class="form-control" name="shiftid" id="shiftid">
                     <option  value="">SELECT</option>
                     @foreach ($shiftList as $x)
                         <option value="{{$x->id}}">{{$x->name}}</option>
@@ -74,30 +74,30 @@
                 </div>                       
               </div>
               <div class="form-group row">
-                <label class="col-sm-2 control-label" for="examnameid">Exam Name</label>
+                <label class="col-sm-2 control-label" for="masterexamid">Master Exam</label>
                 <div class="col-sm-4">
-                  <select class="form-control" name="examnameid" id="examnameid">
+                  <select class="form-control" name="masterexamid" id="masterexamid">
                     <option  value="">SELECT</option>
                     @foreach ($masterExamNameList as $x)
                         <option value="{{$x->id}}">{{$x->name}}</option>
                     @endforeach
                   </select>
                 </div>
+                <label class="col-sm-2 control-label" for="examnameid">Child Name</label>
+                <div class="col-sm-4">
+                  <select class="form-control" name="examnameid" id="examnameid">
+                    <option  value="">SELECT</option>
+                    @foreach ($childExamNameList as $x)
+                        <option value="{{$x->id}}">{{$x->name}}</option>
+                    @endforeach
+                  </select>
+                </div>                  
+              </div>
+              <div class="form-group row">
                 <label class="col-sm-2 control-label" for="markinpercentage">Exam in(%) of 100%</label>
                 <div class="col-sm-4">
                   <input type="text" class="form-control" name="markinpercentage" id="markinpercentage">
-                </div>                    
-              </div>
-              <div class="form-group row">
-                <label class="col-sm-2 control-label" for="markinpercentage">Result With Child</label>
-                <div class="col-sm-4">
-                  <label class="radio-inline">
-                    <input type="radio" name="with_child" value="1" checked>yes
-                  </label>
-                  <label class="radio-inline">
-                    <input type="radio" name="with_child" value="2">No
-                  </label>
-                </div> 
+                </div>  
               </div>
               <div style="text-align:right;">
                 <button type="submit" class="btn btn-success result-btn result-btn-margin-zero" name="btn" value="save_btn">Save</button>
@@ -164,9 +164,9 @@
                 </div>                       
               </div>
               <div class="form-group row">
-                <label class="col-sm-2 control-label" for="examnameid">Exam Name</label>
+                <label class="col-sm-2 control-label" for="masterexamid">Exam Name</label>
                 <div class="col-sm-4">
-                  <select class="form-control" name="examnameid" id="examnameid">
+                  <select class="form-control" name="masterexamid" id="masterexamid">
                     <option  value="">SELECT</option>
                     @foreach ($masterExamNameList as $x)
                     @if($editObj->examnameid==$x->id)
@@ -209,9 +209,9 @@
               <tr>
                 <th>SL NO</th>
                 <th>Program Name</th>
-                <th>Exam Name</th>
+                <th>Master Name</th>
+                <th>Child Exam</th>
                 <th>Marks(%)</th>
-                <th>Master Exam(%)</th>
                 @if($pList[3]->id==3)
                 <th width="10px">Edit</th>
                 @endif
@@ -226,12 +226,12 @@
               <tr>
                 <td>{{++$id}}</td>
                 <td>{{$x->sessionName." "}}{{$x->programName." "}}{{$x->groupName." "}}{{$x->mediumName." "}}{{$x->shiftName." "}}</td>
-                <td>{{$x->examName}}</td>
-                <td>{{$x->exhld_mark_in_percentage}}</td>
-                <td>{{$x->mxm_in_percentage}}</td>
+                <td>{{$x->masterexamName}}</td>
+                <td>{{$x->childexamName}}</td>
+                <td>{{$x->cxm_in_percentage}}</td>
                 @if($pList[3]->id==3)
                 <td> 
-                  <a href="{{URL::to('/masterexam')}}/{{$x->id}}/{{'edit'}}" class="tooltip-success" data-rel="tooltip" title="Edit">
+                  <a href="{{URL::to('/childexam')}}/{{$x->id}}/{{'edit'}}" class="tooltip-success" data-rel="tooltip" title="Edit">
                     <span class="green">
                       <i class="ace-icon fa fa-pencil-square-o bigger-120"></i>
                     </span>
@@ -254,9 +254,9 @@
               <tr>
                 <th>SL NO</th>
                 <th>Program Name</th>
-                <th>Exam Name</th>
+                <th>Master Name</th>
+                <th>Child Exam</th>
                 <th>Marks(%)</th>
-                <th>Master Exam(%)</th>
                 @if($pList[3]->id==3)
                 <th width="10px">Edit</th>
                 @endif
@@ -279,13 +279,12 @@
 <script src="{{asset('clientAdmin/js/dataTables.fixedHeader.min.js')}}"></script>
 <script src="{{asset('clientAdmin/js/dataTables.responsive.min.js')}}"></script>
 <script src="{{asset('clientAdmin/js/responsive.bootstrap.min.js')}}"></script>
-<script src="{{asset('clientAdmin/js/masterexam.js')}}"></script>
+<script src="{{asset('clientAdmin/js/childexam.js')}}"></script>
 <script type="text/javascript">
  $(document).ready(function() {
   var table = $('#example').DataTable( {
     responsive: true
   } );
-
   new $.fn.dataTable.FixedHeader( table );
 } );
 </script>

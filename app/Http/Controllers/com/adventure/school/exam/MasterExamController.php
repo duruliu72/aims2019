@@ -17,6 +17,7 @@ class MasterExamController extends Controller
     }
     public function masterExamCrete(Request $request){
         $instituteName=Institute::getInstituteName();
+        $aProgramOffer=new ProgramOffer();
         $aMenu=new Menu();
         $hasMenu=$aMenu->hasMenu('masterexam');
         if($hasMenu==false){
@@ -25,15 +26,69 @@ class MasterExamController extends Controller
         $sidebarMenu=$aMenu->getSidebarMenu();
         $pList=$aMenu->getPermissionOnMenu('masterexam');
         if($request->isMethod('post')){
-            
+            $validatedData = $request->validate([
+                'programid' => 'required|',
+                'groupid' => 'required|',
+                'mediumid' => 'required|',
+                'shiftid' => 'required|',
+                'examnameid'=>'required|',
+                'markinpercentage'=>'required'
+            ]);
+            $sessionid=$request->sessionid;
+            $programid=$request->programid;
+            $groupid=$request->groupid;
+            $mediumid=$request->mediumid;
+            $shiftid=$request->shiftid;
+            $examnameid=$request->examnameid;
+            $markinpercentage=$request->markinpercentage;
+            $with_child=$request->with_child;
+            $programofferid=$aProgramOffer->getProgramOfferId(0,$programid,$groupid,$mediumid,$shiftid);
+            if($request->btn=="save_btn"){
+                if($programofferid==0){
+                    $msg="This Program Offer has not creared yet";
+                    return redirect()->back()->with('msg',$msg);
+                }
+                $obj=new MasterExam();
+                $obj->programofferid=$programofferid;
+                $obj->examnameid=$examnameid;
+                $obj->exhld_mark_in_percentage=$markinpercentage;
+                $obj->mxm_in_percentage=100;
+                $obj->with_child=$with_child;
+                $isTrue=$obj->hasItem($programofferid,$examnameid);
+                if(!$isTrue){
+                    $obj->save();
+                }else{
+                    $msg="You aready created this exam";
+                    return redirect()->back()->with('msg',$msg);
+                }
+            }elseif($request->btn=="update_btn"){
+                $obj=MasterExam::findOrfail($request->id1);
+                $isTrue=$obj->hasItem($programofferid,$examnameid);
+                $obj->programofferid=$programofferid;
+                $obj->examnameid=$examnameid;
+                $obj->exhld_mark_in_percentage=$markinpercentage;
+                $obj->with_child=$with_child;
+                $isTrue=$obj->hasItem($programofferid,$examnameid);
+                if(($obj->programofferid==$programofferid&&$obj->examnameid==$examnameid)||!$isTrue){
+                    $obj->Update();
+                    $msg="Updated this exam";
+                }else{
+                    $msg="You aready created this exam";
+                }
+                return redirect()->back()->with('msg',$msg);
+            }
         }
-        $aList=MasterExam::all();
-        $aProgramOffer=new ProgramOffer();
+        $aList=MasterExam::getAllMaster();
         $programList=$aProgramOffer->getProgramsOnSession(0);
         $groupList=$aProgramOffer->getGroupsOnSession(0);
         $mediumList=$aProgramOffer->getMediumsOnSession(0);
         $shiftList=$aProgramOffer->getShiftsOnSession(0);
         $masterExamNameList=ExamName::getExamName(1);
+        $bean=null;
+        if($request->id!=null){
+            $editObj=MasterExam::findOrfail($request->id);
+            $bean=MasterExam::getMasterExamId($request->id);
+        }
         $dataList=[
             'instituteName'=>$instituteName,
             'sidebarMenu'=>$sidebarMenu,
@@ -43,72 +98,91 @@ class MasterExamController extends Controller
             'shiftList'=>$shiftList,
             'masterExamNameList'=>$masterExamNameList,
             'pList'=>$pList,
-            'result'=>$aList
+            'result'=>$aList,
+            'editObj'=>$bean,
         ];
         return view('admin.exam.masterexam.masterexamcreate',$dataList);
     }
-    public function create(){
-        $aMenu=new Menu();
-        $hasMenu=$aMenu->hasMenu('masterexam');
-        if($hasMenu==false){
-            return redirect('error');
+     // For Ajax Call ===============
+     public function getValue(Request $request){
+        $option=$request->option;
+        $methodid=$request->methodid;
+        $programid=$request->programid;
+        $groupid=$request->groupid;
+        $mediumid=$request->mediumid;
+        $shiftid=$request->shiftid;
+        if($option=="program"){
+            if($methodid==1){
+                $this->getGroupsOnSessionAndProgram($programid);
+            }elseif($methodid==2){
+                $this->getMediumsOnSessionAndProgram($programid);
+            }elseif($methodid==3){
+                $this->getShiftsOnSessionAndProgram($programid);
+            }
+        }elseif($option=="group"){
+            if($methodid==1){
+                $this->getMediumsOnSessionAndPrograAndGroup($programid,$groupid);
+            }elseif($methodid==2){
+                $this->getShiftsOnSessionAndPrograAndGroup($programid,$groupid);
+            }
+        }elseif($option=="medium"){
+            if($methodid==1){
+                $this->getShiftsOnSessionAndPrograAndGroupAndMedium($programid,$groupid,$mediumid);
+            }
         }
-        $sidebarMenu=$aMenu->getSidebarMenu();
-        $pList=$aMenu->getPermissionOnMenu('masterexam');
-        $dataList=[
-            'sidebarMenu'=>$sidebarMenu
-        ];
-        if($pList[2]->id!=2){
-            return redirect('error'); 
-        }
-    	return view('admin.exam.masterexam.create',$dataList);
     }
-    public function store(Request $request){
-     	 $validatedData = $request->validate([
-        'name' => 'required|unique:master_exam|max:255',
-    	]);
-     	$name=$request->name;
-     	$obj=new MasterExam();
-     	$obj->name=$name;
-     	$status=$obj->save();
-     	if($status){
-     		$msg="Msater Exam Created Successfully";
-		  }else{
-		    $msg="Master Exam not Created";
-		}
-     	return redirect()->back()->with('msg',$msg);
-    }
-    public function edit($id){
-        $aMenu=new Menu();
-        $hasMenu=$aMenu->hasMenu('masterexam');
-        if($hasMenu==false){
-            return redirect('error');
+    private function getGroupsOnSessionAndProgram($programid){
+        $aProgramOffer=new ProgramOffer();
+        $result=$aProgramOffer->getGroupsOnSessionAndProgram(0,$programid);
+        $output="<option value=''>SELECT</option>";
+        foreach($result as $x){
+           $output.="<option value='$x->id'>$x->name</option>";
         }
-        $sidebarMenu=$aMenu->getSidebarMenu();
-        $pList=$aMenu->getPermissionOnMenu('masterexam');
-    	$obj=MasterExam::findOrfail($id);
-        if($pList[3]->id!=3){
-            return redirect('error');
-        }
-        $dataList=[
-        'sidebarMenu'=>$sidebarMenu,
-        'bean'=>$obj
-        ];
-       return view('admin.exam.masterexam.edit',$dataList); 
+        echo  $output;
     }
-    public function update(Request $request, $id){
-    	$validatedData = $request->validate([
-        'name' => 'required|unique:master_exam|max:255',
-    	]);
-    	$name=$request->name;
-     	$obj=MasterExam::findOrfail($id);
-     	$obj->name=$name;
-     	$status=$obj->update();
-     	if($status){
-     		$msg="Master Exam Updated Successfully";
-		  }else{
-		    $msg="Master Exam not Updated";
-		}
-     	return redirect()->back()->with('msg',$msg);
+    private function getMediumsOnSessionAndProgram($programid){
+        $aProgramOffer=new ProgramOffer();
+        $result=$aProgramOffer->getMediumsOnSessionAndProgram(0,$programid);
+        $output="<option value=''>SELECT</option>";
+        foreach($result as $x){
+           $output.="<option value='$x->id'>$x->name</option>";
+        }
+        echo  $output;
+    }
+    private function getShiftsOnSessionAndProgram($programid){
+        $aProgramOffer=new ProgramOffer();
+        $result=$aProgramOffer->getShiftsOnSessionAndProgram(0,$programid);
+        $output="<option value=''>SELECT</option>";
+        foreach($result as $x){
+           $output.="<option value='$x->id'>$x->name</option>";
+        }
+        echo  $output;
+    }
+    private function getMediumsOnSessionAndPrograAndGroup($programid,$groupid){
+        $aProgramOffer=new ProgramOffer();
+        $result=$aProgramOffer->getMediumsOnSessionAndPrograAndGroup(0,$programid,$groupid);
+        $output="<option value=''>SELECT</option>";
+        foreach($result as $x){
+           $output.="<option value='$x->id'>$x->name</option>";
+        }
+        echo  $output;
+    }
+    private function getShiftsOnSessionAndPrograAndGroup($programid,$groupid){
+        $aProgramOffer=new ProgramOffer();
+        $result=$aProgramOffer->getShiftsOnSessionAndPrograAndGroup(0,$programid,$groupid);
+        $output="<option value=''>SELECT</option>";
+        foreach($result as $x){
+           $output.="<option value='$x->id'>$x->name</option>";
+        }
+        echo  $output;
+    }
+    private function getShiftsOnSessionAndPrograAndGroupAndMedium($programid,$groupid,$mediumid){
+        $aProgramOffer=new ProgramOffer();
+        $result=$aProgramOffer->getShiftsOnSessionAndPrograAndGroupAndMedium(0,$programid,$groupid,$mediumid);
+        $output="<option value=''>SELECT</option>";
+        foreach($result as $x){
+           $output.="<option value='$x->id'>$x->name</option>";
+        }
+        echo  $output;
     }
 }

@@ -106,10 +106,15 @@ Route::get('students/getValue','com\adventure\school\admission\StudentController
 Route::get('students', 'com\adventure\school\academic\StudentController@allStudentReg');
 Route::post('students', 'com\adventure\school\academic\StudentController@allStudentReg');
 // Class Exam Settings
+Route::resource('examname', 'com\adventure\school\exam\ExamNameController');
+Route::get('masterexam/getValue', 'com\adventure\school\exam\MasterExamController@getValue');
 Route::get('masterexam', 'com\adventure\school\exam\MasterExamController@masterExamCrete');
 Route::post('masterexam', 'com\adventure\school\exam\MasterExamController@masterExamCrete');
-Route::resource('childexam', 'com\adventure\school\exam\ChildExamController');
-Route::resource('examname', 'com\adventure\school\exam\ExamNameController');
+Route::get('masterexam/{id}/edit', 'com\adventure\school\exam\MasterExamController@masterExamCrete');
+Route::post('masterexam/{id}/edit', 'com\adventure\school\exam\MasterExamController@masterExamCrete');
+Route::get('childexam', 'com\adventure\school\exam\ChildExamController@childExamCrete');
+Route::post('childexam', 'com\adventure\school\exam\ChildExamController@childExamCrete');
+Route::get('childexam/getValue', 'com\adventure\school\exam\ChildExamController@getValue');
 // Menu Settings
 Route::resource('menu', 'com\adventure\school\menu\MenuController');
 

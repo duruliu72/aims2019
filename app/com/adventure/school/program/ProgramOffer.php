@@ -80,6 +80,11 @@ class ProgramOffer extends Model
 		return false;
 	}
 	public function getProgramOfferId($sessionid,$programid,$groupid,$mediumid,$shiftid){
+		if($sessionid==0){
+			$yearName = date('Y');
+	    	$aSession=new Session();
+	    	$sessionid=$aSession->getSessionId($yearName);
+		}
 		$sql="SELECT * FROM `programoffers`
 		WHERE sessionid=? AND programid=? AND groupid=?  AND mediumid=? AND shiftid=?";
 		$qresult=\DB::select($sql,[$sessionid,$programid,$groupid,$mediumid,$shiftid]);
