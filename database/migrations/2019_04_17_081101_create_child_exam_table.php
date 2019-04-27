@@ -15,7 +15,9 @@ class CreateChildExamTable extends Migration
     {
         Schema::create('child_exam', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('name',100);
+            $table->integer('master_exam_id')->length(11);
+            $table->integer('examnameid')->length(11);
+            $table->double('cxm_in_percentage',8,2);
             $table->integer('status')->length(5)->default(0);
             $table->timestamps();
         });

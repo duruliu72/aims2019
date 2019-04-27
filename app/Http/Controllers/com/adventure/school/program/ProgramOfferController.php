@@ -61,7 +61,6 @@ class ProgramOfferController extends Controller
         }else{
             return redirect('error');
         }
-    	
     }
     public function store(Request $request){
      	$validatedData = $request->validate([

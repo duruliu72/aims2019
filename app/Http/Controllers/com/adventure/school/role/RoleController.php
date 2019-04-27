@@ -4,6 +4,7 @@ namespace App\Http\Controllers\com\adventure\school\role;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\com\adventure\school\basic\Institute;
 use App\com\adventure\school\menu\Menu;
 use App\com\adventure\school\role\Role;
 use App\com\adventure\school\role\RoleMenu;
@@ -22,8 +23,14 @@ class RoleController extends Controller
         $sidebarMenu=$aMenu->getSidebarMenu();
         $pList=$aMenu->getPermissionOnMenu('role');
         $aRole=new Role();
-    	$roleList=$aRole->getExcludeSuccessorRole();
-    	return view('admin.rolesettings.role.index',['sidebarMenu'=>$sidebarMenu,'pList'=>$pList,'result'=>$roleList]);
+        $roleList=$aRole->getExcludeSuccessorRole();
+        $dataList=[
+            'institute'=>Institute::getInstituteName(),
+            'sidebarMenu'=>$sidebarMenu,
+            'pList'=>$pList,
+            'result'=>$roleList,
+        ];
+    	return view('admin.rolesettings.role.index',$dataList);
     }
     public function create(){
         $aMenu=new Menu();
@@ -33,17 +40,22 @@ class RoleController extends Controller
         }
         $sidebarMenu=$aMenu->getSidebarMenu();
         $pList=$aMenu->getPermissionOnMenu('role');
-        if($pList[2]->id==2){
-            $aRole=new Role();
-            $aRoleMenu=new RoleMenu();
-            $roleList=$aRole->getIncludeSuccessorRole();
-            $menuList=$aRoleMenu->getMenuListByRole($aRole->getRoleId());
-            $permissionList=$aRoleMenu->getPermissionList($aRole->getRoleId());
-            return view('admin.rolesettings.role.create',['sidebarMenu'=>$sidebarMenu,'roleList'=>$roleList,'menuList'=>$menuList,'permissionList'=>$permissionList]);
-        }else{
+        if($pList[2]->id!=2){
             return redirect('error');
         }
-        
+        $aRole=new Role();
+        $aRoleMenu=new RoleMenu();
+        $roleList=$aRole->getIncludeSuccessorRole();
+        $menuList=$aRoleMenu->getMenuListByRole($aRole->getRoleId());
+        $permissionList=$aRoleMenu->getPermissionList($aRole->getRoleId());
+        $dataList=[
+            'institute'=>Institute::getInstituteName(),
+            'sidebarMenu'=>$sidebarMenu,
+            'roleList'=>$roleList,
+            'menuList'=>$menuList,
+            'permissionList'=>$permissionList
+        ];
+        return view('admin.rolesettings.role.create',$dataList);
     }
     private function isValid($selectmenu){
         $tempid=0;
@@ -106,16 +118,23 @@ class RoleController extends Controller
         }
         $sidebarMenu=$aMenu->getSidebarMenu();
         $pList=$aMenu->getPermissionOnMenu('role');
-        if($pList[2]->id==2){
-            $aRoleMenu=new RoleMenu();
-            $aRole=Role::findOrfail($id);
-            $roleList=$aRole->getPredecessorRole($aRole->id);
-            $list=$aRoleMenu->editPermissionList($aRole->rolecreatorid,$aRole->id);
-            return view('admin.rolesettings.role.edit',['sidebarMenu'=>$sidebarMenu,'roleList'=>$roleList,'bean'=>$aRole,'list'=>$list]); 
-        }else{
+        if($pList[2]->id!=2){
             return redirect('error');
         }
-        
+        $aRoleMenu=new RoleMenu();
+        $aRole=Role::findOrfail($id);
+        $roleList=$aRole->getPredecessorRole($aRole->id);
+        $list=$aRoleMenu->xyz($aRole->rolecreatorid,$aRole->id);
+        $parentlist=$aRoleMenu->yyy($aRole->rolecreatorid,$aRole->id);
+        $dataList=[
+            'institute'=>Institute::getInstituteName(),
+            'sidebarMenu'=>$sidebarMenu,
+            'roleList'=>$roleList,
+            'bean'=>$aRole,
+            'list'=>$list,
+            'parentlist'=>$parentlist
+        ];
+        return view('admin.rolesettings.role.edit',$dataList); 
     }
     public function update(Request $request, $id){
         $validatedData = $request->validate([

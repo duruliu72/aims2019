@@ -17,7 +17,7 @@ function getChangeOnProgram(id,option,output,methodid){
 	var groupid=0;
 	$.ajax({
 		type:'get',
-		url: "http://localhost/school2019/public/vadmissionsubject/getValue",
+		url: "vadmissionsubject/getValue",
 		dataType: "html",
 		data: {'programid':programid,'groupid':groupid,'idvalue':idvalue,'option':option,'methodid':methodid},
 		success: function( result ) {
@@ -31,7 +31,7 @@ function getChangeOnGroup(id,option,output,methodid){
 	var groupid=0;
 	$.ajax({
 		type:'get',
-		url: "http://localhost/school2019/public/vadmissionsubject/getValue",
+		url: "vadmissionsubject/getValue",
 		dataType: "html",
 		data: {'programid':programid,'groupid':groupid,'idvalue':idvalue,'option':option,'methodid':methodid},
 		success: function( result ) {
@@ -45,7 +45,7 @@ function getChangeOnMedium(id,option,output,methodid){
 	var groupid=$("#groupid").val();
 	$.ajax({
 		type:'get',
-		url: "http://localhost/school2019/public/vadmissionsubject/getValue",
+		url: "vadmissionsubject/getValue",
 		dataType: "html",
 		data: {'programid':programid,'groupid':groupid,'idvalue':idvalue,'option':option,'methodid':methodid},
 		success: function( result ) {

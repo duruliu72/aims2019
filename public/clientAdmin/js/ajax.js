@@ -27,7 +27,7 @@ function getValue(id,option,output,methodid){
 	var idvalue=$("#"+id).val();
 	$.ajax({
 		type:'get',
-		url: "http://localhost/school2019/public/getValue",
+		url: "getValue",
 		dataType: "html",
 		data: {'idvalue':idvalue,'option':option,'methodid':methodid},
 		success: function( result ) {
@@ -41,7 +41,7 @@ function getValueWith(id,option,output,methodid){
 	var id=$("#id").val();
 	$.ajax({
 		type:'get',
-		url: "http://localhost/school2019/public/getValueWith",
+		url: "getValueWith",
 		dataType: "html",
 		data: {'idvalue':idvalue,'id':id,'option':option,'methodid':methodid},
 		success: function( result ) {
@@ -54,7 +54,7 @@ function getAddress(id,option,output,methodid){
 	var idvalue=$("#"+id).val();
 	$.ajax({
 		type:'get',
-		url: "http://localhost/school2019/public/getFValue",
+		url: "getFValue",
 		dataType: "html",
 		data: {'idvalue':idvalue,'option':option,'methodid':methodid},
 		success: function( result ) {
@@ -81,7 +81,7 @@ function getValueForAdmission(id,option,output,methodid){
 	var idvalue=$("#"+id).val();
 	$.ajax({
 		type:'get',
-		url: "http://localhost/school2019/public/getFValue",
+		url: "getFValue",
 		dataType: "html",
 		data: {'idvalue':idvalue,'option':option,'methodid':methodid},
 		success: function( result ) {
@@ -95,7 +95,7 @@ function getValueForMedium(id,option,output,methodid){
 	var programid=$("#programid").val();
 	$.ajax({
 		type:'get',
-		url: "http://localhost/school2019/public/getValueForMedium",
+		url: "getValueForMedium",
 		dataType: "html",
 		data: {'programid':programid,'idvalue':idvalue,'option':option,'methodid':methodid},
 		success: function( result ) {
@@ -110,7 +110,7 @@ function getValueForShift(id,option,output,methodid){
 	// console.log(programid+" "+groupid+" "+idvalue);
 	$.ajax({
 		type:'get',
-		url: "http://localhost/school2019/public/getValueForShift",
+		url: "getValueForShift",
 		dataType: "html",
 		data: {'programid':programid,'groupid':groupid,'idvalue':idvalue,'option':option,'methodid':methodid},
 		success: function( result ) {

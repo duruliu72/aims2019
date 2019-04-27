@@ -4,6 +4,7 @@ namespace App\Http\Controllers\com\adventure\school\basic;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\com\adventure\school\basic\Institute;
 use App\com\adventure\school\basic\District;
 use App\com\adventure\school\basic\Division;
 use App\com\adventure\school\menu\Menu;
@@ -22,8 +23,14 @@ class DistrictController extends Controller
         $sidebarMenu=$aMenu->getSidebarMenu();
         $pList=$aMenu->getPermissionOnMenu('district');
         $aDistrict=new District();
-    	$aList=$aDistrict->getAllDistrict();
-    	return view('admin.basic.district.index',['sidebarMenu'=>$sidebarMenu,'pList'=>$pList,'result'=>$aList]);
+        $aList=$aDistrict->getAllDistrict();
+        $dataList=[
+            'institute'=>Institute::getInstituteName(),
+            'sidebarMenu'=>$sidebarMenu,
+            'pList'=>$pList,
+            'result'=>$aList
+        ];
+    	return view('admin.basic.district.index',$dataList);
     }
     public function create(){
         $aMenu=new Menu();
@@ -33,13 +40,16 @@ class DistrictController extends Controller
         }
         $sidebarMenu=$aMenu->getSidebarMenu();
         $pList=$aMenu->getPermissionOnMenu('district');
-        if($pList[2]->id==2){
-        	$divisionList=Division::all();
-            return view('admin.basic.district.create',['sidebarMenu'=>$sidebarMenu,'divisionList'=>$divisionList]);
-        }else{
+        if($pList[2]->id!=2){
             return redirect('error');
         }
-    	
+        $divisionList=Division::all();
+    	$dataList=[
+            'institute'=>Institute::getInstituteName(),
+            'sidebarMenu'=>$sidebarMenu,
+            'divisionList'=>$divisionList
+        ];
+        return view('admin.basic.district.create',$dataList);
     }
     public function store(Request $request){
      	 $validatedData = $request->validate([
@@ -68,13 +78,17 @@ class DistrictController extends Controller
         $sidebarMenu=$aMenu->getSidebarMenu();
         $pList=$aMenu->getPermissionOnMenu('district');
     	$aDistrict=District::findOrfail($id);
-        if($pList[3]->id==3){
-        	$divisionList=Division::all();
-           	return view('admin.basic.district.edit',['sidebarMenu'=>$sidebarMenu,'bean'=>$aDistrict,'divisionList'=>$divisionList]); 
-       }else{
-            return redirect('error');
-       }
-        
+        if($pList[3]->id!=3){
+        	return redirect('error');
+        }
+        $divisionList=Division::all();
+        $dataList=[
+            'institute'=>Institute::getInstituteName(),
+            'sidebarMenu'=>$sidebarMenu,
+            'divisionList'=>$divisionList,
+            'bean'=>$aDistrict
+        ];
+        return view('admin.basic.district.edit',$dataList); 
     }
     public function update(Request $request, $id){
     	$validatedData = $request->validate([

@@ -15,11 +15,10 @@ class CreateApplicantsTable extends Migration
     {
         Schema::create('applicants', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('programofferid')->length(11);
             $table->integer('applicantid')->length(11)->unique();
-            $table->integer('admssion_roll')->length(11)->nullable()->unique();
-            $table->integer('studentregid')->length(11)->nullable()->unique();
-            $table->string('name',150);
+            $table->string('firstName',150);
+            $table->string('middleName',150);
+            $table->string('lastName',150);
             $table->string('fatherName',150);
             $table->string('motherName',150);
             $table->string('f_occupation',150)->nullable();
@@ -60,12 +59,9 @@ class CreateApplicantsTable extends Migration
             $table->string('signature',150)->nullable();
             $table->string('father_picture',150)->nullable();
             $table->string('mother_picture',150)->nullable();
-            $table->string('username',191)->unique();
-            $table->string('password',191);
             $table->timestamps();
         });
     }
-
     /**
      * Reverse the migrations.
      *

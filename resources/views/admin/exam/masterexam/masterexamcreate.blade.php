@@ -228,7 +228,7 @@
                 <td>{{$x->sessionName." "}}{{$x->programName." "}}{{$x->groupName." "}}{{$x->mediumName." "}}{{$x->shiftName." "}}</td>
                 <td>{{$x->examName}}</td>
                 <td>{{$x->exhld_mark_in_percentage}}</td>
-                <td>{{$x->mxm_in_percentage}}</td>
+                <td>{{$x->differ_mxm_in_percentage}}</td>
                 @if($pList[3]->id==3)
                 <td> 
                   <a href="{{URL::to('/masterexam')}}/{{$x->id}}/{{'edit'}}" class="tooltip-success" data-rel="tooltip" title="Edit">

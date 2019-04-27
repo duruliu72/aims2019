@@ -4,6 +4,7 @@ namespace App\Http\Controllers\com\adventure\school\basic;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\com\adventure\school\basic\Institute;
 use App\com\adventure\school\basic\AdmissionSubject;
 use App\com\adventure\school\menu\Menu;
 class AdmissionSubjectController extends Controller
@@ -20,8 +21,14 @@ class AdmissionSubjectController extends Controller
         }
         $sidebarMenu=$aMenu->getSidebarMenu();
         $pList=$aMenu->getPermissionOnMenu('admissionsubject');
-    	$aList=AdmissionSubject::all();
-    	return view('admin.basic.admissionsubject.index',['sidebarMenu'=>$sidebarMenu,'pList'=>$pList,'result'=>$aList]);
+        $aList=AdmissionSubject::all();
+        $dataList=[
+            'institute'=>Institute::getInstituteName(),
+            'sidebarMenu'=>$sidebarMenu,
+            'pList'=>$pList,
+            'result'=>$aList
+        ];
+    	return view('admin.basic.admissionsubject.index',$dataList);
     }
     public function create(){
         $aMenu=new Menu();
@@ -31,12 +38,14 @@ class AdmissionSubjectController extends Controller
         }
         $sidebarMenu=$aMenu->getSidebarMenu();
         $pList=$aMenu->getPermissionOnMenu('admissionsubject');
-        if($pList[2]->id==2){
-            return view('admin.basic.admissionsubject.create',['sidebarMenu'=>$sidebarMenu]);
-        }else{
+        if($pList[2]->id!=2){
             return redirect('error');
         }
-    	
+    	$dataList=[
+            'institute'=>Institute::getInstituteName(),
+            'sidebarMenu'=>$sidebarMenu,
+        ];
+        return view('admin.basic.admissionsubject.create',$dataList);
     }
     public function store(Request $request){
      	 $validatedData = $request->validate([
@@ -61,13 +70,16 @@ class AdmissionSubjectController extends Controller
         }
         $sidebarMenu=$aMenu->getSidebarMenu();
         $pList=$aMenu->getPermissionOnMenu('admissionsubject');
-    	$aAdmissionSubject=AdmissionSubject::findOrfail($id);
-        if($pList[3]->id==3){
-           return view('admin.basic.admissionsubject.edit',['sidebarMenu'=>$sidebarMenu,'bean'=>$aAdmissionSubject]); 
-       }else{
+        $aAdmissionSubject=AdmissionSubject::findOrfail($id);
+        if($pList[3]->id!=3){
             return redirect('error');
-       }
-        
+        }
+        $dataList=[
+        'institute'=>Institute::getInstituteName(),
+        'sidebarMenu'=>$sidebarMenu,
+        'bean'=>$aAdmissionSubject
+        ];
+        return view('admin.basic.admissionsubject.edit',$dataList); 
     }
     public function update(Request $request, $id){
     	$validatedData = $request->validate([

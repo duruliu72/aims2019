@@ -27,8 +27,14 @@ class InstituteController extends Controller
         $sidebarMenu=$aMenu->getSidebarMenu();
         $pList=$aMenu->getPermissionOnMenu('institute');
         $aInstitute=new Institute();
-    	$aList=$aInstitute->getAllInstitute();
-    	return view('admin.basic.institute.index',['sidebarMenu'=>$sidebarMenu,'pList'=>$pList,'result'=>$aList]);
+        $aList=$aInstitute->getAllInstitute();
+        $dataList=[
+            'institute'=>Institute::getInstituteName(),
+            'sidebarMenu'=>$sidebarMenu,
+            'pList'=>$pList,
+            'result'=>$aList
+        ];
+    	return view('admin.basic.institute.index',$dataList);
     }
     public function create(){
         $aMenu=new Menu();
@@ -38,20 +44,19 @@ class InstituteController extends Controller
         }
         $sidebarMenu=$aMenu->getSidebarMenu();
         $pList=$aMenu->getPermissionOnMenu('institute');
-        if($pList[2]->id==2){
-	    	$dataList=[
-	    		'sidebarMenu'=>$sidebarMenu,
-	    		'divisionList'=>Division::all(),
-	    		'districtList'=>array(),
-	    		'thanaList'=>array(),
-	    		'postofficeList'=>array(),
-	    		'localgovList'=>array(),
-	    	];
-            return view('admin.basic.institute.create',$dataList);
-        }else{
+        if($pList[2]->id!=2){
             return redirect('error');
         }
-    	
+    	$dataList=[
+            'institute'=>Institute::getInstituteName(),
+            'sidebarMenu'=>$sidebarMenu,
+            'divisionList'=>Division::all(),
+            'districtList'=>District::all(),
+            'thanaList'=>Thana::all(),
+            'postofficeList'=>PostOffice::all(),
+            'localgovList'=>LocalGov::all(),
+        ];
+        return view('admin.basic.institute.create',$dataList);
     }
     public function store(Request $request){
      	$validatedData = $request->validate([
@@ -69,7 +74,7 @@ class InstituteController extends Controller
         $aInstitute->subcategoryid=$request->subcategoryid;
         $aInstitute->wordno=$request->wordno;
         $aInstitute->cluster=$request->cluster;
-        $aInstitute->eiin=$request->eiin;
+        $aInstitute->ein=$request->eiin;
         $upload_logo = $request->file('institutelogo');
         if($upload_logo!=null){
             $explode_logo=explode('.',$upload_logo->getClientOriginalName());
@@ -114,6 +119,7 @@ class InstituteController extends Controller
         $aInstitute=$aObj->getInstituteById($id);
         if($pList[3]->id==3){
         	$dataList=[
+                'institute'=>Institute::getInstituteName(),
                 'sidebarMenu'=>$sidebarMenu,
                 'divisionList'=>Division::all(),
                 'districtList'=>District::all(),
@@ -139,7 +145,7 @@ class InstituteController extends Controller
         $aInstitute->subcategoryid=$request->subcategoryid;
         $aInstitute->wordno=$request->wordno;
         $aInstitute->cluster=$request->cluster;
-        $aInstitute->eiin=$request->eiin;
+        $aInstitute->ein=$request->eiin;
         $upload_logo = $request->file('institutelogo');
         if($upload_logo!=null){
             $explode_logo=explode('.',$upload_logo->getClientOriginalName());

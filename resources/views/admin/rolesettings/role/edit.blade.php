@@ -7,7 +7,7 @@
       <section class="wrapper">
         <div class="row">
           <div class="col-lg-12">
-            <h3 class="page-header"><i class="fa fa-laptop"></i>Horinagor High School</h3>
+          <h3 class="page-header"><i class="fa fa-laptop"></i>{{$institute->name}}</h3>
             <ol class="breadcrumb">
               <li><a href="{{URL::to('/role')}}">All</a></li>
               <li>Role</li>
@@ -51,39 +51,37 @@
                   <div class="row">
                     <div class="col-md-12" id="output">
                       <ul class="role_menu">
-                        @foreach($list as $x)
-                          @if($x['menuitem']->parentid==0)
-                             @if($x['menuitem']->childroleid!=0)
-                               <li><label><input type="checkbox" checked="" onclick="" name="menuid[]" value="{{$x['menuitem']->id}}">{{$x['menuitem']->name}}</label><input  type="checkbox" hidden="" checked="" name="permissionid_{{$x['menuitem']->id}}[]" value="0">
-                              @else
-                              <li><label><input type="checkbox" onclick="" name="menuid[]" value="{{$x['menuitem']->id}}">{{$x['menuitem']->name}}</label><input  type="checkbox" hidden="" checked="" name="permissionid_{{$x['menuitem']->id}}[]" value="0">
-                             @endif
-                            <ul>
-                              @foreach($list as $y)
-                                @if($y['menuitem']->parentid==$x['menuitem']->id)
-                                  <li>
-                                    <div class="menu">
-                                      @if($x['menuitem']->childroleid!=0)
-                                       <label><input type="checkbox" checked="" name="menuid[]" value="{{$y['menuitem']->id}}">{{$y['menuitem']->name}}</label>
-                                      @else
-                                      <label><input type="checkbox" name="menuid[]" value="{{$y['menuitem']->id}}">{{$y['menuitem']->name}}</label>
-                                     @endif
-                                    </div>
-                                    <div class="permission">
-                                      @foreach($y['permissionList'] as $p)
-                                        @if($p->cid!=0)
-                                        <label><input type="checkbox" checked="" name="permissionid_{{$y['menuitem']->id}}[]" value="{{$p->id}}">{{$p->name}} &nbsp;&nbsp;</label>
-                                        @else
-                                        <label><input type="checkbox" name="permissionid_{{$y['menuitem']->id}}[]" value="{{$p->id}}">{{$p->name}} &nbsp;&nbsp;</label>
-                                       @endif
-                                      @endforeach
-                                    </div>
-                                  </li>
-                                @endif
-                              @endforeach
-                            </ul>
-                          </li>
+                        @foreach($parentlist as $x)
+                          @if($x->child_menuid!=0)
+                            <li><label><input type="checkbox" checked>{{$x->name}}</label>
+                          @else
+                            <li><label><input type="checkbox">{{$x->name}}</label>
                           @endif
+                              <ul>
+                              @foreach($list[$x->menuid] as $item)
+                                  <li>
+                                      @if($item[0]->child_menuid!=0)
+                                      <div class="menu">
+                                          <label><input type="checkbox" checked>{{$item[0]->name}}</label>
+                                      </div>
+                                      @else
+                                      <div class="menu">
+                                          <label><input type="checkbox">{{$item[0]->name}}</label>
+                                      </div>
+                                      @endif
+                                      <div class="permission">
+                                        @foreach($item[1] as $permission_item)
+                                          @if($permission_item->child_permissionid!=0)
+                                            <label><input type="checkbox" checked>{{$permission_item->name}} &nbsp;&nbsp;</label>
+                                          @else
+                                            <label><input type="checkbox">{{$permission_item->name}} &nbsp;&nbsp;</label>
+                                          @endif
+                                        @endforeach
+                                      </div>
+                                  </li>                              
+                              @endforeach
+                              </ul>
+                            </li>
                         @endforeach
                       </ul>
                     </div>
@@ -99,5 +97,4 @@
 @endsection
 @section('uniqueScript')
 <script src="{{asset('clientAdmin/js/role.js')}}"></script>
-<script src="{{asset('clientAdmin/js/ajax.js')}}"></script>
 @endsection

@@ -14,7 +14,8 @@ class CreateAdmissionProgramsTable extends Migration
     public function up()
     {
         Schema::create('admission_programs', function (Blueprint $table) {
-            $table->primary('programofferid')->length(11);
+            $table->increments('id');
+            $table->integer('programofferid')->length(11);
             $table->double('required_gpa', 8, 2)->nullable();
             $table->double('exam_marks', 8, 2)->nullable();
             $table->date('exam_date')->nullable();

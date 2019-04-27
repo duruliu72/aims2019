@@ -21,7 +21,7 @@ function getChangeOnProgram(id,option,output,methodid){
 	var shiftid=0;
 	$.ajax({
 		type:'get',
-		url: "http://localhost/school2019/public/courseoffercreate/getValue",
+		url: "courseoffercreate/getValue",
 		dataType: "html",
 		data: {'programid':programid,'groupid':groupid,'mediumid':mediumid,'shiftid':shiftid,'option':option,'methodid':methodid},
 		success: function( result ) {
@@ -36,7 +36,7 @@ function getChangeOnGroup(id,option,output,methodid){
 	var shiftid=0;
 	$.ajax({
 		type:'get',
-		url: "http://localhost/school2019/public/courseoffercreate/getValue",
+		url: "courseoffercreate/getValue",
 		dataType: "html",
 		data: {'programid':programid,'groupid':groupid,'mediumid':mediumid,'shiftid':shiftid,'option':option,'methodid':methodid},
 		success: function( result ) {
@@ -51,7 +51,7 @@ function getChangeOnMedium(id,option,output,methodid){
 	var shiftid=0;
 	$.ajax({
 		type:'get',
-		url: "http://localhost/school2019/public/courseoffercreate/getValue",
+		url: "courseoffercreate/getValue",
 		dataType: "html",
 		data: {'programid':programid,'groupid':groupid,'mediumid':mediumid,'shiftid':shiftid,'option':option,'methodid':methodid},
 		success: function( result ) {
@@ -66,7 +66,7 @@ function getChangeOnShift(id,option,output,methodid){
 	var shiftid=$("#"+id).val();
 	$.ajax({
 		type:'get',
-		url: "http://localhost/school2019/public/courseoffercreate/getValue",
+		url: "courseoffercreate/getValue",
 		dataType: "html",
 		data: {'programid':programid,'groupid':groupid,'mediumid':mediumid,'shiftid':shiftid,'option':option,'methodid':methodid},
 		success: function( result ) {

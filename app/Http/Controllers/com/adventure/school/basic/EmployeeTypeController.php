@@ -4,6 +4,7 @@ namespace App\Http\Controllers\com\adventure\school\basic;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\com\adventure\school\basic\Institute;
 use App\com\adventure\school\menu\Menu;
 use App\com\adventure\school\basic\EmployeeType;
 class EmployeeTypeController extends Controller
@@ -20,8 +21,14 @@ class EmployeeTypeController extends Controller
         }
         $sidebarMenu=$aMenu->getSidebarMenu();
         $pList=$aMenu->getPermissionOnMenu('employeetypes');
-    	$aList=EmployeeType::all();
-    	return view('admin.basic.employeetype.index',['sidebarMenu'=>$sidebarMenu,'pList'=>$pList,'result'=>$aList]);
+        $aList=EmployeeType::all();
+        $dataList=[
+            'institute'=>Institute::getInstituteName(),
+            'sidebarMenu'=>$sidebarMenu,
+            'pList'=>$pList,
+            'result'=>$aList
+        ];
+    	return view('admin.basic.employeetype.index',$dataList);
     }
     public function create(){
         $aMenu=new Menu();
@@ -31,12 +38,14 @@ class EmployeeTypeController extends Controller
         }
         $sidebarMenu=$aMenu->getSidebarMenu();
         $pList=$aMenu->getPermissionOnMenu('employeetypes');
-        if($pList[2]->id==2){
-            return view('admin.basic.employeetype.create',['sidebarMenu'=>$sidebarMenu]);
-        }else{
+        if($pList[2]->id!=2){
             return redirect('error');
         }
-    	
+    	$dataList=[
+            'institute'=>Institute::getInstituteName(),
+            'sidebarMenu'=>$sidebarMenu,
+        ];
+        return view('admin.basic.employeetype.create',$dataList);
     }
     public function store(Request $request){
      	 $validatedData = $request->validate([
@@ -62,12 +71,15 @@ class EmployeeTypeController extends Controller
         $sidebarMenu=$aMenu->getSidebarMenu();
         $pList=$aMenu->getPermissionOnMenu('employeetypes');
     	$aEmployeeType=EmployeeType::findOrfail($id);
-        if($pList[3]->id==3){
-           return view('admin.basic.employeetype.edit',['sidebarMenu'=>$sidebarMenu,'bean'=>$aEmployeeType]); 
-       }else{
+        if($pList[3]->id!=3){
             return redirect('error');
        }
-        
+       $dataList=[
+        'institute'=>Institute::getInstituteName(),
+        'sidebarMenu'=>$sidebarMenu,
+        'bean'=>$aEmployeeType
+    ];
+       return view('admin.basic.employeetype.edit',$dataList);  
     }
     public function update(Request $request, $id){
     	$validatedData = $request->validate([

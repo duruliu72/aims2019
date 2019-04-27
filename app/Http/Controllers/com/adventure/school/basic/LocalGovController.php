@@ -4,6 +4,7 @@ namespace App\Http\Controllers\com\adventure\school\basic;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\com\adventure\school\basic\Institute;
 use App\com\adventure\school\basic\LocalGov;
 use App\com\adventure\school\basic\Thana;
 use App\com\adventure\school\menu\Menu;
@@ -22,8 +23,14 @@ class LocalGovController extends Controller
         $sidebarMenu=$aMenu->getSidebarMenu();
         $pList=$aMenu->getPermissionOnMenu('localgov');
         $aLocalGov=new LocalGov();
-    	$aList=$aLocalGov->getAllLocalGov();
-    	return view('admin.basic.localgov.index',['sidebarMenu'=>$sidebarMenu,'pList'=>$pList,'result'=>$aList]);
+        $aList=$aLocalGov->getAllLocalGov();
+        $dataList=[
+            'institute'=>Institute::getInstituteName(),
+            'sidebarMenu'=>$sidebarMenu,
+            'pList'=>$pList,
+            'result'=>$aList
+        ];
+    	return view('admin.basic.localgov.index',$dataList);
     }
     public function create(){
         $aMenu=new Menu();
@@ -33,13 +40,16 @@ class LocalGovController extends Controller
         }
         $sidebarMenu=$aMenu->getSidebarMenu();
         $pList=$aMenu->getPermissionOnMenu('localgov');
-        if($pList[2]->id==2){
-        	$thanaList=Thana::all();
-            return view('admin.basic.localgov.create',['sidebarMenu'=>$sidebarMenu,'thanaList'=>$thanaList]);
-        }else{
+        if($pList[2]->id!=2){
             return redirect('error');
         }
-    	
+        $thanaList=Thana::all();
+        $dataList=[
+            'institute'=>Institute::getInstituteName(),
+            'sidebarMenu'=>$sidebarMenu,
+            'thanaList'=>$thanaList,
+        ];
+        return view('admin.basic.localgov.create',$dataList);
     }
     public function store(Request $request){
      	 $validatedData = $request->validate([
@@ -68,13 +78,17 @@ class LocalGovController extends Controller
         $sidebarMenu=$aMenu->getSidebarMenu();
         $pList=$aMenu->getPermissionOnMenu('localgov');
     	$aLocalGov=LocalGov::findOrfail($id);
-        if($pList[3]->id==3){
-        	$thanaList=Thana::all();
-           	return view('admin.basic.localgov.edit',['sidebarMenu'=>$sidebarMenu,'bean'=>$aLocalGov,'thanaList'=>$thanaList]); 
-       }else{
+        if($pList[3]->id!=3){
             return redirect('error');
-       }
-        
+        }
+        $thanaList=Thana::all();
+        $dataList=[
+            'institute'=>Institute::getInstituteName(),
+            'sidebarMenu'=>$sidebarMenu,
+            'thanaList'=>$thanaList,
+            'bean'=>$aLocalGov
+        ];
+        return view('admin.basic.localgov.edit',$dataList); 
     }
     public function update(Request $request, $id){
     	$validatedData = $request->validate([

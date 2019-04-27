@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateMasterExamTable extends Migration
+class CreateAdmissionapplicantsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,15 @@ class CreateMasterExamTable extends Migration
      */
     public function up()
     {
-        Schema::create('master_exam', function (Blueprint $table) {
+        Schema::create('admissionapplicants', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('programofferid')->length(11);
-            $table->integer('examnameid')->length(11);
-            $table->double('exhld_mark_in_percentage',8,2);
-            $table->double('mxm_in_percentage',8,2);
-            $table->integer('with_child')->length(11);
+            $table->integer('applicantid')->length(11);
+            $table->integer('admssion_roll')->length(11)->nullable()->unique();
+            $table->integer('fromclass')->length(11);
+            $table->integer('fromsection')->length(11);
+            $table->integer('admissionDate')->length(11);
+            $table->integer('studenttype')->length(11);
             $table->integer('status')->length(5)->default(0);
             $table->timestamps();
         });
@@ -32,6 +34,6 @@ class CreateMasterExamTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('master_exam');
+        Schema::dropIfExists('admissionapplicants');
     }
 }

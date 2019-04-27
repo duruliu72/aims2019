@@ -9,12 +9,12 @@
   <section class="wrapper">
     <div class="row">
       <div class="col-lg-12">
-        <h3 class="page-header"><i class="fa fa-laptop"></i>Horinagor High School</h3>
+        <h3 class="page-header"><i class="fa fa-laptop"></i>{{$institute->name}}</h3>
         <ol class="breadcrumb">
           @if($pList[2]->id==2)
             <li><a href="{{URL::to('/institute')}}/{{'create'}}">New</a></li>
           @endif
-          <li>Division</li>
+          <li>Institute</li>
         </ol>
       </div>
     </div>
@@ -59,7 +59,7 @@
                 <td>{{$x->subcategoryid}}</td>
                 <td>{{$x->wordno}}</td>
                 <td>{{$x->cluster}}</td>
-                <td>{{$x->eiin}}</td>
+                <td>{{$x->ein}}</td>
                 <td>{{$x->divisionName}}</td>
                 <td>{{$x->districtName}}</td>
                 <td>{{$x->thanaName}}</td>

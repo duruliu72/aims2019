@@ -76,4 +76,83 @@ class RoleMenu extends Model
         $list=\DB::select($sql,[$parentid,$menuid,$chieldid,$menuid]);
         return $list;
     }
+    public function xyz($parent_roleid,$child_roleid){
+        $sql="SELECT 
+        parent_menu.menuid,
+        parent_menu.name,
+        parent_menu.parentid,
+        IFNULL(child_menu.menuid,0) AS child_menuid
+        From(SELECT 
+        role_menu.menuid,
+        menus.name,
+        menus.parentid
+        FROM `role_menu`
+        INNER JOIN menus ON role_menu.menuid=menus.id
+        WHERE roleid=? GROUP BY menuid) AS  parent_menu
+        LEFT JOIN
+        (SELECT
+        role_menu.menuid
+        FROM `role_menu`
+        WHERE roleid=? GROUP BY menuid) AS  child_menu 
+        ON parent_menu.menuid=child_menu.menuid WHERE parent_menu.parentid!=0 ORDER BY parent_menu.menuid";
+        $qresult=\DB::select($sql,[$parent_roleid,$child_roleid]);
+        $result=collect($qresult);
+        $parent_result=$this->yyy($parent_roleid,$child_roleid);
+        foreach($parent_result as $parent_item){
+            $list[$parent_item->menuid]=array();
+        }
+        foreach($result as $item){
+            foreach($parent_result as $parent_item){
+                if($parent_item->menuid==$item->parentid){
+                    $permission=$this->zzz($parent_roleid,$child_roleid,$item->menuid);
+                    array_push($list[$parent_item->menuid],array($item,$permission));
+                }
+            }
+        }
+        return $list;
+    }
+    public function yyy($parent_roleid,$child_roleid){
+        $parentsql="SELECT 
+        parent_menu.menuid,
+        parent_menu.name,
+        parent_menu.parentid,
+        IFNULL(child_menu.menuid,0) AS child_menuid
+        From (SELECT 
+        role_menu.menuid,
+        menus.name,
+        menus.parentid
+        FROM `role_menu`
+        INNER JOIN menus ON role_menu.menuid=menus.id
+        WHERE roleid=? GROUP BY menuid) AS  parent_menu
+        LEFT JOIN
+        (SELECT
+        role_menu.menuid
+        FROM `role_menu`
+        WHERE roleid=? GROUP BY menuid) AS  child_menu 
+        ON parent_menu.menuid=child_menu.menuid WHERE parent_menu.parentid=0  ORDER BY parent_menu.menuid";
+        $parent_qresult=\DB::select($parentsql,[$parent_roleid,$child_roleid]);
+        $parent_result=collect($parent_qresult);
+        return $parent_result;
+    }
+    public function zzz($parent_roleid,$child_roleid,$menuid){
+        $sqlpermission="SELECT table1.*,
+        IFNULL(table2.permissionid,0) AS child_permissionid
+        FROM(SELECT 
+        role_menu.menuid,
+        role_menu.permissionid,
+        permissions.name
+        FROM `role_menu`
+        INNER JOIN permissions ON role_menu.permissionid=permissions.id
+        WHERE roleid=?) AS table1
+        LEFT JOIN 
+        (SELECT 
+        role_menu.menuid,
+        role_menu.permissionid
+        FROM `role_menu`
+        WHERE roleid=?) AS table2 ON table1.menuid=table2.menuid && table1.permissionid=table2.permissionid
+        WHERE table1.menuid=?";
+        $permission_qresult=\DB::select($sqlpermission,[$parent_roleid,$child_roleid,$menuid]);
+        $permission_result=collect($permission_qresult);
+        return $permission_result;
+    }
 }

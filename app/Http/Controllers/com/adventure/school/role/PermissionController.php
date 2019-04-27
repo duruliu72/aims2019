@@ -4,6 +4,7 @@ namespace App\Http\Controllers\com\adventure\school\role;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\com\adventure\school\basic\Institute;
 use App\com\adventure\school\role\Permission;
 use App\com\adventure\school\role\RoleMenu;
 use App\com\adventure\school\menu\Menu;
@@ -20,8 +21,14 @@ class PermissionController extends Controller
         }
         $sidebarMenu=$aMenu->getSidebarMenu();
         $pList=$aMenu->getPermissionOnMenu('permission');
-    	$permissionList=Permission::all();
-    	return view('admin.rolesettings.permission.index',['sidebarMenu'=>$sidebarMenu,'pList'=>$pList,'result'=>$permissionList]);
+        $permissionList=Permission::all();
+        $dataList=[
+            'institute'=>Institute::getInstituteName(),
+            'sidebarMenu'=>$sidebarMenu,
+            'pList'=>$pList,
+            'result'=>$permissionList
+        ];
+    	return view('admin.rolesettings.permission.index',$dataList);
     }
     public function create(){
         $aMenu=new Menu();
@@ -31,12 +38,15 @@ class PermissionController extends Controller
         }
         $sidebarMenu=$aMenu->getSidebarMenu();
         $pList=$aMenu->getPermissionOnMenu('permission');
-        if($pList[2]->id==2){
-            $permissionList=Permission::all();
-            return view('admin.rolesettings.permission.create',['sidebarMenu'=>$sidebarMenu]);
-        }else{
+        if($pList[2]->id!=2){
             return redirect('error');
         }
+        $permissionList=Permission::all();
+        $dataList=[
+            'institute'=>Institute::getInstituteName(),
+            'sidebarMenu'=>$sidebarMenu,
+        ];
+        return view('admin.rolesettings.permission.create',$dataList);
     }
     public function store(Request $request){
     	$validatedData = $request->validate([
@@ -81,13 +91,16 @@ class PermissionController extends Controller
         }
         $sidebarMenu=$aMenu->getSidebarMenu();
         $pList=$aMenu->getPermissionOnMenu('permission');
-        if($pList[3]->id==3){
-            $aPermission=Permission::findOrfail($id);
-            return view('admin.rolesettings.permission.edit',['sidebarMenu'=>$sidebarMenu,'bean'=>$aPermission]);
-        }else{
+        if($pList[3]->id!=3){
             return redirect('error');
         }
-    	
+        $aPermission=Permission::findOrfail($id);
+        $dataList=[
+            'institute'=>Institute::getInstituteName(),
+            'sidebarMenu'=>$sidebarMenu,
+            'bean'=>$aPermission
+        ];
+        return view('admin.rolesettings.permission.edit',$dataList);
     }
     public function update(Request $request, $id){
     	$validatedData = $request->validate([

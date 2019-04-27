@@ -15,9 +15,7 @@ Route::get('/error', function(){
 return view('errorpage');
 });
 Auth::routes();
-
 Route::get('/home', 'HomeController@index')->name('home');
-
 // Basic Settings
 Route::resource('gender', 'com\adventure\school\basic\GenderController');
 Route::resource('quota', 'com\adventure\school\basic\QuotaController');
@@ -114,6 +112,8 @@ Route::get('masterexam/{id}/edit', 'com\adventure\school\exam\MasterExamControll
 Route::post('masterexam/{id}/edit', 'com\adventure\school\exam\MasterExamController@masterExamCrete');
 Route::get('childexam', 'com\adventure\school\exam\ChildExamController@childExamCrete');
 Route::post('childexam', 'com\adventure\school\exam\ChildExamController@childExamCrete');
+Route::get('childexam/{id}/edit', 'com\adventure\school\exam\ChildExamController@childExamCrete');
+Route::post('childexam/{id}/edit', 'com\adventure\school\exam\ChildExamController@childExamCrete');
 Route::get('childexam/getValue', 'com\adventure\school\exam\ChildExamController@getValue');
 // Menu Settings
 Route::resource('menu', 'com\adventure\school\menu\MenuController');
@@ -121,9 +121,9 @@ Route::resource('menu', 'com\adventure\school\menu\MenuController');
 // Role Settings
 Route::resource('permission', 'com\adventure\school\role\PermissionController');
 Route::resource('role', 'com\adventure\school\role\RoleController');
-// For Ajax 
-Route::get('/getValue/','com\adventure\school\AjaxController@getValue');
-Route::get('/getValueWith/','com\adventure\school\AjaxController@getValueWith');
+// // For Ajax 
+// Route::get('/getValue/','com\adventure\school\AjaxController@getValue');
+// Route::get('/getValueWith/','com\adventure\school\AjaxController@getValueWith');
 
 
 // ===========================================

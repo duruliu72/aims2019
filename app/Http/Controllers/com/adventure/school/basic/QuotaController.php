@@ -4,6 +4,7 @@ namespace App\Http\Controllers\com\adventure\school\basic;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\com\adventure\school\basic\Institute;
 use App\com\adventure\school\basic\Quota;
 use App\com\adventure\school\menu\Menu;
 class QuotaController extends Controller
@@ -20,8 +21,14 @@ class QuotaController extends Controller
         }
         $sidebarMenu=$aMenu->getSidebarMenu();
         $pList=$aMenu->getPermissionOnMenu('quota');
-    	$quotaList=Quota::all();
-    	return view('admin.basic.quota.index',['sidebarMenu'=>$sidebarMenu,'pList'=>$pList,'result'=>$quotaList]);
+        $quotaList=Quota::all();
+        $dataList=[
+            'institute'=>Institute::getInstituteName(),
+            'sidebarMenu'=>$sidebarMenu,
+            'pList'=>$pList,
+            'result'=>$quotaList
+        ];
+    	return view('admin.basic.quota.index',$dataList);
     }
     public function create(){
         $aMenu=new Menu();
@@ -31,12 +38,14 @@ class QuotaController extends Controller
         }
         $sidebarMenu=$aMenu->getSidebarMenu();
         $pList=$aMenu->getPermissionOnMenu('quota');
-        if($pList[2]->id==2){
-            return view('admin.basic.quota.create',['sidebarMenu'=>$sidebarMenu]);
-        }else{
+        if($pList[2]->id!=2){
             return redirect('error');
         }
-    	
+    	$dataList=[
+            'institute'=>Institute::getInstituteName(),
+            'sidebarMenu'=>$sidebarMenu
+        ];
+        return view('admin.basic.quota.create',$dataList);
     }
     public function store(Request $request){
      	 $validatedData = $request->validate([
@@ -61,12 +70,16 @@ class QuotaController extends Controller
         }
         $sidebarMenu=$aMenu->getSidebarMenu();
         $pList=$aMenu->getPermissionOnMenu('quota');
-        if($pList[3]->id==3){
-            $aQuota=Quota::findOrfail($id);
-            return view('admin.basic.quota.edit',['sidebarMenu'=>$sidebarMenu,'bean'=>$aQuota]);
-        }else{
+        if($pList[3]->id!=3){
             return redirect('error');
         }
+        $aQuota=Quota::findOrfail($id);
+        $dataList=[
+            'institute'=>Institute::getInstituteName(),
+            'sidebarMenu'=>$sidebarMenu,
+            'bean'=>$aQuota
+        ];
+        return view('admin.basic.quota.edit',$dataList);
     }
     public function update(Request $request, $id){
     	$validatedData = $request->validate([

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\com\adventure\school\menu;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\com\adventure\school\basic\Institute;
 use App\com\adventure\school\menu\Menu;
 use App\com\adventure\school\role\Role;
 use App\com\adventure\school\role\Permission;
@@ -22,8 +23,14 @@ class MenuController extends Controller
         }
         $sidebarMenu=$aMenu->getSidebarMenu();
         $pList=$aMenu->getPermissionOnMenu('menu');
-    	$menuList=$aMenu->getAllMenu();
-    	return view('admin.menu.index',['sidebarMenu'=>$sidebarMenu,'pList'=>$pList,'result'=>$menuList]);
+        $menuList=$aMenu->getAllMenu();
+        $dataList=[
+            'institute'=>Institute::getInstituteName(),
+            'sidebarMenu'=>$sidebarMenu,
+            'pList'=>$pList,
+            'result'=>$menuList
+        ];
+    	return view('admin.menu.index',$dataList);
     }
     public function create(){
         $aMenu=new Menu();
@@ -35,7 +42,12 @@ class MenuController extends Controller
         if($pList[2]->id==2){
            $aList=$aMenu->getParentsMenu();
             $sidebarMenu=$aMenu->getSidebarMenu();
-            return view('admin.menu.create',['sidebarMenu'=>$sidebarMenu,'parents'=>$aList]); 
+            $dataList=[
+                'institute'=>Institute::getInstituteName(),
+                'sidebarMenu'=>$sidebarMenu,
+                'parents'=>$aList,
+            ];
+            return view('admin.menu.create',$dataList); 
         }else{
              return redirect('error');
         }
@@ -108,7 +120,13 @@ class MenuController extends Controller
         $sidebarMenu=$aMenu->getSidebarMenu();
         $pList=$aMenu->getPermissionOnMenu('menu');
         if($pList[3]->id==3){
-            return view('admin.menu.edit',['sidebarMenu'=>$sidebarMenu,'bean'=>$aMenu,'parents'=>$aList]);
+            $dataList=[
+                'institute'=>Institute::getInstituteName(),
+                'sidebarMenu'=>$sidebarMenu,
+                'bean'=>$aMenu,
+                'parents'=>$aList
+            ];
+            return view('admin.menu.edit',$dataList);
         }else{
             return redirect('error');
         }

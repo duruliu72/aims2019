@@ -4,6 +4,7 @@ namespace App\Http\Controllers\com\adventure\school\basic;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\com\adventure\school\basic\Institute;
 use App\com\adventure\school\basic\BloodGroup;
 use App\com\adventure\school\menu\Menu;
 class BloodGroupController extends Controller
@@ -21,7 +22,13 @@ class BloodGroupController extends Controller
         $sidebarMenu=$aMenu->getSidebarMenu();
         $pList=$aMenu->getPermissionOnMenu('bloodgroup');
     	$aList=BloodGroup::all();
-    	return view('admin.basic.bloodgroup.index',['sidebarMenu'=>$sidebarMenu,'pList'=>$pList,'result'=>$aList]);
+        $dataList=[
+            'institute'=>Institute::getInstituteName(),
+            'sidebarMenu'=>$sidebarMenu,
+            'pList'=>$pList,
+            'result'=>$aList
+        ];
+        return view('admin.basic.bloodgroup.index',$dataList);
     }
     public function create(){
         $aMenu=new Menu();
@@ -31,12 +38,14 @@ class BloodGroupController extends Controller
         }
         $sidebarMenu=$aMenu->getSidebarMenu();
         $pList=$aMenu->getPermissionOnMenu('bloodgroup');
-        if($pList[2]->id==2){
-            return view('admin.basic.bloodgroup.create',['sidebarMenu'=>$sidebarMenu]);
-        }else{
+        if($pList[2]->id!=2){
             return redirect('error');
         }
-    	
+    	$dataList=[
+            'institute'=>Institute::getInstituteName(),
+            'sidebarMenu'=>$sidebarMenu,
+        ];
+        return view('admin.basic.bloodgroup.create',$dataList);
     }
     public function store(Request $request){
      	$validatedData = $request->validate([
@@ -62,13 +71,16 @@ class BloodGroupController extends Controller
         }
         $sidebarMenu=$aMenu->getSidebarMenu();
         $pList=$aMenu->getPermissionOnMenu('bloodgroup');
-         if($pList[3]->id==3){
-            $aBloodGroup=BloodGroup::findOrfail($id);
-            return view('admin.basic.bloodgroup.edit',['sidebarMenu'=>$sidebarMenu,'bean'=>$aBloodGroup]);
-         }else{
+         if($pList[3]->id!=3){
             return redirect('error');
          }
-    	
+         $dataList=[
+            'institute'=>Institute::getInstituteName(),
+            'sidebarMenu'=>$sidebarMenu,
+            'bean'=>$aBloodGroup
+        ];
+        $aBloodGroup=BloodGroup::findOrfail($id);
+        return view('admin.basic.bloodgroup.edit',$dataList);
     }
     public function update(Request $request, $id){
     	$validatedData = $request->validate([

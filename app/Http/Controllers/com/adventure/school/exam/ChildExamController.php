@@ -8,6 +8,7 @@ use App\com\adventure\school\basic\Institute;
 use App\com\adventure\school\menu\Menu;
 use App\com\adventure\school\program\ProgramOffer;
 use App\com\adventure\school\exam\ExamName;
+use App\com\adventure\school\exam\ChildExamCourse;
 use App\com\adventure\school\exam\ChildExam;
 
 class ChildExamController extends Controller
@@ -35,19 +36,58 @@ class ChildExamController extends Controller
                 'shiftid' => 'required|',
                 'masterexamid'=>'required',
                 'examnameid'=>'required|',
-                'markinpercentage'=>'required'
+                'cxm_in_percentage'=>'required'
             ]);
-            $sessionid=$request->sessionid;
             $programid=$request->programid;
             $groupid=$request->groupid;
             $mediumid=$request->mediumid;
             $shiftid=$request->shiftid;
             $masterexamid=$request->masterexamid;
             $examnameid=$request->examnameid;
-            $markinpercentage=$request->markinpercentage;
-            $programofferid=$aProgramOffer->getProgramOfferId(0,$programid,$groupid,$mediumid,$shiftid);
-            $master_exam_id=$aChildExam->getMasterExamOnPOAndExamNameId($programofferid,$masterexamid);
-            $obj=new ChildExam();
+            $courseofferidList=$request->courseofferid;
+            $marksList=$request->marks;
+            $cxm_in_percentage=$request->cxm_in_percentage;
+            if($request->btn=="save_btn"){
+                $programofferid=$aProgramOffer->getProgramOfferId(0,$programid,$groupid,$mediumid,$shiftid);
+                $obj=new ChildExam();
+                $master_exam_id=$obj->getMasterExamOnPOAndExamNameId($programofferid,$masterexamid);
+                $obj->master_exam_id=$master_exam_id;
+                $obj->examnameid=$examnameid;
+                $obj->cxm_in_percentage=$cxm_in_percentage;
+                $isTrue=$obj->hasItem($master_exam_id,$examnameid);
+                if(!$isTrue){
+                    $obj->save();
+                    $last_id=$obj->getLastid();
+                    foreach($courseofferidList as $courseofferid){
+                        $aChildExamCourse=new ChildExamCourse();
+                        $aChildExamCourse->child_exam_id=$last_id;
+                        $aChildExamCourse->courseofferid=$courseofferid;
+                        $aChildExamCourse->marks=$marksList[$courseofferid];
+                        $aChildExamCourse->save();
+                    }
+                    $msg="Exam Created Successfully";
+                    return redirect()->back()->with('msg',$msg);
+                }else{
+                    $msg="You aready created this exam";
+                    return redirect()->back()->with('msg',$msg);
+                }
+            }
+            if($request->btn=="update_btn"){
+                $programofferid=$aProgramOffer->getProgramOfferId(0,$programid,$groupid,$mediumid,$shiftid);
+                $obj=ChildExam::findOrfail($request->hiddenid);
+                $master_exam_id=$obj->getMasterExamOnPOAndExamNameId($programofferid,$masterexamid);
+                $obj->master_exam_id=$master_exam_id;
+                $obj->examnameid=$examnameid;
+                $obj->cxm_in_percentage=$cxm_in_percentage;
+                $isTrue=$obj->hasItem($master_exam_id,$examnameid);
+                if(($master_exam_id==$obj->master_exam_id&&$examnameid==$obj->examnameid)||!$isTrue){
+                    $obj->Update();
+                    $msg="Updated this exam";
+                }else{
+                    $msg="You aready created this exam";
+                }
+                return redirect()->back()->with('msg',$msg);
+            }
         }
         $aList=ChildExam::getAllChild();
         $programList=$aChildExam->getProgramsOnSession(0);
@@ -57,6 +97,14 @@ class ChildExamController extends Controller
         $masterExamNameList=ChildExam::getExamName(1);
         $childExamNameList=ExamName::getExamName(2);
         $bean=null;
+        $courseofferList=null;
+        if($request->id!=null){
+            ChildExam::findOrfail($request->id);
+            $bean=ChildExam::getChildExam($request->id);
+            $programofferid=ChildExam::getProgramofferidOnChildExamId($request->id);
+            $aChildExamCourse=new ChildExamCourse();
+            $courseofferList=$aChildExamCourse->getAllCoursesOnChildExam($request->id);
+        }
         $dataList=[
             'instituteName'=>$instituteName,
             'sidebarMenu'=>$sidebarMenu,
@@ -66,9 +114,10 @@ class ChildExamController extends Controller
             'shiftList'=>$shiftList,
             'masterExamNameList'=>$masterExamNameList,
             'childExamNameList'=>$childExamNameList,
+            'courseofferList'=>$courseofferList,
             'pList'=>$pList,
             'result'=>$aList,
-            'editObj'=>$bean
+            'editBean'=>$bean
         ];
         return view('admin.exam.childexam.childexamcreate',$dataList);
     }
@@ -102,8 +151,28 @@ class ChildExamController extends Controller
         }elseif($option=="shift"){
             if($methodid==1){
                 $this->getExamNameOnProgramOffer($programid,$groupid,$mediumid,$shiftid);
+            }elseif($methodid==2){
+                $this->getAllCourses($programid,$groupid,$mediumid,$shiftid);
             }
         }
+    }
+    private function getAllCourses($programid,$groupid,$mediumid,$shiftid){
+        $aProgramOffer=new ProgramOffer();
+        $programofferid=$aProgramOffer->getProgramOfferId(0,$programid,$groupid,$mediumid,$shiftid);
+        $aChildExamCourse=new ChildExamCourse();
+        $result=$aChildExamCourse->getAllCourses($programofferid);
+        $output="";
+        $sino=0;
+        foreach($result as $x){
+            $sino++;
+            $output.="<tr>";
+            $output.="<td>".$sino."<input type='hidden' name='courseofferid[$x->id]' value=".$x->id."></td>";
+            $output.="<td>".$x->courseName."</td>";
+            $output.="<td>".$x->courseCode."</td>";
+            $output.="<td ><input  class=form-control' type='text' name='marks[$x->id]' value='10'></td>";
+            $output.="</tr>";
+        }
+        echo  $output;
     }
     private function getGroupsOnSessionAndProgram($programid){
         $aChildExam=new ChildExam();

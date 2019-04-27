@@ -7,7 +7,7 @@
       <section class="wrapper">
         <div class="row">
           <div class="col-lg-12">
-            <h3 class="page-header"><i class="fa fa-laptop"></i>Horinagor High School</h3>
+            <h3 class="page-header"><i class="fa fa-laptop"></i>{{$institute->name}}</h3>
             <ol class="breadcrumb">
               <li><a href="{{URL::to('/role')}}">All</a></li>
               <li>Role</li>
@@ -81,5 +81,4 @@
 @endsection
 @section('uniqueScript')
 <script src="{{asset('clientAdmin/js/role.js')}}"></script>
-<script src="{{asset('clientAdmin/js/ajax.js')}}"></script>
 @endsection

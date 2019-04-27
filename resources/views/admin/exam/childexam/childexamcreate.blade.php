@@ -12,8 +12,8 @@
         <h3 class="page-header"><i class="fa fa-laptop"></i>{{$instituteName->name}}</h3>
         <ol class="breadcrumb">
               <li>Child Exam</li>
-              @if($pList[2]->id==2 && $editObj!=null)
-              <li><a href="{{URL::to('/masterexam')}}">New</a></li>
+              @if($pList[2]->id==2 && $editBean!=null)
+              <li><a href="{{URL::to('/childexam')}}">New</a></li>
               @endif
               @if ($errors->any())
                   <span style="float: right;font-size: 15px;">{{$errors->all()[0] }}</span>
@@ -30,7 +30,7 @@
       <div class="col-lg-12">
         <section class="panel margin-bottom-zero">
           <div class="master-exam">
-            @if($editObj==null)
+            @if($editBean==null)
             <form action="{{URL::to('childexam')}}" method="POST">
               {{csrf_field()}}
               <div class="form-group row">
@@ -94,18 +94,34 @@
                 </div>                  
               </div>
               <div class="form-group row">
-                <label class="col-sm-2 control-label" for="markinpercentage">Exam in(%) of 100%</label>
+                <label class="col-sm-2 control-label" for="cxm_in_percentage">Exam in(%) of 100%</label>
                 <div class="col-sm-4">
-                  <input type="text" class="form-control" name="markinpercentage" id="markinpercentage">
+                  <input type="text" class="form-control" name="cxm_in_percentage" id="cxm_in_percentage">
                 </div>  
+              </div>
+              <div class="row">
+                <div class="col-md-6">
+                  <table class="table table-striped table-bordered table-hover customtable">
+                    <thead>
+                      <tr>
+                        <th>SL.NO</th>
+                        <th>Subject Name</th>
+                        <th>Code</th>
+                        <th width="15%%">Marks</th>
+                      </tr>
+                    </thead>
+                    <tbody id="childexamcourse">
+                    </tbody>
+                  </table>
+                </div>
               </div>
               <div style="text-align:right;">
                 <button type="submit" class="btn btn-success result-btn result-btn-margin-zero" name="btn" value="save_btn">Save</button>
               </div>
             </form>
             @else
-            <form action="{{URL::to('masterexam')}}" method="POST">
-              <input type="hidden" name="id1" value="{{$editObj->id}}">
+            <form action="{{URL::to('childexam')}}" method="POST">
+              <input type="hidden" name="hiddenid" value="{{$editBean->id}}">
               {{csrf_field()}}
               <div class="form-group row">
                 <label class="col-sm-2 control-label" for="programid">Program</label>
@@ -113,7 +129,7 @@
                   <select onchange="getChange(this,'program')" class="form-control" name="programid" id="programid">
                     <option  value="">SELECT</option>
                     @foreach ($programList as $x)
-                      @if($editObj->programid==$x->id)
+                      @if($editBean->programid==$x->id)
                       <option selected value="{{$x->id}}">{{$x->name}}</option>
                       @else
                       <option value="{{$x->id}}">{{$x->name}}</option>
@@ -126,7 +142,7 @@
                   <select onchange="getChange(this,'group')" class="form-control" name="groupid" id="groupid">
                   <option  value="">SELECT</option>
                   @foreach ($groupList as $x)
-                    @if($editObj->groupid==$x->id)
+                    @if($editBean->groupid==$x->id)
                     <option selected value="{{$x->id}}">{{$x->name}}</option>
                     @else
                     <option value="{{$x->id}}">{{$x->name}}</option>
@@ -141,7 +157,7 @@
                   <select onchange="getChange(this,'medium')" class="form-control" name="mediumid" id="mediumid">
                     <option  value="">SELECT</option>
                     @foreach ($mediumList as $x)
-                    @if($editObj->mediumid==$x->id)
+                    @if($editBean->mediumid==$x->id)
                     <option selected value="{{$x->id}}">{{$x->name}}</option>
                     @else
                     <option value="{{$x->id}}">{{$x->name}}</option>
@@ -151,10 +167,10 @@
                 </div>
                 <label class="col-sm-2 control-label" for="shiftid">Shift</label>
                 <div class="col-sm-4">
-                  <select class="form-control" name="shiftid" id="shiftid">
+                  <select onchange="getChange(this,'shift')" class="form-control" name="shiftid" id="shiftid">
                     <option  value="">SELECT</option>
                     @foreach ($shiftList as $x)
-                    @if($editObj->shiftid==$x->id)
+                    @if($editBean->shiftid==$x->id)
                     <option selected value="{{$x->id}}">{{$x->name}}</option>
                     @else
                     <option value="{{$x->id}}">{{$x->name}}</option>
@@ -164,12 +180,12 @@
                 </div>                       
               </div>
               <div class="form-group row">
-                <label class="col-sm-2 control-label" for="masterexamid">Exam Name</label>
+                <label class="col-sm-2 control-label" for="masterexamid">Master Exam</label>
                 <div class="col-sm-4">
                   <select class="form-control" name="masterexamid" id="masterexamid">
                     <option  value="">SELECT</option>
                     @foreach ($masterExamNameList as $x)
-                    @if($editObj->examnameid==$x->id)
+                    @if($editBean->mxm_examnameid==$x->id)
                     <option selected value="{{$x->id}}">{{$x->name}}</option>
                     @else
                     <option value="{{$x->id}}">{{$x->name}}</option>
@@ -177,21 +193,52 @@
                     @endforeach
                   </select>
                 </div>
-                <label class="col-sm-2 control-label" for="markinpercentage">Exam in(%) of 100%</label>
+                <label class="col-sm-2 control-label" for="examnameid">Child Exam</label>
                 <div class="col-sm-4">
-                  <input type="text" class="form-control" name="markinpercentage" value="{{$editObj->exhld_mark_in_percentage}}" id="markinpercentage">
-                </div>                    
+                  <select class="form-control" name="examnameid" id="examnameid">
+                    <option  value="">SELECT</option>
+                    @foreach ($childExamNameList as $x)
+                    @if($editBean->cxm_examnameid==$x->id)
+                    <option selected value="{{$x->id}}">{{$x->name}}</option>
+                    @else
+                    <option value="{{$x->id}}">{{$x->name}}</option>
+                    @endif
+                    @endforeach
+                  </select>
+                </div>                   
               </div>
               <div class="form-group row">
-                <label class="col-sm-2 control-label" for="markinpercentage">Result With Child</label>
+                <label class="col-sm-2 control-label" for="cxm_in_percentage">Exam in(%) of 100%</label>
                 <div class="col-sm-4">
-                  <label class="radio-inline">
-                    <input type="radio" name="with_child" value="1" @if($editObj->with_child==1) checked @endif>yes
-                  </label>
-                  <label class="radio-inline">
-                    <input type="radio" name="with_child" value="2" @if($editObj->with_child==2) checked @endif>No
-                  </label>
+                  <input type="text" class="form-control" name="cxm_in_percentage" value="{{$editBean->cxm_in_percentage}}" id="cxm_in_percentage">
                 </div> 
+              </div>
+              <div class="row">
+                <div class="col-md-6">
+                  <table class="table table-striped table-bordered table-hover customtable">
+                    <thead>
+                      <tr>
+                        <th>SL.NO</th>
+                        <th>Subject Name</th>
+                        <th>Code</th>
+                        <th width="15%%">Marks</th>
+                      </tr>
+                    </thead>
+                    <tbody id="childexamcourse">
+                      <?php 
+                        $sino=0;
+                      ?>
+                      @foreach($courseofferList as $x)
+                      <tr>
+                        <td>{{++$sino}}<input type="hidden" name="courseofferid[{{$x->id}}]" value="{{$x->id}}"></td>
+                        <td>{{$x->courseName}}</td>
+                        <td>{{$x->courseCode}}</td>
+                        <td class="no-padding" ><input  class="form-control" type="text" name="marks[{{$x->id}}]" value="{{$x->marks}}"></td>
+                      </tr>
+                      @endforeach
+                    </tbody>
+                  </table>
+                </div>
               </div>
               <div style="text-align:right;">
                 <button type="submit" class="btn btn-success result-btn result-btn-margin-zero" name="btn" value="update_btn">Update</button>

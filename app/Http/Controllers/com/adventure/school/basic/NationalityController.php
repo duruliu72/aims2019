@@ -4,6 +4,7 @@ namespace App\Http\Controllers\com\adventure\school\basic;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\com\adventure\school\basic\Institute;
 use App\com\adventure\school\basic\Nationality;
 use App\com\adventure\school\menu\Menu;
 class NationalityController extends Controller
@@ -20,8 +21,14 @@ class NationalityController extends Controller
         }
         $sidebarMenu=$aMenu->getSidebarMenu();
         $pList=$aMenu->getPermissionOnMenu('nationality');
-    	$quotaList=Nationality::all();
-    	return view('admin.basic.nationality.index',['sidebarMenu'=>$sidebarMenu,'pList'=>$pList,'result'=>$quotaList]);
+        $quotaList=Nationality::all();
+        $dataList=[
+            'institute'=>Institute::getInstituteName(),
+            'sidebarMenu'=>$sidebarMenu,
+            'pList'=>$pList,
+            'result'=>$quotaList
+        ];
+    	return view('admin.basic.nationality.index',$dataList);
     }
     public function create(){
         $aMenu=new Menu();
@@ -31,12 +38,14 @@ class NationalityController extends Controller
         }
         $sidebarMenu=$aMenu->getSidebarMenu();
         $pList=$aMenu->getPermissionOnMenu('nationality');
-        if($pList[2]->id==2){
-            return view('admin.basic.nationality.create',['sidebarMenu'=>$sidebarMenu]);
-        }else{
+        if($pList[2]->id!=2){
             return redirect('error');
         }
-    	
+    	$dataList=[
+            'institute'=>Institute::getInstituteName(),
+            'sidebarMenu'=>$sidebarMenu,
+        ];
+        return view('admin.basic.nationality.create',$dataList);
     }
     public function store(Request $request){
      	 $validatedData = $request->validate([
@@ -61,12 +70,16 @@ class NationalityController extends Controller
         }
         $sidebarMenu=$aMenu->getSidebarMenu();
         $pList=$aMenu->getPermissionOnMenu('nationality');
-        if($pList[3]->id==3){
-            $aNationality=Nationality::findOrfail($id);
-            return view('admin.basic.nationality.edit',['sidebarMenu'=>$sidebarMenu,'bean'=>$aNationality]);
-        }else{
+        if($pList[3]->id!=3){
             return redirect('error');
         }
+        $aNationality=Nationality::findOrfail($id);
+        $dataList=[
+            'institute'=>Institute::getInstituteName(),
+            'sidebarMenu'=>$sidebarMenu,
+            'bean'=>$aNationality
+        ];
+        return view('admin.basic.nationality.edit',$dataList);
     }
     public function update(Request $request, $id){
     	$validatedData = $request->validate([

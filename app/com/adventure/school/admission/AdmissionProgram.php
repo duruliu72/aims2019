@@ -7,7 +7,7 @@ use App\com\adventure\school\program\Session;
 class AdmissionProgram extends Model
 {
     protected $table="admission_programs";
-    protected $primaryKey = 'programofferid';
+    // protected $primaryKey = 'programofferid';
 	protected $fillable = ['programofferid','required_gpa','exam_marks','exam_date','exam_time','status'];
 	public function getAllAdmissionProgram(){
 		$sql="SELECT t1.* ,

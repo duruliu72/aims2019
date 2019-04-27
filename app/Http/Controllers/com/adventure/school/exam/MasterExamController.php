@@ -63,7 +63,6 @@ class MasterExamController extends Controller
                 }
             }elseif($request->btn=="update_btn"){
                 $obj=MasterExam::findOrfail($request->id1);
-                $isTrue=$obj->hasItem($programofferid,$examnameid);
                 $obj->programofferid=$programofferid;
                 $obj->examnameid=$examnameid;
                 $obj->exhld_mark_in_percentage=$markinpercentage;

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\com\adventure\school\basic;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\com\adventure\school\basic\Institute;
 use App\com\adventure\school\basic\Gender;
 use App\com\adventure\school\menu\Menu;
 class GenderController extends Controller
@@ -20,8 +21,14 @@ class GenderController extends Controller
         }
         $sidebarMenu=$aMenu->getSidebarMenu();
         $pList=$aMenu->getPermissionOnMenu('gender');
-    	$genderList=Gender::all();
-    	return view('admin.basic.gender.index',['sidebarMenu'=>$sidebarMenu,'pList'=>$pList,'result'=>$genderList]);
+        $genderList=Gender::all();
+        $dataList=[
+            'institute'=>Institute::getInstituteName(),
+            'sidebarMenu'=>$sidebarMenu,
+            'pList'=>$pList,
+            'result'=>$genderList
+        ];
+    	return view('admin.basic.gender.index',$dataList);
     }
     public function create(){
         $aMenu=new Menu();
@@ -31,12 +38,14 @@ class GenderController extends Controller
         }
         $sidebarMenu=$aMenu->getSidebarMenu();
         $pList=$aMenu->getPermissionOnMenu('gender');
-        if($pList[2]->id==2){
-            return view('admin.basic.gender.create',['sidebarMenu'=>$sidebarMenu]); 
-       }else{
+        if($pList[2]->id!=2){
             return redirect('error');
-       }
-    	
+        }
+    	$dataList=[
+            'institute'=>Institute::getInstituteName(),
+            'sidebarMenu'=>$sidebarMenu,
+        ];
+        return view('admin.basic.gender.create',$dataList); 
     }
     public function store(Request $request){
     	$msg="";
@@ -71,13 +80,16 @@ class GenderController extends Controller
         }
         $sidebarMenu=$aMenu->getSidebarMenu();
         $pList=$aMenu->getPermissionOnMenu('gender');
-        if($pList[3]->id==3){
-            $aGender=Gender::findOrfail($id);
-            return view('admin.basic.gender.edit',['sidebarMenu'=>$sidebarMenu,'bean'=>$aGender]);
-        }else{
+        if($pList[3]->id!=3){
             return redirect('error');
         }
-    	
+        $aGender=Gender::findOrfail($id);
+    	$dataList=[
+            'institute'=>Institute::getInstituteName(),
+            'sidebarMenu'=>$sidebarMenu,
+            'bean'=>$aGender,
+        ];
+        return view('admin.basic.gender.edit',$dataList);
     }
     public function update(Request $request, $id){
         $aGender=Gender::findOrfail($id);

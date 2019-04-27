@@ -4,7 +4,7 @@
       <section class="wrapper">
         <div class="row">
           <div class="col-lg-12">
-            <h3 class="page-header"><i class="fa fa-laptop"></i>Horinagor High School</h3>
+            <h3 class="page-header"><i class="fa fa-laptop"></i>{{$institute->name}}</h3>
             <ol class="breadcrumb">
               <li><a href="{{URL::to('/institute')}}">All</a></li>
               <li>Institute</li>
@@ -33,7 +33,7 @@
                     </div> 
                      <label class="col-sm-2 control-label" for="eiin">EIIN</label>
                     <div class="col-sm-4">
-                      <input type="text" class="form-control" name="eiin" id="eiin" value="{{$bean->eiin}}">
+                      <input type="text" class="form-control" name="eiin" id="eiin" value="{{$bean->ein}}">
                     </div>                    
                   </div>
                   <div class="form-group row">
