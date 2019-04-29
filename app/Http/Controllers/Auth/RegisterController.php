@@ -106,7 +106,7 @@ class RegisterController extends Controller
            $aPermission3->save();
            $aPermission4=new Permission();
            $aPermission4->id=4;
-           $aPermission4->name="Up";
+           $aPermission4->name="Del";
            $aPermission4->save();
         }
         \DB::transaction(function () use($aUser){

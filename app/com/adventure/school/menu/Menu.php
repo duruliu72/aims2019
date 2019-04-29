@@ -96,12 +96,6 @@ class Menu extends Model
 	// ==========================================Picture Upload======================
 	public function generateFilename($imagepropaties,$uploaded_file){
 		$selectedimageurl=$uploaded_file;
-		// // check image width and height
-		// $file_temp = $selectedimageurl['tmp_name'];
-		// list($width, $height, $type, $attr)=getimagesize($file_temp);
-		// if($width>$imagepropaties['maxwidth'] && $height>$imagepropaties['maxheight']){
-		// 		return "";
-		// }
 		$file_name=$selectedimageurl['name'];
 		$name_explode=explode('.', $file_name);
     $file_ext = strtolower(end($name_explode));

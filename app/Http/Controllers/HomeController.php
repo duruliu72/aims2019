@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\com\adventure\school\basic\Institute;
 use App\com\adventure\school\menu\Menu;
 class HomeController extends Controller
 {
@@ -13,7 +14,11 @@ class HomeController extends Controller
     public function index()
     {
     	$aMenu=new Menu();
-    	$sidebarMenu=$aMenu->getSidebarMenu();
-        return view('adminhome',['sidebarMenu'=>$sidebarMenu]);
+        $sidebarMenu=$aMenu->getSidebarMenu();
+        $dataList=[
+            'institute'=>Institute::getInstituteName(),
+            'sidebarMenu'=>$sidebarMenu
+        ];
+        return view('adminhome',$dataList);
     }
 }

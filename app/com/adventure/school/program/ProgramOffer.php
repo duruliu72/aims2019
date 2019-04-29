@@ -22,7 +22,7 @@ class ProgramOffer extends Model
 			INNER JOIN groups ON t1.groupid=groups.id
 			INNER JOIN mediums ON t1.mediumid=mediums.id
 			INNER JOIN shifts ON t1.shiftid=shifts.id
-			INNER JOIN employees ON t1.cordinator=employees.id";
+			LEFT JOIN employees ON t1.cordinator=employees.id";
 		$result=\DB::select($sql);
 		return $result;
 		}
@@ -51,13 +51,15 @@ class ProgramOffer extends Model
 				return $result;
 		}
     public function getProgramOnLevel(){
-    	$sql="SELECT t1.* ,
-		programlevels.name AS levelName,
-		programs.id,
-		programs.name
-		FROM `vlevel_programs` AS t1
-		INNER JOIN programlevels ON t1.programlevelid=programlevels.id
-		INNER JOIN programs ON t1.programid=programs.id";
+    	$sql="SELECT 
+			programs.id,
+			programs.name,
+			t1.programlevelid,
+			programlevels.name AS levelName
+			FROM `vlevel_programs` AS t1
+			INNER JOIN programlevels ON t1.programlevelid=programlevels.id
+			INNER JOIN programs ON t1.programid=programs.id
+			GROUP BY t1.programid";
 		$result=\DB::select($sql);
 		return $result;
     }

@@ -4,7 +4,13 @@
       <section class="wrapper">
         <div class="row">
           <div class="col-lg-12">
-            <h3 class="page-header"><i class="fa fa-laptop"></i>Horinagor High School</h3>
+            <h3 class="page-header"><i class="fa fa-laptop"></i>
+              @if($institute!=null)
+                {{$institute->name}}
+              @else
+                Dashboard
+              @endif
+            </h3>
             <ol class="breadcrumb">
               <li><a href="{{URL::to('/programoffer')}}">All</a></li>
               <li>Program Offer</li>
@@ -37,13 +43,33 @@
                     </div>
                     <label class="col-sm-2 control-label" for="programid">Program</label>
                     <div class="col-sm-4">
-                      <select onchange="getChange(this,'programtogroup')" class="form-control" name="programid" id="programid">
+                      <select onchange="getChange(this,'program')" class="form-control" name="programid" id="programid">
                           <option  value="">SELECT</option>
                          @foreach ($programList as $x)
                            <option value="{{$x->id}}">{{$x->name}}</option>
                          @endforeach
                       </select>
                     </div>                         
+                  </div>
+                  <div class="form-group row">
+                    <label class="col-sm-2 control-label" for="mediumid">Medium</label>
+                    <div class="col-sm-4">
+                      <select class="form-control" name="mediumid" id="mediumid">
+                         <option value="">SELECT</option>
+                         @foreach ($mediumList as $x)
+                           <option value="{{$x->id}}">{{$x->name}}</option>
+                         @endforeach
+                      </select>
+                    </div>
+                    <label class="col-sm-2 control-label" for="shiftid">Shift</label>
+                    <div class="col-sm-4">
+                      <select class="form-control" name="shiftid" id="shiftid">
+                         <option value="">SELECT</option>
+                         @foreach ($shiftList as $x)
+                           <option value="{{$x->id}}">{{$x->name}}</option>
+                         @endforeach
+                      </select>
+                    </div>                        
                   </div>
                   <div class="form-group row">
                     <label class="col-sm-2 control-label" for="groupid">Group</label>
@@ -55,27 +81,7 @@
                          @endforeach
                       </select>
                     </div>
-                    <label class="col-sm-2 control-label" for="mediumid">Medium</label>
-                    <div class="col-sm-4">
-                      <select class="form-control" name="mediumid" id="mediumid">
-                         <option value="">SELECT</option>
-                         @foreach ($mediumList as $x)
-                           <option value="{{$x->id}}">{{$x->name}}</option>
-                         @endforeach
-                      </select>
-                    </div>                         
-                  </div>
-                  <div class="form-group row">
-                    <label class="col-sm-2 control-label" for="shiftid">Shift</label>
-                    <div class="col-sm-4">
-                      <select class="form-control" name="shiftid" id="shiftid">
-                         <option value="">SELECT</option>
-                         @foreach ($shiftList as $x)
-                           <option value="{{$x->id}}">{{$x->name}}</option>
-                         @endforeach
-                      </select>
-                    </div>
-                    <label class="col-sm-2 control-label" for="cordinator">Cordiantor</label>
+                    <label class="col-sm-2 control-label" for="cordinator">Coordinator</label>
                     <div class="col-sm-4">
                       <select class="form-control" name="cordinator" id="cordinator">
                          <option value="">SELECT</option>
@@ -102,5 +108,5 @@
 
 @endsection
 @section('uniqueScript')
-<script src="{{asset('clientAdmin/js/ajax.js')}}"></script>
+<script src="{{asset('clientAdmin/js/programoffer.js')}}"></script>
 @endsection

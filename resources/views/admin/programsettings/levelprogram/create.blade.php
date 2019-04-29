@@ -4,9 +4,15 @@
       <section class="wrapper">
         <div class="row">
           <div class="col-lg-12">
-            <h3 class="page-header"><i class="fa fa-laptop"></i>Horinagor High School</h3>
+          <h3 class="page-header"><i class="fa fa-laptop"></i>
+            @if($institute!=null)
+              {{$institute->name}}
+            @else
+              Dashboard
+            @endif
+        </h3>
             <ol class="breadcrumb">
-              <li><a href="{{URL::to('/vlevelprogram')}}">All</a></li>
+              <li><a href="{{URL::to('/levelprogram')}}">All</a></li>
               <li>Level Program</li>
               @if ($errors->any())
                   <span style="float: right;font-size: 15px;">{{$errors->all()[0] }}</span>
@@ -23,7 +29,7 @@
           <div class="col-lg-12">
             <section class="panel">
               <div class="panel-body">
-                <form action="{{URL::to('vlevelprogram')}}" method="POST">
+                <form action="{{URL::to('levelprogram')}}" method="POST">
                   {{csrf_field()}}
                    <div class="form-group row">
                     <label class="col-sm-2 control-label" for="programlevelid">Program Level</label>

@@ -43,11 +43,12 @@ Route::resource('employees', 'com\adventure\school\employee\EmployeeController')
 Route::resource('session', 'com\adventure\school\program\SessionControler');
 Route::resource('plevel', 'com\adventure\school\program\PLevelControler');
 Route::resource('program', 'com\adventure\school\program\ProgramControler');
-Route::resource('vlevelprogram', 'com\adventure\school\program\VLevelProgramController');
+Route::resource('levelprogram', 'com\adventure\school\program\VLevelProgramController');
 Route::resource('group', 'com\adventure\school\program\GroupControler');
-Route::resource('vprogramgroup', 'com\adventure\school\program\VProgramGroupController');
+Route::resource('programgroup', 'com\adventure\school\program\VProgramGroupController');
 Route::resource('medium', 'com\adventure\school\program\MediumControler');
 Route::resource('shift', 'com\adventure\school\program\ShiftControler');
+Route::get('programoffer/getValue', 'com\adventure\school\program\ProgramOfferController@getValue');
 Route::resource('programoffer', 'com\adventure\school\program\ProgramOfferController');
 Route::resource('course', 'com\adventure\school\program\CourseController');
 Route::resource('coursecode', 'com\adventure\school\program\CourseCodeController');
@@ -120,7 +121,10 @@ Route::resource('menu', 'com\adventure\school\menu\MenuController');
 
 // Role Settings
 Route::resource('permission', 'com\adventure\school\role\PermissionController');
+Route::get('role/getValue', 'com\adventure\school\role\RoleController@getValue');
 Route::resource('role', 'com\adventure\school\role\RoleController');
+// User Manager
+Route::resource('user', 'com\adventure\school\usermanager\UserManagerController');
 // // For Ajax 
 // Route::get('/getValue/','com\adventure\school\AjaxController@getValue');
 // Route::get('/getValueWith/','com\adventure\school\AjaxController@getValueWith');

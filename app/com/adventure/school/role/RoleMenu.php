@@ -76,7 +76,7 @@ class RoleMenu extends Model
         $list=\DB::select($sql,[$parentid,$menuid,$chieldid,$menuid]);
         return $list;
     }
-    public function xyz($parent_roleid,$child_roleid){
+    public function menuList($parent_roleid,$child_roleid){
         $sql="SELECT 
         parent_menu.menuid,
         parent_menu.name,
@@ -97,21 +97,22 @@ class RoleMenu extends Model
         ON parent_menu.menuid=child_menu.menuid WHERE parent_menu.parentid!=0 ORDER BY parent_menu.menuid";
         $qresult=\DB::select($sql,[$parent_roleid,$child_roleid]);
         $result=collect($qresult);
-        $parent_result=$this->yyy($parent_roleid,$child_roleid);
+        $parent_result=$this->parentMenuList($parent_roleid,$child_roleid);
+        // dd($parent_result);
         foreach($parent_result as $parent_item){
             $list[$parent_item->menuid]=array();
         }
         foreach($result as $item){
             foreach($parent_result as $parent_item){
                 if($parent_item->menuid==$item->parentid){
-                    $permission=$this->zzz($parent_roleid,$child_roleid,$item->menuid);
+                    $permission=$this->permissionOnMenu($parent_roleid,$child_roleid,$item->menuid);
                     array_push($list[$parent_item->menuid],array($item,$permission));
                 }
             }
         }
         return $list;
     }
-    public function yyy($parent_roleid,$child_roleid){
+    public function parentMenuList($parent_roleid,$child_roleid){
         $parentsql="SELECT 
         parent_menu.menuid,
         parent_menu.name,
@@ -134,7 +135,7 @@ class RoleMenu extends Model
         $parent_result=collect($parent_qresult);
         return $parent_result;
     }
-    public function zzz($parent_roleid,$child_roleid,$menuid){
+    public function permissionOnMenu($parent_roleid,$child_roleid,$menuid){
         $sqlpermission="SELECT table1.*,
         IFNULL(table2.permissionid,0) AS child_permissionid
         FROM(SELECT 

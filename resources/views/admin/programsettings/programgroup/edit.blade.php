@@ -4,9 +4,15 @@
       <section class="wrapper">
         <div class="row">
           <div class="col-lg-12">
-            <h3 class="page-header"><i class="fa fa-laptop"></i>Horinagor High School</h3>
+          <h3 class="page-header"><i class="fa fa-laptop"></i>
+            @if($institute!=null)
+              {{$institute->name}}
+            @else
+              Dashboard
+            @endif
+        </h3>
             <ol class="breadcrumb">
-              <li><a href="{{URL::to('/vprogramgroup')}}">All</a></li>
+              <li><a href="{{URL::to('/programgroup')}}">All</a></li>
               <li>Program Group</li>
               @if ($errors->any())
                   <span style="float: right;font-size: 15px;">{{$errors->all()[0] }}</span>
@@ -24,7 +30,7 @@
           <div class="col-lg-12">
             <section class="panel">
               <div class="panel-body">
-                <form action="{{URL::to('vprogramgroup')}}/{{$bean->id}}" method="POST">
+                <form action="{{URL::to('programgroup')}}/{{$bean->id}}" method="POST">
                   @method('PUT')
                   {{csrf_field()}}
                     <div class="form-group row">

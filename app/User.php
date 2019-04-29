@@ -27,4 +27,11 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+    public function getLastOne(){
+        $sql="SELECT * FROM `users`
+        ORDER BY id DESC";
+        $qResult=\DB::select($sql);
+        $result=collect($qResult)->first();
+        return $result;
+    }
 }

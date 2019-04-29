@@ -4,6 +4,7 @@ namespace App\Http\Controllers\com\adventure\school\program;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\com\adventure\school\basic\Institute;
 use App\com\adventure\school\program\Program;
 use App\com\adventure\school\menu\Menu;
 class ProgramControler extends Controller
@@ -20,8 +21,14 @@ class ProgramControler extends Controller
         }
         $sidebarMenu=$aMenu->getSidebarMenu();
         $pList=$aMenu->getPermissionOnMenu('program');
-    	$aList=Program::all();
-    	return view('admin.programsettings.program.index',['sidebarMenu'=>$sidebarMenu,'pList'=>$pList,'result'=>$aList]);
+        $aList=Program::all();
+        $dataList=[
+            'institute'=>Institute::getInstituteName(),
+            'sidebarMenu'=>$sidebarMenu,
+            'pList'=>$pList,
+            'result'=>$aList
+        ];
+    	return view('admin.programsettings.program.index',$dataList);
     }
     public function create(){
         $aMenu=new Menu();
@@ -31,12 +38,14 @@ class ProgramControler extends Controller
         }
         $sidebarMenu=$aMenu->getSidebarMenu();
         $pList=$aMenu->getPermissionOnMenu('program');
-        if($pList[2]->id==2){
-            return view('admin.programsettings.program.create',['sidebarMenu'=>$sidebarMenu]);
-        }else{
+        if($pList[2]->id!=2){
             return redirect('error');
         }
-    	
+    	$dataList=[
+            'institute'=>Institute::getInstituteName(),
+            'sidebarMenu'=>$sidebarMenu
+        ];
+        return view('admin.programsettings.program.create',$dataList);
     }
     public function store(Request $request){
      	 $validatedData = $request->validate([
@@ -62,12 +71,15 @@ class ProgramControler extends Controller
         $sidebarMenu=$aMenu->getSidebarMenu();
         $pList=$aMenu->getPermissionOnMenu('program');
     	$aProgram=Program::findOrfail($id);
-        if($pList[3]->id==3){
-           return view('admin.programsettings.program.edit',['sidebarMenu'=>$sidebarMenu,'bean'=>$aProgram]); 
-       }else{
+        if($pList[3]->id!=3){
             return redirect('error');
-       }
-        
+        }
+        $dataList=[
+            'institute'=>Institute::getInstituteName(),
+            'sidebarMenu'=>$sidebarMenu,
+            'bean'=>$aProgram
+        ];
+        return view('admin.programsettings.program.edit',$dataList); 
     }
     public function update(Request $request, $id){
     	$validatedData = $request->validate([

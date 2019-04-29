@@ -4,6 +4,7 @@ namespace App\Http\Controllers\com\adventure\school\program;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\com\adventure\school\basic\Institute;
 use App\com\adventure\school\program\ProgramOffer;
 use App\com\adventure\school\program\Session;
 use App\com\adventure\school\program\Program;
@@ -28,8 +29,14 @@ class ProgramOfferController extends Controller
         $sidebarMenu=$aMenu->getSidebarMenu();
         $pList=$aMenu->getPermissionOnMenu('programoffer');
         $aProgramOffer=new ProgramOffer();
-    	$aList=$aProgramOffer->getAllProgramOffer();
-    	return view('admin.programsettings.programoffer.index',['sidebarMenu'=>$sidebarMenu,'pList'=>$pList,'result'=>$aList]);
+        $aList=$aProgramOffer->getAllProgramOffer();
+        $dataList=[
+            'institute'=>Institute::getInstituteName(),
+            'sidebarMenu'=>$sidebarMenu,
+            'pList'=>$pList,
+            'result'=>$aList
+        ];
+    	return view('admin.programsettings.programoffer.index',$dataList);
     }
     public function create(){
         $aMenu=new Menu();
@@ -39,28 +46,27 @@ class ProgramOfferController extends Controller
         }
         $sidebarMenu=$aMenu->getSidebarMenu();
         $pList=$aMenu->getPermissionOnMenu('programoffer');
-        if($pList[2]->id==2){
-        	$sessionList=Session::all();
-        	$aProgramOffer=new ProgramOffer();
-        	$programList=$aProgramOffer->getProgramOnLevel();
-        	$groupList=array();
-        	$mediumList=Medium::all();
-            $shiftList=Shift::all();
-            $aEmployee=new Employee();
-            $employeeList=$aEmployee->getEmployees();
-            $dataList=[
-                'sidebarMenu'=>$sidebarMenu,
-                'sessionList'=>$sessionList,
-                'programList'=>$programList,
-                'groupList'=>$groupList,
-                'mediumList'=>$mediumList,
-                'shiftList'=>$shiftList,
-                'employeeList'=>$employeeList,
-            ];
-            return view('admin.programsettings.programoffer.create',$dataList);
-        }else{
+        if($pList[2]->id!=2){
             return redirect('error');
         }
+        $sessionList=Session::all();
+        $programList=Program::getProgramsOnLevel();
+        $mediumList=Medium::all();
+        $shiftList=Shift::all();
+        $groupList=Group::getGroupsOnProgram();
+        $aEmployee=new Employee();
+        $employeeList=$aEmployee->getEmployees();
+        $dataList=[
+            'institute'=>Institute::getInstituteName(),
+            'sidebarMenu'=>$sidebarMenu,
+            'sessionList'=>$sessionList,
+            'programList'=>$programList,
+            'mediumList'=>$mediumList,
+            'shiftList'=>$shiftList,
+            'groupList'=>$groupList,
+            'employeeList'=>$employeeList,
+        ];
+        return view('admin.programsettings.programoffer.create',$dataList);
     }
     public function store(Request $request){
      	$validatedData = $request->validate([
@@ -89,7 +95,9 @@ class ProgramOfferController extends Controller
      	$aProgramOffer->groupid=$groupid;
      	$aProgramOffer->mediumid=$mediumid;
         $aProgramOffer->shiftid=$shiftid;
-        $cordinator=$request->cordinator;
+        if($cordinator!=null){
+            $aProgramOffer->cordinator=$cordinator;
+        }
         $aProgramOffer->seat=$seat;
      	$status=$aProgramOffer->save();
      	if($status){
@@ -107,30 +115,29 @@ class ProgramOfferController extends Controller
         }
         $sidebarMenu=$aMenu->getSidebarMenu();
         $pList=$aMenu->getPermissionOnMenu('programoffer');
-    	$aProgramOffer=ProgramOffer::findOrfail($id);
-        if($pList[3]->id==3){
-           	$sessionList=Session::all();
-        	$programList=$aProgramOffer->getProgramOnLevel();
-        	$groupList=$aProgramOffer->getGroupOnProgramByID($aProgramOffer->programid);
-        	$mediumList=Medium::all();
-            $shiftList=Shift::all();
-            $aEmployee=new Employee();
-            $employeeList=$aEmployee->getEmployees();
-            $dataList=[
-                'sidebarMenu'=>$sidebarMenu,
-                'sessionList'=>$sessionList,
-                'programList'=>$programList,
-                'groupList'=>$groupList,
-                'mediumList'=>$mediumList,
-                'shiftList'=>$shiftList,
-                'employeeList'=>$employeeList,
-                'bean'=>$aProgramOffer
-            ];
-            return view('admin.programsettings.programoffer.edit',$dataList);
-       }else{
+        if($pList[3]->id!=3){
             return redirect('error');
-       }
-        
+        }
+        $aProgramOffer=ProgramOffer::findOrfail($id);
+        $sessionList=Session::all();
+        $programList=Program::getProgramsOnLevel();
+        $mediumList=Medium::all();
+        $shiftList=Shift::all();
+        $groupList=Group::getGroupsOnProgram();
+        $aEmployee=new Employee();
+        $employeeList=$aEmployee->getEmployees();
+        $dataList=[
+            'institute'=>Institute::getInstituteName(),
+            'sidebarMenu'=>$sidebarMenu,
+            'sessionList'=>$sessionList,
+            'programList'=>$programList,
+            'groupList'=>$groupList,
+            'mediumList'=>$mediumList,
+            'shiftList'=>$shiftList,
+            'employeeList'=>$employeeList,
+            'bean'=>$aProgramOffer
+        ];
+        return view('admin.programsettings.programoffer.edit',$dataList);
     }
     public function update(Request $request, $id){
     	$validatedData = $request->validate([
@@ -167,10 +174,32 @@ class ProgramOfferController extends Controller
         $aProgramOffer->seat=$seat;
      	$status=$aProgramOffer->update();
      	if($status){
-     		$msg="Program Updated Successfully";
+     		$msg="Program Offer Updated Successfully";
 		  }else{
-		    $msg="Program not Updated";
+		    $msg="Program Offer not Updated";
 		}
      	return redirect()->back()->with('msg',$msg);
+    }
+    // For Ajax Call ===============
+    public function getValue(Request $request){
+        $option=$request->option;
+        $methodid=$request->methodid;
+        $programid=$request->programid;
+        $groupid=$request->groupid;
+        $mediumid=$request->mediumid;
+        $shiftid=$request->shiftid;
+        if($option=="program"){
+            if($methodid==1){
+                $this->getGroupsOnProgram($programid);
+            }
+        }
+    }
+    private function getGroupsOnProgram($programid){
+        $result=Group::getGroupsOnProgramID($programid);
+        $output="<option value=''>SELECT</option>";
+        foreach($result as $x){
+           $output.="<option value='$x->id'>$x->name</option>";
+        }
+        echo  $output;
     }
 }

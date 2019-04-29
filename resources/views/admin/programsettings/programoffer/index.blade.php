@@ -9,7 +9,13 @@
   <section class="wrapper">
     <div class="row">
       <div class="col-lg-12">
-        <h3 class="page-header"><i class="fa fa-laptop"></i>Horinagor High School</h3>
+        <h3 class="page-header"><i class="fa fa-laptop"></i>
+          @if($institute!=null)
+            {{$institute->name}}
+          @else
+            Dashboard
+          @endif
+        </h3>
         <ol class="breadcrumb">
           @if($pList[2]->id==2)
             <li><a href="{{URL::to('/programoffer')}}/{{'create'}}">New</a></li>
@@ -28,10 +34,10 @@
                 <th>SL NO</th>
                 <th>Session</th>
                 <th>Program</th>
-                <th>Group</th>
                 <th>Medium</th>
                 <th>Shift</th>
-                <th>Cordinator</th>
+                <th>Group</th>
+                <th>Coordinator</th>
                 <th>Seat</th>
                 @if($pList[3]->id==3)
                 <th width="10px">Edit</th>
@@ -79,10 +85,10 @@
                 <th>SL NO</th>
                 <th>Session</th>
                 <th>Program</th>
-                <th>Group</th>
                 <th>Medium</th>
                 <th>Shift</th>
-                <th>Cordinator</th>
+                <th>Group</th>
+                <th>Coordinator</th>
                 <th>Seat</th>
                 @if($pList[3]->id==3)
                 <th width="10px">Edit</th>

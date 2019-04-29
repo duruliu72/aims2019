@@ -7,7 +7,13 @@
       <section class="wrapper">
         <div class="row">
           <div class="col-lg-12">
-            <h3 class="page-header"><i class="fa fa-laptop"></i>{{$institute->name}}</h3>
+            <h3 class="page-header"><i class="fa fa-laptop"></i>
+              @if($institute!=null)
+              {{$institute->name}}
+              @else
+              Dashboard
+              @endif
+            </h3>
             <ol class="breadcrumb">
               <li><a href="{{URL::to('/role')}}">All</a></li>
               <li>Role</li>
@@ -31,7 +37,7 @@
                    <div class="form-group row">
                     <label class="col-sm-2 control-label" for="rolecreatorid">Role Creator</label>
                     <div class="col-sm-4">
-                      <select onchange="getChange(this,'RcreatorToRole')" class="form-control" name="rolecreatorid" id="rolecreatorid">
+                      <select onchange="getChange(this,'rolecreate')" class="form-control" name="rolecreatorid" id="rolecreatorid">
                         @foreach($roleList as $x)
                           <option  value="{{$x->id}}">{{$x->name}}</option>
                         @endforeach
@@ -39,34 +45,32 @@
                     </div>
                      <label class="col-sm-2 control-label" for="name">Role</label>
                     <div class="col-sm-4">
+                      <input type="hidden" class="form-control" id="id" name="id" value="0">
                       <input type="text" class="form-control" name="name" id="name">
                     </div>
                   </div>
                   <div class="row">
                     <div class="col-md-12" id="output">
                       <ul class="role_menu">
-                        @foreach($menuList as $x)
-                          @if($x->parentid==0)
-                          <li><label><input type="checkbox" onclick="clickMenu(this)" name="menuid[]" value="{{$x->id}}">{{$x->name}}</label><input  type="checkbox" hidden="" checked="" name="permissionid_{{$x->id}}[]" value="0">
-                            <ul>
-                              @foreach($permissionList as $y)
-                                @if($y['menuitem']->parentid==$x->id)
-                                  <li>
-                                    <div class="menu">
-                                      <label><input type="checkbox" name="menuid[]" value="{{$y['menuitem']->id}}">{{$y['menuitem']->name}}</label>
-                                    </div>
-                                    <div class="permission">
-                                      @foreach($y['permissionList'] as $p)
-                                        <label><input type="checkbox" name="permissionid_{{$y['menuitem']->id}}[]" value="{{$p->permissionid}}">{{$p->name}} &nbsp;&nbsp;</label>
-                                      @endforeach
-                                    </div>
-                                  </li>
-                                @endif
-                              @endforeach
-                            </ul>
-                          </li>
-                          @endif
-                        @endforeach
+                          @foreach($parentMenuList as $x)
+                            <li><label><input type="checkbox" name="menuid[{{$x->menuid}}]" value="{{$x->menuid}}">{{$x->name}}</label>
+                            <input type="hidden" name="permissionid[{{$x->menuid}}][0]" value="0">
+                              <ul>
+                                @foreach($menuList[$x->menuid] as $item)
+                                <li>
+                                  <div class="menu">
+                                      <label><input type="checkbox" name="menuid[{{$item[0]->menuid}}]" value="{{$item[0]->menuid}}">{{$item[0]->name}}</label>
+                                  </div>
+                                  <div class="permission">
+                                    @foreach($item[1] as $permission_item)
+                                     <label><input type="checkbox" name="permissionid[{{$item[0]->menuid}}][{{$permission_item->permissionid}}]" value="{{$permission_item->permissionid}}">{{$permission_item->name}} &nbsp;&nbsp;</label>
+                                    @endforeach
+                                  </div>
+                                </li>
+                                @endforeach
+                              </ul>
+                            </li>
+                          @endforeach
                       </ul>
                     </div>
                   </div>

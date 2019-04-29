@@ -4,6 +4,7 @@ namespace App\Http\Controllers\com\adventure\school\program;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\com\adventure\school\basic\Institute;
 use App\com\adventure\school\menu\Menu;
 use App\com\adventure\school\program\Course;
 use App\com\adventure\school\program\CourseCode;
@@ -22,8 +23,14 @@ class CourseCodeController extends Controller
         $sidebarMenu=$aMenu->getSidebarMenu();
         $pList=$aMenu->getPermissionOnMenu('coursecode');
         $aCourseCode=new CourseCode();
-    	$aList=$aCourseCode->getAllCourse();
-    	return view('admin.programsettings.coursecode.index',['sidebarMenu'=>$sidebarMenu,'pList'=>$pList,'result'=>$aList]);
+        $aList=$aCourseCode->getAllCourse();
+        $dataList=[
+            'institute'=>Institute::getInstituteName(),
+            'sidebarMenu'=>$sidebarMenu,
+            'pList'=>$pList,
+            'result'=>$aList
+        ];
+    	return view('admin.programsettings.coursecode.index',$dataList);
     }
     public function create(){
         $aMenu=new Menu();
@@ -33,13 +40,16 @@ class CourseCodeController extends Controller
         }
         $sidebarMenu=$aMenu->getSidebarMenu();
         $pList=$aMenu->getPermissionOnMenu('coursecode');
-        if($pList[2]->id==2){
-        	$courseList=Course::all();
-            return view('admin.programsettings.coursecode.create',['sidebarMenu'=>$sidebarMenu,'courseList'=>$courseList]);
-        }else{
+        if($pList[2]->id!=2){
             return redirect('error');
         }
-    	
+        $courseList=Course::all();
+    	$dataList=[
+            'institute'=>Institute::getInstituteName(),
+            'sidebarMenu'=>$sidebarMenu,
+            'courseList'=>$courseList
+        ];
+        return view('admin.programsettings.coursecode.create',$dataList);
     }
     public function store(Request $request){
      	 $validatedData = $request->validate([
@@ -68,13 +78,17 @@ class CourseCodeController extends Controller
         $sidebarMenu=$aMenu->getSidebarMenu();
         $pList=$aMenu->getPermissionOnMenu('coursecode');
     	$aCourseCode=CourseCode::findOrfail($id);
-        if($pList[3]->id==3){
-        	$courseList=Course::all();
-           	return view('admin.programsettings.coursecode.edit',['sidebarMenu'=>$sidebarMenu,'bean'=>$aCourseCode,'courseList'=>$courseList]); 
-       }else{
+        if($pList[3]->id!=3){
             return redirect('error');
-       }
-        
+        }
+        $courseList=Course::all();
+        $dataList=[
+            'institute'=>Institute::getInstituteName(),
+            'sidebarMenu'=>$sidebarMenu,
+            'bean'=>$aCourseCode,
+            'courseList'=>$courseList
+        ];
+        return view('admin.programsettings.coursecode.edit',$dataList); 
     }
     public function update(Request $request, $id){
     	$validatedData = $request->validate([

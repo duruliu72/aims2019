@@ -1,21 +1,23 @@
 
+var baseUrl="http://localhost/school2019/public";
 function getChange(thisref,option){
 	var id=thisref.getAttribute('id');
-	if(option=="programtogroup"){
-		getValue(id,option,"#groupid",1);
-	}else if(option=="admissiongroup"){
-		getValue(id,option,"#groupid",1);
+	if(option=="rolecreate"){
+		getChangeOnRoleCreator(id,option,"#output",1);
+	}else if(option=="rolecedit"){
+		getChangeOnRoleCreator(id,option,"#output",1);
 	}
 }
-function getValue(id,option,output,methodid){
-	var idvalue=$("#"+id).val();
+function getChangeOnRoleCreator(id,option,output,methodid){
+	var rolecreatorid=$("#"+id).val();
+	var createdroleid=$("#id").val();
+	console.log(createdroleid);
 	$.ajax({
 		type:'get',
-		url: "getValue",
+		url: baseUrl+"/role/getValue",
 		dataType: "html",
-		data: {'idvalue':idvalue,'option':option,'methodid':methodid},
+		data: {'rolecreatorid':rolecreatorid,'createdroleid':createdroleid,'option':option,'methodid':methodid},
 		success: function( result ) {
-			// console.log(result);
 			$(output).empty().append(result);
 		}
 	});

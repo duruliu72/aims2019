@@ -4,6 +4,7 @@ namespace App\Http\Controllers\com\adventure\school\program;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\com\adventure\school\basic\Institute;
 use App\com\adventure\school\program\PLevel;
 use App\com\adventure\school\menu\Menu;
 class PLevelControler extends Controller
@@ -20,8 +21,14 @@ class PLevelControler extends Controller
         }
         $sidebarMenu=$aMenu->getSidebarMenu();
         $pList=$aMenu->getPermissionOnMenu('plevel');
-    	$aList=PLevel::all();
-    	return view('admin.programsettings.level.index',['sidebarMenu'=>$sidebarMenu,'pList'=>$pList,'result'=>$aList]);
+        $aList=PLevel::all();
+        $dataList=[
+            'institute'=>Institute::getInstituteName(),
+            'sidebarMenu'=>$sidebarMenu,
+            'pList'=>$pList,
+            'result'=>$aList
+        ];
+    	return view('admin.programsettings.level.index',$dataList);
     }
     public function create(){
         $aMenu=new Menu();
@@ -31,12 +38,14 @@ class PLevelControler extends Controller
         }
         $sidebarMenu=$aMenu->getSidebarMenu();
         $pList=$aMenu->getPermissionOnMenu('plevel');
-        if($pList[2]->id==2){
-            return view('admin.programsettings.level.create',['sidebarMenu'=>$sidebarMenu]);
-        }else{
+        if($pList[2]->id!=2){
             return redirect('error');
         }
-    	
+    	$dataList=[
+            'institute'=>Institute::getInstituteName(),
+            'sidebarMenu'=>$sidebarMenu
+        ];
+        return view('admin.programsettings.level.create',$dataList);
     }
     public function store(Request $request){
      	 $validatedData = $request->validate([
@@ -62,12 +71,15 @@ class PLevelControler extends Controller
         $sidebarMenu=$aMenu->getSidebarMenu();
         $pList=$aMenu->getPermissionOnMenu('plevel');
     	$aProgramLevel=PLevel::findOrfail($id);
-        if($pList[3]->id==3){
-           return view('admin.programsettings.level.edit',['sidebarMenu'=>$sidebarMenu,'bean'=>$aProgramLevel]); 
-       }else{
+        if($pList[3]->id!=3){
             return redirect('error');
-       }
-        
+        }
+        $dataList=[
+            'institute'=>Institute::getInstituteName(),
+            'sidebarMenu'=>$sidebarMenu,
+            'bean'=>$aProgramLevel
+        ];
+        return view('admin.programsettings.level.edit',$dataList); 
     }
     public function update(Request $request, $id){
     	$validatedData = $request->validate([

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\com\adventure\school\program;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\com\adventure\school\basic\Institute;
 use App\com\adventure\school\menu\Menu;
 use App\com\adventure\school\program\GradePoint;
 use App\com\adventure\school\program\ProgramOffer;
@@ -70,6 +71,7 @@ class GradePointController extends Controller
             $gradeList=$gradePointObj->getGradeLetter($programofferid);
         }
         $dataList=[
+            'institute'=>Institute::getInstituteName(),
             'sidebarMenu'=>$sidebarMenu,
             'programList'=>$aProgramOffer->getProgramsOnSession($sessionid),
             'groupList'=>$aProgramOffer->getGroupsOnSession($sessionid),
@@ -138,6 +140,7 @@ class GradePointController extends Controller
             $gradeList=$gradePointObj->getEditedGradeLetter($programofferid);
         }
         $dataList=[
+            'institute'=>Institute::getInstituteName(),
             'sidebarMenu'=>$sidebarMenu,
             'programList'=>$aProgramOffer->getProgramsOnSession($sessionid),
             'groupList'=>$aProgramOffer->getGroupsOnSession($sessionid),

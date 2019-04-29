@@ -4,6 +4,7 @@ namespace App\Http\Controllers\com\adventure\school\program;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\com\adventure\school\basic\Institute;
 use App\com\adventure\school\program\Shift;
 use App\com\adventure\school\menu\Menu;
 class ShiftControler extends Controller
@@ -20,8 +21,14 @@ class ShiftControler extends Controller
         }
         $sidebarMenu=$aMenu->getSidebarMenu();
         $pList=$aMenu->getPermissionOnMenu('shift');
-    	$aList=Shift::all();
-    	return view('admin.programsettings.shift.index',['sidebarMenu'=>$sidebarMenu,'pList'=>$pList,'result'=>$aList]);
+        $aList=Shift::all();
+        $dataList=[
+            'institute'=>Institute::getInstituteName(),
+            'sidebarMenu'=>$sidebarMenu,
+            'pList'=>$pList,
+            'result'=>$aList
+        ];
+    	return view('admin.programsettings.shift.index',$dataList);
     }
     public function create(){
         $aMenu=new Menu();
@@ -31,12 +38,14 @@ class ShiftControler extends Controller
         }
         $sidebarMenu=$aMenu->getSidebarMenu();
         $pList=$aMenu->getPermissionOnMenu('shift');
-        if($pList[2]->id==2){
-            return view('admin.programsettings.shift.create',['sidebarMenu'=>$sidebarMenu]);
-        }else{
+        if($pList[2]->id!=2){
             return redirect('error');
         }
-    	
+    	$dataList=[
+            'institute'=>Institute::getInstituteName(),
+            'sidebarMenu'=>$sidebarMenu
+        ];
+        return view('admin.programsettings.shift.create',$dataList);
     }
     public function store(Request $request){
      	 $validatedData = $request->validate([
@@ -76,12 +85,15 @@ class ShiftControler extends Controller
         $sidebarMenu=$aMenu->getSidebarMenu();
         $pList=$aMenu->getPermissionOnMenu('shift');
     	$aShift=Shift::findOrfail($id);
-        if($pList[3]->id==3){
-           return view('admin.programsettings.shift.edit',['sidebarMenu'=>$sidebarMenu,'bean'=>$aShift]); 
-       }else{
+        if($pList[3]->id!=3){
             return redirect('error');
-       }
-        
+        }
+        $dataList=[
+            'institute'=>Institute::getInstituteName(),
+            'sidebarMenu'=>$sidebarMenu,
+            'bean'=>$aShift
+        ];
+        return view('admin.programsettings.shift.edit',$dataList); 
     }
     public function update(Request $request, $id){
     	$validatedData = $request->validate([

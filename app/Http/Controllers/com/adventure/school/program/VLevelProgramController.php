@@ -4,6 +4,7 @@ namespace App\Http\Controllers\com\adventure\school\program;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\com\adventure\school\basic\Institute;
 use App\com\adventure\school\program\VLevelProgram;
 use App\com\adventure\school\program\PLevel;
 use App\com\adventure\school\program\Program;
@@ -16,32 +17,43 @@ class VLevelProgramController extends Controller
     }
     public function index(){
         $aMenu=new Menu();
-        $hasMenu=$aMenu->hasMenu('vlevelprogram');
+        $hasMenu=$aMenu->hasMenu('levelprogram');
         if($hasMenu==false){
             return redirect('error');
         }
         $sidebarMenu=$aMenu->getSidebarMenu();
-        $pList=$aMenu->getPermissionOnMenu('vlevelprogram');
+        $pList=$aMenu->getPermissionOnMenu('levelprogram');
     	$obj=new VLevelProgram();
-    	$aList=$obj->getAllGroupsOnProgram();
-    	return view('admin.programsettings.levelprogram.index',['sidebarMenu'=>$sidebarMenu,'pList'=>$pList,'result'=>$aList]);
+        $aList=$obj->getAllGroupsOnProgram();
+        $dataList=[
+            'institute'=>Institute::getInstituteName(),
+            'sidebarMenu'=>$sidebarMenu,
+            'pList'=>$pList,
+            'result'=>$aList
+        ];
+    	return view('admin.programsettings.levelprogram.index',$dataList);
     	
     }
     public function create(){
        $aMenu=new Menu();
-        $hasMenu=$aMenu->hasMenu('vlevelprogram');
+        $hasMenu=$aMenu->hasMenu('levelprogram');
         if($hasMenu==false){
             return redirect('error');
         }
         $sidebarMenu=$aMenu->getSidebarMenu();
-        $pList=$aMenu->getPermissionOnMenu('vlevelprogram');
-        if($pList[2]->id==2){
-        	$levelList=PLevel::all();
-        	$programList=Program::all();
-            return view('admin.programsettings.levelprogram.create',['sidebarMenu'=>$sidebarMenu,'levelList'=>$levelList,'programList'=>$programList]);
-        }else{
+        $pList=$aMenu->getPermissionOnMenu('levelprogram');
+        if($pList[2]->id!=2){
             return redirect('error');
         }
+        $levelList=PLevel::all();
+        $programList=Program::all();
+        $dataList=[
+            'institute'=>Institute::getInstituteName(),
+            'sidebarMenu'=>$sidebarMenu,
+            'levelList'=>$levelList,
+            'programList'=>$programList
+        ];
+        return view('admin.programsettings.levelprogram.create',$dataList);
     }
     public function store(Request $request){
      	$aVLevelProgram=new VLevelProgram();
@@ -64,21 +76,26 @@ class VLevelProgramController extends Controller
     }
     public function edit($id){
         $aMenu=new Menu();
-        $hasMenu=$aMenu->hasMenu('vprogramgroup');
+        $hasMenu=$aMenu->hasMenu('levelprogram');
         if($hasMenu==false){
             return redirect('error');
         }
         $sidebarMenu=$aMenu->getSidebarMenu();
-        $pList=$aMenu->getPermissionOnMenu('vprogramgroup');
-        if($pList[3]->id==3){
-            $aVLevelProgram=VLevelProgram::findOrfail($id);
-        	$levelList=PLevel::all();
-            $programList=Program::all();
-           return view('admin.programsettings.levelprogram.edit',['sidebarMenu'=>$sidebarMenu,'levelList'=>$levelList,'programList'=>$programList,'bean'=>$aVLevelProgram]); 
-       }else{
+        $pList=$aMenu->getPermissionOnMenu('levelprogram');
+        if($pList[3]->id!=3){
             return redirect('error');
-       }
-        
+        }
+        $aVLevelProgram=VLevelProgram::findOrfail($id);
+        $levelList=PLevel::all();
+        $programList=Program::all();
+        $dataList=[
+            'institute'=>Institute::getInstituteName(),
+            'sidebarMenu'=>$sidebarMenu,
+            'levelList'=>$levelList,
+            'programList'=>$programList,
+            'bean'=>$aVLevelProgram
+        ];
+        return view('admin.programsettings.levelprogram.edit',$dataList); 
     }
     public function update(Request $request, $id){
     	$aVLevelProgram=VLevelProgram::findOrfail($id);

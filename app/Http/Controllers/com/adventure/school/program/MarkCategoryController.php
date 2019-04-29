@@ -4,6 +4,7 @@ namespace App\Http\Controllers\com\adventure\school\program;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\com\adventure\school\basic\Institute;
 use App\com\adventure\school\program\MarkCategory;
 use App\com\adventure\school\menu\Menu;
 class MarkCategoryController extends Controller
@@ -22,6 +23,7 @@ class MarkCategoryController extends Controller
         $pList=$aMenu->getPermissionOnMenu('markcategory');
         $aList=MarkCategory::all();
         $dataList=[
+            'institute'=>Institute::getInstituteName(),
             'sidebarMenu'=>$sidebarMenu,
             'pList'=>$pList,
             'result'=>$aList
@@ -40,6 +42,7 @@ class MarkCategoryController extends Controller
             return redirect('error');
         }
         $dataList=[
+            'institute'=>Institute::getInstituteName(),
             'sidebarMenu'=>$sidebarMenu,
         ];
         return view('admin.programsettings.markcategory.create',$dataList);
@@ -72,6 +75,7 @@ class MarkCategoryController extends Controller
             return redirect('error');
        }
        $dataList=[
+        'institute'=>Institute::getInstituteName(),
         'sidebarMenu'=>$sidebarMenu,
         'bean'=>$aMarkCategory
         ];

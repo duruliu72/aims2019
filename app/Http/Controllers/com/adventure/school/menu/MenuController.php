@@ -39,19 +39,17 @@ class MenuController extends Controller
             return redirect('error');
         }
         $pList=$aMenu->getPermissionOnMenu('menu');
-        if($pList[2]->id==2){
-           $aList=$aMenu->getParentsMenu();
-            $sidebarMenu=$aMenu->getSidebarMenu();
-            $dataList=[
-                'institute'=>Institute::getInstituteName(),
-                'sidebarMenu'=>$sidebarMenu,
-                'parents'=>$aList,
-            ];
-            return view('admin.menu.create',$dataList); 
-        }else{
+        if($pList[2]->id!=2){
              return redirect('error');
         }
-    	
+    	$aList=$aMenu->getParentsMenu();
+        $sidebarMenu=$aMenu->getSidebarMenu();
+        $dataList=[
+            'institute'=>Institute::getInstituteName(),
+            'sidebarMenu'=>$sidebarMenu,
+            'parents'=>$aList,
+        ];
+        return view('admin.menu.create',$dataList); 
     }
     public function store(Request $request){
      	$validatedData = $request->validate([
@@ -111,7 +109,7 @@ class MenuController extends Controller
      	return redirect()->back()->with('msg',$msg);
     }
     public function edit($id){
-    	$aMenu=Menu::findOrfail($id);
+        $aMenu=Menu::findOrfail($id);
         $hasMenu=$aMenu->hasMenu('menu');
         if($hasMenu==false){
             return redirect('error');
@@ -119,18 +117,16 @@ class MenuController extends Controller
     	$aList=$aMenu->getParentsMenu();
         $sidebarMenu=$aMenu->getSidebarMenu();
         $pList=$aMenu->getPermissionOnMenu('menu');
-        if($pList[3]->id==3){
-            $dataList=[
-                'institute'=>Institute::getInstituteName(),
-                'sidebarMenu'=>$sidebarMenu,
-                'bean'=>$aMenu,
-                'parents'=>$aList
-            ];
-            return view('admin.menu.edit',$dataList);
-        }else{
+        if($pList[3]->id!=3){
             return redirect('error');
         }
-        
+        $dataList=[
+            'institute'=>Institute::getInstituteName(),
+            'sidebarMenu'=>$sidebarMenu,
+            'bean'=>$aMenu,
+            'parents'=>$aList
+        ];
+        return view('admin.menu.edit',$dataList);
     }
     public function update(Request $request, $id){
     	$validatedData = $request->validate([
@@ -146,8 +142,31 @@ class MenuController extends Controller
      	$aMenu=Menu::findOrfail($id);
      	$aMenu->name=$name;
      	$aMenu->parentid=$parentid;
-     	$aMenu->menuorder=$menuorder;
-     	$status=$aMenu->update();
+        $aMenu->menuorder=$menuorder;
+        $status=$aMenu->update();
+        $aRole=new Role();
+        $roleid=$aRole->getRoleId();
+        \DB::table('role_menu')
+        ->where('roleid', '=', $roleid)
+        ->where('menuid', '=', $aMenu->id)
+        ->delete();
+         // Get All Permission for new menu
+         $permissionList=Permission::all();
+        if($parentid!=0){
+            foreach ($permissionList as $x) {
+                $aRoleMenu=new RoleMenu();
+                $aRoleMenu->roleid=$roleid;
+                $aRoleMenu->menuid=$aMenu->id;
+                $aRoleMenu->permissionid=$x->id;
+                $aRoleMenu->save();
+            }
+        }else{
+            $aRoleMenu=new RoleMenu();
+            $aRoleMenu->roleid=$roleid;
+            $aRoleMenu->menuid=$aMenu->id;
+            $aRoleMenu->permissionid=0;
+            $aRoleMenu->save();
+        }
      	if($status){
      		$msg="Menu Updated Successfully";
 		  }else{

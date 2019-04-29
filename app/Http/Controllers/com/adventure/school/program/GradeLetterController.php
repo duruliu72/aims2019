@@ -4,6 +4,7 @@ namespace App\Http\Controllers\com\adventure\school\program;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\com\adventure\school\basic\Institute;
 use App\com\adventure\school\program\GradeLetter;
 use App\com\adventure\school\menu\Menu;
 class GradeLetterController extends Controller
@@ -20,8 +21,14 @@ class GradeLetterController extends Controller
         }
         $sidebarMenu=$aMenu->getSidebarMenu();
         $pList=$aMenu->getPermissionOnMenu('gradeletter');
-    	$aList=GradeLetter::all();
-    	return view('admin.programsettings.gradeletter.index',['sidebarMenu'=>$sidebarMenu,'pList'=>$pList,'result'=>$aList]);
+        $aList=GradeLetter::all();
+        $dataList=[
+            'institute'=>Institute::getInstituteName(),
+            'sidebarMenu'=>$sidebarMenu,
+            'pList'=>$pList,
+            'result'=>$aList
+        ];
+    	return view('admin.programsettings.gradeletter.index',$dataList);
     }
     public function create(){
         $aMenu=new Menu();
@@ -33,9 +40,12 @@ class GradeLetterController extends Controller
         $pList=$aMenu->getPermissionOnMenu('gradeletter');
         if($pList[2]->id!=2){
             return redirect('error');
-            
         }
-        return view('admin.programsettings.gradeletter.create',['sidebarMenu'=>$sidebarMenu]);
+        $dataList=[
+            'institute'=>Institute::getInstituteName(),
+            'sidebarMenu'=>$sidebarMenu
+        ];
+        return view('admin.programsettings.gradeletter.create',$dataList);
     	
     }
     public function store(Request $request){
@@ -64,9 +74,13 @@ class GradeLetterController extends Controller
     	$gradeLetterObj=GradeLetter::findOrfail($id);
         if($pList[3]->id!=3){
             return redirect('error');
-           
-       }
-       return view('admin.programsettings.gradeletter.edit',['sidebarMenu'=>$sidebarMenu,'bean'=>$gradeLetterObj]); 
+        }
+       $dataList=[
+            'institute'=>Institute::getInstituteName(),
+            'sidebarMenu'=>$sidebarMenu,
+            'bean'=>$gradeLetterObj
+        ];
+       return view('admin.programsettings.gradeletter.edit',$dataList); 
     }
     public function update(Request $request, $id){
     	$validatedData = $request->validate([

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\com\adventure\school\program;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\com\adventure\school\basic\Institute;
 use App\com\adventure\school\program\VProgramGroup;
 use App\com\adventure\school\program\Program;
 use App\com\adventure\school\program\Group;
@@ -16,32 +17,42 @@ class VProgramGroupController extends Controller
     }
     public function index(){
         $aMenu=new Menu();
-        $hasMenu=$aMenu->hasMenu('vprogramgroup');
+        $hasMenu=$aMenu->hasMenu('programgroup');
         if($hasMenu==false){
             return redirect('error');
         }
         $sidebarMenu=$aMenu->getSidebarMenu();
-        $pList=$aMenu->getPermissionOnMenu('vprogramgroup');
+        $pList=$aMenu->getPermissionOnMenu('programgroup');
     	$obj=new VProgramGroup();
-    	$aList=$obj->getAllGroupsOnProgram();
-    	return view('admin.programsettings.programgroup.index',['sidebarMenu'=>$sidebarMenu,'pList'=>$pList,'result'=>$aList]);
-    	
+        $aList=$obj->getAllGroupsOnProgram();
+        $dataList=[
+            'institute'=>Institute::getInstituteName(),
+            'sidebarMenu'=>$sidebarMenu,
+            'pList'=>$pList,
+            'result'=>$aList
+        ];
+    	return view('admin.programsettings.programgroup.index',$dataList);
     }
     public function create(){
        $aMenu=new Menu();
-        $hasMenu=$aMenu->hasMenu('vprogramgroup');
+        $hasMenu=$aMenu->hasMenu('programgroup');
         if($hasMenu==false){
             return redirect('error');
         }
         $sidebarMenu=$aMenu->getSidebarMenu();
-        $pList=$aMenu->getPermissionOnMenu('vprogramgroup');
-        if($pList[2]->id==2){
-        	$programList=Program::all();
-        	$groupList=Group::all();
-            return view('admin.programsettings.programgroup.create',['sidebarMenu'=>$sidebarMenu,'programList'=>$programList,'groupList'=>$groupList]);
-        }else{
+        $pList=$aMenu->getPermissionOnMenu('programgroup');
+        if($pList[2]->id!=2){
             return redirect('error');
         }
+        $programList=Program::all();
+        $groupList=Group::all();
+        $dataList=[
+            'institute'=>Institute::getInstituteName(),
+            'sidebarMenu'=>$sidebarMenu,
+            'programList'=>$programList,
+            'groupList'=>$groupList
+        ];
+        return view('admin.programsettings.programgroup.create',$dataList);
     }
     public function store(Request $request){
      	$aVProgramGroup=new VProgramGroup();
@@ -64,21 +75,26 @@ class VProgramGroupController extends Controller
     }
     public function edit($id){
         $aMenu=new Menu();
-        $hasMenu=$aMenu->hasMenu('vprogramgroup');
+        $hasMenu=$aMenu->hasMenu('programgroup');
         if($hasMenu==false){
             return redirect('error');
         }
         $sidebarMenu=$aMenu->getSidebarMenu();
-        $pList=$aMenu->getPermissionOnMenu('vprogramgroup');
+        $pList=$aMenu->getPermissionOnMenu('programgroup');
     	$aVProgramGroup=VProgramGroup::findOrfail($id);
-        if($pList[3]->id==3){
-        	$programList=Program::all();
-        	$groupList=Group::all();
-           return view('admin.programsettings.programgroup.edit',['sidebarMenu'=>$sidebarMenu,'programList'=>$programList,'groupList'=>$groupList,'bean'=>$aVProgramGroup]); 
-       }else{
+        if($pList[3]->id!=3){
             return redirect('error');
        }
-        
+        $programList=Program::all();
+        $groupList=Group::all();
+        $dataList=[
+            'institute'=>Institute::getInstituteName(),
+            'sidebarMenu'=>$sidebarMenu,
+            'programList'=>$programList,
+            'groupList'=>$groupList,
+            'bean'=>$aVProgramGroup
+        ];
+        return view('admin.programsettings.programgroup.edit',$dataList); 
     }
     public function update(Request $request, $id){
     	$aVProgramGroup=VProgramGroup::findOrfail($id);

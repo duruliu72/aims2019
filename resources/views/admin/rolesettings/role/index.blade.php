@@ -9,7 +9,13 @@
   <section class="wrapper">
     <div class="row">
       <div class="col-lg-12">
-      <h3 class="page-header"><i class="fa fa-laptop"></i>{{$institute->name}}</h3>
+        <h3 class="page-header"><i class="fa fa-laptop"></i>
+              @if($institute!=null)
+              {{$institute->name}}
+              @else
+              Dashboard
+              @endif
+        </h3>
         <ol class="breadcrumb">
           @if($pList[2]->id==2)
           <li><a href="{{URL::to('/role')}}/{{'create'}}">New</a></li>
@@ -26,9 +32,7 @@
             <thead>
               <tr>
                 <th>SL NO</th>
-                <th><span style="margin-right: 25px;">Role Created By</span>
-                  <label class="radio-inline"><input type="radio" name="creator"  value="1" onchange="getOwnRole(this)">Own</label>
-                  <label class="radio-inline"><input type="radio" name="creator" checked value="2" onchange="getOwnRole(this)">Successor</label>
+                <th><span style="margin-right: 25px;">Role Created</span>
                 </th>
                 <th>Role Creator</th>
                 @if($pList[3]->id==3)
@@ -70,7 +74,7 @@
             <tfoot>
               <tr>
                 <th>SL NO</th>
-                <th>Role Created By</th>
+                <th>Role Created</th>
                 <th>Role Creator</th>
                 @if($pList[3]->id==3)
                 <th width="10px">Edit</th>

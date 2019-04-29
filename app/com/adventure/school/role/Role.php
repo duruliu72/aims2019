@@ -9,15 +9,28 @@ class Role extends Model
     protected $table='roles';
     protected $fillable = ['name','rolecreatorid','status'];
     public function getRoleId(){
-	 	 $aRole=\DB::select('SELECT 
+	 	    $aRole=\DB::select('SELECT 
         roles.id ,
         roles.name 
         FROM users
         INNER JOIN role_user ON users.id=role_user.userid
         INNER JOIN roles ON role_user.roleid=roles.id
-        WHERE users.id=1',[Auth::user()->id])[0];
+        WHERE users.id=?',[Auth::user()->id])[0];
 	 	 return $aRole->id;
-	 }
+   }
+   public static function getSingleRole(){
+      $sql="SELECT 
+      roles.id ,
+      roles.name,
+      roles.rolecreatorid
+      FROM users
+      INNER JOIN role_user ON users.id=role_user.userid
+      INNER JOIN roles ON role_user.roleid=roles.id
+      WHERE users.id=?";
+      $qResult=\DB::select($sql,[Auth::user()->id]);
+      $aRole=collect($qResult)->first();
+      return $aRole;
+   }
     public function getIncludeSuccessorRole(){
         return $this->ownAndSuccessorRole($this->getRoleId());
     }
@@ -26,8 +39,8 @@ class Role extends Model
     }
     public function ownAndSuccessorRole($id){
       $result=\DB::select('SELECT t1.*,roles.name AS creatorName 
-FROM (SELECT * FROM `roles` WHERE roles.id=?) AS t1 
-LEFT JOIN roles ON t1.rolecreatorid=roles.id', [$id]);
+      FROM (SELECT * FROM `roles` WHERE roles.id=?) AS t1 
+      LEFT JOIN roles ON t1.rolecreatorid=roles.id', [$id]);
       $list[0]=$result[0];
       $items=$this->getRoleList($id,0);
       $i=1;
@@ -62,8 +75,8 @@ LEFT JOIN roles ON t1.rolecreatorid=roles.id', [$id]);
     }
     private function getRoleList($roleid,$i){
         $result=\DB::select('SELECT t1.*,roles.name AS creatorName FROM (SELECT * FROM `roles`
-WHERE roles.rolecreatorid=?) AS t1
-LEFT JOIN roles ON t1.rolecreatorid=roles.id', [$roleid]);
+        WHERE roles.rolecreatorid=?) AS t1
+        LEFT JOIN roles ON t1.rolecreatorid=roles.id', [$roleid]);
         if(count($result)>0){
             foreach ($result as $item) {
               $list[$i]=$item;

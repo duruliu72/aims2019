@@ -4,6 +4,7 @@ namespace App\Http\Controllers\com\adventure\school\program;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\com\adventure\school\basic\Institute;
 use App\com\adventure\school\program\Section;
 use App\com\adventure\school\menu\Menu;
 class SectionController extends Controller
@@ -20,8 +21,14 @@ class SectionController extends Controller
         }
         $sidebarMenu=$aMenu->getSidebarMenu();
         $pList=$aMenu->getPermissionOnMenu('sections');
-    	$aList=Section::all();
-    	return view('admin.programsettings.section.index',['sidebarMenu'=>$sidebarMenu,'pList'=>$pList,'result'=>$aList]);
+        $aList=Section::all();
+        $dataList=[
+            'institute'=>Institute::getInstituteName(),
+            'sidebarMenu'=>$sidebarMenu,
+            'pList'=>$pList,
+            'result'=>$aList
+        ];
+    	return view('admin.programsettings.section.index',$dataList);
     }
     public function create(){
         $aMenu=new Menu();
@@ -31,12 +38,14 @@ class SectionController extends Controller
         }
         $sidebarMenu=$aMenu->getSidebarMenu();
         $pList=$aMenu->getPermissionOnMenu('sections');
-        if($pList[2]->id==2){
-            return view('admin.programsettings.section.create',['sidebarMenu'=>$sidebarMenu]);
-        }else{
+        if($pList[2]->id!=2){
             return redirect('error');
         }
-    	
+    	$dataList=[
+            'institute'=>Institute::getInstituteName(),
+            'sidebarMenu'=>$sidebarMenu
+        ];
+        return view('admin.programsettings.section.create',$dataList);
     }
     public function store(Request $request){
      	 $validatedData = $request->validate([
@@ -62,12 +71,15 @@ class SectionController extends Controller
         $sidebarMenu=$aMenu->getSidebarMenu();
         $pList=$aMenu->getPermissionOnMenu('sections');
     	$aSection=Section::findOrfail($id);
-        if($pList[3]->id==3){
-           return view('admin.programsettings.section.edit',['sidebarMenu'=>$sidebarMenu,'bean'=>$aSection]); 
-       }else{
+        if($pList[3]->id!=3){
             return redirect('error');
-       }
-        
+        }
+        $dataList=[
+            'institute'=>Institute::getInstituteName(),
+            'sidebarMenu'=>$sidebarMenu,
+            'bean'=>$aSection
+        ];
+        return view('admin.programsettings.section.edit',$dataList); 
     }
     public function update(Request $request, $id){
     	$validatedData = $request->validate([
