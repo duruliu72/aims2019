@@ -170,7 +170,9 @@ class ProgramOfferController extends Controller
      	$aProgramOffer->groupid=$groupid;
      	$aProgramOffer->mediumid=$mediumid;
         $aProgramOffer->shiftid=$shiftid;
-        $cordinator=$request->cordinator;
+        if($cordinator!=null){
+            $aProgramOffer->cordinator=$cordinator;
+        }
         $aProgramOffer->seat=$seat;
      	$status=$aProgramOffer->update();
      	if($status){

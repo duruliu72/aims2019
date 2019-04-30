@@ -14,7 +14,7 @@ class Admission extends Model
 		}
 		$sql="SELECT t1.programofferid,programs.* 
 		FROM `admission_programs` AS t1
-        INNER JOIN (SELECT programofferid FROM `vadmission_subjects` GROUP BY programofferid) AS t3 ON t1.programofferid=t3.programofferid
+        INNER JOIN (SELECT admission_programid FROM `admission_program_subjects` GROUP BY admission_programid) AS t3 ON t1.programofferid=t3.programofferid
 		INNER JOIN programoffers AS t2 ON t1.programofferid=t2.id
 		INNER join sessions on t2.sessionid=sessions.id
 		INNER join programs on t2.programid=programs.id
@@ -30,7 +30,7 @@ class Admission extends Model
 		}
 		$sql="SELECT t1.programofferid,mediums.* 
 		FROM `admission_programs` AS t1
-        INNER JOIN (SELECT programofferid FROM `vadmission_subjects` GROUP BY programofferid) AS t3 ON t1.programofferid=t3.programofferid
+        INNER JOIN (SELECT programofferid FROM `admission_program_subjects` GROUP BY programofferid) AS t3 ON t1.programofferid=t3.programofferid
 		INNER JOIN programoffers AS t2 ON t1.programofferid=t2.id
 		INNER join sessions on t2.sessionid=sessions.id
 		INNER join mediums on t2.mediumid=mediums.id
@@ -46,7 +46,7 @@ class Admission extends Model
 		}
 		$sql="SELECT t1.programofferid,shifts.* 
 		FROM `admission_programs` AS t1
-        INNER JOIN (SELECT programofferid FROM `vadmission_subjects` GROUP BY programofferid) AS t3 ON t1.programofferid=t3.programofferid
+        INNER JOIN (SELECT programofferid FROM `admission_program_subjects` GROUP BY programofferid) AS t3 ON t1.programofferid=t3.programofferid
 		INNER JOIN programoffers AS t2 ON t1.programofferid=t2.id
 		INNER join sessions on t2.sessionid=sessions.id
 		INNER join shifts on t2.shiftid=shifts.id
@@ -63,7 +63,7 @@ class Admission extends Model
 		$sql="SELECT 
 		t1.programofferid,groups.*
 		FROM `admission_programs` AS t1
-        INNER JOIN (SELECT programofferid FROM `vadmission_subjects` GROUP BY programofferid) AS t3 ON t1.programofferid=t3.programofferid
+        INNER JOIN (SELECT programofferid FROM `admission_program_subjects` GROUP BY programofferid) AS t3 ON t1.programofferid=t3.programofferid
 		INNER JOIN programoffers AS t2 ON t1.programofferid=t2.id 
 		INNER JOIN sessions ON t2.sessionid=sessions.id 
 		INNER JOIN groups ON t2.groupid=groups.id 
@@ -80,7 +80,7 @@ class Admission extends Model
 		$sql="SELECT 
 		t1.programofferid,mediums.*
 		FROM `admission_programs` AS t1
-		INNER JOIN (SELECT programofferid FROM `vadmission_subjects` GROUP BY programofferid) AS t3 ON t1.programofferid=t3.programofferid
+		INNER JOIN (SELECT programofferid FROM `admission_program_subjects` GROUP BY programofferid) AS t3 ON t1.programofferid=t3.programofferid
 		INNER JOIN programoffers AS t2 ON t1.programofferid=t2.id 
 		INNER JOIN sessions ON t2.sessionid=sessions.id 
 		INNER JOIN mediums ON t2.mediumid=mediums.id 
@@ -97,7 +97,7 @@ class Admission extends Model
 		$sql="SELECT 
 		t1.programofferid,shifts.*
 		FROM `admission_programs` AS t1
-		INNER JOIN (SELECT programofferid FROM `vadmission_subjects` GROUP BY programofferid) AS t3 ON t1.programofferid=t3.programofferid 
+		INNER JOIN (SELECT programofferid FROM `admission_program_subjects` GROUP BY programofferid) AS t3 ON t1.programofferid=t3.programofferid 
 		INNER JOIN programoffers AS t2 ON t1.programofferid=t2.id 
 		INNER JOIN sessions ON t2.sessionid=sessions.id 
 		INNER JOIN shifts ON t2.shiftid=shifts.id 
@@ -112,7 +112,7 @@ class Admission extends Model
 	    	$sessionid=$aSession->getSessionId($yearName);
 		}
 		$sql="SELECT t1.programofferid,mediums.* FROM `admission_programs` AS t1
-		INNER JOIN (SELECT programofferid FROM `vadmission_subjects` GROUP BY programofferid) AS t3 ON t1.programofferid=t3.programofferid
+		INNER JOIN (SELECT programofferid FROM `admission_program_subjects` GROUP BY programofferid) AS t3 ON t1.programofferid=t3.programofferid
 		INNER JOIN programoffers AS t2 ON t1.programofferid=t2.id 
 		INNER JOIN sessions ON t2.sessionid=sessions.id
 		INNER JOIN mediums ON t2.mediumid=mediums.id 
@@ -127,7 +127,7 @@ class Admission extends Model
 	    	$sessionid=$aSession->getSessionId($yearName);
 		}
 		$sql="SELECT t1.programofferid,shifts.* FROM `admission_programs` AS t1
-		INNER JOIN (SELECT programofferid FROM `vadmission_subjects` GROUP BY programofferid) AS t3 ON t1.programofferid=t3.programofferid
+		INNER JOIN (SELECT programofferid FROM `admission_program_subjects` GROUP BY programofferid) AS t3 ON t1.programofferid=t3.programofferid
 		INNER JOIN programoffers AS t2 ON t1.programofferid=t2.id 
 		INNER JOIN sessions ON t2.sessionid=sessions.id
 		INNER JOIN shifts ON t2.shiftid=shifts.id 
@@ -142,7 +142,7 @@ class Admission extends Model
 	    	$sessionid=$aSession->getSessionId($yearName);
 		}
 		$sql="SELECT t1.programofferid,shifts.* FROM `admission_programs` AS t1
-		INNER JOIN (SELECT programofferid FROM `vadmission_subjects` GROUP BY programofferid) AS t3 ON t1.programofferid=t3.programofferid
+		INNER JOIN (SELECT programofferid FROM `admission_program_subjects` GROUP BY programofferid) AS t3 ON t1.programofferid=t3.programofferid
 		INNER JOIN programoffers AS t2 ON t1.programofferid=t2.id 
 		INNER JOIN sessions ON t2.sessionid=sessions.id
 		INNER JOIN shifts ON t2.shiftid=shifts.id 

@@ -1,5 +1,3 @@
-
-var baseUrl="http://localhost/school2019/public";
 function getChange(thisref,option){
 	var id=thisref.getAttribute('id');
 	if(option=="rolecreate"){
@@ -14,7 +12,7 @@ function getChangeOnRoleCreator(id,option,output,methodid){
 	console.log(createdroleid);
 	$.ajax({
 		type:'get',
-		url: baseUrl+"/role/getValue",
+		url: baseUrl+"role/getValue",
 		dataType: "html",
 		data: {'rolecreatorid':rolecreatorid,'createdroleid':createdroleid,'option':option,'methodid':methodid},
 		success: function( result ) {

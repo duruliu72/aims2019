@@ -9,10 +9,16 @@
   <section class="wrapper">
     <div class="row">
       <div class="col-lg-12">
-        <h3 class="page-header"><i class="fa fa-laptop"></i>Horinagor High School</h3>
+      <h3 class="page-header"><i class="fa fa-laptop"></i>
+              @if($institute!=null)
+                {{$institute->name}}
+              @else
+                Dashboard
+              @endif
+          </h3>
         <ol class="breadcrumb">
           @if($pList[2]->id==2)
-            <li><a href="{{URL::to('/vadmissionsubject')}}/{{'create'}}">New</a></li>
+            <li><a href="{{URL::to('/admissionprogramsubject')}}/{{'create'}}">New</a></li>
           @endif
           <li>Admission Subject Assign</li>
         </ol>
@@ -51,7 +57,7 @@
                 <td>{{$x->shiftName}}</td>
                 @if($pList[3]->id==3)
                 <td> 
-                  <a href="{{URL::to('/vadmissionsubject')}}/{{$x->id}}/{{'edit'}}" class="tooltip-success" data-rel="tooltip" title="Edit">
+                  <a href="{{URL::to('/admissionprogramsubject')}}/{{$x->id}}/{{'edit'}}" class="tooltip-success" data-rel="tooltip" title="Edit">
                     <span class="green">
                       <i class="ace-icon fa fa-pencil-square-o bigger-120"></i>
                     </span>

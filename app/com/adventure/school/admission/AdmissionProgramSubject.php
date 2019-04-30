@@ -4,12 +4,12 @@ namespace App\com\adventure\school\admission;
 
 use Illuminate\Database\Eloquent\Model;
 
-class VAdmissionSubject extends Model
+class AdmissionProgramSubject extends Model
 {
-    protected $table='vadmission_subjects';
-   	protected $fillable = ['programofferid','subjectid','marks','status'];
+    protected $table='admission_program_subjects';
+   	protected $fillable = ['admission_programid','subjectid','marks','status'];
    	public function getId(){
-   		 $lastOne=\DB::table('vadmission_subjects')->orderBy('id', 'desc')->first();
+   		 $lastOne=\DB::table('admission_program_subjects')->orderBy('id', 'desc')->first();
    		 if($lastOne!=null){
    		 	return ++$lastOne->id;
    		 }
@@ -22,9 +22,9 @@ class VAdmissionSubject extends Model
 		groups.name AS groupName,
 		mediums.name AS mediumName,
 		shifts.name AS shiftName
-		FROM `vadmission_subjects` AS t1
+		FROM `admission_program_subjects` AS t1
 		INNER JOIN admission_subjects ON t1.subjectid=admission_subjects.id
-		INNER JOIN admission_programs ON t1.programofferid=admission_programs.programofferid
+		INNER JOIN admission_programs ON t1.admission_programid=admission_programs.id
 		INNER JOIN programoffers AS t2 ON admission_programs.programofferid=t2.id
 		INNER JOIN sessions ON t2.sessionid=sessions.id
 		INNER JOIN programs ON t2.programid=programs.id
@@ -39,15 +39,15 @@ class VAdmissionSubject extends Model
    		$sql="SELECT t1.*,
 		t2.programofferid,
 		t2.marks
-		FROM admission_subjects AS t1
-		LEFT JOIN (SELECT * FROM `vadmission_subjects`
+		FROM admission_program_subjects AS t1
+		LEFT JOIN (SELECT * FROM `admission_program_subjects`
 		WHERE programofferid=?) AS t2 ON t1.id=t2.subjectid";
    		$qresult=\DB::select($sql,[$programofferid]);
 		$result=collect($qresult);
 		return $result;
    	}
    	public function CheckAdmissionSubject($programofferid){
-   		return \DB::table('vadmission_subjects')->where('programofferid', $programofferid)->exists();
+   		return \DB::table('admission_program_subjects')->where('programofferid', $programofferid)->exists();
    	}
    	// ==============For Admit Card=================
    	public function getAdmitCardSubject($programofferid){
@@ -55,7 +55,7 @@ class VAdmissionSubject extends Model
 		(t1.marks*(SELECT admission_programs.exam_marks
 		FROM `admission_programs`
 		WHERE programofferid=?)/100) AS marks
-		FROM `vadmission_subjects` AS t1
+		FROM `admission_program_subjects` AS t1
 		INNER JOIN  admission_subjects AS t2 ON t1.subjectid=t2.id
 		WHERE t1.programofferid=?";
    		$qresult=\DB::select($sql,[$programofferid,$programofferid]);
@@ -69,7 +69,7 @@ class VAdmissionSubject extends Model
 	    	$aSession=new Session();
 	    	$sessionid=$aSession->getSessionId($yearName);
 		}
-		$sql="SELECT t1.* FROM `vadmission_subjects` AS t1
+		$sql="SELECT t1.* FROM `admission_program_subjects` AS t1
 		INNER JOIN admission_programs AS t2 ON t1.programofferid=t2.programofferid
 		INNER JOIN programoffers AS t3 ON t2.programofferid=t3.id
 		WHERE t3.sessionid=? AND t3.programid=? AND t3.groupid=?  AND t3.mediumid=? AND t3.shiftid=? GROUP BY t1.programofferid";
@@ -89,7 +89,7 @@ class VAdmissionSubject extends Model
 		groups.name AS groupName,
 		mediums.name AS mediumName,
 		shifts.name AS shiftName
-		FROM `vadmission_subjects` AS t1
+		FROM `admission_program_subjects` AS t1
 		INNER JOIN admission_subjects ON t1.subjectid=admission_subjects.id
 		INNER JOIN admission_programs ON t1.programofferid=admission_programs.programofferid
 		INNER JOIN programoffers AS t2 ON admission_programs.programofferid=t2.id

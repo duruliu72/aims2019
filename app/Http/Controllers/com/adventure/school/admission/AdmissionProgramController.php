@@ -4,6 +4,7 @@ namespace App\Http\Controllers\com\adventure\school\admission;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\com\adventure\school\basic\Institute;
 use App\com\adventure\school\admission\AdmissionProgram;
 use App\com\adventure\school\program\ProgramOffer;
 use App\com\adventure\school\program\Session;
@@ -27,16 +28,17 @@ class AdmissionProgramController extends Controller
         }
         $sidebarMenu=$aMenu->getSidebarMenu();
         $pList=$aMenu->getPermissionOnMenu('admissionprogram');
-        $aProgramOffer=new ProgramOffer();
         $aAdmissionProgram=new AdmissionProgram();
-    	$aList=$aAdmissionProgram->getAllAdmissionProgram();
-    	return view('admin.admissionsettings.admissionprogram.index',['sidebarMenu'=>$sidebarMenu,'pList'=>$pList,'result'=>$aList]);
+        $aList=$aAdmissionProgram->getAllAdmissionProgram();
+        $dataList=[
+            'institute'=>Institute::getInstituteName(),
+            'sidebarMenu'=>$sidebarMenu,
+            'pList'=>$pList,
+            'result'=>$aList
+        ];
+    	return view('admin.admissionsettings.admissionprogram.index',$dataList);
     }
     public function create(){
-    	// $date = date('Y/m/d H:i:s');
-    	$yearName = date('Y');
-    	$aSession=new Session();
-    	$sessionid=$aSession->getSessionId($yearName);
         $aMenu=new Menu();
         $hasMenu=$aMenu->hasMenu('admissionprogram');
         if($hasMenu==false){
@@ -44,17 +46,24 @@ class AdmissionProgramController extends Controller
         }
         $sidebarMenu=$aMenu->getSidebarMenu();
         $pList=$aMenu->getPermissionOnMenu('admissionprogram');
-        if($pList[2]->id==2){
-        	$aProgramOffer=new ProgramOffer();
-        	$programList=$aProgramOffer->getAllProgram($sessionid);
-        	$groupList=array();
-        	$mediumList=$aProgramOffer->getAllMedium($sessionid);
-        	$shiftList=$aProgramOffer->getAllShift($sessionid);
-            return view('admin.admissionsettings.admissionprogram.create',['sidebarMenu'=>$sidebarMenu,'programList'=>$programList,'groupList'=>$groupList,'mediumList'=>$mediumList,'shiftList'=>$shiftList]);
-        }else{
+        if($pList[2]->id!=2){
             return redirect('error');
         }
-    	
+        $aProgramOffer=new ProgramOffer();
+        // sessionid,programid,groupid,mediumid,shiftid and tableName
+        $programList=$aProgramOffer->getAll(0,0,0,0,0,"programs",'programid');
+        $mediumList=$aProgramOffer->getAll(0,0,0,0,0,"mediums",'mediumid');
+        $shiftList=$aProgramOffer->getAll(0,0,0,0,0,"shifts",'shiftid');
+        $groupList=$aProgramOffer->getAll(0,0,0,0,0,"groups",'groupid');
+        $dataList=[
+            'institute'=>Institute::getInstituteName(),
+            'sidebarMenu'=>$sidebarMenu,
+            'programList'=>$programList,
+            'groupList'=>$groupList,
+            'mediumList'=>$mediumList,
+            'shiftList'=>$shiftList
+        ];
+        return view('admin.admissionsettings.admissionprogram.create',$dataList);
     }
     public function store(Request $request){
      	$validatedData = $request->validate([
@@ -116,17 +125,26 @@ class AdmissionProgramController extends Controller
         $pList=$aMenu->getPermissionOnMenu('admissionprogram');
     	$aAdmissionProgram=AdmissionProgram::findOrfail($id);
         $obj=$aAdmissionProgram->getAdmissionProgram($id);
-        if($pList[3]->id==3){
-           	$aProgramOffer=new ProgramOffer();
-            $programList=$aProgramOffer->getAllProgram($sessionid);
-            $groupList=$aProgramOffer->getGroupOnProgramByID($obj->programid);
-            $mediumList=$aProgramOffer->getAllMedium($sessionid);
-            $shiftList=$aProgramOffer->getAllShift($sessionid);
-            return view('admin.admissionsettings.admissionprogram.edit',['sidebarMenu'=>$sidebarMenu,'programList'=>$programList,'groupList'=>$groupList,'mediumList'=>$mediumList,'shiftList'=>$shiftList,'bean'=>$obj]);
-       }else{
+        if($pList[3]->id!=3){
             return redirect('error');
-       }
+        }
         
+        $aProgramOffer=new ProgramOffer();
+        // sessionid,programid,groupid,mediumid,shiftid,tableName And last one compareid
+        $programList=$aProgramOffer->getAll(0,0,0,0,0,"programs",'programid');
+        $mediumList=$aProgramOffer->getAll(0,0,0,0,0,"mediums",'mediumid');
+        $shiftList=$aProgramOffer->getAll(0,0,0,0,0,"shifts",'shiftid');
+        $groupList=$aProgramOffer->getAll(0,0,0,0,0,"groups",'groupid');
+        $dataList=[
+            'institute'=>Institute::getInstituteName(),
+            'sidebarMenu'=>$sidebarMenu,
+            'programList'=>$programList,
+            'groupList'=>$groupList,
+            'mediumList'=>$mediumList,
+            'shiftList'=>$shiftList,
+            'bean'=>$obj
+        ];
+        return view('admin.admissionsettings.admissionprogram.edit',$dataList);
     }
     public function update(Request $request, $id){
     	$validatedData = $request->validate([
@@ -183,4 +201,48 @@ class AdmissionProgramController extends Controller
         }
         return redirect()->back()->with('msg',$msg);
     }
+     // For Ajax Call ===============
+   //    ================================================================
+   public function getValue(Request $request){
+    $option=$request->option;
+    $methodid=$request->methodid;
+    $programid=$request->programid;
+    $groupid=$request->groupid;
+    $mediumid=$request->mediumid;
+    $shiftid=$request->shiftid;
+    if($option=="program"){
+        if($methodid==1){
+            $this->getAll(0,$programid,0,0,0,"mediums",'mediumid');
+        }elseif($methodid==2){
+            $this->getAll(0,$programid,0,0,0,"shifts",'shiftid');
+        }elseif($methodid==3){
+            $this->getAll(0,$programid,0,0,0,"groups",'groupid');
+        }
+    }elseif($option=="group"){
+        // if($methodid==1){
+        //     $this->getMediumsOnSessionAndPrograAndGroup($programid,$groupid);
+        // }elseif($methodid==2){
+        //     $this->getShiftsOnSessionAndPrograAndGroup($programid,$groupid);
+        // }
+    }elseif($option=="medium"){
+        if($methodid==1){
+            $this->getAll(0,$programid,0,$mediumid,0,"shifts",'shiftid');
+        }elseif($methodid==2){
+            $this->getAll(0,$programid,0,$mediumid,0,"groups",'groupid');
+        }
+    }elseif($option=="shift"){
+        if($methodid==1){
+            $this->getAll(0,$programid,0,$mediumid,$shiftid,"groups",'groupid');
+        }
+    }
+}
+private function getAll($sessionid,$programid,$groupid,$mediumid,$shiftid,$tableName,$compareid){
+    $aProgramOffer=new ProgramOffer();
+    $result=$aProgramOffer->getAll($sessionid,$programid,$groupid,$mediumid,$shiftid,$tableName,$compareid);
+     $output="<option value=''>SELECT</option>";
+     foreach($result as $x){
+        $output.="<option value='$x->id'>$x->name</option>";
+     }
+     echo  $output;
+ }
 }

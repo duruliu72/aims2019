@@ -84,5 +84,6 @@
     </section>
 @endsection
 @section('uniqueScript')
+<script src="{{asset('clientAdmin/js/baseUrl.js')}}"></script>
 <script src="{{asset('clientAdmin/js/role.js')}}"></script>
 @endsection

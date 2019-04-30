@@ -74,7 +74,7 @@ class AdmissionController extends Controller
         	'g_postcode' => 'required',
         	'g_localgovid' => 'required',
         	'g_address' => 'required',
-            'username' => 'required',    	]);
+            ]);
     	$request->flash();
     	$aApplicant=new Applicant();
     	$programid=$request->programid;

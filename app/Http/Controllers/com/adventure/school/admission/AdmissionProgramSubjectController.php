@@ -4,8 +4,9 @@ namespace App\Http\Controllers\com\adventure\school\admission;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\com\adventure\school\basic\Institute;
 use App\com\adventure\school\admission\AdmissionProgram;
-use App\com\adventure\school\admission\VAdmissionSubject;
+use App\com\adventure\school\admission\AdmissionProgramSubject;
 use App\com\adventure\school\program\ProgramOffer;
 use App\com\adventure\school\program\Session;
 use App\com\adventure\school\program\Program;
@@ -14,7 +15,7 @@ use App\com\adventure\school\program\Medium;
 use App\com\adventure\school\program\Shift;
 use App\com\adventure\school\basic\AdmissionSubject;
 use App\com\adventure\school\menu\Menu;
-class VAdmissionSubjectController extends Controller
+class AdmissionProgramSubjectController extends Controller
 {
     public function __construct()
     {
@@ -22,15 +23,21 @@ class VAdmissionSubjectController extends Controller
     }
     public function index(){
         $aMenu=new Menu();
-        $hasMenu=$aMenu->hasMenu('vadmissionsubject');
+        $hasMenu=$aMenu->hasMenu('admissionprogramsubject');
         if($hasMenu==false){
             return redirect('error');
         }
         $sidebarMenu=$aMenu->getSidebarMenu();
-        $pList=$aMenu->getPermissionOnMenu('vadmissionsubject');
-        $aVAdmissionSubject=new VAdmissionSubject();
-    	$aList=$aVAdmissionSubject->getAllAdmissionProgram();
-    	return view('admin.admissionsettings.vadmissionsubject.index',['sidebarMenu'=>$sidebarMenu,'pList'=>$pList,'result'=>$aList]);
+        $pList=$aMenu->getPermissionOnMenu('admissionprogramsubject');
+        $aVAdmissionSubject=new AdmissionProgramSubject();
+        $aList=$aVAdmissionSubject->getAllAdmissionProgram();
+        $dataList=[
+            'institute'=>Institute::getInstituteName(),
+            'sidebarMenu'=>$sidebarMenu,
+            'pList'=>$pList,
+            'result'=>$aList
+        ];
+    	return view('admin.admissionsettings.vadmissionsubject.index',$dataList);
     }
     public function create(){
     	// $date = date('Y/m/d H:i:s');
@@ -38,15 +45,16 @@ class VAdmissionSubjectController extends Controller
     	$aSession=new Session();
     	$sessionid=$aSession->getSessionId($yearName);
         $aMenu=new Menu();
-        $hasMenu=$aMenu->hasMenu('vadmissionsubject');
+        $hasMenu=$aMenu->hasMenu('admissionprogramsubject');
         if($hasMenu==false){
             return redirect('error');
         }
         $sidebarMenu=$aMenu->getSidebarMenu();
-        $pList=$aMenu->getPermissionOnMenu('vadmissionsubject');
+        $pList=$aMenu->getPermissionOnMenu('admissionprogramsubject');
         if($pList[2]->id==2){
         	$aAdmissionProgram=new AdmissionProgram();
             $dataList=[
+                'institute'=>Institute::getInstituteName(),
                 'sidebarMenu'=>$sidebarMenu,
                 'programList'=>$aAdmissionProgram->getAllProgram($sessionid),
                 'groupList'=>array(),
@@ -88,7 +96,7 @@ class VAdmissionSubjectController extends Controller
             $count=0;
             foreach ($data as $key => $x) {
                 if($x!=null){
-                    $aVAdmissionSubject=new VAdmissionSubject();
+                    $aVAdmissionSubject=new AdmissionProgramSubject();
                     $aVAdmissionSubject->programofferid=$programofferid;
                     $aVAdmissionSubject->subjectid=$key;
                     $aVAdmissionSubject->marks=$x;
@@ -110,16 +118,16 @@ class VAdmissionSubjectController extends Controller
         $aSession=new Session();
         $sessionid=$aSession->getSessionId($yearName);
         $aMenu=new Menu();
-        $hasMenu=$aMenu->hasMenu('vadmissionsubject');
+        $hasMenu=$aMenu->hasMenu('admissionprogramsubject');
         if($hasMenu==false){
             return redirect('error');
         }
         $sidebarMenu=$aMenu->getSidebarMenu();
-        $pList=$aMenu->getPermissionOnMenu('vadmissionsubject');
+        $pList=$aMenu->getPermissionOnMenu('admissionprogramsubject');
     	$aProgramOffer=ProgramOffer::findOrfail($id);
         if($pList[3]->id==3){
            	$aAdmissionProgram=new AdmissionProgram();
-            $aVAdmissionSubject=new VAdmissionSubject();
+            $aVAdmissionSubject=new AdmissionProgramSubject();
             $dataList=[
                 'sidebarMenu'=>$sidebarMenu,
                 'sessionList'=>Session::all(),
@@ -164,7 +172,7 @@ class VAdmissionSubjectController extends Controller
         $status=\DB::transaction(function()use($data,$programofferid){
             foreach ($data as $key => $x) {
                 if($x!=null){
-                    $aVAdmissionSubject=new VAdmissionSubject();
+                    $aVAdmissionSubject=new AdmissionProgramSubject();
                     $aVAdmissionSubject->programofferid=$programofferid;
                     $aVAdmissionSubject->subjectid=$key;
                     $aVAdmissionSubject->marks=$x;

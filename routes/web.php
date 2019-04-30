@@ -63,9 +63,10 @@ Route::get('gradepoint/getValue', 'com\adventure\school\program\GradePointContro
 Route::resource('coursetype', 'com\adventure\school\program\CourseTypeController');
 
 // Admission program settings
+Route::get('admissionprogram/getValue','com\adventure\school\admission\AdmissionProgramController@getValue');
 Route::resource('admissionprogram', 'com\adventure\school\admission\AdmissionProgramController');
-Route::get('vadmissionsubject/getValue','com\adventure\school\admission\VAdmissionSubjectController@getValue');
-Route::resource('vadmissionsubject', 'com\adventure\school\admission\VAdmissionSubjectController');
+Route::get('admissionprogramsubject/getValue','com\adventure\school\admission\AdmissionProgramSubjectController@getValue');
+Route::resource('admissionprogramsubject', 'com\adventure\school\admission\AdmissionProgramSubjectController');
 Route::get('admissionfee/pay','com\adventure\school\admission\AdmissionFeeController@index1');
 Route::post('admissionfee/pay','com\adventure\school\admission\AdmissionFeeController@index1');
 Route::get('admissionfee/{id}/payment','com\adventure\school\admission\AdmissionFeeController@payment');
@@ -143,8 +144,3 @@ Route::get('/admission/admissionresult','com\adventure\school\admission\Admissio
 Route::post('/admission/admissionresult','com\adventure\school\admission\AdmissionController@getAplicantResult');
 Route::get('/admission/getValue','com\adventure\school\admission\AdmissionController@getValue');
 Route::resource('admission', 'com\adventure\school\admission\AdmissionController');
-
-//Ajax For front Part
-Route::get('/getFValue/','com\adventure\school\FAjaxController@getFValue');
-Route::get('/getValueForMedium/','com\adventure\school\FAjaxController@getValueForMedium');
-Route::get('/getValueForShift/','com\adventure\school\FAjaxController@getValueForShift');

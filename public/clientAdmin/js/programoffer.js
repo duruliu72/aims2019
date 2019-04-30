@@ -11,7 +11,7 @@ function getChangeOnProgram(id,option,output,methodid){
     var shiftid=0;
 	$.ajax({
 		type:'get',
-		url: "getValue",
+		url: baseUrl+"programoffer/getValue",
 		dataType: "html",
 		data: {'programid':programid,'groupid':groupid,'mediumid':mediumid,'shiftid':shiftid,'option':option,'methodid':methodid},
 		success: function( result ) {

@@ -1,0 +1,1 @@
+var baseUrl="http://localhost/school2019/public/";

@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Student extends Model
 {
     protected  $table='students';
-    protected $fillable = ['programofferid','sectionid','studentregid','classroll','studenttype','status'];
+    protected $fillable = ['programofferid','sectionid','applicantid','classroll','studenttype','status'];
 
     public function checkRegisterOrNot($programofferid,$applicantid){
         $sql="SELECT * FROM `applicants` WHERE programofferid=? AND applicantid=? AND studentregid IS NOT NULL";

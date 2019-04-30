@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateVadmissionSubjectsTable extends Migration
+class CreateAdmissionProgramSubjectsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,8 @@ class CreateVadmissionSubjectsTable extends Migration
      */
     public function up()
     {
-        Schema::create('vadmission_subjects', function (Blueprint $table) {
-            $table->integer('programofferid')->length(11);
+        Schema::create('admission_program_subjects', function (Blueprint $table) {
+            $table->integer('admission_programid')->length(11);
             $table->integer('subjectid')->length(11);
             $table->double('marks', 8, 2);
             $table->integer('status')->length(5)->default(0);
@@ -29,6 +29,6 @@ class CreateVadmissionSubjectsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('vadmission_subjects');
+        Schema::dropIfExists('admission_program_subjects');
     }
 }

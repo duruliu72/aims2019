@@ -21,7 +21,6 @@ class CreateStudentsTable extends Migration
             $table->integer('classroll')->length(11);
             $table->integer('fromclass')->length(11);
             $table->integer('fromsection')->length(11);
-            $table->integer('admissionDate')->length(11);
             $table->integer('studenttype')->length(11);
             $table->integer('status')->length(5)->default(0);
             $table->timestamps();

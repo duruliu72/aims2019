@@ -8,7 +8,13 @@
       <section class="wrapper">
         <div class="row">
           <div class="col-lg-12">
-            <h3 class="page-header"><i class="fa fa-laptop"></i>Horinagor High School</h3>
+          <h3 class="page-header"><i class="fa fa-laptop"></i>
+              @if($institute!=null)
+                {{$institute->name}}
+              @else
+                Dashboard
+              @endif
+          </h3>
             <ol class="breadcrumb">
               <li><a href="{{URL::to('/admissionprogram')}}">All</a></li>
               <li>Admission Program</li>
@@ -33,7 +39,7 @@
                   <div class="form-group row">
                     <label class="col-sm-2 control-label" for="programid">Program</label>
                     <div class="col-sm-4">
-                      <select onchange="getChange(this,'admissiongroup')" class="form-control" name="programid" id="programid">
+                      <select onchange="getChange(this,'program')" class="form-control" name="programid" id="programid">
                           <option  value="">SELECT</option>
                          @foreach ($programList as $x)
                            @if($x->id==$bean->programid)
@@ -44,24 +50,9 @@
                          @endforeach
                       </select>
                     </div>
-                     <label class="col-sm-2 control-label" for="groupid">Group</label>
-                    <div class="col-sm-4">
-                      <select class="form-control" name="groupid" id="groupid">
-                         <option value="">SELECT</option>
-                         @foreach ($groupList as $x)
-                           @if($x->id==$bean->groupid)
-                               <option selected value="{{$x->id}}">{{$x->name}}</option>
-                            @else
-                              <option value="{{$x->id}}">{{$x->name}}</option>
-                            @endif
-                         @endforeach
-                      </select>
-                    </div>                       
-                  </div>
-                  <div class="form-group row">
                     <label class="col-sm-2 control-label" for="mediumid">Medium</label>
                     <div class="col-sm-4">
-                      <select class="form-control" name="mediumid" id="mediumid">
+                      <select onchange="getChange(this,'medium')" class="form-control" name="mediumid" id="mediumid">
                          <option value="">SELECT</option>
                          @foreach ($mediumList as $x)
                            @if($x->id==$bean->mediumid)
@@ -71,13 +62,28 @@
                             @endif
                          @endforeach
                       </select>
-                    </div>
+                    </div>                 
+                  </div>
+                  <div class="form-group row">
                      <label class="col-sm-2 control-label" for="shiftid">Shift</label>
                     <div class="col-sm-4">
-                      <select class="form-control" name="shiftid" id="shiftid">
+                      <select onchange="getChange(this,'shift')" class="form-control" name="shiftid" id="shiftid">
                          <option value="">SELECT</option>
                          @foreach ($shiftList as $x)
                            @if($x->id==$bean->shiftid)
+                               <option selected value="{{$x->id}}">{{$x->name}}</option>
+                            @else
+                              <option value="{{$x->id}}">{{$x->name}}</option>
+                            @endif
+                         @endforeach
+                      </select>
+                    </div> 
+                    <label class="col-sm-2 control-label" for="groupid">Group</label>
+                    <div class="col-sm-4">
+                      <select class="form-control" name="groupid" id="groupid">
+                         <option value="">SELECT</option>
+                         @foreach ($groupList as $x)
+                           @if($x->id==$bean->groupid)
                                <option selected value="{{$x->id}}">{{$x->name}}</option>
                             @else
                               <option value="{{$x->id}}">{{$x->name}}</option>
@@ -124,7 +130,8 @@
 @section('uniqueScript')
 <script src="{{asset('clientAdmin/js/bootstrap-datepicker.js')}}"></script>
 <script src="{{asset('clientAdmin/js/bootstrap-timepicker.min.js')}}"></script>
-<script src="{{asset('clientAdmin/js/ajax.js')}}"></script>
+<script src="{{asset('clientAdmin/js/baseUrl.js')}}"></script>
+<script src="{{asset('clientAdmin/js/admissionprogram.js')}}"></script>
 <script type="text/javascript">
     var Script = function() {
   //date picker

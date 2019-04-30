@@ -48,7 +48,7 @@
                     </div>
                     <label class="col-sm-2 control-label" for="programid">Program</label>
                     <div class="col-sm-4">
-                      <select onchange="getChange(this,'programtogroup')" class="form-control" name="programid" id="programid">
+                      <select onchange="getChange(this,'program')" class="form-control" name="programid" id="programid">
                           <option  value="">SELECT</option>
                          @foreach ($programList as $x)
                            @if($x->id==$bean->programid)
@@ -133,5 +133,6 @@
 
 @endsection
 @section('uniqueScript')
-<script src="{{asset('clientAdmin/js/ajax.js')}}"></script>
+<script src="{{asset('clientAdmin/js/baseUrl.js')}}"></script>
+<script src="{{asset('clientAdmin/js/programoffer.js')}}"></script>
 @endsection
