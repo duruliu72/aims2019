@@ -23,14 +23,13 @@ use App\com\adventure\school\basic\LocalGov;
 use App\com\adventure\school\basic\Address;
 class AdmissionController extends Controller
 {
-    
     public function index(){
         $aAdmission=new Admission();
     	$dataList=[
-    		'programList'=>$aAdmission->getAllProgram(0),
-	    	'mediumList'=>$aAdmission->getAllMedium(0),
-	    	'shiftList'=>$aAdmission->getAllShift(0),
-    		'genderList'=>Gender::all(),
+    		'programList'=>array(),
+	    	'mediumList'=>array(),
+	    	'shiftList'=>array(),
+    		'genderList'=>array(),
     		'quotaList'=>Quota::all(),
     		'religionList'=>Religion::all(),
     		'nationaityList'=>Nationality::all(),

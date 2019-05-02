@@ -16,21 +16,27 @@ class AdmissionProgramSubject extends Model
    		 return 1;
    	}
    	public function getAllAdmissionProgram(){
-   		$sql="SELECT t2.*,
-		sessions.name AS sessionName,
-		programs.name AS programName,
-		groups.name AS groupName,
-		mediums.name AS mediumName,
-		shifts.name AS shiftName
-		FROM `admission_program_subjects` AS t1
-		INNER JOIN admission_subjects ON t1.subjectid=admission_subjects.id
-		INNER JOIN admission_programs ON t1.admission_programid=admission_programs.id
-		INNER JOIN programoffers AS t2 ON admission_programs.programofferid=t2.id
-		INNER JOIN sessions ON t2.sessionid=sessions.id
-		INNER JOIN programs ON t2.programid=programs.id
-		INNER JOIN groups ON t2.groupid=groups.id
-		INNER JOIN mediums ON t2.mediumid=mediums.id
-		INNER JOIN shifts ON t2.shiftid=shifts.id GROUP BY t2.id";
+   		$sql="SELECT 
+		   admission_programs.* ,
+		   po.sessionid,
+		   po.programid,
+		   po.groupid,
+		   po.mediumid,
+		   po.shiftid,
+		   sessions.name AS sessionName,
+		   programs.name AS programName,
+		   groups.name AS groupName,
+		   mediums.name AS mediumName,
+		   shifts.name AS shiftName
+		   FROM admission_programs
+		   INNER JOIN programoffers AS po ON admission_programs.programofferid=po.id
+		   INNER JOIN sessions ON po.sessionid=sessions.id
+		   INNER JOIN programs ON po.programid=programs.id
+		   INNER JOIN groups ON po.groupid=groups.id
+		   INNER JOIN mediums ON po.mediumid=mediums.id
+		   INNER JOIN shifts ON po.shiftid=shifts.id
+		   INNER JOIN(SELECT admission_programid FROM `admission_program_subjects`
+		   GROUP BY admission_programid) AS t1 ON t1.admission_programid=admission_programs.id";
    		$qresult=\DB::select($sql);
 		$result=collect($qresult);
 		return $result;
@@ -46,8 +52,8 @@ class AdmissionProgramSubject extends Model
 		$result=collect($qresult);
 		return $result;
    	}
-   	public function CheckAdmissionSubject($programofferid){
-   		return \DB::table('admission_program_subjects')->where('programofferid', $programofferid)->exists();
+   	public function CheckAssignAdmissionSubject($admission_programid){
+   		return \DB::table('admission_program_subjects')->where('admission_programid', $admission_programid)->exists();
    	}
    	// ==============For Admit Card=================
    	public function getAdmitCardSubject($programofferid){

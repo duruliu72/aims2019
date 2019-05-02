@@ -29,15 +29,15 @@ class AdmissionProgramSubjectController extends Controller
         }
         $sidebarMenu=$aMenu->getSidebarMenu();
         $pList=$aMenu->getPermissionOnMenu('admissionprogramsubject');
-        $aVAdmissionSubject=new AdmissionProgramSubject();
-        $aList=$aVAdmissionSubject->getAllAdmissionProgram();
+        $obj=new AdmissionProgramSubject();
+        $aList=$obj->getAllAdmissionProgram();
         $dataList=[
             'institute'=>Institute::getInstituteName(),
             'sidebarMenu'=>$sidebarMenu,
             'pList'=>$pList,
             'result'=>$aList
         ];
-    	return view('admin.admissionsettings.vadmissionsubject.index',$dataList);
+    	return view('admin.admissionsettings.admissionprogramsubject.index',$dataList);
     }
     public function create(){
     	// $date = date('Y/m/d H:i:s');
@@ -52,17 +52,22 @@ class AdmissionProgramSubjectController extends Controller
         $sidebarMenu=$aMenu->getSidebarMenu();
         $pList=$aMenu->getPermissionOnMenu('admissionprogramsubject');
         if($pList[2]->id==2){
-        	$aAdmissionProgram=new AdmissionProgram();
+            $aAdmissionProgram=new AdmissionProgram();
+            // sessionid,programid,groupid,mediumid,shiftid,tableName And last one compareid
+            $programList=$aAdmissionProgram->getAllOnIDS(0,0,0,0,0,"programs",'programid');
+            $mediumList=$aAdmissionProgram->getAllOnIDS(0,0,0,0,0,"mediums",'mediumid');
+            $shiftList=$aAdmissionProgram->getAllOnIDS(0,0,0,0,0,"shifts",'shiftid');
+            $groupList=$aAdmissionProgram->getAllOnIDS(0,0,0,0,0,"groups",'groupid');
             $dataList=[
                 'institute'=>Institute::getInstituteName(),
                 'sidebarMenu'=>$sidebarMenu,
-                'programList'=>$aAdmissionProgram->getAllProgram($sessionid),
-                'groupList'=>array(),
-                'mediumList'=>$aAdmissionProgram->getAllMedium($sessionid),
-                'shiftList'=>$aAdmissionProgram->getAllShift($sessionid),
+                'programList'=>$programList,
+                'groupList'=>$groupList,
+                'mediumList'=>$mediumList,
+                'shiftList'=>$shiftList,
                 'admissionSubList'=>AdmissionSubject::all()
             ];
-            return view('admin.admissionsettings.vadmissionsubject.create',$dataList);
+            return view('admin.admissionsettings.admissionprogramsubject.create',$dataList);
         }else{
             return redirect('error');
         }
@@ -84,23 +89,23 @@ class AdmissionProgramSubjectController extends Controller
         $shiftid=$request->shiftid;
         $data=$request->data;
         $aAdmissionProgram=new AdmissionProgram();
-        $programofferid=$aAdmissionProgram->getProgramOfferId($sessionid,$programid,$groupid,$mediumid,$shiftid);
+        $admission_programid=$aAdmissionProgram->getAdmissionProgramID($sessionid,$programid,$groupid,$mediumid,$shiftid);
         // Check Program Offer is assign or not
-        $aVAdmissionSubject=new VAdmissionSubject();
-        $isExist=$aVAdmissionSubject->CheckAdmissionSubject($programofferid);
+        $aAdmissionProgramSubject=new AdmissionProgramSubject();
+        $isExist=$aAdmissionProgramSubject->CheckAssignAdmissionSubject($admission_programid);
         if($isExist){
             $msg="Admission Subject Already Assign";
             return redirect()->back()->with('msg',$msg);
         }
-        $status=\DB::transaction(function()use($data,$programofferid){
+        $status=\DB::transaction(function()use($data,$admission_programid){
             $count=0;
             foreach ($data as $key => $x) {
                 if($x!=null){
-                    $aVAdmissionSubject=new AdmissionProgramSubject();
-                    $aVAdmissionSubject->programofferid=$programofferid;
-                    $aVAdmissionSubject->subjectid=$key;
-                    $aVAdmissionSubject->marks=$x;
-                    $aVAdmissionSubject->save();
+                    $obj=new AdmissionProgramSubject();
+                    $obj->admission_programid=$admission_programid;
+                    $obj->subjectid=$key;
+                    $obj->marks=$x;
+                    $obj->save();
                     $count++;
                 }
             }
@@ -114,6 +119,7 @@ class AdmissionProgramSubjectController extends Controller
      	return redirect()->back()->with('msg',$msg);
     }
     public function edit($id){
+        dd($id);
         $yearName = date('Y');
         $aSession=new Session();
         $sessionid=$aSession->getSessionId($yearName);
@@ -126,19 +132,24 @@ class AdmissionProgramSubjectController extends Controller
         $pList=$aMenu->getPermissionOnMenu('admissionprogramsubject');
     	$aProgramOffer=ProgramOffer::findOrfail($id);
         if($pList[3]->id==3){
-           	$aAdmissionProgram=new AdmissionProgram();
+            $aAdmissionProgram=new AdmissionProgram();
+            // sessionid,programid,groupid,mediumid,shiftid,tableName And last one compareid
+            $programList=$aAdmissionProgram->getAllOnIDS(0,0,0,0,0,"programs",'programid');
+            $mediumList=$aAdmissionProgram->getAllOnIDS(0,0,0,0,0,"mediums",'mediumid');
+            $shiftList=$aAdmissionProgram->getAllOnIDS(0,0,0,0,0,"shifts",'shiftid');
+            $groupList=$aAdmissionProgram->getAllOnIDS(0,0,0,0,0,"groups",'groupid');
             $aVAdmissionSubject=new AdmissionProgramSubject();
             $dataList=[
+                'institute'=>Institute::getInstituteName(),
                 'sidebarMenu'=>$sidebarMenu,
-                'sessionList'=>Session::all(),
-                'programList'=>$aAdmissionProgram->getAllProgram($sessionid),
-                'groupList'=>$aAdmissionProgram->getAllGroup($sessionid,$aProgramOffer->programid),
-                'mediumList'=>$aAdmissionProgram->getAllMedium($sessionid),
-                'shiftList'=>$aAdmissionProgram->getAllShift($sessionid),
+                'programList'=>$programList,
+                'groupList'=>$groupList,
+                'mediumList'=>$mediumList,
+                'shiftList'=>$shiftList,
                 'bean'=>$aProgramOffer,
                 'admissionSubList'=>$aVAdmissionSubject->getAdmissionSubject($aProgramOffer->id),
             ];
-            return view('admin.admissionsettings.vadmissionsubject.edit',$dataList);
+            return view('admin.admissionsettings.admissionprogramsubject.edit',$dataList);
        }else{
             return redirect('error');
        }
@@ -188,83 +199,47 @@ class AdmissionProgramSubjectController extends Controller
         }
         return redirect()->back()->with('msg',$msg);
     }
-    public function getValue(Request $request){
+     // For Ajax Call ===============
+   //    ================================================================
+   public function getValue(Request $request){
         $option=$request->option;
-        $idvalue=$request->idvalue;
         $methodid=$request->methodid;
         $programid=$request->programid;
         $groupid=$request->groupid;
-        if($option=="admissionsubjectgroup"){
+        $mediumid=$request->mediumid;
+        $shiftid=$request->shiftid;
+        if($option=="program"){
             if($methodid==1){
-                $this->getGroup($idvalue);
+                $this->getAllOnIDS(0,$programid,0,0,0,"mediums",'mediumid');
             }elseif($methodid==2){
-                $this->getMedium($idvalue);
+                $this->getAllOnIDS(0,$programid,0,0,0,"shifts",'shiftid');
             }elseif($methodid==3){
-                $this->getShift($idvalue);
+                $this->getAllOnIDS(0,$programid,0,0,0,"groups",'groupid');
             }
-        }elseif($option=="admissionsubjectmedium"){
+        }elseif($option=="group"){
+            // if($methodid==1){
+            //     $this->getMediumsOnSessionAndPrograAndGroup($programid,$groupid);
+            // }elseif($methodid==2){
+            //     $this->getShiftsOnSessionAndPrograAndGroup($programid,$groupid);
+            // }
+        }elseif($option=="medium"){
             if($methodid==1){
-                $this->getMediumWithProgram($programid,$idvalue);
+                $this->getAllOnIDS(0,$programid,0,$mediumid,0,"shifts",'shiftid');
             }elseif($methodid==2){
-                $this->getShiftWithProgram($programid,$idvalue);
+                $this->getAllOnIDS(0,$programid,0,$mediumid,0,"groups",'groupid');
             }
-        }elseif($option=="admissionsubjectshift"){
+        }elseif($option=="shift"){
             if($methodid==1){
-                $this->getShiftWithProgramAndGroup($programid,$groupid,$idvalue);
+                $this->getAllOnIDS(0,$programid,0,$mediumid,$shiftid,"groups",'groupid');
             }
         }
     }
-    private function getGroup($programid){
+    private function getAllOnIDS($sessionid,$programid,$groupid,$mediumid,$shiftid,$tableName,$compareid){
         $aAdmissionProgram=new AdmissionProgram();
-        $result=$aAdmissionProgram->getAllGroup(0,$programid);
+        $result=$aAdmissionProgram->getAllOnIDS($sessionid,$programid,$groupid,$mediumid,$shiftid,$tableName,$compareid);
         $output="<option value=''>SELECT</option>";
         foreach($result as $x){
-           $output.="<option value='$x->id'>$x->name</option>";
-        }
-        echo  $output;
-    }
-    private function getMedium($programid){
-        $aAdmissionProgram=new AdmissionProgram();
-        $result=$aAdmissionProgram->getAllMediumOnProgram(0,$programid);
-        $output="<option value=''>SELECT</option>";
-        foreach($result as $x){
-           $output.="<option value='$x->id'>$x->name</option>";
-        }
-        echo  $output;
-    }
-    private function getShift($programid){
-        $aAdmissionProgram=new AdmissionProgram();
-        $result=$aAdmissionProgram->getAllShiftOnProgram(0,$programid);
-        $output="<option value=''>SELECT</option>";
-        foreach($result as $x){
-           $output.="<option value='$x->id'>$x->name</option>";
-        }
-        echo  $output;
-    }
-    private function getMediumWithProgram($programid,$groupid){
-        $aAdmissionProgram=new AdmissionProgram();
-        $result=$aAdmissionProgram->getFAllMedium(0,$programid,$groupid);
-        $output="<option value=''>SELECT</option>";
-        foreach($result as $x){
-           $output.="<option value='$x->id'>$x->name</option>";
-        }
-        echo  $output;
-    }
-    private function getShiftWithProgram($programid,$groupid){
-        $aAdmissionProgram=new AdmissionProgram();
-        $result=$aAdmissionProgram->getFAllShiftOnMedium(0,$programid,$groupid);
-        $output="<option value=''>SELECT</option>";
-        foreach($result as $x){
-           $output.="<option value='$x->id'>$x->name</option>";
-        }
-        echo  $output;
-    }
-    private function getShiftWithProgramAndGroup($programid,$groupid,$mediumid){
-        $aAdmissionProgram=new AdmissionProgram();
-        $result=$aAdmissionProgram->getFAllShift(0,$programid,$groupid,$mediumid);
-        $output="<option value=''>SELECT</option>";
-        foreach($result as $x){
-           $output.="<option value='$x->id'>$x->name</option>";
+            $output.="<option value='$x->id'>$x->name</option>";
         }
         echo  $output;
     }
