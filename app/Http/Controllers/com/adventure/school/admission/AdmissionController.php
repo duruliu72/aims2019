@@ -24,21 +24,27 @@ use App\com\adventure\school\basic\Address;
 class AdmissionController extends Controller
 {
     public function index(){
-        $aAdmission=new Admission();
+        $aAdmissionProgram=new AdmissionProgram();
+        // sessionid,programid,groupid,mediumid,shiftid,tableName And last one compareid
+        $programList=$aAdmissionProgram->getAllOnIDS(0,0,0,0,0,"programs",'programid');
+        $mediumList=$aAdmissionProgram->getAllOnIDS(0,0,0,0,0,"mediums",'mediumid');
+        $shiftList=$aAdmissionProgram->getAllOnIDS(0,0,0,0,0,"shifts",'shiftid');
+        $groupList=$aAdmissionProgram->getAllOnIDS(0,0,0,0,0,"groups",'groupid');
     	$dataList=[
-    		'programList'=>array(),
-	    	'mediumList'=>array(),
-	    	'shiftList'=>array(),
-    		'genderList'=>array(),
+    		'programList'=>$programList,
+	    	'mediumList'=>$mediumList,
+            'shiftList'=>$shiftList,
+            'groupList'=>$groupList,
+    		'genderList'=>Gender::all(),
     		'quotaList'=>Quota::all(),
     		'religionList'=>Religion::all(),
     		'nationaityList'=>Nationality::all(),
     		'bloodgroupLst'=>BloodGroup::all(),
     		'divisionList'=>Division::all(),
-    		'districtList'=>array(),
-    		'thanaList'=>array(),
-    		'postofficeList'=>array(),
-    		'localgov'=>array(),
+    		'districtList'=>District::all(),
+    		'thanaList'=>Thana::all(),
+    		'postofficeList'=>PostOffice::all(),
+    		'localgovList'=>LocalGov::all(),
     	];
     	return view('school.admission.admission',$dataList);
     }
@@ -359,86 +365,75 @@ class AdmissionController extends Controller
         ];
         return view('school.admission.admissionresult',$dataList);
     }
-    // For Ajax Call
-    public function getValue(Request $request){
-        $option=$request->option;
-        $idvalue=$request->idvalue;
-        $methodid=$request->methodid;
-        $programid=$request->programid;
-        $groupid=$request->groupid;
-        if($option=="program"){
-            if($methodid==1){
-                $this->getGroup($idvalue);
-            }elseif($methodid==2){
-                $this->getMedium($idvalue);
-            }elseif($methodid==3){
-                $this->getShift($idvalue);
-            }
-        }elseif($option=="group"){
-            if($methodid==1){
-                $this->getMediumWithProgram($programid,$idvalue);
-            }elseif($methodid==2){
-                $this->getShiftWithProgram($programid,$idvalue);
-            }
-        }elseif($option=="medium"){
-            if($methodid==1){
-                $this->getShiftWithProgramAndGroup($programid,$groupid,$idvalue);
-            }
+     // For Ajax Call ===============
+    //    ================================================================
+   public function changeAddress(Request $request){
+    $option=$request->option;
+    $methodid=$request->methodid;
+    $id=$request->id;
+    if($option=="pre_division"){
+        if($methodid==1){
+			$output="<option value=''>SELECT12Division.$id</option>";
+			echo $output;
         }
-    }
-    private function getGroup($programid){
-        $aAdmission=new Admission();
-        $result=$aAdmission->getGroup(0,$programid);
-        $output="<option value=''>SELECT</option>";
-        foreach($result as $x){
-           $output.="<option value='$x->id'>$x->name</option>";
+    }elseif($option=="pre_district"){
+        if($methodid==1){
+			$output="<option value=''>SELECT12Division.$id</option>";
+			echo $output;
         }
-        echo  $output;
-    }
-    private function getMedium($programid){
-        $aAdmission=new Admission();
-        $result=$aAdmission->getMedium(0,$programid);
-        $output="<option value=''>SELECT</option>";
-        foreach($result as $x){
-           $output.="<option value='$x->id'>$x->name</option>";
+    }elseif($option=="pre_thana"){
+        if($methodid==1){
+			$output="<option value=''>SELECT12Division.$id</option>";
+			echo $output;
+        }elseif($methodid==2){
+			$output="<option value=''>SELECT12Division.$id</option>";
+			echo $output;
+		}
+	}elseif($option=="per_division"){
+		if($methodid==1){
+			$output="<option value=''>SELECT12Division.$id</option>";
+			echo $output;
         }
-        echo  $output;
-    }
-    private function getShift($programid){
-        $aAdmission=new Admission();
-        $result=$aAdmission->getShift(0,$programid);
-        $output="<option value=''>SELECT</option>";
-        foreach($result as $x){
-           $output.="<option value='$x->id'>$x->name</option>";
+    }elseif($option=="per_district"){
+		if($methodid==1){
+			$output="<option value=''>SELECT12Division.$id</option>";
+			echo $output;
         }
-        echo  $output;
-    }
-    private function getMediumWithProgram($programid,$groupid){
-        $aAdmission=new Admission();
-        $result=$aAdmission->getMediumWithProgram(0,$programid,$groupid);
-        $output="<option value=''>SELECT</option>";
-        foreach($result as $x){
-           $output.="<option value='$x->id'>$x->name</option>";
+    }elseif($option=="per_thana"){
+		if($methodid==1){
+			$output="<option value=''>SELECT12Division.$id</option>";
+			echo $output;
+        }elseif($methodid==2){
+			$output="<option value=''>SELECT12Division.$id</option>";
+			echo $output;
+		}
+    }elseif($option=="g_division"){
+        if($methodid==1){
+			$output="<option value=''>SELECT12Division.$id</option>";
+			echo $output;
         }
-        echo  $output;
-    }
-    private function getShiftWithProgram($programid,$groupid){
-        $aAdmission=new Admission();
-        $result=$aAdmission->getShiftWithProgram(0,$programid,$groupid);
-        $output="<option value=''>SELECT</option>";
-        foreach($result as $x){
-           $output.="<option value='$x->id'>$x->name</option>";
+    }elseif($option=="g_district"){
+		if($methodid==1){
+			$output="<option value=''>SELECT12Division.$id</option>";
+			echo $output;
         }
-        echo  $output;
+    }elseif($option=="g_thana"){
+        if($methodid==1){
+			$output="<option value=''>SELECT12Division.$id</option>";
+			echo $output;
+        }elseif($methodid==2){
+			$output="<option value=''>SELECT12Division.$id</option>";
+			echo $output;
+		}
     }
-    private function getShiftWithProgramAndGroup($programid,$groupid,$mediumid){
-        $aAdmission=new Admission();
-        $result=$aAdmission->getShiftWithProgramAndGroup(0,$programid,$groupid,$mediumid);
-        $output="<option value=''>SELECT</option>";
-        foreach($result as $x){
-           $output.="<option value='$x->id'>$x->name</option>";
-        }
-        echo  $output;
+}
+private function getDropDownValue($id,$tableName,$compareid){
+    $aAddress=new Address();
+    $result=$aAddress->getDropDownValue($id,$tableName,$compareid);
+    $output="<option value=''>SELECT</option>";
+    foreach($result as $x){
+        $output.="<option value='$x->id'>$x->name</option>";
     }
-
+    echo  $output;
+}
 }

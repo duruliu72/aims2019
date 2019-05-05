@@ -126,10 +126,6 @@ Route::get('role/getValue', 'com\adventure\school\role\RoleController@getValue')
 Route::resource('role', 'com\adventure\school\role\RoleController');
 // User Manager
 Route::resource('user', 'com\adventure\school\usermanager\UserManagerController');
-// // For Ajax 
-// Route::get('/getValue/','com\adventure\school\AjaxController@getValue');
-// Route::get('/getValueWith/','com\adventure\school\AjaxController@getValueWith');
-
 
 // ===========================================
 // route For School front part
@@ -143,4 +139,5 @@ Route::post('/admission/admitcard','com\adventure\school\admission\AdmissionCont
 Route::get('/admission/admissionresult','com\adventure\school\admission\AdmissionController@admissionResultForm');
 Route::post('/admission/admissionresult','com\adventure\school\admission\AdmissionController@getAplicantResult');
 Route::get('/admission/getValue','com\adventure\school\admission\AdmissionController@getValue');
+Route::get('/admission/changeAddress','com\adventure\school\admission\AdmissionController@changeAddress');
 Route::resource('admission', 'com\adventure\school\admission\AdmissionController');

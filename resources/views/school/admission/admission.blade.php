@@ -35,15 +35,7 @@
 				                         @endforeach
 	                                </select>
 	                            </div>
-	                             <label class="col-sm-2 control-label" for="groupid">Group</label>
-	                            <div class="col-sm-4">
-	                                <select onchange="getChange(this,'group')" class="form-control" name="groupid" id="groupid">
-	                                   <option value="">SELECT</option>
-	                                </select>
-	                            </div>
-    				 		 </div>
-    				 		 <div class="form-group row">
-	                            <label class="col-sm-2 control-label" for="mediumid">Medium</label>
+								<label class="col-sm-2 control-label" for="mediumid">Medium</label>
 	                            <div class="col-sm-4">
 	                                <select onchange="getChange(this,'medium')" class="form-control" name="mediumid" id="mediumid">
 	                                    <option value="">SELECT</option>
@@ -52,13 +44,25 @@
 				                         @endforeach
 	                                </select>
 	                            </div>
+	                            
+    				 		 </div>
+    				 		 <div class="form-group row">
 	                            <label class="col-sm-2 control-label" for="shiftid">Shift</label>
 	                            <div class="col-sm-4">
-	                                <select class="form-control" name="shiftid" id="shiftid">
+	                                <select onchange="getChange(this,'shift')" class="form-control" name="shiftid" id="shiftid">
 	                                    <option value="">SELECT</option>
 	                                     @foreach ($shiftList as $x)
 				                           <option value="{{$x->id}}">{{$x->name}}</option>
 				                         @endforeach
+	                                </select>
+	                            </div>
+								<label class="col-sm-2 control-label" for="groupid">Group</label>
+	                            <div class="col-sm-4">
+	                                <select class="form-control" name="groupid" id="groupid">
+	                                   <option value="">SELECT</option>
+									   	@foreach ($groupList as $x)
+				                           <option value="{{$x->id}}">{{$x->name}}</option>
+				                        @endforeach
 	                                </select>
 	                            </div>
                        		 </div>
@@ -113,7 +117,7 @@
                     		<div class="form-group row">
 		                        <label class="col-md-2 control-label" for="dob">Date of Birth</label>
 		                        <div class="col-md-4 date" id="datetimepicker1">
-		                            <input onchange="agecalculate(this)" type="text" class="form-control" id="dob" name="dob" value="">
+		                            <input autocomplete="off" onchange="agecalculate(this)" type="text" class="form-control" id="dob" name="dob" value="">
 		                        </div>
 		                        <label class="col-md-2 control-label" for="age">Age</label>
 		                        <div class="col-md-4">
@@ -208,9 +212,9 @@
     				 				<fieldset>
     				 					<legend>Present Address</legend>
     				 					<div class="form-group row">
-		                                    <label class="col-sm-4 control-label" for="devisionid">Division</label>
+		                                    <label class="col-sm-4 control-label" for="pre_divisionid">Division</label>
 		                                    <div class="col-sm-8">
-		                                        <select onchange="getChange(this,'divisionToDistrict')" class="form-control" name="divisionid" id="divisionid">
+		                                        <select onchange="changeAddress(this,'pre_division')" class="form-control" name="pre_divisionid" id="pre_divisionid">
 		                                            <option value="">SELECT</option>
 		                                            @foreach ($divisionList as $x)
 				                           				<option value="{{$x->id}}">{{$x->name}}</option>
@@ -219,47 +223,59 @@
 		                                    </div>
                                 		</div>
                                 		<div class="form-group row">
-		                                    <label class="col-sm-4 control-label" for="districtid">District</label>
+		                                    <label class="col-sm-4 control-label" for="pre_districtid">District</label>
 		                                    <div class="col-sm-8">
-		                                        <select onchange="getChange(this,'districtToThana')" class="form-control" name="districtid" id="districtid">
-		                                            <option value="">SELECT</option>
+		                                        <select onchange="changeAddress(this,'pre_district')" class="form-control" name="pre_districtid" id="pre_districtid">
+													<option value="">SELECT</option>
+													@foreach ($districtList as $x)
+				                           				<option value="{{$x->id}}">{{$x->name}}</option>
+				                        			@endforeach
 		                                        </select>
 		                                    </div>
                                 		</div>
                                 		<div class="form-group row">
-		                                    <label class="col-sm-4 control-label" for="thanaid">Thana</label>
+		                                    <label class="col-sm-4 control-label" for="pre_thanaid">Thana</label>
 		                                    <div class="col-sm-8">
-		                                        <select onchange="getChange(this,'thanaToPostofficeandlocalgov')" class="form-control" name="thanaid" id="thanaid">
-		                                            <option value="">SELECT</option>
+		                                        <select onchange="changeAddress(this,'pre_thana')" class="form-control" name="pre_thanaid" id="pre_thanaid">
+													<option value="">SELECT</option>
+													@foreach ($thanaList as $x)
+													<option value="{{$x->id}}">{{$x->name}}</option>
+													@endforeach
 		                                        </select>
 		                                    </div>
 		                                </div>
 		                                <div class="form-group row">
-		                                    <label class="col-sm-4 control-label" for="postofficeid">Post Office</label>
+		                                    <label class="col-sm-4 control-label" for="pre_postofficeid">Post Office</label>
 		                                    <div class="col-sm-8">
-		                                        <select class="form-control" name="postofficeid" id="postofficeid">
-		                                            <option value="">SELECT</option>
+		                                        <select class="form-control" name="pre_postofficeid" id="pre_postofficeid">
+													<option value="">SELECT</option>
+													@foreach ($postofficeList as $x)
+													<option value="{{$x->id}}">{{$x->name}}</option>
+													@endforeach
 		                                        </select>
 		                                    </div>
 		                                </div>
 		                                <div class="form-group row">
-		                                    <label class="col-sm-4 control-label" for="postcode">Post Code</label>
+		                                    <label class="col-sm-4 control-label" for="pre_postcode">Post Code</label>
 		                                    <div class="col-sm-8">
-		                                        <input type="text" class="form-control" id="postcode" name="postcode">
+		                                        <input type="text" class="form-control" id="pre_postcode" name="pre_postcode">
 		                                    </div>
 		                                </div>
 		                                <div class="form-group row">
-		                                    <label class="col-sm-4 control-label" for="localgovid">Union</label>
+		                                    <label class="col-sm-4 control-label" for="pre_localgovid">Union</label>
 		                                    <div class="col-sm-8">
-		                                        <select class="form-control" name="localgovid" id="localgovid">
-		                                            <option value="">SELECT</option>
+		                                        <select class="form-control" name="pre_localgovid" id="pre_localgovid">
+													<option value="">SELECT</option>
+													@foreach ($localgovList as $x)
+													<option value="{{$x->id}}">{{$x->name}}</option>
+													@endforeach
 		                                        </select>
 		                                    </div>
                                 		</div>
                                 		<div class="form-group row">
-		                                    <label class="col-md-4 control-label" for="address">Address</label>
+		                                    <label class="col-md-4 control-label" for="pre_address">Address</label>
 		                                    <div class="col-md-8">
-		                                        <textarea onchange="" class="form-control" rows="4" id="address" name="address"></textarea>
+		                                        <textarea onchange="txtChange(this)" class="form-control" rows="4" id="pre_address" name="pre_address"></textarea>
 		                                    </div>
 		                                </div>
     				 				</fieldset>
@@ -269,9 +285,9 @@
     				 					<div style="position: absolute;top: 5px;right: 5px;"><input id="isChecked" name="isChecked" onclick="check(this)" type="checkbox">&nbsp;&nbsp;<span>Same As Present Address</span></div>
     				 					<legend>Permanent Address</legend>
     				 					<div class="form-group row">
-		                                    <label class="col-sm-4 control-label" for="devisionid2">Division</label>
+		                                    <label class="col-sm-4 control-label" for="per_divisionid">Division</label>
 		                                    <div class="col-sm-8">
-		                                        <select onchange="getChange(this,'divisionToDistrict2')" class="form-control" name="divisionid2" id="devisionid2">
+		                                        <select onchange="changeAddress(this,'per_division')" class="form-control" name="per_divisionid" id="per_divisionid">
 		                                            <option value="">SELECT</option>
 		                                            @foreach ($divisionList as $x)
 				                           				<option value="{{$x->id}}">{{$x->name}}</option>
@@ -280,47 +296,59 @@
 		                                    </div>
                                 		</div>
                                 		<div class="form-group row">
-		                                    <label class="col-sm-4 control-label" for="districtid2">District</label>
+		                                    <label class="col-sm-4 control-label" for="per_districtid">District</label>
 		                                    <div class="col-sm-8">
-		                                        <select onchange="getChange(this,'districtToThana2')" class="form-control" name="districtid2" id="districtid2">
-		                                            <option value="">SELECT</option>
+		                                        <select onchange="changeAddress(this,'per_district')" class="form-control" name="per_districtid" id="per_districtid">
+													<option value="">SELECT</option>
+													@foreach ($districtList as $x)
+				                           				<option value="{{$x->id}}">{{$x->name}}</option>
+				                        			@endforeach
 		                                        </select>
 		                                    </div>
                                 		</div>
                                 		<div class="form-group row">
-		                                    <label class="col-sm-4 control-label" for="thanaid2">Thana</label>
+		                                    <label class="col-sm-4 control-label" for="per_thanaid">Thana</label>
 		                                    <div class="col-sm-8">
-		                                        <select onchange="getChange(this,'thanaToPostofficeandlocalgov2')" class="form-control" name="thanaid2" id="thanaid2">
-		                                            <option value="">SELECT</option>
+		                                        <select onchange="changeAddress(this,'per_thana')" class="form-control" name="per_thanaid" id="per_thanaid">
+													<option value="">SELECT</option>
+													@foreach ($thanaList as $x)
+													<option value="{{$x->id}}">{{$x->name}}</option>
+													@endforeach
 		                                        </select>
 		                                    </div>
 		                                </div>
 		                                <div class="form-group row">
-		                                    <label class="col-sm-4 control-label" for="postofficeid2">Post Office</label>
+		                                    <label class="col-sm-4 control-label" for="per_postofficeid">Post Office</label>
 		                                    <div class="col-sm-8">
-		                                        <select class="form-control" name="postofficeid2" id="postofficeid2">
-		                                            <option value="">SELECT</option>
+		                                        <select class="form-control" name="per_postofficeid" id="per_postofficeid">
+													<option value="">SELECT</option>
+													@foreach ($postofficeList as $x)
+													<option value="{{$x->id}}">{{$x->name}}</option>
+													@endforeach
 		                                        </select>
 		                                    </div>
 		                                </div>
 		                                <div class="form-group row">
-		                                    <label class="col-sm-4 control-label" for="postcode2">Post Code</label>
+		                                    <label class="col-sm-4 control-label" for="per_postcode">Post Code</label>
 		                                    <div class="col-sm-8">
-		                                        <input type="text" class="form-control" id="postcode2" name="postcode2">
+		                                        <input type="text" class="form-control" id="per_postcode" name="per_postcode">
 		                                    </div>
 		                                </div>
 		                                <div class="form-group row">
-		                                    <label class="col-sm-4 control-label" for="localgovid2">Union</label>
+		                                    <label class="col-sm-4 control-label" for="per_localgovid">Union</label>
 		                                    <div class="col-sm-8">
-		                                        <select class="form-control" name="localgovid2" id="localgovid2">
-		                                            <option value="">SELECT</option>
+		                                        <select class="form-control" name="per_localgovid" id="per_localgovid">
+													<option value="">SELECT</option>
+													@foreach ($localgovList as $x)
+													<option value="{{$x->id}}">{{$x->name}}</option>
+													@endforeach
 		                                        </select>
 		                                    </div>
                                 		</div>
                                 		<div class="form-group row">
-		                                    <label class="col-md-4 control-label" for="address2">Address</label>
+		                                    <label class="col-md-4 control-label" for="per_address">Address</label>
 		                                    <div class="col-md-8">
-		                                        <textarea onchange="" class="form-control" rows="4" id="address2" name="address2"></textarea>
+		                                        <textarea onchange="txtChange(this)" class="form-control" rows="4" id="per_address" name="per_address"></textarea>
 		                                    </div>
 		                                </div>
     				 				</fieldset>
@@ -362,7 +390,7 @@
     				 			<div class="form-group row">
 		                            <label class="col-sm-2 control-label" for="g_divisionid">Division</label>
 		                            <div class="col-sm-4">
-		                               <select onchange="getChange(this,'g_divisionToDistrict')" class="form-control" name="g_divisionid" id="g_divisionid">
+		                               <select onchange="changeAddress(this,'g_division')" class="form-control" name="g_divisionid" id="g_divisionid">
 		                                    <option value="">SELECT</option>
 		                                        @foreach ($divisionList as $x)
 				                           			<option value="{{$x->id}}">{{$x->name}}</option>
@@ -371,22 +399,31 @@
 		                            </div>
 		                            <label class="col-sm-2 control-label" for="g_districtid">District</label>
 		                            <div class="col-sm-4">
-		                               <select onchange="getChange(this,'g_districtToThana')" class="form-control" name="g_districtid" id="g_districtid">
-		                                    <option value="">SELECT</option>
+		                               <select onchange="changeAddress(this,'g_district')" class="form-control" name="g_districtid" id="g_districtid">
+											<option value="">SELECT</option>
+												@foreach ($districtList as $x)
+				                           			<option value="{{$x->id}}">{{$x->name}}</option>
+				                        		@endforeach
 		                                </select>
 		                            </div>
                                 </div>
                                 <div class="form-group row">
 		                            <label class="col-sm-2 control-label" for="g_thanaid">Thana</label>
 		                            <div class="col-sm-4">
-		                               <select onchange="getChange(this,'g_thanaToPostofficeandlocalgov')" class="form-control" name="g_thanaid" id="g_thanaid">
-		                                    <option value="">SELECT</option>
+		                               <select onchange="changeAddress(this,'g_thana')" class="form-control" name="g_thanaid" id="g_thanaid">
+											<option value="">SELECT</option>
+											@foreach ($thanaList as $x)
+				                           	<option value="{{$x->id}}">{{$x->name}}</option>
+				                        	@endforeach
 		                                </select>
 		                            </div>
 		                            <label class="col-sm-2 control-label" for="g_postofficeid">Post Offce</label>
 		                            <div class="col-sm-4">
 		                               <select onchange="" class="form-control" name="g_postofficeid" id="g_postofficeid">
-		                                    <option value="">SELECT</option>
+											<option value="">SELECT</option>
+											@foreach ($postofficeList as $x)
+												<option value="{{$x->id}}">{{$x->name}}</option>
+											@endforeach
 		                                </select>
 		                            </div>
                                 </div>
@@ -398,7 +435,10 @@
 		                            <label class="col-sm-2 control-label" for="g_localgovid">Union</label>
 		                            <div class="col-sm-4">
 		                               <select onchange="" class="form-control" name="g_localgovid" id="g_localgovid">
-		                                    <option value="">SELECT</option>
+											<option value="">SELECT</option>
+											@foreach ($localgovList as $x)
+											<option value="{{$x->id}}">{{$x->name}}</option>
+											@endforeach
 		                                </select>
 		                            </div>
                                 </div>
@@ -462,16 +502,6 @@
 					                <input type="file" class="form-control-file" name="mother_picture" id="mother_picture">
 					            </div>
 					        </div>
-					        <div class="form-group row">
-					            <label class="col-md-2 control-label" for="username">User Name</label>
-					            <div class="col-md-4">
-					                <input type="text" class="form-control" id="username" name="username">
-					            </div>
-					            <label class="col-md-2 control-label" for="password">Password</label>
-					            <div class="col-md-4">
-					                <input type="password" class="form-control" name="password" id="password">
-					            </div>
-					        </div>
     				 	<!-- </div> -->
     				 	<!-- <div class="form-group row">
 					        <div class="offset-md-2 col-md-4">
@@ -491,6 +521,7 @@
 <script src="{{asset('school/js/bootstrap-datepicker.js')}}"></script>
 <script src="{{asset('school/js/studentReg.js')}}"></script>
 <script src="{{asset('school/js/app.js')}}"></script>
+<script src="{{asset('school/js/baseUrl.js')}}"></script>
 <script src="{{asset('school/js/admission.js')}}"></script>
 <script type="text/javascript">
     var Script = function() {

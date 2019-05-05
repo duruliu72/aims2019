@@ -9,7 +9,13 @@
   <section class="wrapper">
     <div class="row">
       <div class="col-lg-12">
-        <h3 class="page-header"><i class="fa fa-laptop"></i>{{$institute->name}}</h3>
+      <h3 class="page-header"><i class="fa fa-laptop"></i>
+          @if($institute!=null)
+            {{$institute->name}}
+          @else
+            Dashboard
+          @endif
+        </h3>
         <ol class="breadcrumb">
           @if($pList[2]->id==2)
           <li><a href="{{URL::to('/gender')}}/{{'create'}}">New</a></li>

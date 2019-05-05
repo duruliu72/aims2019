@@ -7,15 +7,33 @@ use Illuminate\Database\Eloquent\Model;
 class AdmissionProgramSubject extends Model
 {
     protected $table='admission_program_subjects';
-   	protected $fillable = ['admission_programid','subjectid','marks','status'];
-   	public function getId(){
-   		 $lastOne=\DB::table('admission_program_subjects')->orderBy('id', 'desc')->first();
-   		 if($lastOne!=null){
-   		 	return ++$lastOne->id;
-   		 }
-   		 return 1;
-   	}
-   	public function getAllAdmissionProgram(){
+	protected $fillable = ['admission_programid','subjectid','marks','status'];
+	public function getAllAdmission(){
+		$admisson_programList=$this->getAllAdmissionProgram();
+		$list=array();
+		foreach($admisson_programList as $x){
+			$subjectList=$this->getProgramSubjects($x->id);
+			array_push($list,array(
+				"ad_program" => $x,
+    			"subjects" =>$subjectList,
+			));
+		}
+		return $list;
+	}
+	public function getProgramSubjects($admission_programid){
+		$sql="SELECT 
+		adpsub.admission_programid,
+		adpsub.subjectid,
+		admission_subjects.name AS subjectName,
+		adpsub.marks
+		FROM `admission_program_subjects` AS adpsub
+		INNER JOIN admission_subjects ON adpsub.subjectid=admission_subjects.id
+		WHERE adpsub.admission_programid=?";
+		$qresult=\DB::select($sql,[$admission_programid]);
+		$result=collect($qresult);
+		return $result;
+	}
+   	public function getAllAdmissionProgram($admission_programid=0){
    		$sql="SELECT 
 		   admission_programs.* ,
 		   po.sessionid,
@@ -37,21 +55,36 @@ class AdmissionProgramSubject extends Model
 		   INNER JOIN shifts ON po.shiftid=shifts.id
 		   INNER JOIN(SELECT admission_programid FROM `admission_program_subjects`
 		   GROUP BY admission_programid) AS t1 ON t1.admission_programid=admission_programs.id";
-   		$qresult=\DB::select($sql);
+		$conditionList=array();
+		if($admission_programid!=0){
+			$sql.=" WHERE admission_programs.id=?";
+			array_push($conditionList,$admission_programid);
+		}
+		$qresult=\DB::select($sql,$conditionList);
 		$result=collect($qresult);
+		if($admission_programid!=0){
+			return collect($qresult)->first();
+		}
 		return $result;
-   	}
-   	public function getAdmissionSubject($programofferid){
-   		$sql="SELECT t1.*,
-		t2.programofferid,
-		t2.marks
-		FROM admission_program_subjects AS t1
-		LEFT JOIN (SELECT * FROM `admission_program_subjects`
-		WHERE programofferid=?) AS t2 ON t1.id=t2.subjectid";
-   		$qresult=\DB::select($sql,[$programofferid]);
-		$result=collect($qresult);
-		return $result;
-   	}
+	}
+	public function getId(){
+		$lastOne=\DB::table('admission_program_subjects')->orderBy('id', 'desc')->first();
+		if($lastOne!=null){
+			return ++$lastOne->id;
+		}
+		return 1;
+   }
+   	// public function getAdmissionSubject($programofferid){
+   	// 	$sql="SELECT t1.*,
+	// 	t2.programofferid,
+	// 	t2.marks
+	// 	FROM admission_program_subjects AS t1
+	// 	LEFT JOIN (SELECT * FROM `admission_program_subjects`
+	// 	WHERE programofferid=?) AS t2 ON t1.id=t2.subjectid";
+   	// 	$qresult=\DB::select($sql,[$programofferid]);
+	// 	$result=collect($qresult);
+	// 	return $result;
+   	// }
    	public function CheckAssignAdmissionSubject($admission_programid){
    		return \DB::table('admission_program_subjects')->where('admission_programid', $admission_programid)->exists();
    	}

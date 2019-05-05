@@ -74,12 +74,12 @@ class BloodGroupController extends Controller
          if($pList[3]->id!=3){
             return redirect('error');
          }
+         $aBloodGroup=BloodGroup::findOrfail($id);
          $dataList=[
             'institute'=>Institute::getInstituteName(),
             'sidebarMenu'=>$sidebarMenu,
             'bean'=>$aBloodGroup
         ];
-        $aBloodGroup=BloodGroup::findOrfail($id);
         return view('admin.basic.bloodgroup.edit',$dataList);
     }
     public function update(Request $request, $id){

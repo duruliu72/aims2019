@@ -1,7 +1,7 @@
 function txtChange(thisPointer) {
     var isChecked = document.getElementById("isChecked");
     var presentaddresstxt = thisPointer.value;
-    var permanentaddress = document.getElementById("address2");
+    var permanentaddress = document.getElementById("per_address");
     if (isChecked.checked == true) {
         permanentaddress.value = presentaddresstxt;
     }
@@ -9,42 +9,44 @@ function txtChange(thisPointer) {
 
 function check(thisPointer) {
     // Present address field Id
-    var devisionid=document.getElementById("divisionid");
-    var districtid=document.getElementById("districtid");
-    var thanaid=document.getElementById("thanaid");
-    var postofficeid=document.getElementById("postofficeid");
-    var localgovid=document.getElementById("localgovid");
-    var presentaddress = document.getElementById("address");
-    var presentaddresstxt = presentaddress.value;
+    var pre_divisionid=document.getElementById("pre_divisionid");
+    var pre_districtid=document.getElementById("pre_districtid");
+    var pre_thanaid=document.getElementById("pre_thanaid");
+    var pre_postofficeid=document.getElementById("pre_postofficeid");
+    var pre_localgovid=document.getElementById("pre_localgovid");
+    var pre_address = document.getElementById("pre_address");
+    var presentaddresstxt = pre_address.value;
     // Permanent Address Field Id
-    var permanentaddress = document.getElementById("address2");
-    var devisionid2=document.getElementById("devisionid2");
-    var districtid2=document.getElementById("districtid2");
-    var thanaid2=document.getElementById("thanaid2");
-    var postofficeid2=document.getElementById("postofficeid2");
-    var localgovid2=document.getElementById("localgovid2");
+    var per_address = document.getElementById("per_address");
+    var per_divisionid=document.getElementById("per_divisionid");
+    var per_districtid=document.getElementById("per_districtid");
+    var per_thanaid=document.getElementById("per_thanaid");
+    var per_postofficeid=document.getElementById("per_postofficeid");
+    var per_postcode=document.getElementById("per_postcode");
+    var per_localgovid=document.getElementById("per_localgovid");
     if (thisPointer.checked == true) {
-        devisionid2.disabled=true;
-        devisionid2.value=devisionid.value;
-        districtid2.disabled=true;
-        districtid2.value=districtid.value;
-        thanaid2.disabled=true;
-        thanaid2.value=thanaid.value;
-        postofficeid2.disabled=true;
-        postofficeid2.value=postofficeid2.value;
-        localgovid2.disabled=true;
-        localgovid2.value=localgovid.value;
-        // console.log(localgovid.value);
-        permanentaddress.value = presentaddresstxt;
-        permanentaddress.disabled=true;
+        per_divisionid.disabled=true;
+        per_divisionid.value=pre_divisionid.value;
+        per_districtid.disabled=true;
+        per_districtid.value=pre_districtid.value;
+        per_thanaid.disabled=true;
+        per_thanaid.value=pre_thanaid.value;
+        per_postofficeid.disabled=true;
+        per_postofficeid.value=pre_postofficeid.value;
+        per_postcode.disabled=true;
+        per_localgovid.disabled=true;
+        per_localgovid.value=pre_localgovid.value;
+        per_address.value = presentaddresstxt;
+        per_address.disabled=true;
     } else {
-        permanentaddress.value = "";
-        permanentaddress.disabled=false;
-        devisionid2.disabled=false;
-        districtid2.disabled=false;
-        thanaid2.disabled=false;
-        postofficeid2.disabled=false;
-        localgovid2.disabled=false;
+        per_address.value = "";
+        per_address.disabled=false;
+        per_divisionid.disabled=false;
+        per_districtid.disabled=false;
+        per_thanaid.disabled=false;
+        per_postofficeid.disabled=false;
+        per_postcode.disabled=false;
+        per_localgovid.disabled=false;
     }
 }
 

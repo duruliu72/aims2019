@@ -30,7 +30,7 @@ class AdmissionProgramSubjectController extends Controller
         $sidebarMenu=$aMenu->getSidebarMenu();
         $pList=$aMenu->getPermissionOnMenu('admissionprogramsubject');
         $obj=new AdmissionProgramSubject();
-        $aList=$obj->getAllAdmissionProgram();
+        $aList=$obj->getAllAdmission();
         $dataList=[
             'institute'=>Institute::getInstituteName(),
             'sidebarMenu'=>$sidebarMenu,
@@ -119,7 +119,6 @@ class AdmissionProgramSubjectController extends Controller
      	return redirect()->back()->with('msg',$msg);
     }
     public function edit($id){
-        dd($id);
         $yearName = date('Y');
         $aSession=new Session();
         $sessionid=$aSession->getSessionId($yearName);
@@ -130,30 +129,28 @@ class AdmissionProgramSubjectController extends Controller
         }
         $sidebarMenu=$aMenu->getSidebarMenu();
         $pList=$aMenu->getPermissionOnMenu('admissionprogramsubject');
-    	$aProgramOffer=ProgramOffer::findOrfail($id);
-        if($pList[3]->id==3){
-            $aAdmissionProgram=new AdmissionProgram();
-            // sessionid,programid,groupid,mediumid,shiftid,tableName And last one compareid
-            $programList=$aAdmissionProgram->getAllOnIDS(0,0,0,0,0,"programs",'programid');
-            $mediumList=$aAdmissionProgram->getAllOnIDS(0,0,0,0,0,"mediums",'mediumid');
-            $shiftList=$aAdmissionProgram->getAllOnIDS(0,0,0,0,0,"shifts",'shiftid');
-            $groupList=$aAdmissionProgram->getAllOnIDS(0,0,0,0,0,"groups",'groupid');
-            $aVAdmissionSubject=new AdmissionProgramSubject();
-            $dataList=[
-                'institute'=>Institute::getInstituteName(),
-                'sidebarMenu'=>$sidebarMenu,
-                'programList'=>$programList,
-                'groupList'=>$groupList,
-                'mediumList'=>$mediumList,
-                'shiftList'=>$shiftList,
-                'bean'=>$aProgramOffer,
-                'admissionSubList'=>$aVAdmissionSubject->getAdmissionSubject($aProgramOffer->id),
-            ];
-            return view('admin.admissionsettings.admissionprogramsubject.edit',$dataList);
-       }else{
+        if($pList[3]->id!=3){
             return redirect('error');
-       }
-        
+        }
+        $aAdmissionProgram=AdmissionProgram::findOrfail($id);
+        // sessionid,programid,groupid,mediumid,shiftid,tableName And last one compareid
+        $programList=$aAdmissionProgram->getAllOnIDS(0,0,0,0,0,"programs",'programid');
+        $mediumList=$aAdmissionProgram->getAllOnIDS(0,0,0,0,0,"mediums",'mediumid');
+        $shiftList=$aAdmissionProgram->getAllOnIDS(0,0,0,0,0,"shifts",'shiftid');
+        $groupList=$aAdmissionProgram->getAllOnIDS(0,0,0,0,0,"groups",'groupid');
+        $obj=new AdmissionProgramSubject();
+        $bean=$obj->getAllAdmissionProgram($id);
+        $dataList=[
+            'institute'=>Institute::getInstituteName(),
+            'sidebarMenu'=>$sidebarMenu,
+            'programList'=>$programList,
+            'mediumList'=>$mediumList,
+            'shiftList'=>$shiftList,
+            'groupList'=>$groupList,
+            'bean'=>$bean,
+            'admissionSubList'=>$obj->getProgramSubjects($aAdmissionProgram->id),
+        ];
+        return view('admin.admissionsettings.admissionprogramsubject.edit',$dataList);
     }
     public function update(Request $request, $id){
     	$validatedData = $request->validate([
@@ -170,21 +167,22 @@ class AdmissionProgramSubjectController extends Controller
         $mediumid=$request->mediumid;
         $shiftid=$request->shiftid;
         $data=$request->data;
-        \DB::table('vadmission_subjects')->where('programofferid', '=', $id)->delete();
-        $aAdmissionProgram=new AdmissionProgram();
-        $programofferid=$aAdmissionProgram->getProgramOfferId($sessionid,$programid,$groupid,$mediumid,$shiftid);
+        \DB::table('admission_program_subjects')->where('admission_programid', '=', $id)->delete();
+        $aAdmissionProgram=AdmissionProgram::findOrfail($id);
+       
+        $admission_programid=$aAdmissionProgram->getAdmissionProgramID($sessionid,$programid,$groupid,$mediumid,$shiftid);
         // Check Program Offer is assign or not
-        $aVAdmissionSubject=new VAdmissionSubject();
-        $isExist=$aVAdmissionSubject->CheckAdmissionSubject($programofferid);
+        $obj=new AdmissionProgramSubject();
+        $isExist=$obj->CheckAssignAdmissionSubject($admission_programid);
         if($isExist){
             $msg="Admission Subject Already Assign";
             return redirect()->back()->with('msg',$msg);
         }
-        $status=\DB::transaction(function()use($data,$programofferid){
+        $status=\DB::transaction(function()use($data,$admission_programid){
             foreach ($data as $key => $x) {
                 if($x!=null){
                     $aVAdmissionSubject=new AdmissionProgramSubject();
-                    $aVAdmissionSubject->programofferid=$programofferid;
+                    $aVAdmissionSubject->admission_programid=$admission_programid;
                     $aVAdmissionSubject->subjectid=$key;
                     $aVAdmissionSubject->marks=$x;
                     $aVAdmissionSubject->save();
@@ -199,8 +197,8 @@ class AdmissionProgramSubjectController extends Controller
         }
         return redirect()->back()->with('msg',$msg);
     }
-     // For Ajax Call ===============
-   //    ================================================================
+    // For Ajax Call ===============
+    //    ================================================================
    public function getValue(Request $request){
         $option=$request->option;
         $methodid=$request->methodid;

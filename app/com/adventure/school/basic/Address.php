@@ -27,5 +27,8 @@ class Address extends Model
 		$qresult=\DB::select($sql,[$id]);
 		$result=collect($qresult)->first();
 		return $result;
-   	}
+	   }
+	   public function getDropDownValue($id,$tableName,$compareid){
+			$sql="SELECT * FROM `districts` WHERE divisionid=?";
+	   }
 }

@@ -50,14 +50,14 @@
               @foreach($result as $x)
               <tr>
                 <td>{{++$id}}</td>
-                <td>{{$x->sessionName}}</td>
-                <td>{{$x->programName}}</td>
-                <td>{{$x->groupName}}</td>
-                <td>{{$x->mediumName}}</td>
-                <td>{{$x->shiftName}}</td>
+                <td>{{$x['ad_program']->sessionName}}</td>
+                <td>{{$x['ad_program']->programName}}</td>
+                <td>{{$x['ad_program']->groupName}}</td>
+                <td>{{$x['ad_program']->mediumName}}</td>
+                <td>{{$x['ad_program']->shiftName}}</td>
                 @if($pList[3]->id==3)
                 <td> 
-                  <a href="{{URL::to('/admissionprogramsubject')}}/{{$x->id}}/{{'edit'}}" class="tooltip-success" data-rel="tooltip" title="Edit">
+                  <a href="{{URL::to('/admissionprogramsubject')}}/{{$x['ad_program']->id}}/{{'edit'}}" class="tooltip-success" data-rel="tooltip" title="Edit">
                     <span class="green">
                       <i class="ace-icon fa fa-pencil-square-o bigger-120"></i>
                     </span>

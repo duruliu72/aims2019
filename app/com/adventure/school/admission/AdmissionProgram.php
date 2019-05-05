@@ -11,7 +11,7 @@ class AdmissionProgram extends Model
     // protected $primaryKey = 'programofferid';
 	protected $fillable = ['programofferid','required_gpa','exam_marks','exam_date','exam_time','status'];
 	
-	// ===============================================For Dorpdown ==============
+	//===========================For Dorpdown ==============
 	public function getAllOnIDS($sessionid,$programid,$groupid,$mediumid,$shiftid,$tableName,$compareid){
 		if($sessionid==0){
 			$yearName = date('Y');
@@ -21,8 +21,9 @@ class AdmissionProgram extends Model
 		$sql="SELECT t2.* FROM `programoffers` AS t1
 		INNER JOIN ".$tableName." as t2 ON  t1.".$compareid."=t2.id
 		INNER JOIN admission_programs on t1.id=admission_programs.programofferid
-		WHERE sessionid=1";
+		WHERE sessionid=?";
 		$data=array();
+		array_push($data,$sessionid);
 		if($programid!=0){
 			array_push($data,$programid);
 			$sql.=" AND programid=?";
@@ -127,4 +128,5 @@ class AdmissionProgram extends Model
 		$result = collect($qresult)->first();
 		return $result;
 	}
+	
 }
