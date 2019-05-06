@@ -28,7 +28,10 @@ class Address extends Model
 		$result=collect($qresult)->first();
 		return $result;
 	   }
-	   public function getDropDownValue($id,$tableName,$compareid){
-			$sql="SELECT * FROM `districts` WHERE divisionid=?";
+	   public function getDropDownValue($tableName,$conditionid,$id){
+			$sql="SELECT * FROM ".$tableName." WHERE ".$conditionid."=?";
+			$qresult=\DB::select($sql,[$id]);
+			$result=collect($qresult);
+			return $result;
 	   }
 }

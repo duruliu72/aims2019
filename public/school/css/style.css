@@ -397,8 +397,9 @@
     position: relative;
 }
 #admission .heading h3 {
-    text-align: center;
+    /* text-align: center; */
     font-weight: 300;
+    margin: 25px 0px 50px 0px;
 }
 .massage{
     position: absolute;
@@ -671,5 +672,13 @@
     font-weight: 400;
 }
 .print_footer p span{
+    color: red;
+}
+.star{
+    display: block;
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
     color: red;
 }

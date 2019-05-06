@@ -65,6 +65,7 @@ Route::resource('coursetype', 'com\adventure\school\program\CourseTypeController
 // Admission program settings
 Route::get('admissionprogram/getValue','com\adventure\school\admission\AdmissionProgramController@getValue');
 Route::resource('admissionprogram', 'com\adventure\school\admission\AdmissionProgramController');
+Route::resource('startend', 'com\adventure\school\admission\AppStartEndController');
 Route::get('admissionprogramsubject/getValue','com\adventure\school\admission\AdmissionProgramSubjectController@getValue');
 Route::resource('admissionprogramsubject', 'com\adventure\school\admission\AdmissionProgramSubjectController');
 Route::get('admissionfee/pay','com\adventure\school\admission\AdmissionFeeController@index1');

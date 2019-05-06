@@ -94,6 +94,7 @@ class AdmissionProgram extends Model
 		WHERE programofferid=?";
 		$qresult=\DB::select($sql,[$programofferid]);
 		$result = collect($qresult);
+		// dd($result);
 		if($result->isNotEmpty()){
 			$admission_programid=$result->first()->id;
 			return $admission_programid;

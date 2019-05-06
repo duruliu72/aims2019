@@ -36,6 +36,10 @@
                     <div class="col-sm-4">
                       <input type="text" class="form-control" name="name" id="name">
                     </div>
+                    <label class="col-sm-2 control-label" for="programsign">Program Sign</label>
+                    <div class="col-sm-4">
+                      <input type="text" class="form-control" name="programsign" id="programsign">
+                    </div>
                   </div>
                   <button type="submit" class="btn btn-default">Save</button>
                 </form>

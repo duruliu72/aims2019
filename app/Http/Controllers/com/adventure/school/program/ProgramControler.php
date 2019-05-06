@@ -50,10 +50,13 @@ class ProgramControler extends Controller
     public function store(Request $request){
      	 $validatedData = $request->validate([
         'name' => 'required|unique:programs|max:255',
+        'programsign' => 'required|unique:programs|max:255',
     	]);
-     	$name=$request->name;
+        $name=$request->name;
+        $programsign=$request->programsign;
      	$aProgram=new Program();
-     	$aProgram->name=$name;
+        $aProgram->name=$name;
+        $aProgram->programsign=$programsign;
      	$status=$aProgram->save();
      	if($status){
      		$msg="Program Created Successfully";
@@ -83,11 +86,13 @@ class ProgramControler extends Controller
     }
     public function update(Request $request, $id){
     	$validatedData = $request->validate([
-        'name' => 'required|unique:programs|max:255',
+        // 'name' => 'required|unique:programs|max:255',
     	]);
-    	$name=$request->name;
+        $name=$request->name;
+        $programsign=$request->programsign;
      	$aProgram=Program::findOrfail($id);
-     	$aProgram->name=$name;
+        $aProgram->name=$name;
+        $aProgram->programsign=$programsign;
      	$status=$aProgram->update();
      	if($status){
      		$msg="Program Updated Successfully";

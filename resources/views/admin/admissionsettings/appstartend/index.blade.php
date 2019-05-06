@@ -10,17 +10,17 @@
     <div class="row">
       <div class="col-lg-12">
       <h3 class="page-header"><i class="fa fa-laptop"></i>
-            @if($institute!=null)
-              {{$institute->name}}
-            @else
-              Dashboard
-            @endif
+          @if($institute!=null)
+            {{$institute->name}}
+          @else
+            Dashboard
+          @endif
         </h3>
         <ol class="breadcrumb">
           @if($pList[2]->id==2)
-            <li><a href="{{URL::to('/program')}}/{{'create'}}">New</a></li>
+            <li><a href="{{URL::to('/startend')}}/{{'create'}}">New</a></li>
           @endif
-          <li>Program</li>
+          <li>Application Date Time SetUp</li>
         </ol>
       </div>
     </div>
@@ -32,8 +32,10 @@
             <thead>
               <tr>
                 <th>SL NO</th>
-                <th>Name</th>
-                <th>Program Sign</th>
+                <th>Session</th>
+                <th>App Start Date</th>
+                <th>App End Date</th>
+                <th>Exam Start Date</th>
                 @if($pList[3]->id==3)
                 <th width="10px">Edit</th>
                 @endif
@@ -47,11 +49,13 @@
               @foreach($result as $x)
               <tr>
                 <td>{{++$id}}</td>
-                <td>{{$x->name}}</td>
-                <td>{{$x->programsign}}</td>
+                <td>{{$x->sessionName}}</td>
+                <td>{{$x->app_startDate}}</td>
+                <td>{{$x->app_endDate}}</td>
+                <td>{{$x->examStartDate}}</td>
                 @if($pList[3]->id==3)
                 <td> 
-                  <a href="{{URL::to('/program')}}/{{$x->id}}/{{'edit'}}" class="tooltip-success" data-rel="tooltip" title="Edit">
+                  <a href="{{URL::to('/startend')}}/{{$x->id}}/{{'edit'}}" class="tooltip-success" data-rel="tooltip" title="Edit">
                     <span class="green">
                       <i class="ace-icon fa fa-pencil-square-o bigger-120"></i>
                     </span>
@@ -73,8 +77,10 @@
             <tfoot>
               <tr>
                 <th>SL NO</th>
-                <th>Name</th>
-                <th>Program Sign</th>
+                <th>Session</th>
+                <th>App Start Date</th>
+                <th>App End Date</th>
+                <th>Exam Start Date</th>
                 @if($pList[3]->id==3)
                 <th width="10px">Edit</th>
                 @endif

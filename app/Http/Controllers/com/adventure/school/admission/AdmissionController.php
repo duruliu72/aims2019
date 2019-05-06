@@ -51,34 +51,26 @@ class AdmissionController extends Controller
     public function store(Request $request){
     	$isChecked=$request->isChecked;
     	$validatedData = $request->validate([
-        	'programid' => 'required',
+			'programid' => 'required',
+			'mediumid' => 'required',
+			'shiftid' => 'required',
         	'groupid' => 'required',
-        	'mediumid' => 'required',
-        	'shiftid' => 'required',
-        	'name' => 'required',
+        	'firstName' => 'required',
         	'fatherName' => 'required',
         	'motherName' => 'required',
-        	'dob' => 'required',
-        	'birthregno' => 'required',
+			'dob' => 'required',
+			'phone' => 'required',
         	'genderid' => 'required',
-        	'bloodgroupid' => 'required',
         	'religionid' => 'required',
         	'nationalityid' => 'required',
         	'quotaid' => 'required',
-        	'divisionid' => 'required',
-        	'districtid' => 'required',
-        	'thanaid' => 'required',
-        	'postofficeid' => 'required',
-        	'postcode' => 'required',
-        	'localgovid' => 'required',
-        	'address' => 'required',
-        	'g_divisionid' => 'required',
-        	'g_districtid' => 'required',
-        	'g_thanaid' => 'required',
-        	'g_postofficeid' => 'required',
-        	'g_postcode' => 'required',
-        	'g_localgovid' => 'required',
-        	'g_address' => 'required',
+        	'pre_divisionid' => 'required',
+        	'pre_districtid' => 'required',
+        	'pre_thanaid' => 'required',
+        	'pre_postofficeid' => 'required',
+        	'pre_postcode' => 'required',
+        	'pre_localgovid' => 'required',
+        	'pre_address' => 'required',
             ]);
     	$request->flash();
     	$aApplicant=new Applicant();
@@ -88,9 +80,11 @@ class AdmissionController extends Controller
     	$shiftid=$request->shiftid;
     	$aAdmissionProgram=new AdmissionProgram();
     	// find programofferid id 
-    	$programofferid=$aAdmissionProgram->getProgramOfferId(0,$programid,$groupid,$mediumid,$shiftid);
+		$admission_programid=$aAdmissionProgram->getAdmissionProgramID(0,$programid,$groupid,$mediumid,$shiftid);
         // Create Applicant id
-        $applicantid=$aApplicant->makeAppicantid($programofferid);
+		$applicantid=$aApplicant->makeAppicantid($admission_programid);
+		dd($applicantid);
+		die("Die Here");
         // dd($applicantid);
     	$aApplicant->programofferid=$programofferid;
         $aApplicant->applicantid=$applicantid;
@@ -373,63 +367,51 @@ class AdmissionController extends Controller
     $id=$request->id;
     if($option=="pre_division"){
         if($methodid==1){
-			$output="<option value=''>SELECT12Division.$id</option>";
-			echo $output;
+			$this->getDropDownValue("districts","divisionid",$id);
         }
     }elseif($option=="pre_district"){
         if($methodid==1){
-			$output="<option value=''>SELECT12Division.$id</option>";
-			echo $output;
+			$this->getDropDownValue("thanas","districtid",$id);
         }
     }elseif($option=="pre_thana"){
         if($methodid==1){
-			$output="<option value=''>SELECT12Division.$id</option>";
-			echo $output;
+			$this->getDropDownValue("postoffices","thanaid",$id);
         }elseif($methodid==2){
-			$output="<option value=''>SELECT12Division.$id</option>";
-			echo $output;
+			$this->getDropDownValue("localgovs","thanaid",$id);
 		}
 	}elseif($option=="per_division"){
 		if($methodid==1){
-			$output="<option value=''>SELECT12Division.$id</option>";
-			echo $output;
+			$this->getDropDownValue("districts","divisionid",$id);
         }
     }elseif($option=="per_district"){
 		if($methodid==1){
-			$output="<option value=''>SELECT12Division.$id</option>";
-			echo $output;
+			$this->getDropDownValue("thanas","districtid",$id);
         }
     }elseif($option=="per_thana"){
 		if($methodid==1){
-			$output="<option value=''>SELECT12Division.$id</option>";
-			echo $output;
+			$this->getDropDownValue("postoffices","thanaid",$id);
         }elseif($methodid==2){
-			$output="<option value=''>SELECT12Division.$id</option>";
-			echo $output;
+			$this->getDropDownValue("localgovs","thanaid",$id);
 		}
     }elseif($option=="g_division"){
         if($methodid==1){
-			$output="<option value=''>SELECT12Division.$id</option>";
-			echo $output;
+			$this->getDropDownValue("districts","divisionid",$id);
         }
     }elseif($option=="g_district"){
 		if($methodid==1){
-			$output="<option value=''>SELECT12Division.$id</option>";
-			echo $output;
+			$this->getDropDownValue("thanas","districtid",$id);
         }
     }elseif($option=="g_thana"){
         if($methodid==1){
-			$output="<option value=''>SELECT12Division.$id</option>";
-			echo $output;
+			$this->getDropDownValue("postoffices","thanaid",$id);
         }elseif($methodid==2){
-			$output="<option value=''>SELECT12Division.$id</option>";
-			echo $output;
+			$this->getDropDownValue("localgovs","thanaid",$id);
 		}
     }
 }
-private function getDropDownValue($id,$tableName,$compareid){
+private function getDropDownValue($tableName,$conditionid,$id){
     $aAddress=new Address();
-    $result=$aAddress->getDropDownValue($id,$tableName,$compareid);
+    $result=$aAddress->getDropDownValue($tableName,$conditionid,$id);
     $output="<option value=''>SELECT</option>";
     foreach($result as $x){
         $output.="<option value='$x->id'>$x->name</option>";

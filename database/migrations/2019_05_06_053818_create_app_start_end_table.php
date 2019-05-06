@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateAdmissionProgramsTable extends Migration
+class CreateAppStartEndTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,13 @@ class CreateAdmissionProgramsTable extends Migration
      */
     public function up()
     {
-        Schema::create('admission_programs', function (Blueprint $table) {
+        Schema::create('app_start_end', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('programofferid')->length(11)->unique();
-            $table->double('required_gpa', 8, 2)->nullable();
-            $table->double('exam_marks', 8, 2)->nullable();
-            $table->date('exam_date')->nullable();
-            $table->time('exam_time')->nullable();
+            $table->integer('sessionid')->length(11);
+            $table->dateTime('app_startDate');
+            $table->dateTime('app_endDate');
+            $table->date('examStartDate')->nullable();
+            $table->integer('exam_status')->length(5)->default(0);
             $table->integer('status')->length(5)->default(0);
             $table->timestamps();
         });
@@ -32,6 +32,6 @@ class CreateAdmissionProgramsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('admission_programs');
+        Schema::dropIfExists('app_start_end');
     }
 }
