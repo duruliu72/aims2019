@@ -24,13 +24,13 @@
                     <form action="{{URL::to('admission/applicantcopy')}}"  method="post" class="form-horizontal">
                         {{csrf_field()}}
                         <div class="form-group row">
-                        <label class="col-sm-2 control-label" for="username">User Name</label>
+                        <label class="col-sm-2 control-label" for="applicantid">Applicant ID</label>
                         <div class="col-sm-4">
-                             <input type="text" class="form-control" placeholder="User Name" id="username" name="username" value="{{ old('username') }}">
+                             <input type="text" class="form-control" placeholder="Applicant Id" id="applicantid" name="applicantid" value="{{ old('applicantid') }}">
                         </div>
-                         <label class="col-sm-2 control-label" for="password">Password</label>
+                         <label class="col-sm-2 control-label" for="pin_code">PIN Code</label>
                         <div class="col-sm-4">
-                             <input type="password" class="form-control" placeholder="password" id="password" name="password" value="{{ old('password') }}">
+                             <input autocomplete="off" type="text" class="form-control" placeholder="Pin Code" id="pin_code" name="pin_code" value="{{ old('pin_code') }}">
                         </div>
                         </div>
                         <div class="form-group row">

@@ -18,10 +18,15 @@
                     <div class="col-sm-12 print-col">
                         <div class="institute_name margin_bottom">
                             <div class="institute_logo">
-                                <img src="{{asset('clientAdmin/image/logo/institute_logo.png')}}">
+                                <img src="{{asset('clientAdmin/image/logo/school-logo.png')}}">
                             </div>
                             <div class="institute_txt">
-                                <h3 class="institute_title">{{$instituteinfo->name}}</h3>
+                                <h3 class="institute_title">@if($bean['institute']!=null)
+                                    {{$bean['institute']->name}}
+                                    @else
+                                    Secondary High School
+                                    @endif
+                                </h3>
                                 <p class="institute_subtitle">Chouddagram Pourasova, Chauddagram , Comilla</p>
                             </div>
                         </div>
@@ -32,34 +37,34 @@
                                 </div>
                                 <div class="applicant_item_desc">
                                     <div class="photo">
-                                        <img src="{{asset('clientAdmin/image/picture/Kalam.png')}}">
+                                        <img src="{{asset('clientAdmin/admission/student/')}}/{{$bean['applicant']->picture}}">
                                     </div>
                                     <div class="info">
                                         <table>
                                             <tr>
                                                 <td>Id <span>:</span></td>
-                                                <td>{{$applicantinfo->applicantid}}</td>
+                                                <td>{{$bean['applicant']->applicantid}}</td>
                                             </tr>
                                             <tr>
                                                 <td>Name <span>:</span></td>
-                                                <td>{{$applicantinfo->name}}</td>
+                                                <td>{{sprintf("%s %s %s",$bean['applicant']->firstName,$bean['applicant']->middleName,$bean['applicant']->lastName)}}</td>
                                             </tr>
                                             <tr>
-                                                <?php $dob=date("d/m/Y", strtotime($applicantinfo->dob)) ?>
+                                                <?php $dob=date("d/m/Y", strtotime($bean['applicant']->dob)) ?>
                                                 <td>Date Of Birth <span>:</span></td>
                                                 <td>{{$dob}}</td>
                                             </tr>
                                              <tr>
                                                 <td>Gender <span>:</span></td>
-                                                <td>{{$applicantinfo->genderName}}</td>
+                                                <td>{{$bean['applicant']->genderName}}</td>
                                             </tr>
                                             <tr>
                                                 <td>Reigion <span>:</span></td>
-                                                <td>{{$applicantinfo->religionName}}</td>
+                                                <td>{{$bean['applicant']->religionName}}</td>
                                             </tr>
                                             <tr>
                                                 <td>Blood Group <span>:</span></td>
-                                                <td>{{$applicantinfo->bloodgroupName}}</td>
+                                                <td>{{$bean['applicant']->bloodgroupName}}</td>
                                             </tr>
                                         </table>
                                     </div>
@@ -67,19 +72,19 @@
                                         <table>
                                             <tr>
                                                 <td>Class <span>:</span></td>
-                                                <td>{{$applicantinfo->programName}}</td>
+                                                <td>{{$bean['programofferinfo']->programName}}</td>
                                             </tr>
                                             <tr>
                                                 <td>Shift <span>:</span></td>
-                                                <td>{{$applicantinfo->shiftName}}</td>
+                                                <td>{{$bean['programofferinfo']->shiftName}}</td>
                                             </tr>
                                             <tr>
                                                 <td>Group <span>:</span></td>
-                                                <td>{{$applicantinfo->groupName}}</td>
+                                                <td>{{$bean['programofferinfo']->groupName}}</td>
                                             </tr>
                                              <tr>
                                                 <td>Session <span>:</span></td>
-                                                <td>{{$applicantinfo->sessionName}}</td>
+                                                <td>{{$bean['programofferinfo']->sessionName}}</td>
                                             </tr>
                                         </table>
                                     </div>
@@ -93,31 +98,31 @@
                                     <table>
                                         <tr>
                                             <td>Father's Name <span>:</span></td>
-                                            <td>{{$applicantinfo->fatherName}}</td>
+                                            <td>{{$bean['applicant']->fatherName}}</td>
                                             <td>Mother's Name <span>:</span></td>
-                                            <td>{{$applicantinfo->motherName}}</td>
+                                            <td>{{$bean['applicant']->motherName}}</td>
                                         </tr>
                                         <tr>
                                             <td>Phone <span>:</span></td>
-                                            <td>{{$applicantinfo->father_Phone}}</td>
+                                            <td>{{$bean['applicant']->father_Phone}}</td>
                                             <td>Phone <span>:</span></td>
-                                            <td>{{$applicantinfo->mother_Phone}}</td>
+                                            <td>{{$bean['applicant']->mother_Phone}}</td>
                                         </tr>
                                         <tr>
                                             <td>Profession <span>:</span></td>
-                                            <td>{{$applicantinfo->f_occupation}}</td>
+                                            <td>{{$bean['applicant']->f_occupation}}</td>
                                             <td>Profession <span>:</span></td>
-                                            <td>{{$applicantinfo->m_occupation}}</td>
+                                            <td>{{$bean['applicant']->m_occupation}}</td>
                                         </tr>
                                         <tr>
                                             <td>NID <span>:</span></td>
-                                            <td>{{$applicantinfo->father_nid}}</td>
+                                            <td>{{$bean['applicant']->father_nid}}</td>
                                             <td>NID <span>:</span></td>
-                                            <td>{{$applicantinfo->mother_nid}}</td>
+                                            <td>{{$bean['applicant']->mother_nid}}</td>
                                         </tr>
                                         <tr>
                                             <td>Annual Income <span>:</span></td>
-                                            <td>{{$applicantinfo->parent_income}}</td>
+                                            <td>{{$bean['applicant']->parent_income}}</td>
                                         </tr>
                                     </table>
                                 </div>
@@ -130,9 +135,9 @@
                                     <table>
                                         <tr>
                                             <td>Present Address <span>:</span></td>
-                                            <td>{{$presentAddress->address}},{{$presentAddress->localgovName}},<br>{{$presentAddress->thanaName}},{{$presentAddress->districtName}}</td>
+                                            <td>{{$bean['presentAddress']->address}},{{$bean['presentAddress']->localgovName}},<br>{{$bean['presentAddress']->thanaName}},{{$bean['presentAddress']->districtName}}</td>
                                             <td>Permanent Address <span>:</span></td>
-                                            <td>{{$permanentAddress->address}},{{$permanentAddress->localgovName}},<br>{{$permanentAddress->thanaName}},{{$permanentAddress->districtName}}</td>
+                                            <td>{{$bean['presentAddress']->address}},{{$bean['presentAddress']->localgovName}},<br>{{$bean['presentAddress']->thanaName}},{{$bean['presentAddress']->districtName}}</td>
                                         </tr>
                                     </table>
                                 </div>
@@ -140,7 +145,7 @@
                         </div>
                         <div class="controller_signature">
                             <div class="controller_signature content">
-                                <!-- <img src=""> -->
+                                <img src="{{asset('clientAdmin/admission/emaxcontroller/')}}/{{'examcontroller.jpg'}}">
                                 <p>Exam Controller</p>
                             </div>
                         </div>

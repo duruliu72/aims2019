@@ -420,7 +420,7 @@
     cursor: pointer;
     color: #007bff;
     position: absolute;
-    top: -60px;
+    top: -85px;
     right: 10px;
     padding: 2px 5px;
     border-style: none;
@@ -656,6 +656,9 @@
     float: right;
     margin-right: 10px;
 }
+.controller_signature{
+    margin-top: 20px;
+}
 .controller_signature::after {
     content: "";
     display: block;
@@ -663,6 +666,18 @@
 }
 .controller_signature .content{
     float: right;
+    position: relative;
+}
+.controller_signature .content img{
+    position: absolute;
+    width: 200px;
+    z-index: -9;
+    right: 0px;
+    bottom: 74%;
+}
+.controller_signature .content p{
+    margin: 0px;
+    padding: 25px 0px;
 }
 .print_footer{
     padding: 6px 0px;

@@ -18,10 +18,15 @@
                     <div class="col-sm-12 print-col">
                         <div class="institute_name margin_bottom">
                             <div class="institute_logo">
-                                <img src="{{asset('clientAdmin/image/logo/institute_logo.png')}}">
+                                <img src="{{asset('clientAdmin/image/logo/school-logo.png')}}">
                             </div>
                             <div class="institute_txt">
-                                <h3 class="institute_title">{{$instituteinfo->name}}</h3>
+                                <h3 class="institute_title">@if($bean['institute']!=null)
+                                    {{$bean['institute']->name}}
+                                    @else
+                                    Secondary High School
+                                    @endif
+                                </h3>
                                 <p class="institute_subtitle">Chouddagram Pourasova, Chauddagram , Comilla</p>
                             </div>
                         </div>
@@ -32,60 +37,64 @@
                                 </div>
                                 <div class="applicant_item_desc">
                                     <div class="photo">
-                                        <img src="{{asset('clientAdmin/image/picture/Kalam.png')}}">
+                                    <img src="{{asset('clientAdmin/admission/student/')}}/{{$bean['applicant']->picture}}">
                                     </div>
                                     <div class="info">
                                         <table>
                                             <tr>
-                                                <td>Roll <span>:</span></td>
-                                                <td>{{$applicantinfo->admssion_roll}}</td>
+                                                <td>Id <span>:</span></td>
+                                                <td>{{$bean['applicant']->applicantid}}</td>
                                             </tr>
                                             <tr>
                                                 <td>Name <span>:</span></td>
-                                                <td>{{$applicantinfo->name}}</td>
+                                                <td>{{sprintf("%s %s %s",$bean['applicant']->firstName,$bean['applicant']->middleName,$bean['applicant']->lastName)}}</td>
                                             </tr>
                                             <tr>
-                                                <?php $dob=date("d/m/Y", strtotime($applicantinfo->dob)) ?>
+                                                <td>Serial <span>:</span></td>
+                                                <td>{{$bean['programofferinfo']->admssion_roll}}</td>
+                                            </tr>
+                                            <tr>
+                                                <?php $dob=date("d/m/Y", strtotime($bean['applicant']->dob)) ?>
                                                 <td>Date Of Birth <span>:</span></td>
                                                 <td>{{$dob}}</td>
                                             </tr>
                                              <tr>
                                                 <td>Gender <span>:</span></td>
-                                                <td>{{$applicantinfo->genderName}}</td>
+                                                <td>{{$bean['applicant']->genderName}}</td>
                                             </tr>
                                             <tr>
                                                 <td>Reigion <span>:</span></td>
-                                                <td>{{$applicantinfo->religionName}}</td>
+                                                <td>{{$bean['applicant']->religionName}}</td>
                                             </tr>
                                             <tr>
                                                 <td>Blood Group <span>:</span></td>
-                                                <td>{{$applicantinfo->bloodgroupName}}</td>
+                                                <td>{{$bean['applicant']->bloodgroupName}}</td>
                                             </tr>
                                         </table>
                                         <div class="exam-details">
                                             <table>
                                                 <tr>
-                                                <?php $exam_date=date("d-m-Y", strtotime($examinfo->exam_date)) ?>
+                                                <?php $exam_date=date("d-m-Y", strtotime($bean['programofferinfo']->exam_date)) ?>
                                                     <td>Exam Date <span>:</span></td>
                                                     <td>{{$exam_date}}</td>
                                                     <?php
-                                                        $dt=new DateTime($examinfo->exam_time);
+                                                        $dt=new DateTime($bean['programofferinfo']->exam_time);
                                                        ?>
                                                     <td>Exam Time <span>:</span></td>
                                                     <td>{{$dt->format('h:i a')}}</td>
                                                 </tr>
                                             </table>
                                             <div class="total_marks">
-                                                <p><span>Exam Marks(Total-)</span>{{" : "}}{{$examinfo->exam_marks}}</p>
+                                                <p><span>Exam Marks(Total-)</span>{{" : "}}{{$bean['programofferinfo']->exam_marks}}</p>
                                             </div>
                                             <table>
                                                 <tr>
-                                                    @foreach($subjectinfo as $x)
-                                                        <td>{{$x->name}}</td>
+                                                    @foreach($bean['subject'] as $x)
+                                                        <td>{{$x->admissionSubject}}</td>
                                                     @endforeach
                                                 </tr>
                                                 <tr>
-                                                    @foreach($subjectinfo as $x)
+                                                    @foreach($bean['subject'] as $x)
                                                         <td>{{$x->marks}}</td>
                                                     @endforeach
                                                 </tr>
@@ -96,23 +105,23 @@
                                         <table>
                                             <tr>
                                                 <td>Session <span>:</span></td>
-                                                <td>{{$applicantinfo->sessionName}}</td>
+                                                <td>{{$bean['programofferinfo']->sessionName}}</td>
                                             </tr>
                                             <tr>
                                                 <td>Class <span>:</span></td>
-                                                <td>{{$applicantinfo->programName}}</td>
+                                                <td>{{$bean['programofferinfo']->programName}}</td>
                                             </tr>
                                              <tr>
                                                 <td>Group <span>:</span></td>
-                                                <td>{{$applicantinfo->groupName}}</td>
+                                                <td>{{$bean['programofferinfo']->groupName}}</td>
                                             </tr>
                                              <tr>
                                                 <td>Medium <span>:</span></td>
-                                                <td>{{$applicantinfo->mediumName}}</td>
+                                                <td>{{$bean['programofferinfo']->mediumName}}</td>
                                             </tr>
                                             <tr>
                                                 <td>Shift <span>:</span></td>
-                                                <td>{{$applicantinfo->shiftName}}</td>
+                                                <td>{{$bean['programofferinfo']->shiftName}}</td>
                                             </tr>
                                     
                                         </table>
@@ -122,7 +131,7 @@
                         </div>
                         <div class="controller_signature">
                             <div class="controller_signature content">
-                                <!-- <img src=""> -->
+                                <img src="{{asset('clientAdmin/admission/emaxcontroller/')}}/{{'examcontroller.jpg'}}">
                                 <p>Exam Controller</p>
                             </div>
                         </div>

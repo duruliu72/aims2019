@@ -74,17 +74,6 @@ class AdmissionProgramSubject extends Model
 		}
 		return 1;
    }
-   	// public function getAdmissionSubject($programofferid){
-   	// 	$sql="SELECT t1.*,
-	// 	t2.programofferid,
-	// 	t2.marks
-	// 	FROM admission_program_subjects AS t1
-	// 	LEFT JOIN (SELECT * FROM `admission_program_subjects`
-	// 	WHERE programofferid=?) AS t2 ON t1.id=t2.subjectid";
-   	// 	$qresult=\DB::select($sql,[$programofferid]);
-	// 	$result=collect($qresult);
-	// 	return $result;
-   	// }
    	public function CheckAssignAdmissionSubject($admission_programid){
    		return \DB::table('admission_program_subjects')->where('admission_programid', $admission_programid)->exists();
    	}

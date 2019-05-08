@@ -90,16 +90,26 @@ class AdmissionProgram extends Model
 	public function getAdmissionProgramID($sessionid,$programid,$groupid,$mediumid,$shiftid){
 		$aProgramOffer=new ProgramOffer();
 		$programofferid=$aProgramOffer->getProgramOfferId($sessionid,$programid,$groupid,$mediumid,$shiftid);
-		$sql="SELECT * FROM `admission_programs`
+		$sql="SELECT * FROM admission_programs
 		WHERE programofferid=?";
 		$qresult=\DB::select($sql,[$programofferid]);
 		$result = collect($qresult);
-		// dd($result);
 		if($result->isNotEmpty()){
 			$admission_programid=$result->first()->id;
 			return $admission_programid;
 		}
 		return 0;
+	}
+	public function getProgramofferid($admission_programid){
+		$sql="SELECT * FROM `admission_programs`
+		WHERE id=1";
+		$qresult=\DB::select($sql,[$admission_programid]);
+		$result = collect($qresult)->first();
+		if($result==null){
+			return 0;
+		}
+		$programofferid=$result->programofferid;
+		return $programofferid;
 	}
 	public function getAdmissionProgram($programofferid){
 		$sql="SELECT admission_programs.*,

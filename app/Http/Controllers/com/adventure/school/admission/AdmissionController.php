@@ -8,6 +8,7 @@ use App\com\adventure\school\admission\AdmissionProgram;
 use App\com\adventure\school\admission\Admission;
 use App\com\adventure\school\admission\VAdmissionSubject;
 use App\com\adventure\school\admission\Applicant;
+use App\com\adventure\school\admission\AdmissionApplicant;
 use App\com\adventure\school\admission\AdmissionResult;
 use App\com\adventure\school\basic\Institute;
 use App\com\adventure\school\basic\Gender;
@@ -21,9 +22,13 @@ use App\com\adventure\school\basic\Thana;
 use App\com\adventure\school\basic\PostOffice;
 use App\com\adventure\school\basic\LocalGov;
 use App\com\adventure\school\basic\Address;
+use App\SendSms;
 class AdmissionController extends Controller
 {
     public function index(){
+		// $sendMsg = new SendSms();
+		// $message = 'Application Successful';
+		// $sms_stutus = $sendMsg->MessageSend('01726720772', $message);
         $aAdmissionProgram=new AdmissionProgram();
         // sessionid,programid,groupid,mediumid,shiftid,tableName And last one compareid
         $programList=$aAdmissionProgram->getAllOnIDS(0,0,0,0,0,"programs",'programid');
@@ -79,26 +84,25 @@ class AdmissionController extends Controller
     	$mediumid=$request->mediumid;
     	$shiftid=$request->shiftid;
     	$aAdmissionProgram=new AdmissionProgram();
-    	// find programofferid id 
+    	// find admission_programid id 
 		$admission_programid=$aAdmissionProgram->getAdmissionProgramID(0,$programid,$groupid,$mediumid,$shiftid);
         // Create Applicant id
 		$applicantid=$aApplicant->makeAppicantid($admission_programid);
-		dd($applicantid);
-		die("Die Here");
-        // dd($applicantid);
-    	$aApplicant->programofferid=$programofferid;
         $aApplicant->applicantid=$applicantid;
-    	$aApplicant->name=$request->name;
+		$aApplicant->firstName=$request->firstName;
+		$aApplicant->middleName=$request->middleName;
+		$aApplicant->lastName=$request->lastName;
+		$aApplicant->phone=$request->phone;
     	$aApplicant->fatherName=$request->fatherName;
-    	$aApplicant->motherName=$request->motherName;
-    	$aApplicant->f_occupation=$request->f_occupation;
+		$aApplicant->motherName=$request->motherName;
+		
+    	$aApplicant->f_occupation=$request->f_occupation?$request->f_occupation:null;
     	$aApplicant->m_occupation=$request->m_occupation;
     	$aApplicant->father_nid=$request->father_nid;
     	$aApplicant->mother_nid=$request->mother_nid;
     	$aApplicant->father_Phone=$request->father_Phone;
     	$aApplicant->mother_Phone=$request->mother_Phone;
     	$aApplicant->dob=date("Y-m-d", strtotime($request->dob));
-    	// dd($aApplicant->dob);
     	$aApplicant->age=$request->age;
     	$aApplicant->birthregno=$request->birthregno;
     	$aApplicant->birthpalace=$request->birthpalace;
@@ -110,45 +114,43 @@ class AdmissionController extends Controller
     	$aApplicant->ethnicty=$request->ethnicty;
     	$aApplicant->quotaid=$request->quotaid;
     	$aApplicant->abled=$request->abled;
-    	$aApplicant->email=$request->email;
     	$aApplicant->parent_income=$request->parent_income;
     	// Present Address
     	$presentAddress=new Address();
-    	$presentAddress->divisionid=$request->divisionid;
-    	$presentAddress->districtid=$request->districtid;
-    	$presentAddress->thanaid=$request->thanaid;
-    	$presentAddress->postofficeid=$request->postofficeid;
-    	$presentAddress->postcode=$request->postcode;
-    	$presentAddress->localgovid=$request->localgovid;
-    	$presentAddress->address=$request->address;
-    	
+    	$presentAddress->divisionid=$request->pre_divisionid;
+    	$presentAddress->districtid=$request->pre_districtid;
+    	$presentAddress->thanaid=$request->pre_thanaid;
+    	$presentAddress->postofficeid=$request->pre_postofficeid;
+    	$presentAddress->postcode=$request->pre_postcode;
+    	$presentAddress->localgovid=$request->pre_localgovid;
+    	$presentAddress->address=$request->pre_address;
     	// Permanent Address
     	$permanentAddress=new Address();
     	if(isset($isChecked)){
-    		$permanentAddress->divisionid=$request->divisionid;
-	    	$permanentAddress->districtid=$request->districtid;
-	    	$permanentAddress->thanaid=$request->thanaid;
-	    	$permanentAddress->postofficeid=$request->postofficeid;
-	    	$permanentAddress->postcode=$request->postcode;
-	    	$permanentAddress->localgovid=$request->localgovid;
-	    	$permanentAddress->address=$request->address;
+    		$permanentAddress->divisionid=$request->pre_divisionid;
+	    	$permanentAddress->districtid=$request->pre_districtid;
+	    	$permanentAddress->thanaid=$request->pre_thanaid;
+	    	$permanentAddress->postofficeid=$request->pre_postofficeid;
+	    	$permanentAddress->postcode=$request->pre_postcode;
+	    	$permanentAddress->localgovid=$request->pre_localgovid;
+	    	$permanentAddress->address=$request->pre_address;
     	}else{
     		$validatedData = $request->validate([
-	        	'divisionid2' => 'required',
-	        	'districtid2' => 'required',
-	        	'thanaid2' => 'required',
-	        	'postofficeid2' => 'required',
-	        	'postcode2' => 'required',
-	        	'localgovid2' => 'required',
-	        	'address2' => 'required',
+	        	'per_divisionid' => 'required',
+	        	'per_districtid' => 'required',
+	        	'per_thanaid' => 'required',
+	        	'per_postofficeid' => 'required',
+	        	'per_postcode' => 'required',
+	        	'per_localgovid' => 'required',
+	        	'per_address' => 'required',
 	    	]);
-	    	$permanentAddress->divisionid=$request->divisionid2;
-	    	$permanentAddress->districtid=$request->districtid2;
-	    	$permanentAddress->thanaid=$request->thanaid2;
-	    	$permanentAddress->postofficeid=$request->postofficeid2;
-	    	$permanentAddress->postcode=$request->postcode2;
-	    	$permanentAddress->localgovid=$request->localgovid2;
-	    	$permanentAddress->address=$request->address2;
+	    	$permanentAddress->divisionid=$request->per_divisionid;
+	    	$permanentAddress->districtid=$request->per_districtid;
+	    	$permanentAddress->thanaid=$request->per_thanaid;
+	    	$permanentAddress->postofficeid=$request->per_postofficeid;
+	    	$permanentAddress->postcode=$request->per_postcode;
+	    	$permanentAddress->localgovid=$request->per_localgovid;
+	    	$permanentAddress->address=$request->per_address;
     	}
     	
     	
@@ -159,44 +161,64 @@ class AdmissionController extends Controller
     	$aApplicant->g_occupation=$request->g_occupation;
     	$aApplicant->g_income=$request->g_income;
     	// ==================================
-    	$guardianAddress=new Address();
-    	$guardianAddress->divisionid=$request->g_divisionid;
-    	$guardianAddress->districtid=$request->g_districtid;
-    	$guardianAddress->thanaid=$request->g_thanaid;
-    	$guardianAddress->postofficeid=$request->g_postofficeid;
-    	$guardianAddress->postcode=$request->g_postcode;
-    	$guardianAddress->localgovid=$request->g_localgovid;
-    	$guardianAddress->address=$request->g_address;
+		$guardianAddress=new Address();
+		$test=0;
+		if($request->g_divisionid!=null&&$request->g_divisionid!=""){
+			$guardianAddress->divisionid=$request->g_divisionid;
+			$test++;
+		}
+		if($request->g_districtid!=null&&$request->g_districtid!=""){
+			$guardianAddress->districtid=$request->g_districtid;
+			$test++;
+		}
+    	if($request->g_thanaid!=null&&$request->g_thanaid!=""){
+			$guardianAddress->thanaid=$request->g_thanaid;
+			$test++;
+		}
+    	if($request->g_postofficeid!=null&&$request->g_postofficeid!=""){
+			$guardianAddress->postofficeid=$request->g_postofficeid;
+			$test++;
+		}
+		if($request->g_postcode!=null&&$request->g_postcode!=""){
+			$guardianAddress->postcode=$request->g_postcode;
+			$test++;
+		}
+    	if($request->g_localgovid!=null&&$request->g_localgovid!=""){
+			$guardianAddress->localgovid=$request->g_localgovid;
+			$test++;
+		}
+    	if($request->g_address!=null&&$request->g_address!=""){
+			$guardianAddress->address=$request->g_address;
+			$test++;
+		}
     	// Previous Information
     	$aApplicant->prevschool=$request->prevschool;
     	$aApplicant->lastclass=$request->lastclass;
     	$aApplicant->result=$request->result;
     	$aApplicant->passing_year=$request->passing_year;
     	$aApplicant->tcno=$request->tcno;
-    	
     	$aApplicant->tcissueddate=date("d-m-Y", strtotime($request->tcissueddate));
-    	// dd($aApplicant->tcissueddate);
     	// ===================
-    	// substr(md5(time()),0,12);
-    	$upload_picture = $request->file('picture');
+    	substr(md5(time()),0,12);
+		$upload_picture = $request->file('picture');
     	if($upload_picture!=null){
     		$explode_picture=explode('.',$upload_picture->getClientOriginalName());
     		$extention=end($explode_picture);
-    		$nameexplode=explode(' ',$aApplicant->name);
+    		$nameexplode=explode(' ',$aApplicant->firstName);
     		$imagename=implode('_', $nameexplode);
-	        $picture=$imagename.'.'.$extention;
+	        $picture=$applicantid.'.'.$extention;
 	        $destination=public_path('clientAdmin/admission/student');
 	        $upload_picture->move($destination,$picture);
-	        $aApplicant->picture=$picture;
+			$aApplicant->picture=$picture;
     	}
 
     	$upload_signature= $request->file('signature');
     	if($upload_signature!=null){
     		$explode_signature=explode('.',$upload_signature->getClientOriginalName());
     		$extention=end($explode_signature);
-    		$nameexplode=explode(' ',$aApplicant->name);
-    		$imagename=implode('_', $nameexplode);
-	        $signature=$imagename.'_signature.'.$extention;
+    		$nameexplode=explode(' ',$request->firstName);
+			$imagename=implode('_', $nameexplode);
+	        $signature=$applicantid.'_signature.'.$extention;
 	        $destination=public_path('clientAdmin/admission/student');
 	        $upload_signature->move($destination,$signature);
 	        $aApplicant->signature=$signature;
@@ -222,47 +244,47 @@ class AdmissionController extends Controller
 	        $destination=public_path('clientAdmin/admission/parent');
 	        $upload_mother_picture->move($destination,$mother_picture);
 	        $aApplicant->mother_picture=$mother_picture;
-        }
-        $aApplicant->username=$request->username;
-        // Check here username For unique Value
-        $hasSameUsername=$aApplicant->checkUsername($aApplicant->username);
-        if($hasSameUsername){
-            $msg="Usernme already exist.Give Different UserName";
-             return redirect()->back()->with('msg',$msg)->withInput($request->input());
-        }
-        $txtpassword=$request->password;
-        $aApplicant->password=Hash::make($txtpassword);
-       // die("Die Here");
-        $status=\DB::transaction(function () use($aApplicant,$presentAddress,$permanentAddress,$guardianAddress){
+		}
+		// $admssion_roll=0;
+		// ==============================
+		$aAdmissionApplicant=new AdmissionApplicant();
+		$aAdmissionApplicant->admission_programid=$admission_programid;
+		$aAdmissionApplicant->applicantid=$applicantid;
+		// $aAdmissionApplicant->admssion_roll=$admssion_roll;
+        $status=\DB::transaction(function () use($aApplicant,$aAdmissionApplicant,$presentAddress,$permanentAddress,$guardianAddress,$test){
         	$presentAddress->save();
         	$lastOne=\DB::table('addresses')->orderBy('id', 'desc')->first();
         	$present_addressid=$lastOne->id;
         	$permanentAddress->save();
         	$lastOne=\DB::table('addresses')->orderBy('id', 'desc')->first();
-        	$permanent_addressid=$lastOne->id;
-        	$guardianAddress->save();
-        	$lastOne=\DB::table('addresses')->orderBy('id', 'desc')->first();
-        	$gurdian_addressid=$lastOne->id;
+			$permanent_addressid=$lastOne->id;
         	$aApplicant->present_addressid=$present_addressid;
-        	$aApplicant->permanent_addressid=$permanent_addressid;
-        	$aApplicant->gurdian_addressid=$gurdian_addressid;
-        	return $aApplicant->save();
+			$aApplicant->permanent_addressid=$permanent_addressid;
+			if($test==7){
+				$guardianAddress->save();
+				$lastOne=\DB::table('addresses')->orderBy('id', 'desc')->first();
+				$gurdian_addressid=$lastOne->id;
+				$aApplicant->gurdian_addressid=$gurdian_addressid;
+			}
+			$aApplicant->pin_code=$this->pingenerate();
+
+			$aAdmissionApplicant->save();
+			$sta=$aApplicant->save();
+			// if($sta){
+			// 	//Sending message to the applicant with applicationid and pincode
+            //     $sendMsg = new SendSms();
+            //     $message = 'Application Successful.Your ID: '.$applicantid.' Code: '.$this->pingenerate().'.';
+            //     $sms_stutus = $sendMsg->MessageSend($request->phone, $message);
+			// }
+        	return $sta;
         });
         if($status!=true){
             $msg="Some thing is wrong!";
              return redirect()->back()->with('msg',$msg)->withInput($request->input());
-        }
-        $aObj=$aApplicant->getApplicant($aApplicant->username,$aApplicant->password);
-        $aAddress=new Address();
-        $presentAddress=$aAddress->getAddressById($aObj->present_addressid);
-        $permanentAddress=$aAddress->getAddressById($aObj->permanent_addressid);
-        $aInstitute=new Institute();
-        $instituteinfo=$aInstitute->getInstituteById(1);
+		}
+		$aObj=$aApplicant->getApplicant($applicantid);
         $dataList=[
-            'instituteinfo'=>$instituteinfo,
-            'applicantinfo'=>$aObj,
-            'presentAddress'=>$presentAddress,
-            'permanentAddress'=>$permanentAddress,
+            'bean'=>$aObj,
         ];
         return view('school.admission.applicantcopy',$dataList);
     }
@@ -270,64 +292,26 @@ class AdmissionController extends Controller
         return view('school.admission.applicantview');
     }
     public function applicantCopy(Request $request){
-        $username=$request->username;
-        $password=$request->password;
-        $isExist=\DB::table('applicants')->where('username',$username)->exists();
-        if(!$isExist){
-            $msg="User Name or Password is incorrect";
-            return redirect()->back()->with('msg',$msg)->withInput($request->input());
-        }
-        $hashedPassword=\DB::table('applicants')->where('username',$username)->first()->password;
-        if (!Hash::check($password, $hashedPassword)) {
-             $msg="Password is incorrect";
-             return redirect()->back()->with('msg',$msg)->withInput($request->input());
-        }
+        $applicantid=$request->applicantid;
+        $pin_code=$request->pin_code;
         $aApplicant=new Applicant();
-        $aObj=$aApplicant->getApplicant($username,$hashedPassword);
-        $aAddress=new Address();
-        $presentAddress=$aAddress->getAddressById($aObj->present_addressid);
-        $permanentAddress=$aAddress->getAddressById($aObj->permanent_addressid);
-        $aInstitute=new Institute();
-        $instituteinfo=$aInstitute->getInstituteById(1);
+        $aObj=$aApplicant->getApplicant($applicantid,$pin_code);
         $dataList=[
-            'instituteinfo'=>$instituteinfo,
-            'applicantinfo'=>$aObj,
-            'presentAddress'=>$presentAddress,
-            'permanentAddress'=>$permanentAddress,
+            'bean'=>$aObj,
         ];
-     	return view('school.admission.applicantcopy',$dataList);
+        return view('school.admission.applicantcopy',$dataList);
     }
     public function getAdmitCardForm(){
         return view('school.admission.admitcardview');
     }
     public function getAdmitCard(Request $request){
-        $username=$request->username;
-        $password=$request->password;
-        $isExist=\DB::table('applicants')->where('username',$username)->exists();
-        if(!$isExist){
-            $msg="User Name or Password is incorrect";
-            return redirect()->back()->with('msg',$msg)->withInput($request->input());
-        }
-        $hashedPassword=\DB::table('applicants')->where('username',$username)->first()->password;
-        if (!Hash::check($password, $hashedPassword)) {
-             $msg="Password is incorrect";
-             return redirect()->back()->with('msg',$msg)->withInput($request->input());
-        }
-        $aInstitute=new Institute();
+        $applicantid=$request->applicantid;
+        $pin_code=$request->pin_code;
         $aApplicant=new Applicant();
-        $applicantinfo=$aApplicant->getApplicant($username,$hashedPassword);
-        $isTrue=$aApplicant->isPaid($applicantinfo->applicantid);
-        if(!$isTrue){
-            $msg="Please Pay Your Admission Fee";
-             return redirect()->back()->with('msg',$msg)->withInput($request->input());
-        }
-        $aAdmissionProgram=new AdmissionProgram();
-        $aVAdmissionSubject=new VAdmissionSubject();
+		$aObj=$aApplicant->getApplicantAdmitCard($applicantid,$pin_code);
+		// dd($aObj);
         $dataList=[
-            'instituteinfo'=>$aInstitute->getInstituteById(1),
-            'applicantinfo'=>$applicantinfo,
-            'examinfo'=>$aAdmissionProgram->getExamInfo($applicantinfo->programofferid),
-            'subjectinfo'=>$aVAdmissionSubject->getAdmitCardSubject($applicantinfo->programofferid),
+            'bean'=>$aObj,
         ];
         return view('school.admission.admitcard',$dataList);
     }
@@ -418,4 +402,17 @@ private function getDropDownValue($tableName,$conditionid,$id){
     }
     echo  $output;
 }
+	public function pingenerate(){
+		$pinstr="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+		$length=strlen($pinstr);
+		$codeArray=array();
+		$pin_code="";
+		for($i=0;$i<$length;$i++){
+			$codeArray[$i]=$pinstr[$i];
+		}
+		for($i=0;$i<6;$i++){
+			$pin_code.=$codeArray[rand(0,61)];
+		}
+		return $pin_code;
+	}
 }
