@@ -21,13 +21,32 @@ class AdmissionProgramSubject extends Model
 		return $list;
 	}
 	public function getProgramSubjects($admission_programid){
+		$sql="select
+		t1.*,
+		admission_subjects.name AS subjectName
+		FROM
+				admission_subjects
+				LEFT JOIN 
+				(SELECT 
+				adpsub.admission_programid,
+				adpsub.subjectid,
+				adpsub.marks
+				FROM `admission_program_subjects` AS adpsub
+				WHERE adpsub.admission_programid=?) AS t1
+				ON t1.subjectid=admission_subjects.id";
+		$qresult=\DB::select($sql,[$admission_programid]);
+		$result=collect($qresult);
+		return $result;
+	}
+	public function getAdmissionSubject($admission_programid){
 		$sql="SELECT 
 		adpsub.admission_programid,
 		adpsub.subjectid,
-		admission_subjects.name AS subjectName,
-		adpsub.marks
+		adpsub.marks,
+		admission_subjects.name AS subjectName
 		FROM `admission_program_subjects` AS adpsub
-		INNER JOIN admission_subjects ON adpsub.subjectid=admission_subjects.id
+		INNER JOIN admission_subjects
+		ON adpsub.subjectid=admission_subjects.id
 		WHERE adpsub.admission_programid=?";
 		$qresult=\DB::select($sql,[$admission_programid]);
 		$result=collect($qresult);
@@ -89,25 +108,6 @@ class AdmissionProgramSubject extends Model
    		$qresult=\DB::select($sql,[$programofferid,$programofferid]);
 		$result=collect($qresult);
 		return $result;
-   	}
-   // Admission Marks Entry
-   	public function getProgramOfferId($sessionid,$programid,$groupid,$mediumid,$shiftid){
-   		if($sessionid==0){
-			$yearName = date('Y');
-	    	$aSession=new Session();
-	    	$sessionid=$aSession->getSessionId($yearName);
-		}
-		$sql="SELECT t1.* FROM `admission_program_subjects` AS t1
-		INNER JOIN admission_programs AS t2 ON t1.programofferid=t2.programofferid
-		INNER JOIN programoffers AS t3 ON t2.programofferid=t3.id
-		WHERE t3.sessionid=? AND t3.programid=? AND t3.groupid=?  AND t3.mediumid=? AND t3.shiftid=? GROUP BY t1.programofferid";
-		$qresult=\DB::select($sql,[$sessionid,$programid,$groupid,$mediumid,$shiftid]);
-		$result = collect($qresult);
-		if($result->isNotEmpty()){
-			$programofferid=$result->first()->programofferid;
-			return $programofferid;
-		}
-		return 0;
    	}
    	public function getAdmissioninfo($programofferid){
    		$sql="SELECT t2.*,admission_programs.exam_marks,

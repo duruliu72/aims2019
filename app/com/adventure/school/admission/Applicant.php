@@ -138,6 +138,18 @@ class Applicant extends Model
 		}
 		return ++$startpoint;
 	}
-	
+	public function getAllApplicantForMarkAdd($admission_programid){
+		$sql="select table1.* FROM(SELECT 
+		admissionapplicants.admission_programid,
+		admissionapplicants.admssion_roll,
+		applicants.*
+		FROM `admissionapplicants`
+		INNER JOIN applicants ON admissionapplicants.applicantid=applicants.applicantid
+		WHERE admissionapplicants.admission_programid=?) AS table1
+        WHERE table1.applicantid NOT IN (SELECT admissionresult.applicantid FROM `admissionresult` GROUP BY admissionresult.applicantid)";
+		$qresult=\DB::select($sql,[$admission_programid]);
+		$result=collect($qresult);
+		return $result;
+	}
 	
 }

@@ -32,17 +32,6 @@
                             @endforeach
                         </select>
                       </div>
-                       <label class="col-sm-2 control-label" for="groupid">Group</label>
-                      <div class="col-sm-4">
-                        <select onchange="getChange(this,'group')" class="form-control" name="groupid" id="groupid">
-                           <option value="">SELECT</option>
-                          @foreach ($groupList as $x)
-                             <option value="{{$x->id}}">{{$x->name}}</option>
-                           @endforeach
-                        </select>
-                      </div>                       
-                    </div>
-                    <div class="form-group row">
                       <label class="col-sm-2 control-label" for="mediumid">Medium</label>
                       <div class="col-sm-4">
                         <select onchange="getChange(this,'medium')" class="form-control" name="mediumid" id="mediumid">
@@ -53,11 +42,23 @@
                            
                         </select>
                       </div>
+                                             
+                    </div>
+                    <div class="form-group row">
                        <label class="col-sm-2 control-label" for="shiftid">Shift</label>
                       <div class="col-sm-4">
-                        <select class="form-control" name="shiftid" id="shiftid">
+                        <select onchange="getChange(this,'shift')" class="form-control" name="shiftid" id="shiftid">
                           <option value="">SELECT</option>
                            @foreach ($shiftList as $x)
+                             <option value="{{$x->id}}">{{$x->name}}</option>
+                           @endforeach
+                        </select>
+                      </div> 
+                      <label class="col-sm-2 control-label" for="groupid">Group</label>
+                      <div class="col-sm-4">
+                        <select class="form-control" name="groupid" id="groupid">
+                           <option value="">SELECT</option>
+                          @foreach ($groupList as $x)
                              <option value="{{$x->id}}">{{$x->name}}</option>
                            @endforeach
                         </select>
@@ -73,31 +74,31 @@
                     </div>
                   </form>
                 </div>
-                @if(isset($programinfo)&&isset($subjectinfo)&&isset($applicants))
+                @if(isset($result))
                 <div class="programofferinfo">
                     <div class="programofferinfo_item">
-                        <span>Session: {{$programinfo->sessionName}}</span>
+                        <span>Session: {{$result['admissionprogram']->sessionName}}</span>
                     </div>
                     <div class="programofferinfo_item">
-                        <span>Class Level: {{$programinfo->levelName}}</span>
+                        <span>Class Level: {{$result['admissionprogram']->levelName}}</span>
                     </div>
                     <div class="programofferinfo_item">
-                        <span>Class: {{$programinfo->programName}}</span>
+                        <span>Class: {{$result['admissionprogram']->programName}}</span>
                     </div>
                     <div class="programofferinfo_item">
-                        <span>Medium: {{$programinfo->mediumName}}</span>
+                        <span>Medium: {{$result['admissionprogram']->mediumName}}</span>
                     </div>
                     <div class="programofferinfo_item">
-                        <span>Group: {{$programinfo->groupName}}</span>
+                        <span>Group: {{$result['admissionprogram']->groupName}}</span>
                     </div>
                     <div class="programofferinfo_item">
-                        <span>Shift: {{$programinfo->shiftName}}</span>
+                        <span>Shift: {{$result['admissionprogram']->shiftName}}</span>
                     </div>
                 </div>
                 <div class="bottom_form">
                   <form action="{{URL::to('admissionmarkentry')}}" method="POST">
                   {{csrf_field()}}
-                  <input type="hidden" name="programofferid" value="{{$programinfo->id}}">
+                  <input type="hidden" name="programofferid" value="{{$result['admissionprogram']->id}}">
                   <table class="table table-striped table-bordered table-hover" id="admissionmark">
                     <thead>
                       <tr>
@@ -105,25 +106,25 @@
                         <th>Applicant Id</th>
                         <th>Student Name</th>
                         <th>Roll</th>
-                        @foreach($subjectinfo as $x)
-                        <th>{{$x->name}}(<span class="subjectmarks">{{$x->marks}}</span>)</th>
+                        @foreach($result['subjectinfo'] as $x)
+                        <th>{{$x->subjectName}}(<span class="subjectmarks">{{$x->marks}}</span>)</th>
                         @endforeach
-                        <th>Total Marks({{$programinfo->exam_marks}})</th>
+                        <th>Total Marks({{$result['admissionprogram']->exam_marks}})</th>
                         <th><input id="markcheck" type="checkbox"></th>
                       </tr>
                     </thead>
                     <tbody>
                       <?php $id=0; ?>
-                       @foreach($applicants as $ap)
+                       @foreach($result['applicants'] as $ap)
                       <tr>
                         <td>{{++$id}}</td>
                         <td>{{$ap->applicantid}}</td>
-                        <td>{{$ap->name}}</td>
+                        <td>{{$ap->firstName}}</td>
                         <td>{{$ap->admssion_roll}}</td>
-                        @foreach($subjectinfo as $x)
+                        @foreach($result['subjectinfo'] as $x)
                           <td class="item_{{$ap->applicantid}}">
                             <input type="text" name="marks[{{$ap->applicantid}}][]" />
-                            <input type="hidden" name="subjectid[{{$ap->applicantid}}][]" value="{{$x->id}}">
+                            <input type="hidden" name="subjectid[{{$ap->applicantid}}][]" value="{{$x->subjectid}}">
                           </td>
                         @endforeach
                         <td class="item_{{$ap->applicantid}}"><label>0</label></td>
@@ -152,5 +153,6 @@
 
 @endsection
 @section('uniqueScript')
+<script src="{{asset('clientAdmin/js/baseUrl.js')}}"></script>
 <script src="{{asset('clientAdmin/js/admissionmarkentry.js')}}"></script>
 @endsection

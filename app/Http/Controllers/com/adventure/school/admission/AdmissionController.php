@@ -309,7 +309,6 @@ class AdmissionController extends Controller
         $pin_code=$request->pin_code;
         $aApplicant=new Applicant();
 		$aObj=$aApplicant->getApplicantAdmitCard($applicantid,$pin_code);
-		// dd($aObj);
         $dataList=[
             'bean'=>$aObj,
         ];

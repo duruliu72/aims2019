@@ -45,9 +45,15 @@ class AdmissionProgram extends Model
 		$result=collect($qResult);
 		return $result;
 	}	
-	public function getAllAdmissionProgram(){
+	public function getAdmissionPrograminfo($admission_programid){
+		$resurt=$this->getAllAdmissionProgram($admission_programid);
+		$item=$resurt->first();
+		return $item;
+	}
+	public function getAllAdmissionProgram($admission_programid=0){
 		$sql="SELECT t1.* ,
 		sessions.name AS sessionName,
+        programlevels.name AS levelName,
 		programs.name AS programName,
 		groups.name AS groupName,
 		mediums.name AS mediumName,
@@ -56,10 +62,20 @@ class AdmissionProgram extends Model
 		INNER JOIN programoffers AS t2 ON t1.programofferid=t2.id
 		INNER JOIN sessions ON t2.sessionid=sessions.id
 		INNER JOIN programs ON t2.programid=programs.id
+        INNER JOIN vlevel_programs on programs.id=vlevel_programs.programid
+		INNER JOIN programlevels on vlevel_programs.programlevelid=programlevels.id
 		INNER JOIN groups ON t2.groupid=groups.id
 		INNER JOIN mediums ON t2.mediumid=mediums.id
-		INNER JOIN shifts ON t2.shiftid=shifts.id ORDER BY sessionName DESC";
-		$result=\DB::select($sql);
+		INNER JOIN shifts ON t2.shiftid=shifts.id";
+		$data=array();
+		if($admission_programid!=0){
+			$sql.=" WHERE t1.id=?";
+			array_push($data,$admission_programid);
+		}else{
+			$sql.=" ORDER BY sessionName DESC";
+		}
+		$qResult=\DB::select($sql,$data);
+		$result=collect($qResult);
 		return $result;
 	}
 	public function checkValue($programofferid){
@@ -70,23 +86,7 @@ class AdmissionProgram extends Model
 			return true;
 		}
 		return false;
-	}
-	public function getAllProgram($sessionid){
-		if($sessionid==0){
-			$yearName = date('Y');
-	    	$aSession=new Session();
-	    	$sessionid=$aSession->getSessionId($yearName);
-		}
-		$sql="SELECT programs.* 
-		FROM `admission_programs` AS t1
-		INNER JOIN programoffers AS t2 ON t1.programofferid=t2.id
-		INNER join sessions on t2.sessionid=sessions.id
-		INNER join programs on t2.programid=programs.id
-		WHERE t2.sessionid=? group by t2.programid ORDER BY programs.id";
-		$result=\DB::select($sql,[$sessionid]);
-		return $result;
-	}
-	
+	}	
 	public function getAdmissionProgramID($sessionid,$programid,$groupid,$mediumid,$shiftid){
 		$aProgramOffer=new ProgramOffer();
 		$programofferid=$aProgramOffer->getProgramOfferId($sessionid,$programid,$groupid,$mediumid,$shiftid);
@@ -102,7 +102,7 @@ class AdmissionProgram extends Model
 	}
 	public function getProgramofferid($admission_programid){
 		$sql="SELECT * FROM `admission_programs`
-		WHERE id=1";
+		WHERE id=?";
 		$qresult=\DB::select($sql,[$admission_programid]);
 		$result = collect($qresult)->first();
 		if($result==null){

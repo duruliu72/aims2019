@@ -74,9 +74,6 @@ Route::get('admissionfee/{id}/payment','com\adventure\school\admission\Admission
 Route::post('admissionfee/payment','com\adventure\school\admission\AdmissionFeeController@Paymentstore');
 Route::resource('admissionfee','com\adventure\school\admission\AdmissionFeeController');
 Route::get('admissionmarkentry/getValue','com\adventure\school\admission\AdmissionMarkEntryController@getValue');
-
-Route::get('admissionmarkform','com\adventure\school\admission\AdmissionMarkEntryController@markForm');
-Route::post('admissionmarkform','com\adventure\school\admission\AdmissionMarkEntryController@markForm');
 Route::get('admissionmarkentry','com\adventure\school\admission\AdmissionMarkEntryController@markEntry');
 Route::post('admissionmarkentry','com\adventure\school\admission\AdmissionMarkEntryController@markEntry');
 Route::get('admissionmarkentry/edit','com\adventure\school\admission\AdmissionMarkEntryController@markEdit');

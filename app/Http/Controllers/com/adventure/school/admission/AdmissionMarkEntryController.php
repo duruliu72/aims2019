@@ -4,12 +4,11 @@ namespace App\Http\Controllers\com\adventure\school\admission;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\com\adventure\school\basic\Institute;
 use App\com\adventure\school\menu\Menu;
-use App\com\adventure\school\program\Session;
-use App\com\adventure\school\admission\Admission;
-use App\com\adventure\school\admission\Applicant;
+use App\com\adventure\school\admission\AdmissionProgram;
+use App\com\adventure\school\admission\AdmissionMarkEntry;
 use App\com\adventure\school\admission\AdmissionResult;
-use App\com\adventure\school\admission\VAdmissionSubject;
 class AdmissionMarkEntryController extends Controller
 {
     public function __construct()
@@ -18,9 +17,6 @@ class AdmissionMarkEntryController extends Controller
     }
     public function markEntry(Request $request){
         $msg="";
-        $yearName = date('Y');
-        $aSession=new Session();
-        $sessionid=$aSession->getSessionId($yearName);
         $programid=$request->programid;
         $groupid=$request->groupid;
         $mediumid=$request->mediumid;
@@ -31,22 +27,13 @@ class AdmissionMarkEntryController extends Controller
             return redirect('error');
         }
         $sidebarMenu=$aMenu->getSidebarMenu();
-        $aAdmission=new Admission();
-        $aVAdmissionSubject=new VAdmissionSubject();
-        $aApplicant=new Applicant();
-        $programinfo=null;
-        $subjectinfo=null;
-        $applicants=null;
+        $aAdmissionMarkEntry=new AdmissionMarkEntry();
+        $result=null;
         if($request->isMethod('post')&&$request->result_btn=='result_btn'){
-            $programofferid=$aVAdmissionSubject->getProgramOfferId($sessionid,$programid,$groupid,$mediumid,$shiftid);
-            $programinfo=$aVAdmissionSubject->getAdmissioninfo($programofferid);
-            $subjectinfo=$aVAdmissionSubject->getAdmitCardSubject($programofferid);
-            $applicants=$aApplicant->getApplicantsForMarkEntry($programofferid);
+            $result=$aAdmissionMarkEntry->getResultForMarkEntry(0,$programid,$groupid,$mediumid,$shiftid);
         }
         if($request->isMethod('post')&&$request->save_btn=='save_btn'){
-            $programofferid=$request->programofferid;
-            $programinfo=$aVAdmissionSubject->getAdmissioninfo($programofferid);
-            $subjectinfo=$aVAdmissionSubject->getAdmitCardSubject($programofferid);
+            $admission_programid=$request->programofferid;
             $checkLst=$request->checkbox;
             if($checkLst!=null){
                 foreach ($checkLst as $key=>$value){
@@ -60,7 +47,7 @@ class AdmissionMarkEntryController extends Controller
                              $isTrue=false;
                         }
                     }
-                    if($isTrue==true && $aApplicant->checkAplicant($key)==false){
+                    if($isTrue==true && $aAdmissionMarkEntry->checkAplicant($key)==false){
                         foreach ($markList as $k=>$x) {
                             if ($x!="") {
                                 $aAdmissionResult=new AdmissionResult();
@@ -74,26 +61,28 @@ class AdmissionMarkEntryController extends Controller
                 }
                 $msg="Your input item save Successfully";
             }
-            $applicants=$aApplicant->getApplicantsForMarkEntry($programofferid);
+            $result=$aAdmissionMarkEntry->getResult($admission_programid);
         }
+        $aAdmissionProgram=new AdmissionProgram();
+        // sessionid,programid,groupid,mediumid,shiftid,tableName And last one compareid
+        $programList=$aAdmissionProgram->getAllOnIDS(0,0,0,0,0,"programs",'programid');
+        $mediumList=$aAdmissionProgram->getAllOnIDS(0,0,0,0,0,"mediums",'mediumid');
+        $shiftList=$aAdmissionProgram->getAllOnIDS(0,0,0,0,0,"shifts",'shiftid');
+        $groupList=$aAdmissionProgram->getAllOnIDS(0,0,0,0,0,"groups",'groupid');
         $dataList=[
+            'institute'=>Institute::getInstituteName(),
             'sidebarMenu'=>$sidebarMenu,
-            'programList'=>$aApplicant->getProgramsOnSession($sessionid),
-            'groupList'=>$aApplicant->getGroupsOnSession($sessionid),
-            'mediumList'=>$aApplicant->getMediumsOnSession($sessionid),
-            'shiftList'=>$aApplicant->getShiftsOnSession($sessionid),
-            'programinfo'=>$programinfo,
-            'subjectinfo'=>$subjectinfo,
-            'applicants'=>$applicants,
+            'programList'=>$programList,
+            'mediumList'=>$mediumList,
+            'shiftList'=>$shiftList,
+            'groupList'=>$groupList,
+            'result'=>$result,
             'msg'=>$msg
         ];
         return view('admin.admissionsettings.admissionmarkentry.index',$dataList);
     }
     public function markEdit(Request $request){
         $msg="";
-        $yearName = date('Y');
-        $aSession=new Session();
-        $sessionid=$aSession->getSessionId($yearName);
         $programid=$request->programid;
         $groupid=$request->groupid;
         $mediumid=$request->mediumid;
@@ -104,23 +93,13 @@ class AdmissionMarkEntryController extends Controller
             return redirect('error');
         }
         $sidebarMenu=$aMenu->getSidebarMenu();
-        $aAdmission=new Admission();
-        $aVAdmissionSubject=new VAdmissionSubject();
-        $aApplicant=new Applicant();
-        $programinfo=null;
-        $subjectinfo=null;
-        $applicantsmarks=null;
+        $aAdmissionMarkEntry=new AdmissionMarkEntry();
+        $result=null;
         if($request->isMethod('post')&&$request->search_btn=='search_btn'){
-            $programofferid=$aVAdmissionSubject->getProgramOfferId($sessionid,$programid,$groupid,$mediumid,$shiftid);
-            $programinfo=$aVAdmissionSubject->getAdmissioninfo($programofferid);
-            $subjectinfo=$aVAdmissionSubject->getAdmitCardSubject($programofferid);
-            $applicantsmarks=$aApplicant->getApplicantsForMarkEdit($programofferid);
-            // dd($applicantsmarks);
+            $result=$aAdmissionMarkEntry->getResultForMarkEntry(0,$programid,$groupid,$mediumid,$shiftid);
         }
         if($request->isMethod('post')&&$request->update_btn=='update_btn'){
-            $programofferid=$request->programofferid;
-            $programinfo=$aVAdmissionSubject->getAdmissioninfo($programofferid);
-            $subjectinfo=$aVAdmissionSubject->getAdmitCardSubject($programofferid);
+            $admission_programid=$request->programofferid;
             $checkLst=$request->checkbox;
             if($checkLst!=null){
                 foreach ($checkLst as $key=>$value){
@@ -147,101 +126,24 @@ class AdmissionMarkEntryController extends Controller
                 }
                 $msg="Your input item update Successfully";
             }
-            $applicantsmarks=$aApplicant->getApplicantsForMarkEdit($programofferid);
+            $result=$aAdmissionMarkEntry->getResult($admission_programid);
         }
+        $aAdmissionProgram=new AdmissionProgram();
+        // sessionid,programid,groupid,mediumid,shiftid,tableName And last one compareid
+        $programList=$aAdmissionProgram->getAllOnIDS(0,0,0,0,0,"programs",'programid');
+        $mediumList=$aAdmissionProgram->getAllOnIDS(0,0,0,0,0,"mediums",'mediumid');
+        $shiftList=$aAdmissionProgram->getAllOnIDS(0,0,0,0,0,"shifts",'shiftid');
+        $groupList=$aAdmissionProgram->getAllOnIDS(0,0,0,0,0,"groups",'groupid');
         $dataList=[
+            'institute'=>Institute::getInstituteName(),
             'sidebarMenu'=>$sidebarMenu,
-            'programList'=>$aApplicant->getProgramsOnSession($sessionid),
-            'groupList'=>$aApplicant->getGroupsOnSession($sessionid),
-            'mediumList'=>$aApplicant->getMediumsOnSession($sessionid),
-            'shiftList'=>$aApplicant->getShiftsOnSession($sessionid),
-            'programinfo'=>$programinfo,
-            'subjectinfo'=>$subjectinfo,
-            'applicantsmarks'=>$applicantsmarks,
+            'programList'=>$programList,
+            'mediumList'=>$mediumList,
+            'shiftList'=>$shiftList,
+            'groupList'=>$groupList,
+            'result'=>$result,
             'msg'=>$msg
         ];
         return view('admin.admissionsettings.admissionmarkentry.edit',$dataList);
-    }
-     // For Ajax Call ===============
-     public function getValue(Request $request){
-        $option=$request->option;
-        $methodid=$request->methodid;
-        $programid=$request->programid;
-        $groupid=$request->groupid;
-        $mediumid=$request->mediumid;
-        $shiftid=$request->shiftid;
-        if($option=="program"){
-            if($methodid==1){
-                $this->getGroupsOnSessionAndProgram($programid);
-            }elseif($methodid==2){
-                $this->getMediumsOnSessionAndProgram($programid);
-            }elseif($methodid==3){
-                $this->getShiftsOnSessionAndProgram($programid);
-            }
-        }elseif($option=="group"){
-            if($methodid==1){
-                $this->getMediumsOnSessionAndPrograAndGroup($programid,$groupid);
-            }elseif($methodid==2){
-                $this->getShiftsOnSessionAndPrograAndGroup($programid,$groupid);
-            }
-        }elseif($option=="medium"){
-            if($methodid==1){
-                $this->getShiftsOnSessionAndPrograAndGroupAndMedium($programid,$groupid,$mediumid);
-            }
-        }
-    }
-    private function getGroupsOnSessionAndProgram($programid){
-        $aApplicant=new Applicant();
-        $result=$aApplicant->getGroupsOnSessionAndProgram(0,$programid);
-        $output="<option value=''>SELECT</option>";
-        foreach($result as $x){
-           $output.="<option value='$x->id'>$x->name</option>";
-        }
-        echo  $output;
-    }
-    private function getMediumsOnSessionAndProgram($programid){
-        $aApplicant=new Applicant();
-        $result=$aApplicant->getMediumsOnSessionAndProgram(0,$programid);
-        $output="<option value=''>SELECT</option>";
-        foreach($result as $x){
-           $output.="<option value='$x->id'>$x->name</option>";
-        }
-        echo  $output;
-    }
-    private function getShiftsOnSessionAndProgram($programid){
-        $aApplicant=new Applicant();
-        $result=$aApplicant->getShiftsOnSessionAndProgram(0,$programid);
-        $output="<option value=''>SELECT</option>";
-        foreach($result as $x){
-           $output.="<option value='$x->id'>$x->name</option>";
-        }
-        echo  $output;
-    }
-    private function getMediumsOnSessionAndPrograAndGroup($programid,$groupid){
-        $aApplicant=new Applicant();
-        $result=$aApplicant->getMediumsOnSessionAndPrograAndGroup(0,$programid,$groupid);
-        $output="<option value=''>SELECT</option>";
-        foreach($result as $x){
-           $output.="<option value='$x->id'>$x->name</option>";
-        }
-        echo  $output;
-    }
-    private function getShiftsOnSessionAndPrograAndGroup($programid,$groupid){
-        $aApplicant=new Applicant();
-        $result=$aApplicant->getShiftsOnSessionAndPrograAndGroup(0,$programid,$groupid);
-        $output="<option value=''>SELECT</option>";
-        foreach($result as $x){
-           $output.="<option value='$x->id'>$x->name</option>";
-        }
-        echo  $output;
-    }
-    private function getShiftsOnSessionAndPrograAndGroupAndMedium($programid,$groupid,$mediumid){
-        $aApplicant=new Applicant();
-        $result=$aApplicant->getShiftsOnSessionAndPrograAndGroupAndMedium(0,$programid,$groupid,$mediumid);
-        $output="<option value=''>SELECT</option>";
-        foreach($result as $x){
-           $output.="<option value='$x->id'>$x->name</option>";
-        }
-        echo  $output;
     }
 }
