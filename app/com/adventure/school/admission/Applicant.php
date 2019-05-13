@@ -151,5 +151,20 @@ class Applicant extends Model
 		$result=collect($qresult);
 		return $result;
 	}
-	
+	public function getAllApplicantForMarkEdit($admission_programid){
+		$sql="SELECT t1.* FROM (
+			SELECT 
+					admissionapplicants.admission_programid,
+					admissionapplicants.admssion_roll,
+					applicants.*
+					FROM `admissionapplicants`
+					INNER JOIN applicants ON admissionapplicants.applicantid=applicants.applicantid
+					WHERE admissionapplicants.admission_programid=?
+			) AS t1
+			INNER JOIN (SELECT admissionresult.applicantid FROM admissionresult GROUP BY admissionresult.applicantid) AS t2
+			ON t1.applicantid=t2.applicantid";
+		$qresult=\DB::select($sql,[$admission_programid]);
+		$result=collect($qresult);
+		return $result;
+	}
 }

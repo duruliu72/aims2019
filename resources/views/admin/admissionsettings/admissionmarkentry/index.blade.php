@@ -4,7 +4,13 @@
       <section class="wrapper">
         <div class="row">
           <div class="col-lg-12">
-            <h3 class="page-header"><i class="fa fa-laptop"></i>Horinagor High School</h3>
+            <h3 class="page-header"><i class="fa fa-laptop"></i>
+            @if($institute!=null)
+                {{$institute->name}}
+              @else
+                Dashboard
+              @endif
+            </h3>
              <ol class="breadcrumb">
                 <li>Admission Marks Entry</li>
                 @if($msg!="")
@@ -74,7 +80,7 @@
                     </div>
                   </form>
                 </div>
-                @if(isset($result))
+                @if(isset($result)&&$result!=null))
                 <div class="programofferinfo">
                     <div class="programofferinfo_item">
                         <span>Session: {{$result['admissionprogram']->sessionName}}</span>

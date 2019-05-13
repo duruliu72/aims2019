@@ -19,6 +19,7 @@ class CreateAdmissionresultTable extends Migration
             $table->integer('subjectid')->length(11);
             $table->double('marks', 8, 2);
             $table->timestamps();
+            $table->index(['applicantid', 'subjectid']);
         });
     }
 

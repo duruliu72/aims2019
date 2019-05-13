@@ -30,7 +30,7 @@ class AdmissionMarkEntryController extends Controller
         $aAdmissionMarkEntry=new AdmissionMarkEntry();
         $result=null;
         if($request->isMethod('post')&&$request->result_btn=='result_btn'){
-            $result=$aAdmissionMarkEntry->getResultForMarkEntry(0,$programid,$groupid,$mediumid,$shiftid);
+            $result=$aAdmissionMarkEntry->getAllForMarkEntry(0,$programid,$groupid,$mediumid,$shiftid);
         }
         if($request->isMethod('post')&&$request->save_btn=='save_btn'){
             $admission_programid=$request->programofferid;
@@ -96,7 +96,7 @@ class AdmissionMarkEntryController extends Controller
         $aAdmissionMarkEntry=new AdmissionMarkEntry();
         $result=null;
         if($request->isMethod('post')&&$request->search_btn=='search_btn'){
-            $result=$aAdmissionMarkEntry->getResultForMarkEntry(0,$programid,$groupid,$mediumid,$shiftid);
+            $result=$aAdmissionMarkEntry->getAllForMarkEdit(0,$programid,$groupid,$mediumid,$shiftid);
         }
         if($request->isMethod('post')&&$request->update_btn=='update_btn'){
             $admission_programid=$request->programofferid;
