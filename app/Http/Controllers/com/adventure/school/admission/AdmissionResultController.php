@@ -4,8 +4,11 @@ namespace App\Http\Controllers\com\adventure\school\admission;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\com\adventure\school\basic\Institute;
 use App\com\adventure\school\menu\Menu;
 use App\com\adventure\school\program\Session;
+use App\com\adventure\school\admission\AdmissionProgram;
+use App\com\adventure\school\admission\AdmissionMarkEntry;
 use App\com\adventure\school\admission\Admission;
 use App\com\adventure\school\admission\Applicant;
 use App\com\adventure\school\admission\AdmissionResult;
@@ -17,10 +20,7 @@ class AdmissionResultController extends Controller
         $this->middleware('auth');
     }
     public function resultDisplay(Request $request){
-    	$msg="";
-    	$yearName = date('Y');
-        $aSession=new Session();
-        $sessionid=$aSession->getSessionId($yearName);
+        $msg="";
     	$aMenu=new Menu();
         $hasMenu=$aMenu->hasMenu('admissionresults');
         if($hasMenu==false){
@@ -28,31 +28,34 @@ class AdmissionResultController extends Controller
         }
         $sidebarMenu=$aMenu->getSidebarMenu();
         $aAdmission=new Admission();
-        $aAdmissionResult=new AdmissionResult();
-        $result=$aAdmissionResult->getMeritList(10);
         $pList=$aMenu->getPermissionOnMenu('admissionresults');
         $applicantResults=null;
         $programinfo=null;
+        $result=null;
         if($request->isMethod('post')&&$request->search_btn=='search_btn'){
         	$aAdmissionResult=new AdmissionResult();
-        	$aVAdmissionSubject=new VAdmissionSubject();
         	$programid=$request->programid;
 	        $groupid=$request->groupid;
 	        $mediumid=$request->mediumid;
-	        $shiftid=$request->shiftid;
-        	$programofferid=$aVAdmissionSubject->getProgramOfferId($sessionid,$programid,$groupid,$mediumid,$shiftid);
-        	$programinfo=$aVAdmissionSubject->getAdmissioninfo($programofferid);
-        	$applicantResults=$aAdmissionResult->getAdmissionApplicantsCommon($programofferid);
+            $shiftid=$request->shiftid;
+            $result=$aAdmissionResult->getAdmissionResults(0,$programid,$groupid,$mediumid,$shiftid);
         }
         $aApplicant=new Applicant();
+        $aAdmissionProgram=new AdmissionProgram();
+        // sessionid,programid,groupid,mediumid,shiftid,tableName And last one compareid
+        $programList=$aAdmissionProgram->getAllOnIDS(0,0,0,0,0,"programs",'programid');
+        $mediumList=$aAdmissionProgram->getAllOnIDS(0,0,0,0,0,"mediums",'mediumid');
+        $shiftList=$aAdmissionProgram->getAllOnIDS(0,0,0,0,0,"shifts",'shiftid');
+        $groupList=$aAdmissionProgram->getAllOnIDS(0,0,0,0,0,"groups",'groupid');
+        // dd($result);
         $dataList=[
+            'institute'=>Institute::getInstituteName(),
             'sidebarMenu'=>$sidebarMenu,
-            'programList'=>$aApplicant->getProgramsOnSession($sessionid),
-            'groupList'=>$aApplicant->getGroupsOnSession($sessionid),
-            'mediumList'=>$aApplicant->getMediumsOnSession($sessionid),
-            'shiftList'=>$aApplicant->getShiftsOnSession($sessionid),
-            'programinfo'=>$programinfo,
-            'results'=>$applicantResults,
+            'programList'=>$programList,
+            'mediumList'=>$mediumList,
+            'shiftList'=>$shiftList,
+            'groupList'=>$groupList,
+            'result'=>$result,
             'msg'=>$msg
         ];
     	return view('admin.admissionsettings.admissionresult.index1',$dataList);

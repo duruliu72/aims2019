@@ -24,14 +24,14 @@
                     <form action="{{URL::to('admission/admitcard')}}"  method="post" class="form-horizontal">
                         {{csrf_field()}}
                         <div class="form-group row">
-                        <label class="col-sm-2 control-label" for="applicantid">Applicant ID</label>
-                        <div class="col-sm-4">
-                             <input type="text" class="form-control" placeholder="User Name" id="applicantid" name="applicantid">
-                        </div>
-                         <label class="col-sm-2 control-label" for="pin_code">Pin Code</label>
-                        <div class="col-sm-4">
-                            <input autocomplete="off" type="text" class="form-control" placeholder="Pin Code" id="pin_code" name="pin_code">
-                        </div>
+                            <label class="col-sm-2 control-label" for="applicantid">Applicant ID</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control" placeholder="User Name" id="applicantid" name="applicantid">
+                            </div>
+                            <label class="col-sm-2 control-label" for="pin_code">Pin Code</label>
+                            <div class="col-sm-4">
+                                <input autocomplete="off" type="text" class="form-control" placeholder="Pin Code" id="pin_code" name="pin_code">
+                            </div>
                         </div>
                         <div class="form-group row">
                             <div class="col-sm-4 offset-sm-2">

@@ -4,13 +4,13 @@ namespace App\Http\Controllers\com\adventure\school\admission;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\com\adventure\school\basic\Institute;
 use App\com\adventure\school\admission\AdmissionProgram;
 use App\com\adventure\school\admission\Admission;
 use App\com\adventure\school\admission\VAdmissionSubject;
 use App\com\adventure\school\admission\Applicant;
 use App\com\adventure\school\admission\AdmissionApplicant;
 use App\com\adventure\school\admission\AdmissionResult;
-use App\com\adventure\school\basic\Institute;
 use App\com\adventure\school\basic\Gender;
 use App\com\adventure\school\basic\Quota;
 use App\com\adventure\school\basic\Religion;
@@ -318,27 +318,22 @@ class AdmissionController extends Controller
         return view('school.admission.admissionresultview');
     }
     public function getAplicantResult(Request $request){
-        $username=$request->username;
-        $password=$request->password;
-        $isExist=\DB::table('applicants')->where('username',$username)->exists();
+      	$applicantid=$request->applicantid;
+        $pin_code=$request->pin_code;
+		$isExist=\DB::table('applicants')
+		->where('applicantid',$applicantid)
+		->where('pin_code',$pin_code)
+		->exists();
         if(!$isExist){
-            $msg="User Name or Password is incorrect";
+            $msg="Applicantid or Pincode is incorrect";
             return redirect()->back()->with('msg',$msg)->withInput($request->input());
-        }
-        $hashedPassword=\DB::table('applicants')->where('username',$username)->first()->password;
-        if (!Hash::check($password, $hashedPassword)) {
-             $msg="Password is incorrect";
-             return redirect()->back()->with('msg',$msg)->withInput($request->input());
-        }
-        $aInstitute=new Institute();
-        $aApplicant=new Applicant();
-        $applicantinfo=$aApplicant->getApplicant($username,$hashedPassword);
-        $aAdmissionResult=new AdmissionResult();
-        $aObj=$aAdmissionResult->getMeritPosition($applicantinfo->programofferid,$applicantinfo->applicantid);
+		}
+		$aAdmissionResult=new AdmissionResult();
+		$result=$aAdmissionResult->getAdmissionResult($applicantid,$pin_code);
+		// dd($result);
          $dataList=[
-            'instituteinfo'=>$aInstitute->getInstituteById(1),
-            'applicantinfo'=>$applicantinfo,
-            'admissionresult'=>$aObj,
+			'institute'=>Institute::getInstituteName(),
+            'result'=>$result,
         ];
         return view('school.admission.admissionresult',$dataList);
     }

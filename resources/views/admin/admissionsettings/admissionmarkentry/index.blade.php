@@ -47,8 +47,7 @@
                            @endforeach
                            
                         </select>
-                      </div>
-                                             
+                      </div>                
                     </div>
                     <div class="form-group row">
                        <label class="col-sm-2 control-label" for="shiftid">Shift</label>
@@ -80,7 +79,7 @@
                     </div>
                   </form>
                 </div>
-                @if(isset($result)&&$result!=null))
+                @if(isset($result)&&$result!=null)
                 <div class="programofferinfo">
                     <div class="programofferinfo_item">
                         <span>Session: {{$result['admissionprogram']->sessionName}}</span>

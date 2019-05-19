@@ -47,7 +47,35 @@ class AdmissionMarkEntry extends Model
             }
             $markLst[$applicant->applicantid]=$item;
         }
-        // dd($markLst);
+        $result=array(
+           'admissionprogram'=>$programinfo,
+           'subjectinfo'=>$subjectinfo,
+           'applicants'=>$applicants,
+           'tot_marksList'=>$tot_marksList,
+           'markLst'=>$markLst
+        );
+        return $result;
+    }
+    public function getAllForMarkEditOnId($admission_programid){
+        $aAdmissionProgram=new AdmissionProgram();
+        $programinfo=$aAdmissionProgram->getAdmissionPrograminfo($admission_programid);
+        $aAdmissionProgramSubject=new AdmissionProgramSubject();
+        $subjectinfo=$aAdmissionProgramSubject->getAdmissionSubject($admission_programid);
+        $aApplicant=new Applicant();
+        $applicants=$aApplicant->getAllApplicantForMarkEdit($admission_programid);
+        $tot_marksList=array();
+        foreach($applicants as $applicant){
+            $tot_marksList[$applicant->applicantid]=$this->getTotalMark($applicant->applicantid);
+        }
+        $markLst=array();
+        foreach($applicants as $applicant){
+            $item=array();
+            $subjects=$this->getSubjectMark($applicant->applicantid);
+            foreach($subjects as $subject){
+                $item[$subject->subjectid]=$subject->marks;
+            }
+            $markLst[$applicant->applicantid]=$item;
+        }
         $result=array(
            'admissionprogram'=>$programinfo,
            'subjectinfo'=>$subjectinfo,
@@ -72,7 +100,7 @@ class AdmissionMarkEntry extends Model
 		$result=collect($qresult);
 		return $result;
     }
-    public function getResult($admission_programid){
+    public function getResultOnID($admission_programid){
         $aAdmissionProgram=new AdmissionProgram();
         $programinfo=$aAdmissionProgram->getAdmissionPrograminfo($admission_programid);
         $aAdmissionProgramSubject=new AdmissionProgramSubject();

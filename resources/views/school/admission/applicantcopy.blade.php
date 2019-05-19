@@ -21,7 +21,8 @@
                                 <img src="{{asset('clientAdmin/image/logo/school-logo.png')}}">
                             </div>
                             <div class="institute_txt">
-                                <h3 class="institute_title">@if($bean['institute']!=null)
+                                <h3 class="institute_title">
+                                    @if($bean['institute']!=null)
                                     {{$bean['institute']->name}}
                                     @else
                                     Secondary High School

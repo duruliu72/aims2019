@@ -3,92 +3,61 @@
 namespace App\com\adventure\school\admission;
 
 use Illuminate\Database\Eloquent\Model;
-
+use App\com\adventure\school\basic\Institute;
+use App\com\adventure\school\admission\AdmissionProgram;
+use App\com\adventure\school\admission\AdmissionApplicant;
+use App\com\adventure\school\admission\Applicant;
 class AdmissionResult extends Model
 {
     protected $table="admissionresult";
 	protected $fillable = ['applicantid','subjectid','marks'];
-	public function getMeritList($programofferid){
-		$sql="SELECT finaltable.* 
-		from(SELECT 
-		@row_number:=CASE
-			WHEN @temp_no=table1.programofferid THEN @row_number + 1 ELSE 1
-		END AS serialno,
-		@temp_no:=table1.programofferid AS temp,
-		table1.*
-		FROM(SELECT
-		applicants.*,
-		sum(admissionresult.marks) AS total_obtain_mark,
-		admission_programs.exam_marks
-		FROM `admissionresult`
-		INNER JOIN applicants ON admissionresult.applicantid=applicants.applicantid
-		INNER JOIN admission_programs ON applicants.programofferid=admission_programs.programofferid
-		GROUP BY admissionresult.applicantid ORDER BY applicants.programofferid,marks DESC) AS table1,
-		(SELECT @temp_no:=0,@row_number:=0) as t) AS finaltable WHERE finaltable.programofferid=? AND finaltable.total_obtain_mark>=(finaltable.exam_marks*(0/100))";
-		$qresult=\DB::select($sql,[$programofferid]);
-		$result=collect($qresult);
+	// applicantid wise Result 
+	public function getAdmissionResult($applicantid,$pin_code){
+		$aApplicant=new Applicant();
+		$applicant_id=$aApplicant->getApplicantid($applicantid,$pin_code);
+		$aAdmissionApplicant=new AdmissionApplicant();
+		$admission_programid=$aAdmissionApplicant->getAdmissionProgramId($applicant_id);
+		$aAdmissionProgram=new AdmissionProgram();
+		$programinfo=$aAdmissionProgram->getAdmissionPrograminfo($admission_programid);
+		$aApplicant=new Applicant();
+		$applicant_list=$this->getSerial($admission_programid);
+		$applicant=$this->searchApplicant($applicant_list,$applicant_id);
+		$result=array(
+			'admissionprogram'=>$programinfo,
+			'applicants'=>$applicant
+		);
 		return $result;
 	}
-	public function getMeritPosition($programofferid,$applicantid){
-		$sql="SELECT meritap.*,
-		students.classroll,
-		religions.name AS religionName
-		from (select 
-		totalap.*,
-		@row_number:=CASE
-		WHEN @temp_no=totalap.programofferid THEN @row_number+1 ELSE 1
-		END as serialno,
-		@temp_no:=totalap.programofferid AS temp
-		FROM(SELECT 
-		ap.programofferid,
-		ap.applicantid,
-		IFNULL(ap.studentregid,0) AS studentregid,
-		ap.name,
-		ap.religionid,
-		ap.picture,
-		SUM(admissionresult.marks) AS totalmark
-		FROM(SELECT * FROM `applicants`
-		WHERE programofferid=?) AS ap
-		LEFT JOIN admissionresult ON ap.applicantid=admissionresult.applicantid
-		WHERE ap.admssion_roll IS NOT NULL GROUP BY ap.applicantid ORDER BY totalmark DESC) AS totalap,
-		(SELECT @temp_no:=0,@row_number:=0) AS t) AS meritap
-		LEFT JOIN students ON meritap.programofferid=students.programofferid AND meritap.studentregid=students.studentregid
-		INNER JOIN religions ON meritap.religionid=religions.id
-		WHERE meritap.applicantid=?
-		ORDER BY meritap.applicantid";
-		$qresult=\DB::select($sql,[$programofferid,$applicantid]);
-		$result=collect($qresult)->first();
+	private function searchApplicant($applicant_list,$applicant_id){
+		foreach($applicant_list as $x){
+			if($x[0]->applicantid==$applicant_id){
+				return $x;
+			}
+		}
+		return null;
+	}
+	// Program offer wise
+	public function getAdmissionResults($sessionid,$programid,$groupid,$mediumid,$shiftid){
+		$aAdmissionProgram=new AdmissionProgram();
+		$admission_programid=$aAdmissionProgram->getAdmissionProgramID($sessionid,$programid,$groupid,$mediumid,$shiftid);
+		$programinfo=$aAdmissionProgram->getAdmissionPrograminfo($admission_programid);
+		$applicant_list=$this->getSerial($admission_programid);
+		$result=array(
+			'admissionprogram'=>$programinfo,
+			'applicants'=>$applicant_list
+		);
 		return $result;
 	}
-	public function getAdmissionApplicantsCommon($programofferid){
-		$sql="SELECT meritap.*,
-		students.classroll,
-		religions.name AS religionName
-		from (select 
-		totalap.*,
-		@row_number:=CASE
-		WHEN @temp_no=totalap.programofferid THEN @row_number+1 ELSE 1
-		END as serialno,
-		@temp_no:=totalap.programofferid AS temp
-		FROM(SELECT 
-		ap.programofferid,
-		ap.applicantid,
-		IFNULL(ap.studentregid,0) AS studentregid,
-		ap.name,
-		ap.religionid,
-		ap.picture,
-		SUM(admissionresult.marks) AS totalmark
-		FROM(SELECT * FROM `applicants`
-		WHERE programofferid=?) AS ap
-		LEFT JOIN admissionresult ON ap.applicantid=admissionresult.applicantid
-		WHERE ap.admssion_roll IS NOT NULL GROUP BY ap.applicantid ORDER BY totalmark DESC) AS totalap,
-		(SELECT @temp_no:=0,@row_number:=0) AS t) AS meritap
-		LEFT JOIN students ON meritap.programofferid=students.programofferid AND meritap.studentregid=students.studentregid
-		INNER JOIN religions ON meritap.religionid=religions.id
-		ORDER BY meritap.applicantid";
-		$qresult=\DB::select($sql,[$programofferid]);
-		$result=collect($qresult);
-		return $result;
+	private function getSerial($admission_programid){
+		$aApplicant=new Applicant();
+		$applicants=$aApplicant->allApplicantForResult($admission_programid);
+		$applicant_list=array();
+		$serialno=1;
+		foreach($applicants as $applicant){
+			$applicant_list[$applicant->applicantid]=[$applicant,$serialno];
+			$serialno++;
+		}
+		arsort($applicant_list);
+		return $applicant_list;
 	}
-	
 }

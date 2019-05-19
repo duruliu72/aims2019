@@ -24,7 +24,14 @@ class Applicant extends Model
 		'prevschool','lastclass','result','passingyear','tcno',
 		'tcissueddate','picture',
 		'signature','father_picture','mother_picture'];
-
+	public function getApplicantid($applicantid,$pin_code){
+		$sql="SELECT * FROM `applicants` WHERE applicantid=? && pin_code=?";
+		$qresult=\DB::select($sql,[$applicantid,$pin_code]);
+		$result=collect($qresult);
+		$applicant=$result->first();
+		$applicantid=$applicant->applicantid;
+		return $applicantid;
+	}
 	public function getApplicant($applicantid,$pin_code=""){
 		$applicant=$this->getApplicantinfo($applicantid,$pin_code);
 		$programofferinfo=$this->getApplicantPrograminfo($applicantid);
@@ -51,6 +58,13 @@ class Applicant extends Model
 			'subject'=>$subject
 		);
 		return $list;
+	}
+	public function getApplicantResult($applicantid,$pin_code=""){
+		// $sql="";
+		// $qresult=\DB::select($sql,[$admission_programid]);
+		// $result=collect($qresult);
+		return 90;
+		return $result;
 	}
 	public function getApplicantinfo($applicantid,$pin_code){
 		$sql="SELECT t1.* ,
@@ -147,6 +161,28 @@ class Applicant extends Model
 		INNER JOIN applicants ON admissionapplicants.applicantid=applicants.applicantid
 		WHERE admissionapplicants.admission_programid=?) AS table1
         WHERE table1.applicantid NOT IN (SELECT admissionresult.applicantid FROM `admissionresult` GROUP BY admissionresult.applicantid)";
+		$qresult=\DB::select($sql,[$admission_programid]);
+		$result=collect($qresult);
+		return $result;
+	}
+
+	// For Admission Result Program offer wise
+	public function allApplicantForResult($admission_programid){
+		$sql="select 
+		t1.*,
+		t2.tot_marks
+		from (SELECT 
+		applicants.*,
+		admssion_roll
+		FROM `admissionapplicants`
+		INNER JOIN applicants ON admissionapplicants.applicantid=applicants.applicantid
+		WHERE admission_programid=?) AS t1
+		INNER JOIN
+		(SELECT 
+				admissionresult.applicantid,
+				SUM(admissionresult.marks) AS tot_marks
+				FROM `admissionresult`
+				GROUP BY applicantid) AS t2 ON t1.applicantid=t2.applicantid ORDER BY t2.tot_marks DESC";
 		$qresult=\DB::select($sql,[$admission_programid]);
 		$result=collect($qresult);
 		return $result;

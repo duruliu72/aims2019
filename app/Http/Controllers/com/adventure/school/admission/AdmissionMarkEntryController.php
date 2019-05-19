@@ -61,7 +61,7 @@ class AdmissionMarkEntryController extends Controller
                 }
                 $msg="Your input item save Successfully";
             }
-            $result=$aAdmissionMarkEntry->getResult($admission_programid);
+            $result=$aAdmissionMarkEntry->getResultOnID($admission_programid);
         }
         $aAdmissionProgram=new AdmissionProgram();
         // sessionid,programid,groupid,mediumid,shiftid,tableName And last one compareid
@@ -100,6 +100,7 @@ class AdmissionMarkEntryController extends Controller
         }
         if($request->isMethod('post')&&$request->update_btn=='update_btn'){
             $admission_programid=$request->programofferid;
+            // dd($admission_programid);
             $checkLst=$request->checkbox;
             if($checkLst!=null){
                 foreach ($checkLst as $key=>$value){
@@ -126,7 +127,7 @@ class AdmissionMarkEntryController extends Controller
                 }
                 $msg="Your input item update Successfully";
             }
-            $result=$aAdmissionMarkEntry->getResult($admission_programid);
+            $result=$aAdmissionMarkEntry->getAllForMarkEditOnId($admission_programid);
         }
         $aAdmissionProgram=new AdmissionProgram();
         // sessionid,programid,groupid,mediumid,shiftid,tableName And last one compareid

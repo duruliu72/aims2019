@@ -21,7 +21,13 @@
                                 <img src="{{asset('clientAdmin/image/logo/institute_logo.png')}}">
                             </div>
                             <div class="institute_txt">
-                                <h3 class="institute_title">{{$instituteinfo->name}}</h3>
+                                <h3 class="institute_title"> 
+                                    @if($institute!=null)
+                                        {{$institute->name}}
+                                    @else
+                                        Default Institute Name
+                                    @endif
+                                </h3>
                                 <p class="institute_subtitle">Chouddagram Pourasova, Chauddagram , Comilla</p>
                             </div>
                         </div>
@@ -38,36 +44,20 @@
                                         <table>
                                             <tr>
                                                 <td>Alpplicantid <span>:</span></td>
-                                                <td>{{$admissionresult->applicantid}}</td>
+                                                <td>{{$result['applicants'][0]->applicantid}}</td>
                                             </tr>
                                             <tr>
                                                 <td>Roll <span>:</span></td>
-                                                <td>{{$applicantinfo->admssion_roll}}</td>
+                                                <td>{{$result['applicants'][0]->admssion_roll}}</td>
                                             </tr>
                                             <tr>
                                                 <td>Name <span>:</span></td>
-                                                <td>{{$applicantinfo->name}}</td>
+                                                <td>{{$result['applicants'][0]->firstName}}</td>
                                             </tr>
-                                            <tr>
-                                                <?php $dob=date("d/m/Y", strtotime($applicantinfo->dob)) ?>
-                                                <td>Date Of Birth <span>:</span></td>
-                                                <td>{{$dob}}</td>
-                                            </tr>
-                                             <tr>
-                                                <td>Gender <span>:</span></td>
-                                                <td>{{$applicantinfo->genderName}}</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Reigion <span>:</span></td>
-                                                <td>{{$applicantinfo->religionName}}</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Blood Group <span>:</span></td>
-                                                <td>{{$applicantinfo->bloodgroupName}}</td>
-                                            </tr>
+                                            
                                             <tr>
                                                 <td>Merit Position <span>:</span></td>
-                                                <td>{{$admissionresult->serialno}}</td>
+                                                <td>{{$result['applicants'][1]}}</td>
                                             </tr>
                                         </table>
                                     </div>
