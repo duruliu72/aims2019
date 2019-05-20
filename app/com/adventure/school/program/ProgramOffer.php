@@ -44,7 +44,7 @@ class ProgramOffer extends Model
 				INNER JOIN groups ON t1.groupid=groups.id
 				INNER JOIN mediums ON t1.mediumid=mediums.id
 				INNER JOIN shifts ON t1.shiftid=shifts.id
-				INNER JOIN employees ON t1.cordinator=employees.id
+				LEFT JOIN employees ON t1.cordinator=employees.id
 				WHERE t1.id=?";
 				$qresult=\DB::select($sql,[$programofferid]);
 				$result=collect($qresult)->first();
@@ -129,23 +129,24 @@ class ProgramOffer extends Model
 			}
 			$sql="SELECT t2.* FROM `programoffers` AS t1
 			INNER JOIN ".$tableName." as t2 ON  t1.".$compareid."=t2.id
-			WHERE sessionid=1";
+			WHERE sessionid=?";
 			$data=array();
+			array_push($data,$sessionid);
 			if($programid!=0){
-				array_push($data,$programid);
 				$sql.=" AND programid=?";
+				array_push($data,$programid);
 			}
 			if($groupid!=0){
-				array_push($data,$groupid);
 				$sql.=" AND groupid=?";
+				array_push($data,$groupid);
 			}
 			if($mediumid!=0){
-				array_push($data,$mediumid);
 				$sql.=" AND mediumid=?";
+				array_push($data,$mediumid);
 			}
 			if($shiftid!=0){
-				array_push($data,$shiftid);
 				$sql.=" AND shiftid=?";
+				array_push($data,$shiftid);
 			}
 			$sql.=" GROUP BY t2.id";
 			$qResult=\DB::select($sql,$data);

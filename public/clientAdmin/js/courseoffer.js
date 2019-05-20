@@ -1,17 +1,17 @@
 function getChange(thisref,option){
 	var id=thisref.getAttribute('id');
 	if(option=="program"){
-		getChangeOnProgram(id,option,"#groupid",1);
-		getChangeOnProgram(id,option,"#mediumid",2);
-        getChangeOnProgram(id,option,"#shiftid",3);
+		getChangeOnProgram(id,option,"#mediumid",1);
+        getChangeOnProgram(id,option,"#shiftid",2);
+        getChangeOnProgram(id,option,"#groupid",3);
 	}else if(option=="group"){
-		getChangeOnGroup(id,option,"#mediumid",1);
-        getChangeOnGroup(id,option,"#shiftid",2);
+		// getChangeOnGroup(id,option,"#mediumid",1);
+        // getChangeOnGroup(id,option,"#shiftid",2);
 	}else if(option=="medium"){
         getChangeOnMedium(id,option,"#shiftid",1);
+        getChangeOnMedium(id,option,"#groupid",2);
 	}else if(option=="shift"){
-        getChangeOnShift(id,option,"#firstsubjectcodeid",1);
-        getChangeOnShift(id,option,"#secondsubjectcodeid",2);
+        getChangeOnShift(id,option,"#groupid",1);
     }
 }
 function getChangeOnProgram(id,option,output,methodid){
@@ -21,7 +21,7 @@ function getChangeOnProgram(id,option,output,methodid){
 	var shiftid=0;
 	$.ajax({
 		type:'get',
-		url: "courseoffercreate/getValue",
+		url: baseUrl+"admissionprogram/getValue",
 		dataType: "html",
 		data: {'programid':programid,'groupid':groupid,'mediumid':mediumid,'shiftid':shiftid,'option':option,'methodid':methodid},
 		success: function( result ) {
@@ -36,7 +36,7 @@ function getChangeOnGroup(id,option,output,methodid){
 	var shiftid=0;
 	$.ajax({
 		type:'get',
-		url: "courseoffercreate/getValue",
+		url: baseUrl+"admissionprogram/getValue",
 		dataType: "html",
 		data: {'programid':programid,'groupid':groupid,'mediumid':mediumid,'shiftid':shiftid,'option':option,'methodid':methodid},
 		success: function( result ) {
@@ -45,13 +45,13 @@ function getChangeOnGroup(id,option,output,methodid){
 	});
 }
 function getChangeOnMedium(id,option,output,methodid){
-	var programid=$("#programid").val();
-    var groupid=$("#groupid").val();
+    var programid=$("#programid").val();
+    var groupid=0;
 	var mediumid=$("#"+id).val();
-	var shiftid=0;
+    var shiftid=0;
 	$.ajax({
 		type:'get',
-		url: "courseoffercreate/getValue",
+		url: baseUrl+"admissionprogram/getValue",
 		dataType: "html",
 		data: {'programid':programid,'groupid':groupid,'mediumid':mediumid,'shiftid':shiftid,'option':option,'methodid':methodid},
 		success: function( result ) {
@@ -60,13 +60,13 @@ function getChangeOnMedium(id,option,output,methodid){
 	});
 }
 function getChangeOnShift(id,option,output,methodid){
-	var programid=$("#programid").val();
-    var groupid=$("#groupid").val();
+    var programid=$("#programid").val();
+    var groupid=0;
 	var mediumid=$("#mediumid").val();
-	var shiftid=$("#"+id).val();
+    var shiftid=$("#"+id).val();
 	$.ajax({
 		type:'get',
-		url: "courseoffercreate/getValue",
+		url: baseUrl+"admissionprogram/getValue",
 		dataType: "html",
 		data: {'programid':programid,'groupid':groupid,'mediumid':mediumid,'shiftid':shiftid,'option':option,'methodid':methodid},
 		success: function( result ) {
@@ -151,28 +151,3 @@ function markCheckAction(){
 }
 markCheckAction();
 }
-// ========================Secrion offer And teacher Assign ========================
-// let sectionofferbtn=document.getElementById('sectionofferbtn');
-// let tbody=document.getElementById('tbody');
-// let content=tbody.innerHTML;
-// sectionofferbtn.addEventListener('click',function(){
-// 	actionOn(true);
-// });
-// function actionOn(isTrue){
-// 	if(isTrue){
-// 		tbody.innerHTML+=content;
-// 	}
-// 	for(let tr of tbody.children){
-//         for(let td of tr.children){
-//             if(td.children[0].nodeName=='SPAN')
-//             td.children[0].addEventListener('click',function(){
-// 				if(tbody.children.length>1){
-// 					let deleterow=this.parentNode.parentNode;
-// 					deleterow.parentNode.removeChild(deleterow);
-// 					content=tbody.innerHTML;
-// 				}
-//             });
-//         }
-//     }
-// }
-// actionOn(false);

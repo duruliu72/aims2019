@@ -41,16 +41,7 @@
                         @endforeach
                     </select>
                   </div>
-                    <div class="col-sm-4 form-group">
-                    <label class="control-label" for="groupid">Group</label>
-                      <select onchange="getChange(this,'group')" class="form-control" name="groupid" id="groupid">
-                         <option value="">SELECT</option>
-                         @foreach ($groupList as $x)
-                           <option value="{{$x->id}}">{{$x->name}}</option>
-                         @endforeach
-                      </select>
-                    </div>
-                    <div class="col-sm-4 form-group">
+                  <div class="col-sm-4 form-group">
                     <label class="control-label" for="mediumid">Medium</label>
                       <select onchange="getChange(this,'medium')" class="form-control" name="mediumid" id="mediumid">
                          <option value="">SELECT</option>
@@ -67,7 +58,16 @@
                            <option value="{{$x->id}}">{{$x->name}}</option>
                          @endforeach
                       </select>
-                    </div>                           
+                    </div>  
+                    <div class="col-sm-4 form-group">
+                    <label class="control-label" for="groupid">Group</label>
+                      <select onchange="getChange(this,'group')" class="form-control" name="groupid" id="groupid">
+                         <option value="">SELECT</option>
+                         @foreach ($groupList as $x)
+                           <option value="{{$x->id}}">{{$x->name}}</option>
+                         @endforeach
+                      </select>
+                    </div>                 
                     <div class="col-sm-4 form-group clearfix">
                       <label class="control-label" for="firstsubjectcodeid">Mearge First Subject</label>
                       <select class="form-control" name="firstsubjectcodeid" id="firstsubjectcodeid">
@@ -173,6 +173,7 @@
 <script src="{{asset('clientAdmin/js/dataTables.fixedHeader.min.js')}}"></script>
 <script src="{{asset('clientAdmin/js/dataTables.responsive.min.js')}}"></script>
 <script src="{{asset('clientAdmin/js/responsive.bootstrap.min.js')}}"></script>
+<script src="{{asset('clientAdmin/js/baseUrl.js')}}"></script>
 <script src="{{asset('clientAdmin/js/meargeoffer.js')}}"></script>
 <script type="text/javascript">
  $(document).ready(function() {

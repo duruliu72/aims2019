@@ -34,18 +34,7 @@
                            <option value="{{$x->id}}">{{$x->name}}</option>
                          @endforeach
                       </select>
-                    </div>
-                     <label class="col-sm-2 control-label" for="groupid">Group</label>
-                    <div class="col-sm-4">
-                      <select onchange="getChange(this,'group')" class="form-control" name="groupid" id="groupid">
-                         <option value="">SELECT</option>
-                         @foreach ($groupList as $x)
-                           <option value="{{$x->id}}">{{$x->name}}</option>
-                         @endforeach
-                      </select>
-                    </div>                       
-                  </div>
-                  <div class="form-group row">
+                    </div> 
                     <label class="col-sm-2 control-label" for="mediumid">Medium</label>
                     <div class="col-sm-4">
                       <select onchange="getChange(this,'medium')" class="form-control" name="mediumid" id="mediumid">
@@ -54,16 +43,27 @@
                            <option value="{{$x->id}}">{{$x->name}}</option>
                          @endforeach
                       </select>
-                    </div>
+                    </div>                   
+                  </div>
+                  <div class="form-group row">
                      <label class="col-sm-2 control-label" for="shiftid">Shift</label>
                     <div class="col-sm-4">
-                      <select class="form-control" name="shiftid" id="shiftid">
+                      <select onchange="getChange(this,'shift')" class="form-control" name="shiftid" id="shiftid">
                          <option value="">SELECT</option>
                          @foreach ($shiftList as $x)
                            <option value="{{$x->id}}">{{$x->name}}</option>
                          @endforeach
                       </select>
-                    </div>                           
+                    </div>
+                    <label class="col-sm-2 control-label" for="groupid">Group</label>
+                    <div class="col-sm-4">
+                      <select  class="form-control" name="groupid" id="groupid">
+                         <option value="">SELECT</option>
+                         @foreach ($groupList as $x)
+                           <option value="{{$x->id}}">{{$x->name}}</option>
+                         @endforeach
+                      </select>
+                    </div>                              
                   </div>
                     <div class="row">
                       <div class="col-sm-12">
@@ -108,10 +108,6 @@
                             <th width="2%">#</th>
                             <th width="27%">Subject Name</th>
                             <th width="10%">Marks</th>
-                            @foreach($sectionList as $x)
-                            <input type="hidden" name="sectionid[]" value="{{$x->id}}">
-                            <th>{{$x->name."(Teacher)"}}</th>
-                            @endforeach
                             <th width="2%"><input id="markcheckid" type="checkbox"></th>
                           </tr>
                         </thead>
@@ -123,18 +119,6 @@
                               <td>{{++$id}}</td>                     
                               <td><input type="hidden" name="coursecodeid[]" value="{{$x->id}}" />{{$x->courseNameWithCode}}</td>
                               <td><div class="form-group"><input class="form-control" type="text" name="coursemarks[{{$x->id}}]" value="{{$x->coursemark}}" /></div></td>
-                              @foreach($sectionList as $y)
-                              <td>
-                                <div class="form-group">
-                                  <select name="employeeid[{{$x->id}}][{{$y->id}}]"  class="form-control"">
-                                    <option value="">SELECT</option>
-                                    @foreach($employeeList as $z)
-                                    <option value="{{$z->id}}">{{$z->name}}</option>
-                                    @endforeach
-                                  </select>
-                                </div>
-                              </td>
-                              @endforeach
                               <td><input class="markcheck" type="checkbox" name="checkbox[{{$x->id}}]"></td>
                             </tr>
                             @else
@@ -142,13 +126,6 @@
                               <td>{{++$id}}</td>
                               <td>{{$x->courseNameWithCode}}</td>
                               <td>{{$x->coursemark}}</td>
-                              @foreach($sectionList as $y)
-                                @foreach($sectionTeacherList as $z)
-                                 @if($x->id==$z->coursecodeid && $y->id==$z->sectionid)
-                                  <td>{{$z->employeeName}}</td>
-                                 @endif
-                                @endforeach
-                              @endforeach
                               <td><span style='font-size:18px;'>&#10003;</span></td>      
                             </tr>
                             @endif
@@ -177,5 +154,6 @@
 
 @endsection
 @section('uniqueScript')
+<script src="{{asset('clientAdmin/js/baseUrl.js')}}"></script>
 <script src="{{asset('clientAdmin/js/courseoffer.js')}}"></script>
 @endsection

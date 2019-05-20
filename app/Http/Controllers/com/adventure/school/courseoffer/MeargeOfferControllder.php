@@ -4,6 +4,7 @@ namespace App\Http\Controllers\com\adventure\school\courseoffer;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\com\adventure\school\basic\Institute;
 use App\com\adventure\school\courseoffer\Mearge;
 use App\com\adventure\school\courseoffer\CourseOffer;
 use App\com\adventure\school\courseoffer\MeargeOffer;
@@ -38,17 +39,23 @@ class MeargeOfferControllder extends Controller
         $sidebarMenu=$aMenu->getSidebarMenu();
         $pList=$aMenu->getPermissionOnMenu('meargeoffer');
         $aMeargeOffer=new MeargeOffer();
+        // sessionid,programid,groupid,mediumid,shiftid and tableName
+        $programList=$aMeargeOffer->getAllOnIDS(0,0,0,0,0,"programs",'programid');
+        $mediumList=$aMeargeOffer->getAllOnIDS(0,0,0,0,0,"mediums",'mediumid');
+        $shiftList=$aMeargeOffer->getAllOnIDS(0,0,0,0,0,"shifts",'shiftid');
+        $groupList=$aMeargeOffer->getAllOnIDS(0,0,0,0,0,"groups",'groupid');
         $courseCodeList=$aMeargeOffer->getCourseCodes($sessionid);
         $meargeList=Mearge::all();
         $aList=$aMeargeOffer->meargeDetails();
         $dataList=[
+            'institute'=>Institute::getInstituteName(),
             'sidebarMenu'=>$sidebarMenu,
+            'programList'=>$programList,
+            'groupList'=>$groupList,
+            'mediumList'=>$mediumList,
+            'shiftList'=>$shiftList,
             'pList'=>$pList,
             'result'=>$aList,
-            'programList'=>$aMeargeOffer->getProgramsOnSession($sessionid),
-            'groupList'=>$aMeargeOffer->getGroupsOnSession($sessionid),
-            'mediumList'=>$aMeargeOffer->getMediumsOnSession($sessionid),
-            'shiftList'=>$aMeargeOffer->getShiftsOnSession($sessionid),
             'courseCodeList'=>$courseCodeList,
             'meargeList'=>$meargeList,
             'msg'=>$msg
@@ -62,9 +69,6 @@ class MeargeOfferControllder extends Controller
         'mediumid' => 'required|',
         'shiftid' => 'required|',
         ]);
-        $yearName = date('Y');
-        $aSession=new Session();
-        $sessionid=$aSession->getSessionId($yearName);
      	$programid=$request->programid;
      	$groupid=$request->groupid;
      	$mediumid=$request->mediumid;
@@ -73,7 +77,7 @@ class MeargeOfferControllder extends Controller
         $secondsubjectcodeid=$request->secondsubjectcodeid;
         $meargeid=$request->meargeid;
         $aProgramOffer=new ProgramOffer();
-        $programofferid=$aProgramOffer->getProgramOfferId($sessionid,$programid,$groupid,$mediumid,$shiftid);
+        $programofferid=$aProgramOffer->getProgramOfferId(0,$programid,$groupid,$mediumid,$shiftid);
         $status=$this->doTransaction($programofferid,$firstsubjectcodeid,$secondsubjectcodeid,$meargeid);
      	if($status){
      		$msg="Mearging Successfully";
@@ -114,103 +118,57 @@ class MeargeOfferControllder extends Controller
             return false;
         }
     }
-    
-//    ================================================================
-    public function getValue(Request $request){
-        $option=$request->option;
-        $methodid=$request->methodid;
-        $programid=$request->programid;
-        $groupid=$request->groupid;
-        $mediumid=$request->mediumid;
-        $shiftid=$request->shiftid;
-        if($option=="program"){
-            if($methodid==1){
-                $this->getGroupsOnSessionAndProgram($programid);
-            }elseif($methodid==2){
-                $this->getMediumsOnSessionAndProgram($programid);
-            }elseif($methodid==3){
-                $this->getShiftsOnSessionAndProgram($programid);
-            }
-        }elseif($option=="group"){
-            if($methodid==1){
-                $this->getMediumsOnSessionAndPrograAndGroup($programid,$groupid);
-            }elseif($methodid==2){
-                $this->getShiftsOnSessionAndPrograAndGroup($programid,$groupid);
-            }
-        }elseif($option=="medium"){
-            if($methodid==1){
-                $this->getShiftsOnSessionAndPrograAndGroupAndMedium($programid,$groupid,$mediumid);
-            }
-        }elseif($option=="shift"){
-            if($methodid==1){
-                $this->getCourseCodesOnProgramOffer($programid,$groupid,$mediumid,$shiftid);
-            }elseif($methodid==2){
-                $this->getCourseCodesOnProgramOffer($programid,$groupid,$mediumid,$shiftid);
-            }
+     // For Ajax Call ===============
+   //    ================================================================
+   public function getValue(Request $request){
+    $option=$request->option;
+    $methodid=$request->methodid;
+    $programid=$request->programid;
+    $groupid=$request->groupid;
+    $mediumid=$request->mediumid;
+    $shiftid=$request->shiftid;
+    if($option=="program"){
+        if($methodid==1){
+            $this->getAllOnIDS(0,$programid,0,0,0,"mediums",'mediumid');
+        }elseif($methodid==2){
+            $this->getAllOnIDS(0,$programid,0,0,0,"shifts",'shiftid');
+        }elseif($methodid==3){
+            $this->getAllOnIDS(0,$programid,0,0,0,"groups",'groupid');
+        }
+    }elseif($option=="group"){
+        if($methodid==1){
+            $this->getCourseCodesOnProgramOffer(0,$programid,$groupid,$mediumid,$shiftid);
+        }elseif($methodid==2){
+            $this->getCourseCodesOnProgramOffer(0,$programid,$groupid,$mediumid,$shiftid);
+        }
+    }elseif($option=="medium"){
+        if($methodid==1){
+            $this->getAllOnIDS(0,$programid,0,$mediumid,0,"shifts",'shiftid');
+        }elseif($methodid==2){
+            $this->getAllOnIDS(0,$programid,0,$mediumid,0,"groups",'groupid');
+        }
+    }elseif($option=="shift"){
+        if($methodid==1){
+            $this->getAllOnIDS(0,$programid,0,$mediumid,$shiftid,"groups",'groupid');
         }
     }
-    private function getGroupsOnSessionAndProgram($programid){
-       $aMeargeOffer=new MeargeOffer();
-       $result=$aMeargeOffer->getGroupsOnSessionAndProgram(0,$programid);
+}
+private function getAllOnIDS($sessionid,$programid,$groupid,$mediumid,$shiftid,$tableName,$compareid){
+    $aMeargeOffer=new MeargeOffer();
+    $result=$aMeargeOffer->getAllOnIDS($sessionid,$programid,$groupid,$mediumid,$shiftid,$tableName,$compareid);
+    $output="<option value=''>SELECT</option>";
+    foreach($result as $x){
+        $output.="<option value='$x->id'>$x->name</option>";
+    }
+    echo  $output;
+}
+    private function getCourseCodesOnProgramOffer($sessionid,$programid,$groupid,$mediumid,$shiftid){
+        $aMeargeOffer=new MeargeOffer();
+        $result=$aMeargeOffer->getCourseCodesOnProgramOffer($sessionid,$programid,$groupid,$mediumid,$shiftid);
         $output="<option value=''>SELECT</option>";
         foreach($result as $x){
-           $output.="<option value='$x->id'>$x->name</option>";
+            $output.="<option value='$x->id'>$x->name</option>";
         }
         echo  $output;
     }
-    private function getMediumsOnSessionAndProgram($programid){
-        $aMeargeOffer=new MeargeOffer();
-        $result=$aMeargeOffer->getMediumsOnSessionAndProgram(0,$programid);
-         $output="<option value=''>SELECT</option>";
-         foreach($result as $x){
-            $output.="<option value='$x->id'>$x->name</option>";
-         }
-         echo  $output;
-     }
-     private function getShiftsOnSessionAndProgram($programid){
-        $aMeargeOffer=new MeargeOffer();
-        $result=$aMeargeOffer->getShiftsOnSessionAndProgram(0,$programid);
-         $output="<option value=''>SELECT</option>";
-         foreach($result as $x){
-            $output.="<option value='$x->id'>$x->name</option>";
-         }
-         echo  $output;
-     }
-     private function getMediumsOnSessionAndPrograAndGroup($programid,$groupid){
-        $aMeargeOffer=new MeargeOffer();
-        $result=$aMeargeOffer->getMediumsOnSessionAndPrograAndGroup(0,$programid,$groupid);
-         $output="<option value=''>SELECT</option>";
-         foreach($result as $x){
-            $output.="<option value='$x->id'>$x->name</option>";
-         }
-         echo  $output;
-     }
-     private function getShiftsOnSessionAndPrograAndGroup($programid,$groupid){
-        $aMeargeOffer=new MeargeOffer();
-        $result=$aMeargeOffer->getShiftsOnSessionAndPrograAndGroup(0,$programid,$groupid);
-         $output="<option value=''>SELECT</option>";
-         foreach($result as $x){
-            $output.="<option value='$x->id'>$x->name</option>";
-         }
-         echo  $output;
-     }
-     private function getShiftsOnSessionAndPrograAndGroupAndMedium($programid,$groupid,$mediumid){
-        $aMeargeOffer=new MeargeOffer();
-        $result=$aMeargeOffer->getShiftsOnSessionAndPrograAndGroupAndMedium(0,$programid,$groupid,$mediumid);
-         $output="<option value=''>SELECT</option>";
-         foreach($result as $x){
-            $output.="<option value='$x->id'>$x->name</option>";
-         }
-         echo  $output;
-     }
-     private function getCourseCodesOnProgramOffer($programid,$groupid,$mediumid,$shiftid){
-        $aMeargeOffer=new MeargeOffer();
-        $result=$aMeargeOffer->getCourseCodesOnProgramOffer(0,$programid,$groupid,$mediumid,$shiftid);
-         $output="<option value=''>SELECT</option>";
-         foreach($result as $x){
-            $output.="<option value='$x->id'>$x->name</option>";
-         }
-         echo  $output;
-     }
 }
-// $sessionid,$programid,$groupid,$mediumid,$shiftid

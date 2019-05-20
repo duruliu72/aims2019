@@ -39,17 +39,6 @@
                         </div>              
                       </div>
                       <div class="form-group row">
-                        <label class="col-sm-2 control-label" for="groupid">Group</label>
-                        <div class="col-sm-10">
-                          <select onchange="getChange(this,'group')" class="form-control" name="groupid" id="groupid">
-                            <option value="">SELECT</option>
-                            @foreach ($groupList as $x)
-                              <option <?php echo (old('groupid')==$x->id)? 'selected':''; ?> value="{{$x->id}}">{{$x->name}}</option>
-                            @endforeach
-                          </select>
-                        </div>                       
-                      </div>
-                      <div class="form-group row">
                         <label class="col-sm-2 control-label" for="mediumid">Medium</label>
                         <div class="col-sm-10">
                           <select onchange="getChange(this,'medium')" class="form-control" name="mediumid" id="mediumid">
@@ -70,6 +59,17 @@
                             @endforeach
                           </select>
                         </div>                           
+                      </div>
+                      <div class="form-group row">
+                        <label class="col-sm-2 control-label" for="groupid">Group</label>
+                        <div class="col-sm-10">
+                          <select class="form-control" name="groupid" id="groupid">
+                            <option value="">SELECT</option>
+                            @foreach ($groupList as $x)
+                              <option <?php echo (old('groupid')==$x->id)? 'selected':''; ?> value="{{$x->id}}">{{$x->name}}</option>
+                            @endforeach
+                          </select>
+                        </div>                       
                       </div>
                     </div>
                     <div class="col-md-6">
@@ -105,5 +105,6 @@
     </section>
 @endsection
 @section('uniqueScript')
+<script src="{{asset('clientAdmin/js/baseUrl.js')}}"></script>
 <script src="{{asset('clientAdmin/js/sectionoffer.js')}}"></script>
 @endsection

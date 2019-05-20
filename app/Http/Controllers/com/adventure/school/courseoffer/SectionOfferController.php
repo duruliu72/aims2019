@@ -4,6 +4,7 @@ namespace App\Http\Controllers\com\adventure\school\courseoffer;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\com\adventure\school\basic\Institute;
 use App\com\adventure\school\menu\Menu;
 use App\com\adventure\school\courseoffer\SectionOffer;
 use App\com\adventure\school\program\ProgramOffer;
@@ -43,18 +44,23 @@ class SectionOfferController extends Controller
         }
         $sidebarMenu=$aMenu->getSidebarMenu();
         $pList=$aMenu->getPermissionOnMenu('sectionoffer');
-        if($pList[2]->id==2){
-        }else{
+        if($pList[2]->id!=2){
             return redirect('error');
         }
         $aProgramOffer=new ProgramOffer();
+        // sessionid,programid,groupid,mediumid,shiftid,tableName And last one compareid
+        $programList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,"programs",'programid');
+        $mediumList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,"mediums",'mediumid');
+        $shiftList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,"shifts",'shiftid');
+        $groupList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,"groups",'groupid');
         $sectionList=Section::all();
         $dataList=[
+            'institute'=>Institute::getInstituteName(),
             'sidebarMenu'=>$sidebarMenu,
-            'programList'=>$aProgramOffer->getAllProgram($sessionid),
-            'groupList'=>$aProgramOffer->getGroupsOnSession($sessionid),
-            'mediumList'=>$aProgramOffer->getAllMedium($sessionid),
-            'shiftList'=>$aProgramOffer->getAllShift($sessionid),
+            'programList'=>$programList,
+            'groupList'=>$groupList,
+            'mediumList'=>$mediumList,
+            'shiftList'=>$shiftList,
             'sectionList'=>$sectionList,
         ];
         return view('admin.courseoffer.sectionoffer.create',$dataList);
@@ -119,9 +125,6 @@ class SectionOfferController extends Controller
      	return redirect()->back()->with('msg',$msg);
     }
     public function edit($id){
-        $yearName = date('Y');
-        $aSession=new Session();
-        $sessionid=$aSession->getSessionId($yearName);
         $aMenu=new Menu();
         $hasMenu=$aMenu->hasMenu('sectionoffer');
         if($hasMenu==false){
@@ -129,20 +132,24 @@ class SectionOfferController extends Controller
         }
         $sidebarMenu=$aMenu->getSidebarMenu();
         $pList=$aMenu->getPermissionOnMenu('sectionoffer');
-        if($pList[3]->id==3){
-        }else{
+        if($pList[3]->id!=3){
             return redirect('error');
         }
         $aProgramOffer=ProgramOffer::findOrfail($id);
-        // $sectionList=Section::all();
+        // sessionid,programid,groupid,mediumid,shiftid,tableName And last one compareid
+        $programList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,"programs",'programid');
+        $mediumList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,"mediums",'mediumid');
+        $shiftList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,"shifts",'shiftid');
+        $groupList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,"groups",'groupid');
         $aSectionOffer=new SectionOffer();
         $sectionList=$aSectionOffer->getSectionOfferOnPO($id);
         $dataList=[
+            'institute'=>Institute::getInstituteName(),
             'sidebarMenu'=>$sidebarMenu,
-            'programList'=>$aProgramOffer->getAllProgram($sessionid),
-            'groupList'=>$aProgramOffer->getGroupsOnSession($sessionid),
-            'mediumList'=>$aProgramOffer->getAllMedium($sessionid),
-            'shiftList'=>$aProgramOffer->getAllShift($sessionid),
+            'programList'=>$programList,
+            'groupList'=>$groupList,
+            'mediumList'=>$mediumList,
+            'shiftList'=>$shiftList,
             'sectionList'=>$sectionList,
             'bean'=>$aProgramOffer,
             // 'soList'=>$soList
@@ -188,8 +195,9 @@ class SectionOfferController extends Controller
 		}
      	return redirect()->back()->with('msg',$msg);
     }
-     // For Ajax Call ===============
-     public function getValue(Request $request){
+    // For Ajax Call ===============
+    //    ================================================================
+    public function getValue(Request $request){
         $option=$request->option;
         $methodid=$request->methodid;
         $programid=$request->programid;
@@ -198,79 +206,32 @@ class SectionOfferController extends Controller
         $shiftid=$request->shiftid;
         if($option=="program"){
             if($methodid==1){
-                $this->getGroupsOnSessionAndProgram($programid);
+                $this->getAllOnIDS(0,$programid,0,0,0,"mediums",'mediumid');
             }elseif($methodid==2){
-                $this->getMediumsOnSessionAndProgram($programid);
+                $this->getAllOnIDS(0,$programid,0,0,0,"shifts",'shiftid');
             }elseif($methodid==3){
-                $this->getShiftsOnSessionAndProgram($programid);
+                $this->getAllOnIDS(0,$programid,0,0,0,"groups",'groupid');
             }
         }elseif($option=="group"){
-            if($methodid==1){
-                $this->getMediumsOnSessionAndPrograAndGroup($programid,$groupid);
-            }elseif($methodid==2){
-                $this->getShiftsOnSessionAndPrograAndGroup($programid,$groupid);
-            }
+            
         }elseif($option=="medium"){
             if($methodid==1){
-                $this->getShiftsOnSessionAndPrograAndGroupAndMedium($programid,$groupid,$mediumid);
+                $this->getAllOnIDS(0,$programid,0,$mediumid,0,"shifts",'shiftid');
+            }elseif($methodid==2){
+                $this->getAllOnIDS(0,$programid,0,$mediumid,0,"groups",'groupid');
             }
         }elseif($option=="shift"){
             if($methodid==1){
-                $this->getSectionOfferOnPO($programid,$groupid,$mediumid,$shiftid);
+                $this->getAllOnIDS(0,$programid,0,$mediumid,$shiftid,"groups",'groupid');
             }
         }
     }
-    private function getGroupsOnSessionAndProgram($programid){
+    private function getAllOnIDS($sessionid,$programid,$groupid,$mediumid,$shiftid,$tableName,$compareid){
         $aProgramOffer=new ProgramOffer();
-        $result=$aProgramOffer->getGroup(0,$programid);
+        $result=$aProgramOffer->getAllOnIDS($sessionid,$programid,$groupid,$mediumid,$shiftid,$tableName,$compareid);
         $output="<option value=''>SELECT</option>";
         foreach($result as $x){
-           $output.="<option value='$x->id'>$x->name</option>";
-        }
-        echo  $output;
-    }
-    private function getMediumsOnSessionAndProgram($programid){
-        $aProgramOffer=new ProgramOffer();
-        $result=$aProgramOffer->getMedium(0,$programid);
-        $output="<option value=''>SELECT</option>";
-        foreach($result as $x){
-           $output.="<option value='$x->id'>$x->name</option>";
-        }
-        echo  $output;
-    }
-    private function getShiftsOnSessionAndProgram($programid){
-        $aProgramOffer=new ProgramOffer();
-        $result=$aProgramOffer->getShift(0,$programid);
-        $output="<option value=''>SELECT</option>";
-        foreach($result as $x){
-           $output.="<option value='$x->id'>$x->name</option>";
-        }
-        echo  $output;
-    }
-    private function getMediumsOnSessionAndPrograAndGroup($programid,$groupid){
-        $aProgramOffer=new ProgramOffer();
-        $result=$aProgramOffer->getMediumWithProgram(0,$programid,$groupid);
-        $output="<option value=''>SELECT</option>";
-        foreach($result as $x){
-           $output.="<option value='$x->id'>$x->name</option>";
-        }
-        echo  $output;
-    }
-    private function getShiftsOnSessionAndPrograAndGroup($programid,$groupid){
-        $aProgramOffer=new ProgramOffer();
-        $result=$aProgramOffer->getShiftWithProgram(0,$programid,$groupid);
-        $output="<option value=''>SELECT</option>";
-        foreach($result as $x){
-           $output.="<option value='$x->id'>$x->name</option>";
-        }
-        echo  $output;
-    }
-    private function getShiftsOnSessionAndPrograAndGroupAndMedium($programid,$groupid,$mediumid){
-        $aProgramOffer=new ProgramOffer();
-        $result=$aProgramOffer->getShiftWithProgramAndGroup(0,$programid,$groupid,$mediumid);
-        $output="<option value=''>SELECT</option>";
-        foreach($result as $x){
-           $output.="<option value='$x->id'>$x->name</option>";
+            $output.="<option value='$x->id'>$x->name</option>";
         }
         echo  $output;
     }

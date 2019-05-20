@@ -9,7 +9,7 @@ class Menu extends Model
     protected $table='menus';
    	protected $fillable = ['name','url','parentid','menuorder','status'];
    	public function getAllMenu(){
-   		$sql="SELECT t1.id,
+   	$sql="SELECT t1.id,
 		t1.name,
 		IFNULL(t1.url,'No Url') AS url,
 		t1.parentid,
@@ -20,7 +20,16 @@ class Menu extends Model
 		LEFT JOIN menus ON t1.parentid=menus.id ORDER BY t1.id";
    		$menuList=\DB::select($sql);
    		return $menuList;
-   	}
+		 }
+		 public function checkUrl($url){
+				$sql="SELECT * FROM `menus` WHERE url=?";
+				$qresult=\DB::select($sql,[$url]);
+				$result=collect($qresult);
+				if($result->count()>0){
+					return true;
+				}
+				return false;
+		 }
    	public function getParentsMenu(){
    		$sql="SELECT * FROM `menus` WHERE parentid=0";
    		$pmenuList=\DB::select($sql);

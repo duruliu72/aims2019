@@ -75,7 +75,12 @@ class MenuController extends Controller
      	$aMenu->name=$name;
      	$aMenu->parentid=$parentid;
      	$aMenu->url=$url;
-     	$aMenu->menuorder=$menuorder;
+        $aMenu->menuorder=$menuorder;
+        $isTrue=$aMenu->checkUrl($url);
+        if($isTrue==true){
+            $msg="This Url Already Exist";
+            return redirect()->back()->with('msg',$msg);
+        }
         $status=$aMenu->save();
         // Get Role id for current User
         $aRole=new Role();
