@@ -100,7 +100,7 @@ Route::post('markdistribution/edit','com\adventure\school\courseoffer\MarkDistri
 Route::get('student', 'com\adventure\school\academic\StudentController@applicantSearch');
 Route::get('student/create', 'com\adventure\school\academic\StudentController@goback');
 Route::post('student/create', 'com\adventure\school\academic\StudentController@create1');
-Route::get('students/getValue','com\adventure\school\admission\StudentController@getValue');
+Route::get('students/getValue','com\adventure\school\academic\StudentController@getValue');
 Route::get('students', 'com\adventure\school\academic\StudentController@allStudentReg');
 Route::post('students', 'com\adventure\school\academic\StudentController@allStudentReg');
 // Class Exam Settings

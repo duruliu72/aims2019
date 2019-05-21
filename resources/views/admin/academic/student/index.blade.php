@@ -36,17 +36,6 @@
                             @endforeach
                         </select>
                       </div>
-                       <label class="col-sm-2 control-label" for="groupid">Group</label>
-                      <div class="col-sm-4">
-                        <select onchange="getChange(this,'group')" class="form-control" name="groupid" id="groupid">
-                           <option value="">SELECT</option>
-                          @foreach ($groupList as $x)
-                             <option value="{{$x->id}}">{{$x->name}}</option>
-                           @endforeach
-                        </select>
-                      </div>                       
-                    </div>
-                    <div class="form-group row">
                       <label class="col-sm-2 control-label" for="mediumid">Medium</label>
                       <div class="col-sm-4">
                         <select onchange="getChange(this,'medium')" class="form-control" name="mediumid" id="mediumid">
@@ -56,16 +45,27 @@
                            @endforeach
                            
                         </select>
-                      </div>
-                       <label class="col-sm-2 control-label" for="shiftid">Shift</label>
+                      </div>                  
+                    </div>
+                    <div class="form-group row">
+                      <label class="col-sm-2 control-label" for="shiftid">Shift</label>
                       <div class="col-sm-4">
-                        <select class="form-control" name="shiftid" id="shiftid">
+                        <select onchange="getChange(this,'shift')" class="form-control" name="shiftid" id="shiftid">
                           <option value="">SELECT</option>
                            @foreach ($shiftList as $x)
                              <option value="{{$x->id}}">{{$x->name}}</option>
                            @endforeach
                         </select>
-                      </div>                           
+                      </div>
+                      <label class="col-sm-2 control-label" for="groupid">Group</label>
+                      <div class="col-sm-4">
+                        <select  class="form-control" name="groupid" id="groupid">
+                           <option value="">SELECT</option>
+                          @foreach ($groupList as $x)
+                             <option value="{{$x->id}}">{{$x->name}}</option>
+                           @endforeach
+                        </select>
+                      </div>                              
                     </div>
                     <div class="row">
                       <div class="col-sm-12">
@@ -77,16 +77,16 @@
                     </div>
                   </form>
                 </div>
-                @if(isset($programinfo))
+                @if(isset($result))
                   <div class="printarea" id="printarea">
                     <div class="row print-row">
                       <div class="col-sm-12 print-col">
                          <div class="programinfo">
-                            <div class="programinfo_item"><span>Session&nbsp:</span> <span>{{$programinfo->sessionName}}</span></div>
-                            <div class="programinfo_item"><span>Class&nbsp:</span> <span>{{$programinfo->programName}}</span></div>
-                            <div class="programinfo_item"><span>Group&nbsp:</span> <span>{{$programinfo->groupName}}</span></div>
-                            <div class="programinfo_item"><span>Medium&nbsp:</span> <span>{{$programinfo->mediumName}}</span></div>
-                            <div class="programinfo_item"><span>Shift&nbsp: </span> <span>{{$programinfo->shiftName}}</span></div>
+                            <div class="programinfo_item"><span>Session&nbsp:</span> <span>{{$result['admissionprogram']->sessionName}}</span></div>
+                            <div class="programinfo_item"><span>Class&nbsp:</span> <span>{{$result['admissionprogram']->programName}}</span></div>
+                            <div class="programinfo_item"><span>Group&nbsp:</span> <span>{{$result['admissionprogram']->groupName}}</span></div>
+                            <div class="programinfo_item"><span>Medium&nbsp:</span> <span>{{$result['admissionprogram']->mediumName}}</span></div>
+                            <div class="programinfo_item"><span>Shift&nbsp: </span> <span>{{$result['admissionprogram']->shiftName}}</span></div>
                          </div>
                       </div>
                     </div>
@@ -95,7 +95,7 @@
                       {{csrf_field()}}
                       <div class="col-sm-7 print-col">
                         <div class="applicant_info">
-                            <input type="hidden" name="programofferid" value="{{$programinfo->id}}">
+                            <input type="hidden" name="programofferid" value="{{$result['admissionprogram']->programofferid}}">
                             <table>
                               <thead>
                                 <tr>
@@ -111,21 +111,21 @@
                               </thead>
                               <tbody>
                               <?php $i=0; ?>
-                              @foreach($applicantsinfo as $applicant)
+                              @foreach($result['applicants'] as $applicant)
                                 <tr>
                                   <td>{{++$i}}</td>
-                                  <td>{{$applicant->applicantid}}</td>
-                                  <td>{{$applicant->name}}</td>
-                                  <td>{{$applicant->serialno}}</td>
-                                  <td>{{$applicant->religionName}}</td>
-                                  <td style="margin:0px;padding:0px;"> <img style="width:80px;height:60px;" src="{{asset('clientAdmin/image/picture')}}/{{$applicant->picture}}"></td>
-                                  @if($applicant->studentregid!=0)
-                                    <td>{{$applicant->classroll}}</td>
-                                    <td><span style='font-size:18px;'>&#10003;</span></td>
-                                   @else
-                                    <td><input type="text" class="form-control" name="classroll[{{$applicant->applicantid}}]" id="classroll"></td>
-                                    <td><input class="applicantcheck" type="checkbox" name="applicantcheck[{{$applicant->applicantid}}]"></td>
-                                  @endif
+                                  <td>{{$applicant[0]->applicantid}}</td>
+                                  <td>{{$applicant[0]->firstName}}</td>
+                                  <td>{{$applicant[1]}}</td>
+                                  <td>{{"Islam"}}</td>
+                                  <td style="margin:0px;padding:0px;"> <img style="width:80px;height:60px;" src="{{asset('clientAdmin/image/picture')}}/{{$applicant[0]->picture}}"></td>
+                                 
+                                    <!-- <td>0001</td>
+                                    <td><span style='font-size:18px;'>&#10003;</span></td> -->
+                                
+                                    <td><input type="text" class="form-control" name="classroll[{{$applicant[0]->applicantid}}]" id="classroll"></td>
+                                    <td><input class="applicantcheck" type="checkbox" name="applicantcheck[{{$applicant[0]->applicantid}}]"></td>
+                               
                                 </tr>
                                @endforeach
                               </tbody>
@@ -189,5 +189,6 @@
 
 @endsection
 @section('uniqueScript')
+<script src="{{asset('clientAdmin/js/baseUrl.js')}}"></script>
 <script src="{{asset('clientAdmin/js/student.js')}}"></script>
 @endsection

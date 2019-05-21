@@ -41,17 +41,6 @@
                          @endforeach
                       </select>
                     </div>
-                     <label class="col-sm-2 control-label" for="groupid">Group</label>
-                    <div class="col-sm-4">
-                      <select onchange="getChange(this,'group')" class="form-control" name="groupid" id="groupid">
-                         <option value="">SELECT</option>
-                         @foreach ($groupList as $x)
-                           <option value="{{$x->id}}">{{$x->name}}</option>
-                         @endforeach
-                      </select>
-                    </div>                       
-                  </div>
-                  <div class="form-group row">
                     <label class="col-sm-2 control-label" for="mediumid">Medium</label>
                     <div class="col-sm-4">
                       <select onchange="getChange(this,'medium')" class="form-control" name="mediumid" id="mediumid">
@@ -60,16 +49,27 @@
                            <option value="{{$x->id}}">{{$x->name}}</option>
                          @endforeach
                       </select>
-                    </div>
+                    </div>                   
+                  </div>
+                  <div class="form-group row">
                      <label class="col-sm-2 control-label" for="shiftid">Shift</label>
                     <div class="col-sm-4">
-                      <select class="form-control" name="shiftid" id="shiftid">
+                      <select onchange="getChange(this,'shift')" class="form-control" name="shiftid" id="shiftid">
                          <option value="">SELECT</option>
                          @foreach ($shiftList as $x)
                            <option value="{{$x->id}}">{{$x->name}}</option>
                          @endforeach
                       </select>
-                    </div>                           
+                    </div>
+                    <label class="col-sm-2 control-label" for="groupid">Group</label>
+                    <div class="col-sm-4">
+                      <select  class="form-control" name="groupid" id="groupid">
+                         <option value="">SELECT</option>
+                         @foreach ($groupList as $x)
+                           <option value="{{$x->id}}">{{$x->name}}</option>
+                         @endforeach
+                      </select>
+                    </div>                               
                   </div>
                     <div class="row">
                       <div class="col-sm-12">
@@ -157,5 +157,6 @@
 
 @endsection
 @section('uniqueScript')
+<script src="{{asset('clientAdmin/js/baseUrl.js')}}"></script>
 <script src="{{asset('clientAdmin/js/gradepoint.js')}}"></script>
 @endsection

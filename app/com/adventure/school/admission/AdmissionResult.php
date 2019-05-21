@@ -48,6 +48,18 @@ class AdmissionResult extends Model
 		);
 		return $result;
 	}
+	public function getAdmissionApplicants($programofferid){
+		$aAdmissionProgram=new AdmissionProgram();
+		$admission_programid=$aAdmissionProgram->getAdmissionProgram_id($programofferid);
+		$programinfo=$aAdmissionProgram->getAdmissionPrograminfo($admission_programid);
+		$applicant_list=$this->getSerial($admission_programid);
+		// dd($programofferid,$admission_programid);
+		$result=array(
+			'admissionprogram'=>$programinfo,
+			'applicants'=>$applicant_list
+		);
+		return $result;
+	}
 	private function getSerial($admission_programid){
 		$aApplicant=new Applicant();
 		$applicants=$aApplicant->allApplicantForResult($admission_programid);
@@ -57,7 +69,7 @@ class AdmissionResult extends Model
 			$applicant_list[$applicant->applicantid]=[$applicant,$serialno];
 			$serialno++;
 		}
-		arsort($applicant_list);
+		asort($applicant_list);
 		return $applicant_list;
 	}
 }

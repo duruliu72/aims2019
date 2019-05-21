@@ -100,6 +100,17 @@ class AdmissionProgram extends Model
 		}
 		return 0;
 	}
+	public function getAdmissionProgram_id($programofferid){
+		$sql="SELECT * FROM `admission_programs`
+		WHERE programofferid=?";
+		$qresult=\DB::select($sql,[$programofferid]);
+		$result = collect($qresult)->first();
+		if($result==null){
+			return 0;
+		}
+		$admission_programid=$result->id;
+		return $admission_programid;
+	}
 	public function getProgramofferid($admission_programid){
 		$sql="SELECT * FROM `admission_programs`
 		WHERE id=?";

@@ -18,15 +18,12 @@ class GradePointController extends Controller
     }
     public function createGratePoint(Request $request){
         $msg="";
-        $yearName = date('Y');
-        $aSession=new Session();
-        $sessionid=$aSession->getSessionId($yearName);
         $programid=$request->programid;
         $groupid=$request->groupid;
         $mediumid=$request->mediumid;
         $shiftid=$request->shiftid;
         $aMenu=new Menu();
-        $hasMenu=$aMenu->hasMenu('courseoffercreate');
+        $hasMenu=$aMenu->hasMenu('gradepoint');
         if($hasMenu==false){
             return redirect('error');
         }
@@ -35,7 +32,7 @@ class GradePointController extends Controller
         $programofferinfo=null;
         $gradeList=null;
         if($request->isMethod('post')&&$request->search_btn=='search_btn' || $request->save_btn=='save_btn'){
-            $programofferid=$aProgramOffer->getProgramOfferId($sessionid,$programid,$groupid,$mediumid,$shiftid);
+            $programofferid=$aProgramOffer->getProgramOfferId(0,$programid,$groupid,$mediumid,$shiftid);
             if($request->programofferid!=null){
                 $programofferid=$request->programofferid;
             }
@@ -70,13 +67,18 @@ class GradePointController extends Controller
             $gradePointObj=new GradePoint();
             $gradeList=$gradePointObj->getGradeLetter($programofferid);
         }
+        // sessionid,programid,groupid,mediumid,shiftid,tableName and $compaireid
+        $programList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,"programs",'programid');
+        $mediumList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,"mediums",'mediumid');
+        $shiftList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,"shifts",'shiftid');
+        $groupList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,"groups",'groupid');
         $dataList=[
             'institute'=>Institute::getInstituteName(),
             'sidebarMenu'=>$sidebarMenu,
-            'programList'=>$aProgramOffer->getProgramsOnSession($sessionid),
-            'groupList'=>$aProgramOffer->getGroupsOnSession($sessionid),
-            'mediumList'=>$aProgramOffer->getMediumsOnSession($sessionid),
-            'shiftList'=>$aProgramOffer->getShiftsOnSession($sessionid),
+            'programList'=>$programList,
+            'groupList'=>$groupList,
+            'mediumList'=>$mediumList,
+            'shiftList'=>$shiftList,
             'programofferinfo'=>$programofferinfo,
             'gradeList'=>$gradeList,
             'msg'=>$msg
@@ -93,7 +95,7 @@ class GradePointController extends Controller
         $mediumid=$request->mediumid;
         $shiftid=$request->shiftid;
         $aMenu=new Menu();
-        $hasMenu=$aMenu->hasMenu('courseoffercreate');
+        $hasMenu=$aMenu->hasMenu('gradepoint');
         if($hasMenu==false){
             return redirect('error');
         }
@@ -139,115 +141,76 @@ class GradePointController extends Controller
             $gradePointObj=new GradePoint();
             $gradeList=$gradePointObj->getEditedGradeLetter($programofferid);
         }
+        // sessionid,programid,groupid,mediumid,shiftid,tableName and $compaireid
+        $programList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,"programs",'programid');
+        $mediumList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,"mediums",'mediumid');
+        $shiftList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,"shifts",'shiftid');
+        $groupList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,"groups",'groupid');
         $dataList=[
             'institute'=>Institute::getInstituteName(),
             'sidebarMenu'=>$sidebarMenu,
-            'programList'=>$aProgramOffer->getProgramsOnSession($sessionid),
-            'groupList'=>$aProgramOffer->getGroupsOnSession($sessionid),
-            'mediumList'=>$aProgramOffer->getMediumsOnSession($sessionid),
-            'shiftList'=>$aProgramOffer->getShiftsOnSession($sessionid),
+            'programList'=>$programList,
+            'groupList'=>$groupList,
+            'mediumList'=>$mediumList,
+            'shiftList'=>$shiftList,
             'programofferinfo'=>$programofferinfo,
             'gradeList'=>$gradeList,
             'msg'=>$msg
         ];
         return view('admin.programsettings.gradepoint.edit',$dataList);
     }
-     // For Ajax Call ===============
+   // For Ajax Call ===============
    //    ================================================================
-   public function getValue(Request $request){
-    $option=$request->option;
-    $methodid=$request->methodid;
-    $programid=$request->programid;
-    $groupid=$request->groupid;
-    $mediumid=$request->mediumid;
-    $shiftid=$request->shiftid;
-    if($option=="program"){
-        if($methodid==1){
-            $this->getGroupsOnSessionAndProgram($programid);
-        }elseif($methodid==2){
-            $this->getMediumsOnSessionAndProgram($programid);
-        }elseif($methodid==3){
-            $this->getShiftsOnSessionAndProgram($programid);
-        }
-    }elseif($option=="group"){
-        if($methodid==1){
-            $this->getMediumsOnSessionAndPrograAndGroup($programid,$groupid);
-        }elseif($methodid==2){
-            $this->getShiftsOnSessionAndPrograAndGroup($programid,$groupid);
-        }
-    }elseif($option=="medium"){
-        if($methodid==1){
-            $this->getShiftsOnSessionAndPrograAndGroupAndMedium($programid,$groupid,$mediumid);
-        }
-    }elseif($option=="shift"){
-        if($methodid==1){
-            $this->getCourseCodesOnProgramOffer($programid,$groupid,$mediumid,$shiftid);
-        }elseif($methodid==2){
-            $this->getCourseCodesOnProgramOffer($programid,$groupid,$mediumid,$shiftid);
+    public function getValue(Request $request){
+        $option=$request->option;
+        $methodid=$request->methodid;
+        $programid=$request->programid;
+        $groupid=$request->groupid;
+        $mediumid=$request->mediumid;
+        $shiftid=$request->shiftid;
+        if($option=="program"){
+            if($methodid==1){
+                $this->getAllOnIDS(0,$programid,0,0,0,"mediums",'mediumid');
+            }elseif($methodid==2){
+                $this->getAllOnIDS(0,$programid,0,0,0,"shifts",'shiftid');
+            }elseif($methodid==3){
+                $this->getAllOnIDS(0,$programid,0,0,0,"groups",'groupid');
+            }
+        }elseif($option=="group"){
+            // if($methodid==1){
+            //     $this->getMediumsOnSessionAndPrograAndGroup($programid,$groupid);
+            // }elseif($methodid==2){
+            //     $this->getShiftsOnSessionAndPrograAndGroup($programid,$groupid);
+            // }
+        }elseif($option=="medium"){
+            if($methodid==1){
+                $this->getAllOnIDS(0,$programid,0,$mediumid,0,"shifts",'shiftid');
+            }elseif($methodid==2){
+                $this->getAllOnIDS(0,$programid,0,$mediumid,0,"groups",'groupid');
+            }
+        }elseif($option=="shift"){
+            if($methodid==1){
+                $this->getAllOnIDS(0,$programid,0,$mediumid,$shiftid,"groups",'groupid');
+            }
         }
     }
-}
-private function getGroupsOnSessionAndProgram($programid){
-   $aProgramOffer=new ProgramOffer();
-   $result=$aProgramOffer->getGroupsOnSessionAndProgram(0,$programid);
-    $output="<option value=''>SELECT</option>";
-    foreach($result as $x){
-       $output.="<option value='$x->id'>$x->name</option>";
+    private function getAllOnIDS($sessionid,$programid,$groupid,$mediumid,$shiftid,$tableName,$compareid){
+        $aProgramOffer=new ProgramOffer();
+        $result=$aProgramOffer->getAllOnIDS($sessionid,$programid,$groupid,$mediumid,$shiftid,$tableName,$compareid);
+        $output="<option value=''>SELECT</option>";
+        foreach($result as $x){
+            $output.="<option value='$x->id'>$x->name</option>";
+        }
+        echo  $output;
     }
-    echo  $output;
-}
-private function getMediumsOnSessionAndProgram($programid){
-    $aProgramOffer=new ProgramOffer();
-    $result=$aProgramOffer->getMediumsOnSessionAndProgram(0,$programid);
-     $output="<option value=''>SELECT</option>";
-     foreach($result as $x){
-        $output.="<option value='$x->id'>$x->name</option>";
-     }
-     echo  $output;
- }
- private function getShiftsOnSessionAndProgram($programid){
-    $aProgramOffer=new ProgramOffer();
-    $result=$aProgramOffer->getShiftsOnSessionAndProgram(0,$programid);
-     $output="<option value=''>SELECT</option>";
-     foreach($result as $x){
-        $output.="<option value='$x->id'>$x->name</option>";
-     }
-     echo  $output;
- }
- private function getMediumsOnSessionAndPrograAndGroup($programid,$groupid){
-    $aProgramOffer=new ProgramOffer();
-    $result=$aProgramOffer->getMediumsOnSessionAndPrograAndGroup(0,$programid,$groupid);
-     $output="<option value=''>SELECT</option>";
-     foreach($result as $x){
-        $output.="<option value='$x->id'>$x->name</option>";
-     }
-     echo  $output;
- }
- private function getShiftsOnSessionAndPrograAndGroup($programid,$groupid){
-    $aProgramOffer=new ProgramOffer();
-    $result=$aProgramOffer->getShiftsOnSessionAndPrograAndGroup(0,$programid,$groupid);
-     $output="<option value=''>SELECT</option>";
-     foreach($result as $x){
-        $output.="<option value='$x->id'>$x->name</option>";
-     }
-     echo  $output;
- }
- private function getShiftsOnSessionAndPrograAndGroupAndMedium($programid,$groupid,$mediumid){
-    $aProgramOffer=new ProgramOffer();
-    $result=$aProgramOffer->getShiftsOnSessionAndPrograAndGroupAndMedium(0,$programid,$groupid,$mediumid);
-     $output="<option value=''>SELECT</option>";
-     foreach($result as $x){
-        $output.="<option value='$x->id'>$x->name</option>";
-     }
-     echo  $output;
- }
- private function getCourseCodesOnProgramOffer($programid,$groupid,$mediumid,$shiftid){
-    $aProgramOffer=new ProgramOffer();
-    $result=$aProgramOffer->getCourseCodesOnProgramOffer(0,$programid,$groupid,$mediumid,$shiftid);
-     $output="<option value=''>SELECT</option>";
-     foreach($result as $x){
-        $output.="<option value='$x->id'>$x->name</option>";
-     }
-     echo  $output;
- }
+
+//  private function getCourseCodesOnProgramOffer($programid,$groupid,$mediumid,$shiftid){
+//     $aProgramOffer=new ProgramOffer();
+//     $result=$aProgramOffer->getCourseCodesOnProgramOffer(0,$programid,$groupid,$mediumid,$shiftid);
+//      $output="<option value=''>SELECT</option>";
+//      foreach($result as $x){
+//         $output.="<option value='$x->id'>$x->name</option>";
+//      }
+//      echo  $output;
+//  }
 }

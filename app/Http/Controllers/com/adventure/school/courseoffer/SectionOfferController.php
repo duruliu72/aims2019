@@ -125,6 +125,11 @@ class SectionOfferController extends Controller
      	return redirect()->back()->with('msg',$msg);
     }
     public function edit($id){
+        $aSectionOffer=new SectionOffer();
+        $isTrue=$aSectionOffer->isAssignSectionToProgramOffer($id);
+        if($isTrue==false){
+            abort(404);
+        }
         $aMenu=new Menu();
         $hasMenu=$aMenu->hasMenu('sectionoffer');
         if($hasMenu==false){
