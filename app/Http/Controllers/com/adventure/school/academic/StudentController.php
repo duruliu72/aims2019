@@ -58,29 +58,22 @@ class StudentController extends Controller
             if($request->save_btn=='save_btn'){
                 $programofferid=$request->programofferid;
                 $aStudent=new Student();
-                $aStudentCourse= new StudentCourse();
                 $applicantcheckLst=$request->applicantcheck;
                 $coursecheckList=$request->coursecheck;
                 $sectionid=$request->sectionid;
                 $classrollList=$request->classroll;
                 $coursetypeidList=$request->coursetypeid;
-                if($applicantcheckLst==null || $coursecheckList==null){
-                   
-                }
                 foreach ($applicantcheckLst as $applicantid => $value) {
                     $aStudent=new Student();
-                    $registerOrNot=$aStudent->checkRegisterOrNot($programofferid,$applicantid);
-                    if(!$registerOrNot){
+                    $isTrue=$aStudent->checkStudent($programofferid,$applicantid);
+                    if($isTrue==false){
                         $aStudent->programofferid=$programofferid;
                         $aStudent->sectionid=$sectionid;
-                        $studentregid=$aStudent->generateStudentRegID($programofferid);
-                        $aStudent->studentregid=$studentregid;
+                        $aStudent->applicantid=$applicantid;
                         $aStudent->classroll=$classrollList[$applicantid];
+                        $aStudent->fromclass=0;
+                        $aStudent->fromsection=0;
                         $aStudent->studenttype=1;
-                        \DB::table('applicants')
-                        ->where('programofferid', $programofferid)
-                        ->where('applicantid', $applicantid)
-                        ->update(['studentregid' => $studentregid]);
                         $aStudent->save();
                         $studentid=$aStudent->getLastID();
                         foreach ($coursecheckList as $coursecodeid => $value) {
@@ -97,12 +90,10 @@ class StudentController extends Controller
             $aAdmissionResult=new AdmissionResult();
             $courseTypeList=CourseType::all();
             $sectionList=$aSectionOffer->getSectionsOnPO($programofferid);
-            $result=$aAdmissionResult->getAdmissionApplicants($programofferid);
+            $result=$aAdmissionResult->xxx($programofferid);
             // dd($result);
             $courseList=$aCourseOffer->getStudentCoursesOnProgramOffer($programofferid);
         }
- 
-        $aApplicant=new Applicant();
         // sessionid,programid,groupid,mediumid,shiftid,tableName and $compaireid
         $programList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,"programs",'programid');
         $mediumList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,"mediums",'mediumid');

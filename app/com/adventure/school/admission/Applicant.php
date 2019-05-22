@@ -59,13 +59,6 @@ class Applicant extends Model
 		);
 		return $list;
 	}
-	public function getApplicantResult($applicantid,$pin_code=""){
-		// $sql="";
-		// $qresult=\DB::select($sql,[$admission_programid]);
-		// $result=collect($qresult);
-		return 90;
-		return $result;
-	}
 	public function getApplicantinfo($applicantid,$pin_code){
 		$sql="SELECT t1.* ,
 		genders.name AS genderName,
@@ -188,6 +181,35 @@ WHERE table1.admission_applicantid NOT IN (SELECT admissionresult.admission_appl
 				FROM `admissionresult`
 				GROUP BY admission_applicantid) AS t2 ON t1.admission_applicantid=t2.admission_applicantid ORDER BY t2.tot_marks DESC";
 		$qresult=\DB::select($sql,[$admission_programid]);
+		$result=collect($qresult);
+		return $result;
+	}
+	public function getRegistrationStudent($programofferid){
+		$sql="SELECT t1.*,
+		IFNULL(t2.applicantid,0) AS sapplicantid,
+		t2.classroll
+		FROM(SELECT 
+		applicants.*,
+		religions.name AS religionName,
+		admission_programs.programofferid,
+		admissionapplicants.admission_programid,
+		admissionapplicants.admssion_roll,
+		result1.admission_applicantid,
+		tot_marks
+		FROM `applicants`
+		INNER JOIN religions ON applicants.religionid=religions.id
+		INNER JOIN admissionapplicants ON applicants.applicantid=admissionapplicants.applicantid
+		INNER JOIN admission_programs ON admissionapplicants.admission_programid=admission_programs.id
+		INNER JOIN(SELECT 
+		admissionresult.admission_applicantid,
+		SUM(admissionresult.marks) AS tot_marks
+		FROM `admissionresult`
+		GROUP BY admission_applicantid) AS result1 ON admissionapplicants.id=result1.admission_applicantid
+		WHERE programofferid=?) AS t1
+		left JOIN 
+		(SELECT * FROM `students`
+		WHERE programofferid=?) AS t2 ON t1.applicantid=t2.applicantid ORDER BY t1.tot_marks DESC";
+		$qresult=\DB::select($sql,[$programofferid,$programofferid]);
 		$result=collect($qresult);
 		return $result;
 	}

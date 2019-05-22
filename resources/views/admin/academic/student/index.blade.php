@@ -133,12 +133,14 @@
                                   <td>{{$applicant[1]}}</td>
                                   <td>{{$applicant[0]->religionName}}</td>
                                   <td style="margin:0px;padding:0px;"> <img style="width:80px;height:60px;" src="{{asset('clientAdmin/admission/student')}}/{{$applicant[0]->picture}}"></td>
+                                  @if($applicant[0]->sapplicantid!=0)
+                                    <td>{{$applicant[0]->classroll}}</td>
+                                    <td><span style='font-size:18px;'>&#10003;</span></td>
+                                  @else
                                  
-                                    <!-- <td>0001</td>
-                                    <td><span style='font-size:18px;'>&#10003;</span></td> -->
-                                
                                     <td><input type="text" class="form-control" name="classroll[{{$applicant[0]->applicantid}}]" id="classroll"></td>
                                     <td><input class="applicantcheck" type="checkbox" name="applicantcheck[{{$applicant[0]->applicantid}}]"></td>
+                                    @endif
                                
                                 </tr>
                                @endforeach
