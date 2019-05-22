@@ -8,9 +8,23 @@
       <section class="wrapper">
         <div class="row notprint">
           <div class="col-lg-12">
-            <h3 class="page-header"><i class="fa fa-laptop"></i>Horinagor High School</h3>
+            <h3 class="page-header"><i class="fa fa-laptop"></i>
+              @if($institute!=null)
+                {{$institute->name}}
+              @else
+                Dashboard
+              @endif
+            </h3>
              <ol class="breadcrumb">
                 <li>All Applicants for Registration</li>
+                @if ($errors->any())
+                  <span style="float: right;font-size: 15px;">{{$errors->all()[0] }}</span>
+                @endif
+                @if(session()->has('msg'))
+                <span style="float: right;font-size: 15px;">
+                  {{ session()->get('msg') }}
+                </span>
+                @endif
                 @if($msg!="")
                 <span style="float: right;font-size: 15px;">
                   {{ $msg }}
@@ -115,10 +129,10 @@
                                 <tr>
                                   <td>{{++$i}}</td>
                                   <td>{{$applicant[0]->applicantid}}</td>
-                                  <td>{{$applicant[0]->firstName}}</td>
+                                  <td>{{sprintf('%s %s %s',$applicant[0]->firstName,$applicant[0]->middleName,$applicant[0]->lastName)}}</td>
                                   <td>{{$applicant[1]}}</td>
-                                  <td>{{"Islam"}}</td>
-                                  <td style="margin:0px;padding:0px;"> <img style="width:80px;height:60px;" src="{{asset('clientAdmin/image/picture')}}/{{$applicant[0]->picture}}"></td>
+                                  <td>{{$applicant[0]->religionName}}</td>
+                                  <td style="margin:0px;padding:0px;"> <img style="width:80px;height:60px;" src="{{asset('clientAdmin/admission/student')}}/{{$applicant[0]->picture}}"></td>
                                  
                                     <!-- <td>0001</td>
                                     <td><span style='font-size:18px;'>&#10003;</span></td> -->

@@ -64,4 +64,13 @@ class SectionOffer extends Model
         $result=collect($qResult);
 		return $result;
     }
+    public function hasSectionAssign($programofferid){
+        $sql="SELECT * FROM `sectionoffer` WHERE programofferid=?";
+        $qResult=\DB::select($sql,[$programofferid]);
+        $result=collect($qResult);
+        if($result->count()>0){
+            return true;
+        }
+        return false;
+    }    
 }

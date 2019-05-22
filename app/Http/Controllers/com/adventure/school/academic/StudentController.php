@@ -23,8 +23,9 @@ class StudentController extends Controller
         $this->middleware('auth');
     }
     public function allStudentReg(Request $request){
+        $msg="";
         $aMenu=new Menu();
-        $hasMenu=$aMenu->hasMenu('student');
+        $hasMenu=$aMenu->hasMenu('students');
         if($hasMenu==false){
             return redirect('error');
         }
@@ -35,13 +36,24 @@ class StudentController extends Controller
         $courseTypeList=null;
         $aProgramOffer=new ProgramOffer();
         if($request->isMethod('post')){
-           
+            $aCourseOffer=new CourseOffer();
+            $aSectionOffer=new SectionOffer();
             if($request->search_btn=='search_btn'){
                 $programid=$request->programid;
                 $groupid=$request->groupid;
                 $mediumid=$request->mediumid;
                 $shiftid=$request->shiftid;
-                $programofferid=$aProgramOffer->getProgramOfferId(0,$programid,$groupid,$mediumid,$shiftid);       
+                $programofferid=$aProgramOffer->getProgramOfferId(0,$programid,$groupid,$mediumid,$shiftid);
+                $isCourseAssgn=$aCourseOffer->hasCourseAssign($programofferid);
+                if($isCourseAssgn==false){
+                    $msg="First Assign Course Offer to Class";
+                    return redirect()->back()->with('msg',$msg);
+                }
+                $isSectionAssign=$aSectionOffer->hasSectionAssign($programofferid);
+                if($isSectionAssign==false){
+                    $msg="First Assign Section Offer to Class";
+                    return redirect()->back()->with('msg',$msg);
+                }   
             }
             if($request->save_btn=='save_btn'){
                 $programofferid=$request->programofferid;
@@ -84,14 +96,12 @@ class StudentController extends Controller
             }
             $aAdmissionResult=new AdmissionResult();
             $courseTypeList=CourseType::all();
-            $aCourseOffer=new CourseOffer();
-            $aSectionOffer=new SectionOffer();
             $sectionList=$aSectionOffer->getSectionsOnPO($programofferid);
             $result=$aAdmissionResult->getAdmissionApplicants($programofferid);
             // dd($result);
             $courseList=$aCourseOffer->getStudentCoursesOnProgramOffer($programofferid);
         }
-        $msg="";
+ 
         $aApplicant=new Applicant();
         // sessionid,programid,groupid,mediumid,shiftid,tableName and $compaireid
         $programList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,"programs",'programid');
@@ -146,10 +156,6 @@ class StudentController extends Controller
                     // will be generate
                     $aStudent->studentregid=$studentregid;
                     $aStudent->studenttype=1;
-                    \DB::table('applicants')
-                    ->where('programofferid', $programofferid)
-                    ->where('applicantid', $applicantid)
-                    ->update(['studentregid' => $studentregid]);
                     $aStudent->save();
                     $studentid=$aStudent->getLastID();
                     foreach ($checkboxList as $key => $value) {

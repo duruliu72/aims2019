@@ -154,13 +154,14 @@ class Applicant extends Model
 	}
 	public function getAllApplicantForMarkAdd($admission_programid){
 		$sql="select table1.* FROM(SELECT 
-		admissionapplicants.admission_programid,
-		admissionapplicants.admssion_roll,
-		applicants.*
-		FROM `admissionapplicants`
-		INNER JOIN applicants ON admissionapplicants.applicantid=applicants.applicantid
-		WHERE admissionapplicants.admission_programid=?) AS table1
-        WHERE table1.applicantid NOT IN (SELECT admissionresult.applicantid FROM `admissionresult` GROUP BY admissionresult.applicantid)";
+		admissionapplicants.id AS admission_applicantid,
+admissionapplicants.admission_programid,
+admissionapplicants.admssion_roll,
+applicants.*
+FROM `admissionapplicants`
+INNER JOIN applicants ON admissionapplicants.applicantid=applicants.applicantid
+WHERE admissionapplicants.admission_programid=?) AS table1
+WHERE table1.admission_applicantid NOT IN (SELECT admissionresult.admission_applicantid FROM `admissionresult` GROUP BY admissionresult.admission_applicantid)";
 		$qresult=\DB::select($sql,[$admission_programid]);
 		$result=collect($qresult);
 		return $result;
@@ -171,18 +172,21 @@ class Applicant extends Model
 		$sql="select 
 		t1.*,
 		t2.tot_marks
-		from (SELECT 
+		from (SELECT
 		applicants.*,
+        admissionapplicants.id AS admission_applicantid,
+        religions.name AS religionName,
 		admssion_roll
 		FROM `admissionapplicants`
 		INNER JOIN applicants ON admissionapplicants.applicantid=applicants.applicantid
+        INNER JOIN religions ON applicants.religionid=religions.id
 		WHERE admission_programid=?) AS t1
 		INNER JOIN
 		(SELECT 
-				admissionresult.applicantid,
+				admissionresult.admission_applicantid,
 				SUM(admissionresult.marks) AS tot_marks
 				FROM `admissionresult`
-				GROUP BY applicantid) AS t2 ON t1.applicantid=t2.applicantid ORDER BY t2.tot_marks DESC";
+				GROUP BY admission_applicantid) AS t2 ON t1.admission_applicantid=t2.admission_applicantid ORDER BY t2.tot_marks DESC";
 		$qresult=\DB::select($sql,[$admission_programid]);
 		$result=collect($qresult);
 		return $result;
@@ -190,6 +194,7 @@ class Applicant extends Model
 	public function getAllApplicantForMarkEdit($admission_programid){
 		$sql="SELECT t1.* FROM (
 			SELECT 
+    admissionapplicants.id AS admission_applicantid,
 					admissionapplicants.admission_programid,
 					admissionapplicants.admssion_roll,
 					applicants.*
@@ -197,8 +202,8 @@ class Applicant extends Model
 					INNER JOIN applicants ON admissionapplicants.applicantid=applicants.applicantid
 					WHERE admissionapplicants.admission_programid=?
 			) AS t1
-			INNER JOIN (SELECT admissionresult.applicantid FROM admissionresult GROUP BY admissionresult.applicantid) AS t2
-			ON t1.applicantid=t2.applicantid";
+			INNER JOIN (SELECT admissionresult.admission_applicantid FROM admissionresult GROUP BY admissionresult.admission_applicantid) AS t2
+			ON t1.admission_applicantid=t2.admission_applicantid";
 		$qresult=\DB::select($sql,[$admission_programid]);
 		$result=collect($qresult);
 		return $result;

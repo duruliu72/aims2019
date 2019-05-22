@@ -53,7 +53,6 @@ class AdmissionResult extends Model
 		$admission_programid=$aAdmissionProgram->getAdmissionProgram_id($programofferid);
 		$programinfo=$aAdmissionProgram->getAdmissionPrograminfo($admission_programid);
 		$applicant_list=$this->getSerial($admission_programid);
-		// dd($programofferid,$admission_programid);
 		$result=array(
 			'admissionprogram'=>$programinfo,
 			'applicants'=>$applicant_list
