@@ -3,7 +3,7 @@
 namespace App\com\adventure\school\exam;
 
 use Illuminate\Database\Eloquent\Model;
-
+use App\com\adventure\school\program\Session;
 class MasterExam extends Model
 {
     protected $table="master_exam";
@@ -79,4 +79,39 @@ class MasterExam extends Model
         }
         return false;
     }
+    //===========================For Dorpdown ==============
+	public function getAllOnIDS($sessionid,$programid,$groupid,$mediumid,$shiftid,$tableName,$compareid){
+		if($sessionid==0){
+			$yearName = date('Y');
+			$aSession=new Session();
+			$sessionid=$aSession->getSessionId($yearName);
+        }
+        $sql="SELECT t2.*
+        FROM `programoffers` AS t1
+        INNER JOIN master_exam ON t1.id=master_exam.programofferid
+        INNER JOIN ".$tableName." AS t2 ON  t1.".$compareid."=t2.id
+        WHERE t1.sessionid=?";
+		$data=array();
+		array_push($data,$sessionid);
+		if($programid!=0){
+			array_push($data,$programid);
+			$sql.=" AND programid=?";
+		}
+		if($groupid!=0){
+			array_push($data,$groupid);
+			$sql.=" AND groupid=?";
+		}
+		if($mediumid!=0){
+			array_push($data,$mediumid);
+			$sql.=" AND mediumid=?";
+		}
+		if($shiftid!=0){
+			array_push($data,$shiftid);
+			$sql.=" AND shiftid=?";
+		}
+		$sql.=" GROUP BY t2.id";
+		$qResult=\DB::select($sql,$data);
+		$result=collect($qResult);
+		return $result;
+	}	
 }

@@ -98,5 +98,40 @@ class CourseOffer extends Model
             return true;
         }
         return false;
-    }     
+    }
+    //===========================For Dorpdown ==============
+	public function getAllOnIDS($sessionid,$programid,$groupid,$mediumid,$shiftid,$tableName,$compareid){
+		if($sessionid==0){
+			$yearName = date('Y');
+			$aSession=new Session();
+            $sessionid=$aSession->getSessionId($yearName);
+        }
+        $sql="SELECT t2.* 
+        FROM `courseoffer`
+        INNER JOIN programoffers ON courseoffer.programofferid=programoffers.id
+        INNER JOIN ".$tableName." AS t2 ON programoffers.".$compareid."=t2.id 
+        WHERE programoffers.sessionid=?";
+		$data=array();
+		array_push($data,$sessionid);
+		if($programid!=0){
+			array_push($data,$programid);
+			$sql.=" AND programid=?";
+		}
+		if($groupid!=0){
+			array_push($data,$groupid);
+			$sql.=" AND groupid=?";
+		}
+		if($mediumid!=0){
+			array_push($data,$mediumid);
+			$sql.=" AND mediumid=?";
+		}
+		if($shiftid!=0){
+			array_push($data,$shiftid);
+			$sql.=" AND shiftid=?";
+		}
+		$sql.=" GROUP BY t2.id";
+		$qResult=\DB::select($sql,$data);
+		$result=collect($qResult);
+		return $result;
+	}	
 }

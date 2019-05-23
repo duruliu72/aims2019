@@ -74,6 +74,7 @@ class StudentController extends Controller
                         $aStudent->fromclass=0;
                         $aStudent->fromsection=0;
                         $aStudent->studenttype=1;
+                        $aStudent->currentclass=1;
                         $aStudent->save();
                         $studentid=$aStudent->getLastID();
                         foreach ($coursecheckList as $coursecodeid => $value) {

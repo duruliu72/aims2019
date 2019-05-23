@@ -179,7 +179,7 @@ WHERE table1.admission_applicantid NOT IN (SELECT admissionresult.admission_appl
 				admissionresult.admission_applicantid,
 				SUM(admissionresult.marks) AS tot_marks
 				FROM `admissionresult`
-				GROUP BY admission_applicantid) AS t2 ON t1.admission_applicantid=t2.admission_applicantid ORDER BY t2.tot_marks DESC";
+				GROUP BY admission_applicantid) AS t2 ON t1.admission_applicantid=t2.admission_applicantid ORDER BY t2.tot_marks DESC,t1.applicantid";
 		$qresult=\DB::select($sql,[$admission_programid]);
 		$result=collect($qresult);
 		return $result;
@@ -208,7 +208,7 @@ WHERE table1.admission_applicantid NOT IN (SELECT admissionresult.admission_appl
 		WHERE programofferid=?) AS t1
 		left JOIN 
 		(SELECT * FROM `students`
-		WHERE programofferid=?) AS t2 ON t1.applicantid=t2.applicantid ORDER BY t1.tot_marks DESC";
+		WHERE programofferid=?) AS t2 ON t1.applicantid=t2.applicantid ORDER BY t1.tot_marks DESC,t1.applicantid";
 		$qresult=\DB::select($sql,[$programofferid,$programofferid]);
 		$result=collect($qresult);
 		return $result;

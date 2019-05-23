@@ -10,11 +10,14 @@
   <section class="wrapper">
     <div class="row">
       <div class="col-lg-12">
-        <h3 class="page-header"><i class="fa fa-laptop"></i>Horinagor High School</h3>
+        <h3 class="page-header"><i class="fa fa-laptop"></i>
+        @if($institute!=null)
+              {{$institute->name}}
+            @else
+              Dashboard
+            @endif
+      </h3>
         <ol class="breadcrumb">
-          <!-- @if($pList[2]->id==2)
-            <li><a href="{{URL::to('/meargeoffer')}}/{{'create'}}">New</a></li>
-          @endif -->
           <li>Mark Distribution &nbsp;&nbsp;&nbsp;<a href="{{URL::to('markdistribution')}}/{{'edit'}}">Edit</a></li>
           @if ($errors->any())
                   <span style="float: right;font-size: 15px;">{{$errors->all()[0] }}</span>
@@ -48,17 +51,6 @@
                          @endforeach
                       </select>
                     </div>
-                     <label class="col-sm-2 control-label" for="groupid">Group</label>
-                    <div class="col-sm-4">
-                      <select onchange="getChange(this,'group')" class="form-control" name="groupid" id="groupid">
-                         <option value="">SELECT</option>
-                         @foreach ($groupList as $x)
-                           <option value="{{$x->id}}">{{$x->name}}</option>
-                         @endforeach
-                      </select>
-                    </div>                       
-                  </div>
-                  <div class="form-group row">
                     <label class="col-sm-2 control-label" for="mediumid">Medium</label>
                     <div class="col-sm-4">
                       <select onchange="getChange(this,'medium')" class="form-control" name="mediumid" id="mediumid">
@@ -67,16 +59,27 @@
                            <option value="{{$x->id}}">{{$x->name}}</option>
                          @endforeach
                       </select>
-                    </div>
+                    </div>                     
+                  </div>
+                  <div class="form-group row">
                      <label class="col-sm-2 control-label" for="shiftid">Shift</label>
                     <div class="col-sm-4">
-                      <select class="form-control" name="shiftid" id="shiftid">
+                      <select onchange="getChange(this,'shift')" class="form-control" name="shiftid" id="shiftid">
                          <option value="">SELECT</option>
                          @foreach ($shiftList as $x)
                            <option value="{{$x->id}}">{{$x->name}}</option>
                          @endforeach
                       </select>
-                    </div>                           
+                    </div>
+                    <label class="col-sm-2 control-label" for="groupid">Group</label>
+                    <div class="col-sm-4">
+                      <select class="form-control" name="groupid" id="groupid">
+                         <option value="">SELECT</option>
+                         @foreach ($groupList as $x)
+                           <option value="{{$x->id}}">{{$x->name}}</option>
+                         @endforeach
+                      </select>
+                    </div>                             
                   </div>
                     <div class="row">
                       <div class="col-sm-12">
@@ -201,19 +204,6 @@
 </section>
 @endsection
 @section('uniqueScript')
-<script src="{{asset('clientAdmin/js/jquery.dataTables.min.js')}}"></script>
-<script src="{{asset('clientAdmin/js/dataTables.bootstrap.min.js')}}"></script>
-<script src="{{asset('clientAdmin/js/dataTables.fixedHeader.min.js')}}"></script>
-<script src="{{asset('clientAdmin/js/dataTables.responsive.min.js')}}"></script>
-<script src="{{asset('clientAdmin/js/responsive.bootstrap.min.js')}}"></script>
+<script src="{{asset('clientAdmin/js/baseUrl.js')}}"></script>
 <script src="{{asset('clientAdmin/js/markdistribution.js')}}"></script>
-<script type="text/javascript">
- $(document).ready(function() {
-  var table = $('#example').DataTable( {
-    responsive: true
-  } );
-
-  new $.fn.dataTable.FixedHeader( table );
-} );
-</script>
 @endsection

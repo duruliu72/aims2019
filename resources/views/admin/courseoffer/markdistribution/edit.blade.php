@@ -178,19 +178,6 @@
 </section>
 @endsection
 @section('uniqueScript')
-<script src="{{asset('clientAdmin/js/jquery.dataTables.min.js')}}"></script>
-<script src="{{asset('clientAdmin/js/dataTables.bootstrap.min.js')}}"></script>
-<script src="{{asset('clientAdmin/js/dataTables.fixedHeader.min.js')}}"></script>
-<script src="{{asset('clientAdmin/js/dataTables.responsive.min.js')}}"></script>
-<script src="{{asset('clientAdmin/js/responsive.bootstrap.min.js')}}"></script>
+<script src="{{asset('clientAdmin/js/baseUrl.js')}}"></script>
 <script src="{{asset('clientAdmin/js/markdistribution.js')}}"></script>
-<script type="text/javascript">
- $(document).ready(function() {
-  var table = $('#example').DataTable( {
-    responsive: true
-  } );
-
-  new $.fn.dataTable.FixedHeader( table );
-} );
-</script>
 @endsection

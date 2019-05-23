@@ -16,7 +16,7 @@ class CreateExamNameTable extends Migration
         Schema::create('exam_name', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name',100);
-            $table->integer('examptypeid')->length(11);
+            $table->integer('examtypeid')->length(11);
             $table->integer('status')->length(5)->default(0);
             $table->timestamps();
         });

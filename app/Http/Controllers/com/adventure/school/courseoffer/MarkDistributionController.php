@@ -4,6 +4,7 @@ namespace App\Http\Controllers\com\adventure\school\courseoffer;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\com\adventure\school\basic\Institute;
 use App\com\adventure\school\courseoffer\CourseOffer;
 use App\com\adventure\school\courseoffer\MarkDistribution;
 use App\com\adventure\school\program\MarkCategory;
@@ -23,9 +24,6 @@ class MarkDistributionController extends Controller
     }
     public function createMarkdistribution(Request $request){
         $msg="";
-        $yearName = date('Y');
-        $aSession=new Session();
-        $sessionid=$aSession->getSessionId($yearName);
         $programid=$request->programid;
         $groupid=$request->groupid;
         $mediumid=$request->mediumid;
@@ -44,16 +42,23 @@ class MarkDistributionController extends Controller
         $markCategoryList=null;
         $markdistributionList=null;
         $selectedlist=null;
-        $programofferid=$aProgramOffer->getProgramOfferId($sessionid,$programid,$groupid,$mediumid,$shiftid);
+        $programofferid=$aProgramOffer->getProgramOfferId(0,$programid,$groupid,$mediumid,$shiftid);
         $markCategoryList=MarkCategory::all();
+      
         if($request->isMethod('post')&&$request->search_btn=='search_btn' || $request->save_btn=='save_btn'){
-            if($request->save_btn=='search_btn'){
+            if($request->search_btn=='search_btn'){
                 $validatedData = $request->validate([
                     'programid' => 'required|',
                     'groupid' => 'required|',
                     'mediumid' => 'required|',
                     'shiftid' => 'required|',
                     ]);
+                $isTrue=$aCourseOffer->hasCourseAssign($programofferid);
+                if($isTrue==false){
+                    $msg="Please course asssign first";
+                    return redirect()->back()->with('msg',$msg);
+                }
+                
             }
             if($request->save_btn=='save_btn'){
                 $programofferid=$request->programofferid;
@@ -99,14 +104,20 @@ class MarkDistributionController extends Controller
             }
         }
         $aList=[];
-        $dataList=[
+        // sessionid,programid,groupid,mediumid,shiftid,tableName And last one compareid
+        $programList=$aCourseOffer->getAllOnIDS(0,0,0,0,0,"programs",'programid');
+        $mediumList=$aCourseOffer->getAllOnIDS(0,0,0,0,0,"mediums",'mediumid');
+        $shiftList=$aCourseOffer->getAllOnIDS(0,0,0,0,0,"shifts",'shiftid');
+        $groupList=$aCourseOffer->getAllOnIDS(0,0,0,0,0,"groups",'groupid');
+        $dataList=[         
+            'institute'=>Institute::getInstituteName(),
             'sidebarMenu'=>$sidebarMenu,
+            'programList'=>$programList,
+            'groupList'=>$groupList,
+            'mediumList'=>$mediumList,
+            'shiftList'=>$shiftList,
             'pList'=>$pList,
             'result'=>$aList,
-            'programList'=>$aCourseOffer->getProgramsOnSession($sessionid),
-            'groupList'=>$aCourseOffer->getGroupsOnSession($sessionid),
-            'mediumList'=>$aCourseOffer->getMediumsOnSession($sessionid),
-            'shiftList'=>$aCourseOffer->getShiftsOnSession($sessionid),
             'programofferinfo'=>$programofferinfo,
             'courseCodeList'=>$courseCodeList,
             'markCategoryList'=>$markCategoryList,
@@ -117,9 +128,6 @@ class MarkDistributionController extends Controller
     }
     public function editMarkdistribution(Request $request){
         $msg="";
-        $yearName = date('Y');
-        $aSession=new Session();
-        $sessionid=$aSession->getSessionId($yearName);
         $programid=$request->programid;
         $groupid=$request->groupid;
         $mediumid=$request->mediumid;
@@ -138,11 +146,11 @@ class MarkDistributionController extends Controller
         $markCategoryList=null;
         $markdistributionList=null;
         $selectedlist=null;
-        $programofferid=$aProgramOffer->getProgramOfferId($sessionid,$programid,$groupid,$mediumid,$shiftid);
+        $programofferid=$aProgramOffer->getProgramOfferId(0,$programid,$groupid,$mediumid,$shiftid);
         $markCategoryList=MarkCategory::all();
         
         if($request->isMethod('post')&&$request->search_btn=='search_btn' || $request->update_btn=='update_btn'){
-            if($request->save_btn=='search_btn'){
+            if($request->search_btn=='search_btn'){
                 $validatedData = $request->validate([
                     'programid' => 'required|',
                     'groupid' => 'required|',
@@ -228,13 +236,19 @@ class MarkDistributionController extends Controller
                 $selectedlist[$course->id]=$aMarkDistribution->getCourseCategoryOnCourse($programofferid,$course->id);
             }
         }
+        // sessionid,programid,groupid,mediumid,shiftid,tableName And last one compareid
+        $programList=$aCourseOffer->getAllOnIDS(0,0,0,0,0,"programs",'programid');
+        $mediumList=$aCourseOffer->getAllOnIDS(0,0,0,0,0,"mediums",'mediumid');
+        $shiftList=$aCourseOffer->getAllOnIDS(0,0,0,0,0,"shifts",'shiftid');
+        $groupList=$aCourseOffer->getAllOnIDS(0,0,0,0,0,"groups",'groupid');
         $dataList=[
+            'institute'=>Institute::getInstituteName(),
             'sidebarMenu'=>$sidebarMenu,
+            'programList'=>$programList,
+            'groupList'=>$groupList,
+            'mediumList'=>$mediumList,
+            'shiftList'=>$shiftList,
             'pList'=>$pList,
-            'programList'=>$aCourseOffer->getProgramsOnSession($sessionid),
-            'groupList'=>$aCourseOffer->getGroupsOnSession($sessionid),
-            'mediumList'=>$aCourseOffer->getMediumsOnSession($sessionid),
-            'shiftList'=>$aCourseOffer->getShiftsOnSession($sessionid),
             'programofferinfo'=>$programofferinfo,
             'courseCodeList'=>$courseCodeList,
             'markCategoryList'=>$markCategoryList,
@@ -276,7 +290,8 @@ class MarkDistributionController extends Controller
     //     }
     // }
     
-//    ================================================================
+    // For Ajax Call ===============
+    //    ================================================================
     public function getValue(Request $request){
         $option=$request->option;
         $methodid=$request->methodid;
@@ -286,91 +301,37 @@ class MarkDistributionController extends Controller
         $shiftid=$request->shiftid;
         if($option=="program"){
             if($methodid==1){
-                $this->getGroupsOnSessionAndProgram($programid);
+                $this->getAllOnIDS(0,$programid,0,0,0,"mediums",'mediumid');
             }elseif($methodid==2){
-                $this->getMediumsOnSessionAndProgram($programid);
+                $this->getAllOnIDS(0,$programid,0,0,0,"shifts",'shiftid');
             }elseif($methodid==3){
-                $this->getShiftsOnSessionAndProgram($programid);
+                $this->getAllOnIDS(0,$programid,0,0,0,"groups",'groupid');
             }
         }elseif($option=="group"){
-            if($methodid==1){
-                $this->getMediumsOnSessionAndPrograAndGroup($programid,$groupid);
-            }elseif($methodid==2){
-                $this->getShiftsOnSessionAndPrograAndGroup($programid,$groupid);
-            }
+            // if($methodid==1){
+            //     $this->getMediumsOnSessionAndPrograAndGroup($programid,$groupid);
+            // }elseif($methodid==2){
+            //     $this->getShiftsOnSessionAndPrograAndGroup($programid,$groupid);
+            // }
         }elseif($option=="medium"){
             if($methodid==1){
-                $this->getShiftsOnSessionAndPrograAndGroupAndMedium($programid,$groupid,$mediumid);
+                $this->getAllOnIDS(0,$programid,0,$mediumid,0,"shifts",'shiftid');
+            }elseif($methodid==2){
+                $this->getAllOnIDS(0,$programid,0,$mediumid,0,"groups",'groupid');
             }
         }elseif($option=="shift"){
             if($methodid==1){
-                $this->getCourseCodesOnProgramOffer($programid,$groupid,$mediumid,$shiftid);
-            }elseif($methodid==2){
-                $this->getCourseCodesOnProgramOffer($programid,$groupid,$mediumid,$shiftid);
+                $this->getAllOnIDS(0,$programid,0,$mediumid,$shiftid,"groups",'groupid');
             }
         }
     }
-    private function getGroupsOnSessionAndProgram($programid){
-       $aCourseOffer=new CourseOffer();
-       $result=$aCourseOffer->getGroupsOnSessionAndProgram(0,$programid);
+    private function getAllOnIDS($sessionid,$programid,$groupid,$mediumid,$shiftid,$tableName,$compareid){
+        $aCourseOffer=new CourseOffer();
+        $result=$aCourseOffer->getAllOnIDS($sessionid,$programid,$groupid,$mediumid,$shiftid,$tableName,$compareid);
         $output="<option value=''>SELECT</option>";
         foreach($result as $x){
-           $output.="<option value='$x->id'>$x->name</option>";
+            $output.="<option value='$x->id'>$x->name</option>";
         }
         echo  $output;
     }
-    private function getMediumsOnSessionAndProgram($programid){
-        $aCourseOffer=new CourseOffer();
-        $result=$aCourseOffer->getMediumsOnSessionAndProgram(0,$programid);
-         $output="<option value=''>SELECT</option>";
-         foreach($result as $x){
-            $output.="<option value='$x->id'>$x->name</option>";
-         }
-         echo  $output;
-     }
-     private function getShiftsOnSessionAndProgram($programid){
-        $aCourseOffer=new CourseOffer();
-        $result=$aCourseOffer->getShiftsOnSessionAndProgram(0,$programid);
-         $output="<option value=''>SELECT</option>";
-         foreach($result as $x){
-            $output.="<option value='$x->id'>$x->name</option>";
-         }
-         echo  $output;
-     }
-     private function getMediumsOnSessionAndPrograAndGroup($programid,$groupid){
-        $aCourseOffer=new CourseOffer();
-        $result=$aCourseOffer->getMediumsOnSessionAndPrograAndGroup(0,$programid,$groupid);
-         $output="<option value=''>SELECT</option>";
-         foreach($result as $x){
-            $output.="<option value='$x->id'>$x->name</option>";
-         }
-         echo  $output;
-     }
-     private function getShiftsOnSessionAndPrograAndGroup($programid,$groupid){
-        $aCourseOffer=new CourseOffer();
-        $result=$aCourseOffer->getShiftsOnSessionAndPrograAndGroup(0,$programid,$groupid);
-         $output="<option value=''>SELECT</option>";
-         foreach($result as $x){
-            $output.="<option value='$x->id'>$x->name</option>";
-         }
-         echo  $output;
-     }
-     private function getShiftsOnSessionAndPrograAndGroupAndMedium($programid,$groupid,$mediumid){
-        $aCourseOffer=new CourseOffer();
-        $result=$aCourseOffer->getShiftsOnSessionAndPrograAndGroupAndMedium(0,$programid,$groupid,$mediumid);
-         $output="<option value=''>SELECT</option>";
-         foreach($result as $x){
-            $output.="<option value='$x->id'>$x->name</option>";
-         }
-         echo  $output;
-     }
-     private function getCourseCodesOnProgramOffer($programid,$groupid,$mediumid,$shiftid){
-        $aCourseOffer=new CourseOffer();
-        $result=$aCourseOffer->getCourseCodesOnProgramOffer(0,$programid,$groupid,$mediumid,$shiftid);
-         $output="<option value=''>SELECT</option>";
-         foreach($result as $x){
-            $output.="<option value='$x->id'>$x->name</option>";
-         }
-         echo  $output;
-     }
 }

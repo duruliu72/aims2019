@@ -8,6 +8,7 @@ use App\com\adventure\school\basic\Institute;
 use App\com\adventure\school\menu\Menu;
 use App\com\adventure\school\program\ProgramOffer;
 use App\com\adventure\school\exam\ExamName;
+use App\com\adventure\school\exam\MasterExam;
 use App\com\adventure\school\exam\ChildExamCourse;
 use App\com\adventure\school\exam\ChildExam;
 
@@ -18,9 +19,9 @@ class ChildExamController extends Controller
         $this->middleware('auth');
     }
     public function childExamCrete(Request $request){
-        $instituteName=Institute::getInstituteName();
         $aProgramOffer=new ProgramOffer();
         $aChildExam=new ChildExam();
+        $aMasterExam=new MasterExam();
         $aMenu=new Menu();
         $hasMenu=$aMenu->hasMenu('childexam');
         if($hasMenu==false){
@@ -90,10 +91,6 @@ class ChildExamController extends Controller
             }
         }
         $aList=ChildExam::getAllChild();
-        $programList=$aChildExam->getProgramsOnSession(0);
-        $groupList=$aChildExam->getGroupsOnSession(0);
-        $mediumList=$aChildExam->getMediumsOnSession(0);
-        $shiftList=$aChildExam->getShiftsOnSession(0);
         $masterExamNameList=ChildExam::getExamName(1);
         $childExamNameList=ExamName::getExamName(2);
         $bean=null;
@@ -105,8 +102,12 @@ class ChildExamController extends Controller
             $aChildExamCourse=new ChildExamCourse();
             $courseofferList=$aChildExamCourse->getAllCoursesOnChildExam($request->id);
         }
+        $programList=$aMasterExam->getAllOnIDS(0,0,0,0,0,"programs",'programid');
+        $mediumList=$aMasterExam->getAllOnIDS(0,0,0,0,0,"mediums",'mediumid');
+        $shiftList=$aMasterExam->getAllOnIDS(0,0,0,0,0,"shifts",'shiftid');
+        $groupList=$aMasterExam->getAllOnIDS(0,0,0,0,0,"groups",'groupid');
         $dataList=[
-            'instituteName'=>$instituteName,
+            'institute'=>Institute::getInstituteName(),
             'sidebarMenu'=>$sidebarMenu,
             'programList'=>$programList,
             'groupList'=>$groupList,
@@ -121,8 +122,8 @@ class ChildExamController extends Controller
         ];
         return view('admin.exam.childexam.childexamcreate',$dataList);
     }
-    
     // For Ajax Call ===============
+    //    ================================================================
     public function getValue(Request $request){
         $option=$request->option;
         $methodid=$request->methodid;
@@ -132,29 +133,38 @@ class ChildExamController extends Controller
         $shiftid=$request->shiftid;
         if($option=="program"){
             if($methodid==1){
-                $this->getGroupsOnSessionAndProgram($programid);
+                $this->getAllOnIDS(0,$programid,0,0,0,"mediums",'mediumid');
             }elseif($methodid==2){
-                $this->getMediumsOnSessionAndProgram($programid);
+                $this->getAllOnIDS(0,$programid,0,0,0,"shifts",'shiftid');
             }elseif($methodid==3){
-                $this->getShiftsOnSessionAndProgram($programid);
+                $this->getAllOnIDS(0,$programid,0,0,0,"groups",'groupid');
             }
         }elseif($option=="group"){
-            if($methodid==1){
-                $this->getMediumsOnSessionAndPrograAndGroup($programid,$groupid);
-            }elseif($methodid==2){
-                $this->getShiftsOnSessionAndPrograAndGroup($programid,$groupid);
-            }
-        }elseif($option=="medium"){
-            if($methodid==1){
-                $this->getShiftsOnSessionAndPrograAndGroupAndMedium($programid,$groupid,$mediumid);
-            }
-        }elseif($option=="shift"){
             if($methodid==1){
                 $this->getExamNameOnProgramOffer($programid,$groupid,$mediumid,$shiftid);
             }elseif($methodid==2){
                 $this->getAllCourses($programid,$groupid,$mediumid,$shiftid);
             }
+        }elseif($option=="medium"){
+            if($methodid==1){
+                $this->getAllOnIDS(0,$programid,0,$mediumid,0,"shifts",'shiftid');
+            }elseif($methodid==2){
+                $this->getAllOnIDS(0,$programid,0,$mediumid,0,"groups",'groupid');
+            }
+        }elseif($option=="shift"){
+            if($methodid==1){
+                $this->getAllOnIDS(0,$programid,0,$mediumid,$shiftid,"groups",'groupid');
+            }
         }
+    }
+    private function getAllOnIDS($sessionid,$programid,$groupid,$mediumid,$shiftid,$tableName,$compareid){
+        $aMasterExam=new MasterExam();
+        $result=$aMasterExam->getAllOnIDS($sessionid,$programid,$groupid,$mediumid,$shiftid,$tableName,$compareid);
+        $output="<option value=''>SELECT</option>";
+        foreach($result as $x){
+            $output.="<option value='$x->id'>$x->name</option>";
+        }
+        echo  $output;
     }
     private function getAllCourses($programid,$groupid,$mediumid,$shiftid){
         $aProgramOffer=new ProgramOffer();
@@ -174,65 +184,12 @@ class ChildExamController extends Controller
         }
         echo  $output;
     }
-    private function getGroupsOnSessionAndProgram($programid){
-        $aChildExam=new ChildExam();
-        $result=$aChildExam->getGroupsOnSessionAndProgram(0,$programid);
-        $output="<option value=''>SELECT</option>";
-        foreach($result as $x){
-           $output.="<option value='$x->id'>$x->name</option>";
-        }
-        echo  $output;
-    }
-    private function getMediumsOnSessionAndProgram($programid){
-        $aChildExam=new ChildExam();
-        $result=$aChildExam->getMediumsOnSessionAndProgram(0,$programid);
-        $output="<option value=''>SELECT</option>";
-        foreach($result as $x){
-           $output.="<option value='$x->id'>$x->name</option>";
-        }
-        echo  $output;
-    }
-    private function getShiftsOnSessionAndProgram($programid){
-        $aChildExam=new ChildExam();
-        $result=$aChildExam->getShiftsOnSessionAndProgram(0,$programid);
-        $output="<option value=''>SELECT</option>";
-        foreach($result as $x){
-           $output.="<option value='$x->id'>$x->name</option>";
-        }
-        echo  $output;
-    }
-    private function getMediumsOnSessionAndPrograAndGroup($programid,$groupid){
-        $aChildExam=new ChildExam();
-        $result=$aChildExam->getMediumsOnSessionAndPrograAndGroup(0,$programid,$groupid);
-        $output="<option value=''>SELECT</option>";
-        foreach($result as $x){
-           $output.="<option value='$x->id'>$x->name</option>";
-        }
-        echo  $output;
-    }
-    private function getShiftsOnSessionAndPrograAndGroup($programid,$groupid){
-        $aChildExam=new ChildExam();
-        $result=$aChildExam->getShiftsOnSessionAndPrograAndGroup(0,$programid,$groupid);
-        $output="<option value=''>SELECT</option>";
-        foreach($result as $x){
-           $output.="<option value='$x->id'>$x->name</option>";
-        }
-        echo  $output;
-    }
-    private function getShiftsOnSessionAndPrograAndGroupAndMedium($programid,$groupid,$mediumid){
-        $aChildExam=new ChildExam();
-        $result=$aChildExam->getShiftsOnSessionAndPrograAndGroupAndMedium(0,$programid,$groupid,$mediumid);
-        $output="<option value=''>SELECT</option>";
-        foreach($result as $x){
-           $output.="<option value='$x->id'>$x->name</option>";
-        }
-        echo  $output;
-    }
+    
     private function getExamNameOnProgramOffer($programid,$groupid,$mediumid,$shiftid){
-        $aChildExam=new ChildExam();
+        $aExamName=new ExamName();
         $aProgramOffer=new ProgramOffer();
         $programofferid=$aProgramOffer->getProgramOfferId(0,$programid,$groupid,$mediumid,$shiftid);
-        $result=$aChildExam->getExamNameOnProgramOffer($programofferid,1);
+        $result=$aExamName->getExamNameOnProgramOffer($programofferid,1);
         $output="<option value=''>SELECT</option>";
         foreach($result as $x){
            $output.="<option value='$x->id'>$x->name</option>";

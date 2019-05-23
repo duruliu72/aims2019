@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\com\adventure\school\exam;
 
 use Illuminate\Http\Request;
+use App\com\adventure\school\basic\Institute;
 use App\Http\Controllers\Controller;
 use App\com\adventure\school\exam\ExamName;
 use App\com\adventure\school\menu\Menu;
@@ -21,7 +22,12 @@ class ExamNameController extends Controller
         $sidebarMenu=$aMenu->getSidebarMenu();
         $pList=$aMenu->getPermissionOnMenu('examname');
         $aList=ExamName::getAll();
-        $dataList=['sidebarMenu'=>$sidebarMenu,'pList'=>$pList,'result'=>$aList];
+        $dataList=[
+            'institute'=>Institute::getInstituteName(),
+            'sidebarMenu'=>$sidebarMenu,
+            'pList'=>$pList,
+            'result'=>$aList
+        ];
         return view('admin.exam.examname.index',$dataList);
     }
     public function create(){
@@ -32,12 +38,13 @@ class ExamNameController extends Controller
         }
         $sidebarMenu=$aMenu->getSidebarMenu();
         $pList=$aMenu->getPermissionOnMenu('examname');
-        $dataList=[
-            'sidebarMenu'=>$sidebarMenu
-        ];
         if($pList[2]->id!=2){
             return redirect('error'); 
         }
+        $dataList=[
+            'institute'=>Institute::getInstituteName(),
+            'sidebarMenu'=>$sidebarMenu
+        ];
     	return view('admin.exam.examname.create',$dataList);
     }
     public function store(Request $request){
@@ -71,6 +78,7 @@ class ExamNameController extends Controller
             return redirect('error');
         }
         $dataList=[
+        'institute'=>Institute::getInstituteName(),
         'sidebarMenu'=>$sidebarMenu,
         'bean'=>$obj
         ];
