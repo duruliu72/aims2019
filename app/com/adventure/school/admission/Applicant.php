@@ -24,13 +24,44 @@ class Applicant extends Model
 		'prevschool','lastclass','result','passingyear','tcno',
 		'tcissueddate','picture',
 		'signature','father_picture','mother_picture'];
-	public function getApplicantid($applicantid,$pin_code){
-		$sql="SELECT * FROM `applicants` WHERE applicantid=? && pin_code=?";
-		$qresult=\DB::select($sql,[$applicantid,$pin_code]);
+
+	public function getApplicantid($applicantid,$pin_code=""){
+		$sql="SELECT * FROM `applicants` WHERE applicantid=?";
+		$data=array();
+		array_push($data,$applicantid);
+		if($pin_code!=""){
+			$sql.=" && pin_code=?";
+			array_push($data,$pin_code);
+		}
+		$qresult=\DB::select($sql,$data);
 		$result=collect($qresult);
 		$applicant=$result->first();
 		$applicantid=$applicant->applicantid;
 		return $applicantid;
+	}
+	public function getApplicant1($applicantid,$pin_code=""){
+		$sql="SELECT t1.* ,
+		genders.name AS genderName,
+		blood_groups.name AS bloodgroupName,
+		religions.name AS religionName,
+		nationalities.name AS nationalityName,
+		quotas.name AS quotaName                              
+		FROM applicants AS t1
+		LEFT JOIN genders ON t1.genderid=genders.id
+		LEFT JOIN blood_groups ON t1.bloodgroupid=blood_groups.id
+		LEFT JOIN religions ON t1.religionid=religions.id
+		LEFT JOIN nationalities ON t1.`nationalityid`=nationalities.id
+		LEFT JOIN quotas ON t1.`quotaid`=quotas.id
+		WHERE t1.applicantid=?";
+		$data=array();
+		array_push($data,$applicantid);
+		if($pin_code!==""){
+			$sql.=" && pin_code=?";
+			array_push($data,$pin_code);
+		}
+		$qresult=\DB::select($sql,$data);
+		$applicant=collect($qresult)->first();
+		return $applicant;
 	}
 	public function getApplicant($applicantid,$pin_code=""){
 		$applicant=$this->getApplicantinfo($applicantid,$pin_code);
@@ -159,7 +190,23 @@ WHERE table1.admission_applicantid NOT IN (SELECT admissionresult.admission_appl
 		$result=collect($qresult);
 		return $result;
 	}
-
+	public function getAllApplicantForMarkEdit($admission_programid){
+		$sql="SELECT t1.* FROM (
+			SELECT 
+    admissionapplicants.id AS admission_applicantid,
+					admissionapplicants.admission_programid,
+					admissionapplicants.admssion_roll,
+					applicants.*
+					FROM `admissionapplicants`
+					INNER JOIN applicants ON admissionapplicants.applicantid=applicants.applicantid
+					WHERE admissionapplicants.admission_programid=?
+			) AS t1
+			INNER JOIN (SELECT admissionresult.admission_applicantid FROM admissionresult GROUP BY admissionresult.admission_applicantid) AS t2
+			ON t1.admission_applicantid=t2.admission_applicantid";
+		$qresult=\DB::select($sql,[$admission_programid]);
+		$result=collect($qresult);
+		return $result;
+	}
 	// For Admission Result Program offer wise
 	public function allApplicantForResult($admission_programid){
 		$sql="select 
@@ -213,21 +260,5 @@ WHERE table1.admission_applicantid NOT IN (SELECT admissionresult.admission_appl
 		$result=collect($qresult);
 		return $result;
 	}
-	public function getAllApplicantForMarkEdit($admission_programid){
-		$sql="SELECT t1.* FROM (
-			SELECT 
-    admissionapplicants.id AS admission_applicantid,
-					admissionapplicants.admission_programid,
-					admissionapplicants.admssion_roll,
-					applicants.*
-					FROM `admissionapplicants`
-					INNER JOIN applicants ON admissionapplicants.applicantid=applicants.applicantid
-					WHERE admissionapplicants.admission_programid=?
-			) AS t1
-			INNER JOIN (SELECT admissionresult.admission_applicantid FROM admissionresult GROUP BY admissionresult.admission_applicantid) AS t2
-			ON t1.admission_applicantid=t2.admission_applicantid";
-		$qresult=\DB::select($sql,[$admission_programid]);
-		$result=collect($qresult);
-		return $result;
-	}
+	
 }

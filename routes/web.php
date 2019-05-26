@@ -43,9 +43,9 @@ Route::resource('employees', 'com\adventure\school\employee\EmployeeController')
 Route::resource('session', 'com\adventure\school\program\SessionControler');
 Route::resource('plevel', 'com\adventure\school\program\PLevelControler');
 Route::resource('program', 'com\adventure\school\program\ProgramControler');
-Route::resource('levelprogram', 'com\adventure\school\program\VLevelProgramController');
+Route::resource('levelprogram', 'com\adventure\school\program\LevelProgramController');
 Route::resource('group', 'com\adventure\school\program\GroupControler');
-Route::resource('programgroup', 'com\adventure\school\program\VProgramGroupController');
+Route::resource('programgroup', 'com\adventure\school\program\ProgramGroupController');
 Route::resource('medium', 'com\adventure\school\program\MediumControler');
 Route::resource('shift', 'com\adventure\school\program\ShiftControler');
 Route::get('programoffer/getValue', 'com\adventure\school\program\ProgramOfferController@getValue');
@@ -99,7 +99,7 @@ Route::post('markdistribution/edit','com\adventure\school\courseoffer\MarkDistri
 // Academic Settings
 Route::get('student', 'com\adventure\school\academic\StudentController@applicantSearch');
 Route::get('student/create', 'com\adventure\school\academic\StudentController@goback');
-Route::post('student/create', 'com\adventure\school\academic\StudentController@create1');
+Route::post('student/create', 'com\adventure\school\academic\StudentController@studentReg');
 Route::get('students/getValue','com\adventure\school\academic\StudentController@getValue');
 Route::get('students', 'com\adventure\school\academic\StudentController@allStudentReg');
 Route::post('students', 'com\adventure\school\academic\StudentController@allStudentReg');

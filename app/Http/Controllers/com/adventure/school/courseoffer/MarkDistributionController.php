@@ -94,7 +94,7 @@ class MarkDistributionController extends Controller
                 }
                 
             }
-            $programofferinfo=$aProgramOffer->getProgramOfferinfo($programofferid);
+            $programofferinfo=$aProgramOffer->getProgramOffer($programofferid);
             $courseCodeList=$aCourseOffer->getCourseCodesOnProgramOffer($programofferid);
             $aMarkDistribution=new MarkDistribution();
             $markdistributionList=$aMarkDistribution->getMarkDistributionOnProgramOffer($programofferid);
@@ -227,7 +227,7 @@ class MarkDistributionController extends Controller
                 }
                 
             }
-            $programofferinfo=$aProgramOffer->getProgramOfferinfo($programofferid);
+            $programofferinfo=$aProgramOffer->getProgramOffer($programofferid);
             $courseCodeList=$aCourseOffer->getCourseCodesOnProgramOffer($programofferid);
             $aMarkDistribution=new MarkDistribution();
             $markdistributionList=$aMarkDistribution->getMarkDistributionOnProgramOffer($programofferid);

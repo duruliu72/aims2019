@@ -33,8 +33,8 @@ class MasterExam extends Model
                 INNER JOIN exam_name AS exn ON mex.examnameid=exn.id
                 INNER JOIN sessions ON po.sessionid=sessions.id
                 INNER JOIN programs ON po.programid=programs.id
-                INNER JOIN vlevel_programs on programs.id=vlevel_programs.programid
-                INNER JOIN programlevels on vlevel_programs.programlevelid=programlevels.id
+                INNER JOIN level_programs on programs.id=level_programs.programid
+                INNER JOIN programlevels on level_programs.programlevelid=programlevels.id
                 INNER JOIN groups ON po.groupid=groups.id
                 INNER JOIN mediums ON po.mediumid=mediums.id
                 INNER JOIN shifts ON po.shiftid=shifts.id

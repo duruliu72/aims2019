@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateVlevelProgramsTable extends Migration
+class CreateProgramGroupsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,12 @@ class CreateVlevelProgramsTable extends Migration
      */
     public function up()
     {
-        Schema::create('vlevel_programs', function (Blueprint $table) {
+        Schema::create('program_groups', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('programlevelid')->length(11);
             $table->integer('programid')->length(11);
+            $table->integer('groupid')->length(11);
             $table->integer('status')->length(5)->default(0);
             $table->timestamps();
-            $table->unique('programid');
         });
     }
 
@@ -30,6 +29,6 @@ class CreateVlevelProgramsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('vlevel_programs');
+        Schema::dropIfExists('program_groups');
     }
 }

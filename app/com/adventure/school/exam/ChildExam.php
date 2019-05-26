@@ -31,8 +31,8 @@ class ChildExam extends Model
         INNER JOIN exam_name AS childexam ON child_exam.examnameid=childexam.id
         INNER JOIN sessions ON programoffers.sessionid=sessions.id
         INNER JOIN programs ON programoffers.programid=programs.id
-        INNER JOIN vlevel_programs on programs.id=vlevel_programs.programid
-        INNER JOIN programlevels on vlevel_programs.programlevelid=programlevels.id
+        INNER JOIN level_programs on programs.id=level_programs.programid
+        INNER JOIN programlevels on level_programs.programlevelid=programlevels.id
         INNER JOIN groups ON programoffers.groupid=groups.id
         INNER JOIN mediums ON programoffers.mediumid=mediums.id
         INNER JOIN shifts ON programoffers.shiftid=shifts.id";

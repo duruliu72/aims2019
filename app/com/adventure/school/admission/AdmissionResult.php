@@ -11,7 +11,7 @@ class AdmissionResult extends Model
 {
     protected $table="admissionresult";
 	protected $fillable = ['applicantid','subjectid','marks'];
-	// applicantid wise Result 
+	// Admission Result For single Applicant 
 	public function getAdmissionResult($applicantid,$pin_code){
 		$aApplicant=new Applicant();
 		$applicant_id=$aApplicant->getApplicantid($applicantid,$pin_code);
@@ -59,7 +59,7 @@ class AdmissionResult extends Model
 		);
 		return $result;
 	}
-	public function xxx($programofferid){
+	public function getResultOnPO($programofferid){
 		$aAdmissionProgram=new AdmissionProgram();
 		$admission_programid=$aAdmissionProgram->getAdmissionProgram_id($programofferid);
 		$programinfo=$aAdmissionProgram->getAdmissionPrograminfo($admission_programid);

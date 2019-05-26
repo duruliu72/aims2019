@@ -91,7 +91,7 @@ class StudentController extends Controller
             $aAdmissionResult=new AdmissionResult();
             $courseTypeList=CourseType::all();
             $sectionList=$aSectionOffer->getSectionsOnPO($programofferid);
-            $result=$aAdmissionResult->xxx($programofferid);
+            $result=$aAdmissionResult->getResultOnPO($programofferid);
             // dd($result);
             $courseList=$aCourseOffer->getStudentCoursesOnProgramOffer($programofferid);
         }
@@ -109,13 +109,13 @@ class StudentController extends Controller
             'shiftList'=>$shiftList,
             'sectionList'=>$sectionList,
             'courseTypeList'=>$courseTypeList,
-            'result'=>$result,
             'courseList'=>$courseList,
+            'result'=>$result,
             'msg'=>$msg
         ];
         return view('admin.academic.student.index',$dataList);
     }
-    public function create1(Request $request){
+    public function studentReg(Request $request){
         $aMenu=new Menu();
         $hasMenu=$aMenu->hasMenu('student');
         if($hasMenu==false){
@@ -162,12 +162,14 @@ class StudentController extends Controller
                 }
             }
         }
-        $applicant=$aApplicant->getApplicantx($applicantid);
-        $aObj=$aAdmissionResult->getMeritPosition($applicant->programofferid,$applicantid);
-        if($aObj==null) {
+        // die("Die Here");
+        $applicant=$aApplicant->getApplicant1($applicantid);
+        if($applicant==null) {
             $msg="Wrong Appicant Id";
             return redirect()->back()->with('msg',$msg)->withInput($request->input());
         }
+        dd($applicant);
+        $aObj=$aAdmissionResult->getMeritPosition($applicant->programofferid,$applicantid);
         $aProgramOffer=new ProgramOffer();
         $programofferinfo=$aProgramOffer->getProgramofferDetails($applicant->programofferid);
         $aCourseOffer=new CourseOffer();
@@ -175,8 +177,8 @@ class StudentController extends Controller
         $courseList=$aCourseOffer->getStudentCourses($applicantid,$aObj->programofferid);
         $sectionList=$aSectionOffer->getSectionsOnPO($aObj->programofferid);
         $courseTypeList=CourseType::all();
-
         $dataList=[
+                'institute'=>Institute::getInstituteName(),
                 'sidebarMenu'=>$sidebarMenu,
                 'courseList'=>$courseList,
                 'courseTypeList'=>$courseTypeList,

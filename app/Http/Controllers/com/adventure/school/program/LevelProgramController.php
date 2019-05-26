@@ -5,11 +5,11 @@ namespace App\Http\Controllers\com\adventure\school\program;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\com\adventure\school\basic\Institute;
-use App\com\adventure\school\program\VLevelProgram;
+use App\com\adventure\school\program\LevelProgram;
 use App\com\adventure\school\program\PLevel;
 use App\com\adventure\school\program\Program;
 use App\com\adventure\school\menu\Menu;
-class VLevelProgramController extends Controller
+class LevelProgramController extends Controller
 {
     public function __construct()
     {
@@ -23,8 +23,8 @@ class VLevelProgramController extends Controller
         }
         $sidebarMenu=$aMenu->getSidebarMenu();
         $pList=$aMenu->getPermissionOnMenu('levelprogram');
-    	$obj=new VLevelProgram();
-        $aList=$obj->getAllGroupsOnProgram();
+    	$obj=new LevelProgram();
+        $aList=$obj->getLevelPrograms();
         $dataList=[
             'institute'=>Institute::getInstituteName(),
             'sidebarMenu'=>$sidebarMenu,
@@ -56,17 +56,17 @@ class VLevelProgramController extends Controller
         return view('admin.programsettings.levelprogram.create',$dataList);
     }
     public function store(Request $request){
-     	$aVLevelProgram=new VLevelProgram();
+     	$aLevelProgram=new LevelProgram();
         $programlevelid=$request->programlevelid;
         $programid=$request->programid;
-        $hasSame=$aVLevelProgram->checkValue($programid);
+        $hasSame=$aLevelProgram->checkValue($programid);
         if($hasSame){
             $msg="This Program has aready Assign To Another Level";
             return redirect()->back()->with('msg',$msg);
         }
-        $aVLevelProgram->programlevelid=$programlevelid;
-        $aVLevelProgram->programid= $programid;
-     	$status=$aVLevelProgram->save();
+        $aLevelProgram->programlevelid=$programlevelid;
+        $aLevelProgram->programid= $programid;
+     	$status=$aLevelProgram->save();
      	if($status){
      		$msg="Created Successfully";
 		  }else{
@@ -85,7 +85,7 @@ class VLevelProgramController extends Controller
         if($pList[3]->id!=3){
             return redirect('error');
         }
-        $aVLevelProgram=VLevelProgram::findOrfail($id);
+        $aLevelProgram=LevelProgram::findOrfail($id);
         $levelList=PLevel::all();
         $programList=Program::all();
         $dataList=[
@@ -93,22 +93,22 @@ class VLevelProgramController extends Controller
             'sidebarMenu'=>$sidebarMenu,
             'levelList'=>$levelList,
             'programList'=>$programList,
-            'bean'=>$aVLevelProgram
+            'bean'=>$aLevelProgram
         ];
         return view('admin.programsettings.levelprogram.edit',$dataList); 
     }
     public function update(Request $request, $id){
-    	$aVLevelProgram=VLevelProgram::findOrfail($id);
+    	$aLevelProgram=LevelProgram::findOrfail($id);
     	$programlevelid=$request->programlevelid;
         $programid=$request->programid;
-        $hasSame=$aVLevelProgram->checkValueforUpdate($programlevelid,$programid);
+        $hasSame=$aLevelProgram->checkValueforUpdate($programlevelid,$programid);
         if($hasSame){
             $msg="This Program has aready Assign";
             return redirect()->back()->with('msg',$msg);
         }
-        $aVLevelProgram->programlevelid=$programlevelid;
-        $aVLevelProgram->programid= $programid;
-     	$status=$aVLevelProgram->update();
+        $aLevelProgram->programlevelid=$programlevelid;
+        $aLevelProgram->programid= $programid;
+     	$status=$aLevelProgram->update();
      	if($status){
      		$msg="Updated Successfully";
 		  }else{

@@ -5,11 +5,11 @@ namespace App\Http\Controllers\com\adventure\school\program;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\com\adventure\school\basic\Institute;
-use App\com\adventure\school\program\VProgramGroup;
+use App\com\adventure\school\program\ProgramGroup;
 use App\com\adventure\school\program\Program;
 use App\com\adventure\school\program\Group;
 use App\com\adventure\school\menu\Menu;
-class VProgramGroupController extends Controller
+class ProgramGroupController extends Controller
 {
     public function __construct()
     {
@@ -23,8 +23,8 @@ class VProgramGroupController extends Controller
         }
         $sidebarMenu=$aMenu->getSidebarMenu();
         $pList=$aMenu->getPermissionOnMenu('programgroup');
-    	$obj=new VProgramGroup();
-        $aList=$obj->getAllGroupsOnProgram();
+    	$obj=new ProgramGroup();
+        $aList=$obj->getGroupsOnProgram();
         $dataList=[
             'institute'=>Institute::getInstituteName(),
             'sidebarMenu'=>$sidebarMenu,

@@ -62,8 +62,8 @@ class AdmissionProgram extends Model
 		INNER JOIN programoffers AS t2 ON t1.programofferid=t2.id
 		INNER JOIN sessions ON t2.sessionid=sessions.id
 		INNER JOIN programs ON t2.programid=programs.id
-        INNER JOIN vlevel_programs on programs.id=vlevel_programs.programid
-		INNER JOIN programlevels on vlevel_programs.programlevelid=programlevels.id
+        INNER JOIN level_programs on programs.id=level_programs.programid
+		INNER JOIN programlevels on level_programs.programlevelid=programlevels.id
 		INNER JOIN groups ON t2.groupid=groups.id
 		INNER JOIN mediums ON t2.mediumid=mediums.id
 		INNER JOIN shifts ON t2.shiftid=shifts.id";

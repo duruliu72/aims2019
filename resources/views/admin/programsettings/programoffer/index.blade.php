@@ -57,7 +57,7 @@
                 <td>{{$x->groupName}}</td>
                 <td>{{$x->mediumName}}</td>
                 <td>{{$x->shiftName}}</td>
-                <td>{{$x->cordinatorName}}</td>
+                <td>{{sprintf('%s%s%s',$x->first_name,$x->middle_name,$x->last_name)}}</td>
                 <td>{{$x->seat}}</td>
                 @if($pList[3]->id==3)
                 <td> 

@@ -29,7 +29,7 @@ class ProgramOfferController extends Controller
         $sidebarMenu=$aMenu->getSidebarMenu();
         $pList=$aMenu->getPermissionOnMenu('programoffer');
         $aProgramOffer=new ProgramOffer();
-        $aList=$aProgramOffer->getAllProgramOffer();
+        $aList=$aProgramOffer->getProgramOffers();
         $dataList=[
             'institute'=>Institute::getInstituteName(),
             'sidebarMenu'=>$sidebarMenu,
