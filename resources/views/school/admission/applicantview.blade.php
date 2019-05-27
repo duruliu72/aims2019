@@ -17,6 +17,11 @@
                     @if(session()->has('msg'))
                         <span style="float: right;font-size: 15px;">{{ session()->get('msg') }}</span>
                     @endif
+                    @if($msg=="")
+                    <span style="float: right;font-size: 15px;">
+                        {{ $msg }}
+                    </span>
+                    @endif
                 </div>
     		</div>
     		<div class="row">

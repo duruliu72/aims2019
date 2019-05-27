@@ -77,6 +77,11 @@ class ProgramOffer extends Model
 			return 0;
 		} 
     public function checkValue($sessionid,$programid,$groupid,$mediumid,$shiftid){
+			if($sessionid==0){
+				$yearName = date('Y');
+					$aSession=new Session();
+					$sessionid=$aSession->getSessionId($yearName);
+			}
 			$sql="SELECT * FROM `programoffers`
 			WHERE sessionid=? AND programid=? AND groupid=?  AND mediumid=? AND shiftid=?";
 			$result=\DB::select($sql,[$sessionid,$programid,$groupid,$mediumid,$shiftid]);

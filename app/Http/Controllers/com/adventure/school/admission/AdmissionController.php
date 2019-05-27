@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\com\adventure\school\basic\Institute;
+use App\com\adventure\school\program\ProgramOffer;
 use App\com\adventure\school\admission\AdmissionProgram;
 use App\com\adventure\school\admission\Admission;
 use App\com\adventure\school\admission\VAdmissionSubject;
@@ -82,12 +83,14 @@ class AdmissionController extends Controller
     	$programid=$request->programid;
     	$groupid=$request->groupid;
     	$mediumid=$request->mediumid;
-    	$shiftid=$request->shiftid;
+		$shiftid=$request->shiftid;
+		$aProgramOffer=new ProgramOffer();
     	$aAdmissionProgram=new AdmissionProgram();
-    	// find admission_programid id 
-		$admission_programid=$aAdmissionProgram->getAdmissionProgramID(0,$programid,$groupid,$mediumid,$shiftid);
+		// find admission_programid id 
+		$programofferid=$aProgramOffer->getProgramOfferId(0,$programid,$groupid,$mediumid,$shiftid);
+		// $admission_programid=$aAdmissionProgram->getAdmissionProgramID(0,$programid,$groupid,$mediumid,$shiftid);
         // Create Applicant id
-		$applicantid=$aApplicant->makeAppicantid($admission_programid);
+		$applicantid=$aApplicant->makeAppicantid($programofferid);
         $aApplicant->applicantid=$applicantid;
 		$aApplicant->firstName=$request->firstName;
 		$aApplicant->middleName=$request->middleName;
@@ -248,7 +251,7 @@ class AdmissionController extends Controller
 		// $admssion_roll=0;
 		// ==============================
 		$aAdmissionApplicant=new AdmissionApplicant();
-		$aAdmissionApplicant->admission_programid=$admission_programid;
+		$aAdmissionApplicant->programofferid=$programofferid;
 		$aAdmissionApplicant->applicantid=$applicantid;
 		// $aAdmissionApplicant->admssion_roll=$admssion_roll;
         $status=\DB::transaction(function () use($aApplicant,$aAdmissionApplicant,$presentAddress,$permanentAddress,$guardianAddress,$test){
@@ -267,7 +270,6 @@ class AdmissionController extends Controller
 				$aApplicant->gurdian_addressid=$gurdian_addressid;
 			}
 			$aApplicant->pin_code=$this->pingenerate();
-
 			$aAdmissionApplicant->save();
 			$sta=$aApplicant->save();
 			// if($sta){
@@ -282,20 +284,30 @@ class AdmissionController extends Controller
             $msg="Some thing is wrong!";
              return redirect()->back()->with('msg',$msg)->withInput($request->input());
 		}
-		$aObj=$aApplicant->getApplicant($applicantid);
+		$aAdmission=new Admission();
+		$aObj=$aAdmission->getApplicantCopy($applicantid);
         $dataList=[
             'bean'=>$aObj,
         ];
         return view('school.admission.applicantcopy',$dataList);
     }
     public function applicantCopyPage(){
-        return view('school.admission.applicantview');
+		$msg="";
+		$dataList=[
+            'msg'=>$msg,
+        ];
+        return view('school.admission.applicantview',$dataList);
     }
     public function applicantCopy(Request $request){
+		$msg="";
         $applicantid=$request->applicantid;
         $pin_code=$request->pin_code;
-        $aApplicant=new Applicant();
-        $aObj=$aApplicant->getApplicant($applicantid,$pin_code);
+		$aAdmission=new Admission();
+		$aObj=$aAdmission->getApplicantCopy($applicantid,$pin_code);
+		if($aObj['applicant']==null){
+			$msg="Applicantid or pincode is incorrect";
+			return redirect()->back()->with('msg',$msg)->withInput($request->input());
+		}
         $dataList=[
             'bean'=>$aObj,
         ];

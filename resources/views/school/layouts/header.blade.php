@@ -24,8 +24,8 @@
                 <div class="container">
                     <nav class="main-menu" id="my-menu">
                         <ul>
-                            <li><a href="#">Menu01</a></li>
-                            <li class="has-sub"><a href="#">Menu02</a>
+                            <li><a href="#">Home</a></li>
+                            <li class="has-sub"><a href="#">About Us</a>
                                 <ul>
                                     <li><a href="#">Menu11</a></li>
                                     <li class="has-sub"><a href="#">Menu12</a>
@@ -100,7 +100,7 @@
                                     <li><a href="#">Menu15</a></li>
                                 </ul>
                             </li>
-                            <li class="has-sub"><a href="#">Menu03</a></li>
+                            <li class="has-sub"><a href="#">Office</a></li>
                             <li class="has-sub">
                                 <a href="#">ADMISSION</a>
                                 <ul>
@@ -110,7 +110,7 @@
                                     <li><a href="{{URL::to('/admission/admissionresult')}}">Result</a></li>
                                 </ul>
                             </li>
-                            <li><a href="#">Menu05</a></li>
+                            <li><a href="#">Notice</a></li>
                         </ul>
                     </nav>
                 </div>

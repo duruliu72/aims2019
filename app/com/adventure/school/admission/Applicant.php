@@ -39,7 +39,7 @@ class Applicant extends Model
 		$applicantid=$applicant->applicantid;
 		return $applicantid;
 	}
-	public function getApplicant1($applicantid,$pin_code=""){
+	public function getApplicant($applicantid,$pin_code=""){
 		$sql="SELECT t1.* ,
 		genders.name AS genderName,
 		blood_groups.name AS bloodgroupName,
@@ -55,7 +55,7 @@ class Applicant extends Model
 		WHERE t1.applicantid=?";
 		$data=array();
 		array_push($data,$applicantid);
-		if($pin_code!==""){
+		if($pin_code!=""){
 			$sql.=" && pin_code=?";
 			array_push($data,$pin_code);
 		}
@@ -63,83 +63,57 @@ class Applicant extends Model
 		$applicant=collect($qresult)->first();
 		return $applicant;
 	}
-	public function getApplicant($applicantid,$pin_code=""){
-		$applicant=$this->getApplicantinfo($applicantid,$pin_code);
-		$programofferinfo=$this->getApplicantPrograminfo($applicantid);
-		$aAddress=new Address();
-		$presentAddress=$aAddress->getAddressById($applicant->present_addressid);
-		$institute=Institute::getInstituteName();
-		$list=array(
-			'institute'=>$institute,
-			'applicant'=>$applicant,
-			'programofferinfo'=>$programofferinfo,
-			'presentAddress'=>$presentAddress
-		);
-		return $list;
-	}
-	public function getApplicantAdmitCard($applicantid,$pin_code=""){
-		$applicant=$this->getApplicantinfo($applicantid,$pin_code);
-		$programofferinfo=$this->getApplicantPrograminfo($applicantid);
-		$subject=$this->getAdmissionSubject($applicantid,$pin_code);
-		$institute=Institute::getInstituteName();
-		$list=array(
-			'institute'=>$institute,
-			'applicant'=>$applicant,
-			'programofferinfo'=>$programofferinfo,
-			'subject'=>$subject
-		);
-		return $list;
-	}
-	public function getApplicantinfo($applicantid,$pin_code){
-		$sql="SELECT t1.* ,
-		genders.name AS genderName,
-		blood_groups.name AS bloodgroupName,
-		religions.name AS religionName,
-		nationalities.name AS nationalityName,
-		quotas.name AS quotaName                              
-		FROM applicants AS t1
-		LEFT JOIN genders ON t1.genderid=genders.id
-		LEFT JOIN blood_groups ON t1.bloodgroupid=blood_groups.id
-		LEFT JOIN religions ON t1.religionid=religions.id
-		LEFT JOIN nationalities ON t1.`nationalityid`=nationalities.id
-		LEFT JOIN quotas ON t1.`quotaid`=quotas.id
-		WHERE t1.applicantid=?";
-		$data=array();
-		array_push($data,$applicantid);
-		if($pin_code!==""){
-			$sql.=" && pin_code=?";
-			array_push($data,$pin_code);
-		}
-		$qresult=\DB::select($sql,$data);
-		$result=collect($qresult)->first();
-		return $result;
-	}
-	public function getApplicantPrograminfo($applicantid){
-		$sql="SELECT 
-		admissionapplicants.applicantid,
-		admissionapplicants.admssion_roll,
-		admission_programs.exam_marks,
-		admission_programs.exam_date,
-		admission_programs.exam_time,
-		programoffers.*,
-		sessions.name AS sessionName,
-		programs.name AS programName,
-		groups.name AS groupName,
-		mediums.name AS mediumName,
-		shifts.name AS shiftName
-		FROM `admissionapplicants`
-		INNER JOIN admission_programs ON admissionapplicants.admission_programid=admission_programs.id
-		INNER JOIN programoffers ON admission_programs.programofferid=programoffers.id
-		INNER JOIN sessions ON programoffers.sessionid=sessions.id
-		INNER JOIN programs ON programoffers.programid=programs.id
-		INNER JOIN groups ON programoffers.groupid=groups.id
-		INNER JOIN mediums ON programoffers.mediumid=mediums.id
-		INNER JOIN shifts ON programoffers.shiftid=shifts.id
-		WHERE admissionapplicants.applicantid=?";
-		$qresult=\DB::select($sql,[$applicantid]);
-		$result=collect($qresult)->first();
-		return $result;
-	}
+	
+	// public function getApplicantinfo($applicantid,$pin_code){
+	// 	$sql="SELECT t1.* ,
+	// 	genders.name AS genderName,
+	// 	blood_groups.name AS bloodgroupName,
+	// 	religions.name AS religionName,
+	// 	nationalities.name AS nationalityName,
+	// 	quotas.name AS quotaName                              
+	// 	FROM applicants AS t1
+	// 	LEFT JOIN genders ON t1.genderid=genders.id
+	// 	LEFT JOIN blood_groups ON t1.bloodgroupid=blood_groups.id
+	// 	LEFT JOIN religions ON t1.religionid=religions.id
+	// 	LEFT JOIN nationalities ON t1.`nationalityid`=nationalities.id
+	// 	LEFT JOIN quotas ON t1.`quotaid`=quotas.id
+	// 	WHERE t1.applicantid=?";
+	// 	$data=array();
+	// 	array_push($data,$applicantid);
+	// 	if($pin_code!==""){
+	// 		$sql.=" && pin_code=?";
+	// 		array_push($data,$pin_code);
+	// 	}
+	// 	$qresult=\DB::select($sql,$data);
+	// 	$result=collect($qresult)->first();
+	// 	return $result;
+	// }
+	// public function getApplicantPrograminfo($applicantid){
+	// 	$sql="SELECT 
+	// 	admissionapplicants.applicantid,
+	// 	admissionapplicants.admssion_roll,
+	// 	admission_programs.exam_marks,
+	// 	admission_programs.exam_date,
+	// 	admission_programs.exam_time,
+	// 	programoffers.*,
+	// 	sessions.name AS sessionName,
+	// 	programs.name AS programName,
+	// 	groups.name AS groupName,
+	// 	mediums.name AS mediumName,
+	// 	shifts.name AS shiftName
+	// 	FROM `admissionapplicants`
+	// 	INNER JOIN admission_programs ON admissionapplicants.programofferid=admission_programs.programofferid
+	// 	INNER JOIN programoffers ON admission_programs.programofferid=programoffers.id
+	// 	INNER JOIN sessions ON programoffers.sessionid=sessions.id
+	// 	INNER JOIN programs ON programoffers.programid=programs.id
+	// 	INNER JOIN groups ON programoffers.groupid=groups.id
+	// 	INNER JOIN mediums ON programoffers.mediumid=mediums.id
+	// 	INNER JOIN shifts ON programoffers.shiftid=shifts.id
+	// 	WHERE admissionapplicants.applicantid=?";
+	// 	$qresult=\DB::select($sql,[$applicantid]);
+	// 	$result=collect($qresult)->first();
+	// 	return $result;
+	// }
 	public function getAdmissionSubject($applicantid,$pin_code){
 		$sql="select admission_program_subjects.*,
 		admission_subjects.name AS admissionSubject
@@ -153,9 +127,7 @@ class Applicant extends Model
 		$result=collect($qresult);
 		return $result;
 	}
-	public function makeAppicantid($admission_programid){
-		$aAdmissionProgram=new AdmissionProgram();
-		$programofferid=$aAdmissionProgram->getProgramofferid($admission_programid);
+	public function makeAppicantid($programofferid){
 		$sql="SELECT 
 		concat(substr(sessions.name,3),programs.programsign,'0000') AS startpoint
 		FROM `programoffers`

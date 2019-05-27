@@ -29,7 +29,7 @@ class AdmissionProgramController extends Controller
         $sidebarMenu=$aMenu->getSidebarMenu();
         $pList=$aMenu->getPermissionOnMenu('admissionprogram');
         $aAdmissionProgram=new AdmissionProgram();
-        $aList=$aAdmissionProgram->getAllAdmissionProgram();
+        $aList=$aAdmissionProgram->getAdmissionPrograms();
         $dataList=[
             'institute'=>Institute::getInstituteName(),
             'sidebarMenu'=>$sidebarMenu,
@@ -113,9 +113,6 @@ class AdmissionProgramController extends Controller
      	return redirect()->back()->with('msg',$msg);
     }
     public function edit($id){
-        $yearName = date('Y');
-        $aSession=new Session();
-        $sessionid=$aSession->getSessionId($yearName);
         $aMenu=new Menu();
         $hasMenu=$aMenu->hasMenu('admissionprogram');
         if($hasMenu==false){
@@ -155,9 +152,6 @@ class AdmissionProgramController extends Controller
         'required_gpa' => 'required',
         'exam_marks' => 'required',
         ]);
-        $yearName = date('Y');
-        $aSession=new Session();
-        $sessionid=$aSession->getSessionId($yearName);
      	$programid=$request->programid;
      	$groupid=$request->groupid;
      	$mediumid=$request->mediumid;
@@ -168,27 +162,27 @@ class AdmissionProgramController extends Controller
         $exam_time=$request->exam_time;
         // Check Here  programoffer is Created or not
         $aProgramOffer=new ProgramOffer();
-        $hasSame=$aProgramOffer->checkValue($sessionid,$programid,$groupid,$mediumid,$shiftid);
-        if($hasSame==false){
+        $has=$aProgramOffer->checkValue(0,$programid,$groupid,$mediumid,$shiftid);
+        if($has==false){
             $msg="This Program Offer is not Created Yet";
             return redirect()->back()->with('msg',$msg);
         }
-        $programofferid=$aProgramOffer->getProgramOfferId($sessionid,$programid,$groupid,$mediumid,$shiftid);
         $aAdmissionProgram=AdmissionProgram::findOrfail($id);
-        if($id==$programofferid){
-            $aAdmissionProgram->programofferid=$programofferid;
+        $programofferid=$aProgramOffer->getProgramOfferId(0,$programid,$groupid,$mediumid,$shiftid);
+        $admission_programid=$aAdmissionProgram->getAdmissionProgram_id($programofferid);
+        if($id==$admission_programid){
             $aAdmissionProgram->required_gpa=$required_gpa;
             $aAdmissionProgram->exam_marks=$exam_marks;
             $aAdmissionProgram->exam_date=date("Y-m-d", strtotime($exam_date));
             $aAdmissionProgram->exam_time=date("H:i", strtotime($exam_time));
         }else{
-            $hasAddProgram=$aAdmissionProgram->checkValue($programofferid);
-            if($hasAddProgram){
+            $hasAdmProgram=$aAdmissionProgram->checkValue($programofferid);
+            if($hasAdmProgram){
                 $msg="This Admission Program  has Already Exists";
                 return redirect()->back()->with('msg',$msg);
             }
+            $aAdmissionProgram->programofferid=$programofferid;
         }
-        $aAdmissionProgram->programofferid=$programofferid;
         $aAdmissionProgram->required_gpa=$required_gpa;
         $aAdmissionProgram->exam_marks=$exam_marks;
         $aAdmissionProgram->exam_date=date("Y-m-d", strtotime($exam_date));

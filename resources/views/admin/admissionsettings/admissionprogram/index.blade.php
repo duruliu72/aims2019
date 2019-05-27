@@ -65,7 +65,7 @@
                 <td>{{$x->exam_time}}</td>
                 @if($pList[3]->id==3)
                 <td> 
-                  <a href="{{URL::to('/admissionprogram')}}/{{$x->programofferid}}/{{'edit'}}" class="tooltip-success" data-rel="tooltip" title="Edit">
+                  <a href="{{URL::to('/admissionprogram')}}/{{$x->id}}/{{'edit'}}" class="tooltip-success" data-rel="tooltip" title="Edit">
                     <span class="green">
                       <i class="ace-icon fa fa-pencil-square-o bigger-120"></i>
                     </span>

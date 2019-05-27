@@ -11,52 +11,24 @@ class AdmissionProgram extends Model
     // protected $primaryKey = 'programofferid';
 	protected $fillable = ['programofferid','required_gpa','exam_marks','exam_date','exam_time','status'];
 	
-	//===========================For Dorpdown ==============
-	public function getAllOnIDS($sessionid,$programid,$groupid,$mediumid,$shiftid,$tableName,$compareid){
-		if($sessionid==0){
-			$yearName = date('Y');
-			$aSession=new Session();
-			$sessionid=$aSession->getSessionId($yearName);
-		}
-		$sql="SELECT t2.* FROM `programoffers` AS t1
-		INNER JOIN ".$tableName." as t2 ON  t1.".$compareid."=t2.id
-		INNER JOIN admission_programs on t1.id=admission_programs.programofferid
-		WHERE sessionid=?";
-		$data=array();
-		array_push($data,$sessionid);
-		if($programid!=0){
-			array_push($data,$programid);
-			$sql.=" AND programid=?";
-		}
-		if($groupid!=0){
-			array_push($data,$groupid);
-			$sql.=" AND groupid=?";
-		}
-		if($mediumid!=0){
-			array_push($data,$mediumid);
-			$sql.=" AND mediumid=?";
-		}
-		if($shiftid!=0){
-			array_push($data,$shiftid);
-			$sql.=" AND shiftid=?";
-		}
-		$sql.=" GROUP BY t2.id";
-		$qResult=\DB::select($sql,$data);
-		$result=collect($qResult);
-		return $result;
-	}	
-	public function getAdmissionPrograminfo($admission_programid){
-		$resurt=$this->getAllAdmissionProgram($admission_programid);
+	public function getAdmissionProgram($admission_programid){
+		$resurt=$this->getAdmissionPrograms($admission_programid);
 		$item=$resurt->first();
 		return $item;
 	}
-	public function getAllAdmissionProgram($admission_programid=0){
+	public function getAdmissionPrograms($admission_programid=0){
 		$sql="SELECT t1.* ,
+		t2.sessionid,
 		sessions.name AS sessionName,
+        programlevels.id AS levelid,
         programlevels.name AS levelName,
+        t2.programid,
 		programs.name AS programName,
+        t2.groupid,
 		groups.name AS groupName,
+        t2.mediumid,
 		mediums.name AS mediumName,
+        t2.shiftid,
 		shifts.name AS shiftName
 		FROM `admission_programs` AS t1
 		INNER JOIN programoffers AS t2 ON t1.programofferid=t2.id
@@ -122,21 +94,6 @@ class AdmissionProgram extends Model
 		$programofferid=$result->programofferid;
 		return $programofferid;
 	}
-	public function getAdmissionProgram($programofferid){
-		$sql="SELECT admission_programs.*,
-		programoffers.id,
-		programoffers.sessionid,
-		programoffers.programid,
-		programoffers.groupid,
-		programoffers.mediumid,
-		programoffers.shiftid
-		FROM `admission_programs`
-		INNER JOIN programoffers ON admission_programs.programofferid=programoffers.id
-		WHERE admission_programs.programofferid=?";
-		$qresult=\DB::select($sql,[$programofferid]);
-		$result = collect($qresult)->first();
-		return $result;
-	}
 	public function getExamInfo($programofferid){
 		$sql="SELECT 
 		t1.programofferid,
@@ -150,5 +107,40 @@ class AdmissionProgram extends Model
 		$result = collect($qresult)->first();
 		return $result;
 	}
-	
+	/////////////////sd
+
+	//===========================For Dorpdown ==============
+	public function getAllOnIDS($sessionid,$programid,$groupid,$mediumid,$shiftid,$tableName,$compareid){
+		if($sessionid==0){
+			$yearName = date('Y');
+			$aSession=new Session();
+			$sessionid=$aSession->getSessionId($yearName);
+		}
+		$sql="SELECT t2.* FROM `programoffers` AS t1
+		INNER JOIN ".$tableName." as t2 ON  t1.".$compareid."=t2.id
+		INNER JOIN admission_programs on t1.id=admission_programs.programofferid
+		WHERE sessionid=?";
+		$data=array();
+		array_push($data,$sessionid);
+		if($programid!=0){
+			array_push($data,$programid);
+			$sql.=" AND programid=?";
+		}
+		if($groupid!=0){
+			array_push($data,$groupid);
+			$sql.=" AND groupid=?";
+		}
+		if($mediumid!=0){
+			array_push($data,$mediumid);
+			$sql.=" AND mediumid=?";
+		}
+		if($shiftid!=0){
+			array_push($data,$shiftid);
+			$sql.=" AND shiftid=?";
+		}
+		$sql.=" GROUP BY t2.id";
+		$qResult=\DB::select($sql,$data);
+		$result=collect($qResult);
+		return $result;
+	}	
 }
