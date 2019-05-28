@@ -7,6 +7,8 @@ use App\com\adventure\school\basic\Institute;
 use App\com\adventure\school\program\Session;
 use App\com\adventure\school\admission\Applicant;
 use App\com\adventure\school\admission\AdmissionApplicant;
+use App\com\adventure\school\admission\AdmissionProgram;
+use App\com\adventure\school\admission\AdmissionProgramSubject;
 use App\com\adventure\school\program\ProgramOffer;
 use App\com\adventure\school\basic\Address;
 class Admission extends Model
@@ -18,9 +20,9 @@ class Admission extends Model
         if($applicant!=null){
             $present_addressid=$applicant->present_addressid;
         }
-        // dd($applicant);
         $aAdmissionApplicant=new AdmissionApplicant();
-        $programofferid=$aAdmissionApplicant->getProgramOfferId($applicantid);
+        $admissionApplicant=$aAdmissionApplicant->getAdmissionApplicant($applicantid);
+		$programofferid=$admissionApplicant->programofferid;
         $aProgramOffer=new ProgramOffer();
 		$programofferinfo=$aProgramOffer->getProgramOffer($programofferid);
 		$aAddress=new Address();
@@ -34,17 +36,27 @@ class Admission extends Model
 		);
 		return $list;
     }
-    // public function getApplicantAdmitCard($applicantid,$pin_code=""){
-	// 	$applicant=$this->getApplicantinfo($applicantid,$pin_code);
-	// 	$programofferinfo=$this->getApplicantPrograminfo($applicantid);
-	// 	$subject=$this->getAdmissionSubject($applicantid,$pin_code);
-	// 	$institute=Institute::getInstituteName();
-	// 	$list=array(
-	// 		'institute'=>$institute,
-	// 		'applicant'=>$applicant,
-	// 		'programofferinfo'=>$programofferinfo,
-	// 		'subject'=>$subject
-	// 	);
-	// 	return $list;
-	// }
+    public function getApplicantAdmitCard($applicantid,$pin_code=""){
+		$applicant=new Applicant();
+		$applicant=$applicant->getApplicant($applicantid,$pin_code);
+		$aAdmissionApplicant=new AdmissionApplicant();
+		$admissionApplicant=$aAdmissionApplicant->getAdmissionApplicant($applicantid);
+		$programofferid=$admissionApplicant->programofferid;
+		$aProgramOffer=new ProgramOffer();
+		$programofferinfo=$aProgramOffer->getProgramOffer($programofferid);
+		$aAdmissionProgram=new AdmissionProgram();
+		$admissionProgram=$aAdmissionProgram->getAdmissionProgramOnPO($programofferid);
+		$aAdmissionProgramSubject=new AdmissionProgramSubject();
+		$subject=$aAdmissionProgramSubject->getAdmissionProgramSubjects($programofferid);
+		$institute=Institute::getInstituteName();
+		$list=array(
+			'institute'=>$institute,
+			'applicant'=>$applicant,
+			'admissionApplicant'=>$admissionApplicant,
+			'programofferinfo'=>$programofferinfo,
+			'admissionProgram'=>$admissionProgram,
+			'subject'=>$subject
+		);
+		return $list;
+	}
 }

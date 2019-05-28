@@ -52,7 +52,7 @@
                                             </tr>
                                             <tr>
                                                 <td>Serial <span>:</span></td>
-                                                <td>{{$bean['programofferinfo']->admssion_roll}}</td>
+                                                <td>{{$bean['admissionApplicant']->admssion_roll}}</td>
                                             </tr>
                                             <tr>
                                                 <?php $dob=date("d/m/Y", strtotime($bean['applicant']->dob)) ?>
@@ -75,23 +75,23 @@
                                         <div class="exam-details">
                                             <table>
                                                 <tr>
-                                                <?php $exam_date=date("d-m-Y", strtotime($bean['programofferinfo']->exam_date)) ?>
+                                                <?php $exam_date=date("d-m-Y", strtotime($bean['admissionProgram']->exam_date)) ?>
                                                     <td>Exam Date <span>:</span></td>
                                                     <td>{{$exam_date}}</td>
                                                     <?php
-                                                        $dt=new DateTime($bean['programofferinfo']->exam_time);
+                                                        $dt=new DateTime($bean['admissionProgram']->exam_time);
                                                        ?>
                                                     <td>Exam Time <span>:</span></td>
                                                     <td>{{$dt->format('h:i a')}}</td>
                                                 </tr>
                                             </table>
                                             <div class="total_marks">
-                                                <p><span>Exam Marks(Total-)</span>{{" : "}}{{$bean['programofferinfo']->exam_marks}}</p>
+                                                <p><span>Exam Marks(Total-)</span>{{" : "}}{{$bean['admissionProgram']->exam_marks}}</p>
                                             </div>
                                             <table>
                                                 <tr>
                                                     @foreach($bean['subject'] as $x)
-                                                        <td>{{$x->admissionSubject}}</td>
+                                                        <td>{{$x->subjectName}}</td>
                                                     @endforeach
                                                 </tr>
                                                 <tr>

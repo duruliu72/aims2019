@@ -7,5 +7,5 @@ use Illuminate\Database\Eloquent\Model;
 class AdmissionSubject extends Model
 {
     protected $table='admission_subjects';
-   	protected $fillable = ['name','status'];
+    protected $fillable = ['name','status']; 
 }

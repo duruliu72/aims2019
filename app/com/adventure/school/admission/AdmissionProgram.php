@@ -10,7 +10,7 @@ class AdmissionProgram extends Model
     protected $table="admission_programs";
     // protected $primaryKey = 'programofferid';
 	protected $fillable = ['programofferid','required_gpa','exam_marks','exam_date','exam_time','status'];
-	
+
 	public function getAdmissionProgram($admission_programid){
 		$resurt=$this->getAdmissionPrograms($admission_programid);
 		$item=$resurt->first();
@@ -59,56 +59,14 @@ class AdmissionProgram extends Model
 		}
 		return false;
 	}	
-	public function getAdmissionProgramID($sessionid,$programid,$groupid,$mediumid,$shiftid){
-		$aProgramOffer=new ProgramOffer();
-		$programofferid=$aProgramOffer->getProgramOfferId($sessionid,$programid,$groupid,$mediumid,$shiftid);
-		$sql="SELECT * FROM admission_programs
-		WHERE programofferid=?";
-		$qresult=\DB::select($sql,[$programofferid]);
-		$result = collect($qresult);
-		if($result->isNotEmpty()){
-			$admission_programid=$result->first()->id;
-			return $admission_programid;
-		}
-		return 0;
-	}
-	public function getAdmissionProgram_id($programofferid){
+	/////////////////sd//////////////////
+	public function getAdmissionProgramOnPO($programofferid){
 		$sql="SELECT * FROM `admission_programs`
 		WHERE programofferid=?";
-		$qresult=\DB::select($sql,[$programofferid]);
-		$result = collect($qresult)->first();
-		if($result==null){
-			return 0;
-		}
-		$admission_programid=$result->id;
-		return $admission_programid;
-	}
-	public function getProgramofferid($admission_programid){
-		$sql="SELECT * FROM `admission_programs`
-		WHERE id=?";
-		$qresult=\DB::select($sql,[$admission_programid]);
-		$result = collect($qresult)->first();
-		if($result==null){
-			return 0;
-		}
-		$programofferid=$result->programofferid;
-		return $programofferid;
-	}
-	public function getExamInfo($programofferid){
-		$sql="SELECT 
-		t1.programofferid,
-		t1.exam_marks,
-		t1.exam_date,
-		t1.exam_time
-		FROM `admission_programs` AS t1
-		INNER JOIN programoffers ON t1.programofferid=programoffers.id
-		WHERE t1.programofferid=?";
 		$qresult=\DB::select($sql,[$programofferid]);
 		$result = collect($qresult)->first();
 		return $result;
 	}
-	/////////////////sd
-
 	//===========================For Dorpdown ==============
 	public function getAllOnIDS($sessionid,$programid,$groupid,$mediumid,$shiftid,$tableName,$compareid){
 		if($sessionid==0){

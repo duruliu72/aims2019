@@ -319,8 +319,8 @@ class AdmissionController extends Controller
     public function getAdmitCard(Request $request){
         $applicantid=$request->applicantid;
         $pin_code=$request->pin_code;
-        $aApplicant=new Applicant();
-		$aObj=$aApplicant->getApplicantAdmitCard($applicantid,$pin_code);
+		$aAdmission=new Admission();
+		$aObj=$aAdmission->getApplicantAdmitCard($applicantid,$pin_code);
         $dataList=[
             'bean'=>$aObj,
         ];

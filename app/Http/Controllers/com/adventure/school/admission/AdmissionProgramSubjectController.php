@@ -5,8 +5,6 @@ namespace App\Http\Controllers\com\adventure\school\admission;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\com\adventure\school\basic\Institute;
-use App\com\adventure\school\admission\AdmissionProgram;
-use App\com\adventure\school\admission\AdmissionProgramSubject;
 use App\com\adventure\school\program\ProgramOffer;
 use App\com\adventure\school\program\Session;
 use App\com\adventure\school\program\Program;
@@ -14,6 +12,8 @@ use App\com\adventure\school\program\Group;
 use App\com\adventure\school\program\Medium;
 use App\com\adventure\school\program\Shift;
 use App\com\adventure\school\basic\AdmissionSubject;
+use App\com\adventure\school\admission\AdmissionProgram;
+use App\com\adventure\school\admission\AdmissionProgramSubject;
 use App\com\adventure\school\menu\Menu;
 class AdmissionProgramSubjectController extends Controller
 {
@@ -30,7 +30,7 @@ class AdmissionProgramSubjectController extends Controller
         $sidebarMenu=$aMenu->getSidebarMenu();
         $pList=$aMenu->getPermissionOnMenu('admissionprogramsubject');
         $obj=new AdmissionProgramSubject();
-        $aList=$obj->getAllAdmission();
+        $aList=$obj->admissionSubjectDisplay();
         $dataList=[
             'institute'=>Institute::getInstituteName(),
             'sidebarMenu'=>$sidebarMenu,
@@ -40,10 +40,6 @@ class AdmissionProgramSubjectController extends Controller
     	return view('admin.admissionsettings.admissionprogramsubject.index',$dataList);
     }
     public function create(){
-    	// $date = date('Y/m/d H:i:s');
-    	$yearName = date('Y');
-    	$aSession=new Session();
-    	$sessionid=$aSession->getSessionId($yearName);
         $aMenu=new Menu();
         $hasMenu=$aMenu->hasMenu('admissionprogramsubject');
         if($hasMenu==false){
@@ -80,29 +76,38 @@ class AdmissionProgramSubjectController extends Controller
         'mediumid' => 'required|',
         'shiftid' => 'required|',
     	]);
-     	$yearName = date('Y');
-    	$aSession=new Session();
-    	$sessionid=$aSession->getSessionId($yearName);
      	$programid=$request->programid;
      	$groupid=$request->groupid;
      	$mediumid=$request->mediumid;
         $shiftid=$request->shiftid;
         $data=$request->data;
+        $aProgramOffer=new ProgramOffer();
+        $hasProgramoffer=$aProgramOffer->checkValue(0,$programid,$groupid,$mediumid,$shiftid);
+        if(!$hasProgramoffer){
+            $msg="Program offer Create at First";
+            return redirect()->back()->with('msg',$msg);
+        }
+        $programofferid=$aProgramOffer->getProgramOfferId(0,$programid,$groupid,$mediumid,$shiftid);
         $aAdmissionProgram=new AdmissionProgram();
-        $admission_programid=$aAdmissionProgram->getAdmissionProgramID($sessionid,$programid,$groupid,$mediumid,$shiftid);
+        // dd($programofferid);
+        $hasAdmissionProgram=$aAdmissionProgram->checkValue($programofferid);
+        if(!$hasAdmissionProgram){
+            $msg="Admission Program Create at First";
+            return redirect()->back()->with('msg',$msg);
+        }        
         // Check Program Offer is assign or not
         $aAdmissionProgramSubject=new AdmissionProgramSubject();
-        $isExist=$aAdmissionProgramSubject->CheckAssignAdmissionSubject($admission_programid);
+        $isExist=$aAdmissionProgramSubject->CheckAssignAdmissionSubject($programofferid);
         if($isExist){
             $msg="Admission Subject Already Assign";
             return redirect()->back()->with('msg',$msg);
         }
-        $status=\DB::transaction(function()use($data,$admission_programid){
+        $status=\DB::transaction(function()use($data,$programofferid){
             $count=0;
             foreach ($data as $key => $x) {
                 if($x!=null){
                     $obj=new AdmissionProgramSubject();
-                    $obj->admission_programid=$admission_programid;
+                    $obj->programofferid=$programofferid;
                     $obj->subjectid=$key;
                     $obj->marks=$x;
                     $obj->save();
@@ -119,9 +124,6 @@ class AdmissionProgramSubjectController extends Controller
      	return redirect()->back()->with('msg',$msg);
     }
     public function edit($id){
-        $yearName = date('Y');
-        $aSession=new Session();
-        $sessionid=$aSession->getSessionId($yearName);
         $aMenu=new Menu();
         $hasMenu=$aMenu->hasMenu('admissionprogramsubject');
         if($hasMenu==false){
@@ -132,14 +134,19 @@ class AdmissionProgramSubjectController extends Controller
         if($pList[3]->id!=3){
             return redirect('error');
         }
-        $aAdmissionProgram=AdmissionProgram::findOrfail($id);
+        $obj=new AdmissionProgramSubject();
+        $hasSubject=$obj->CheckAssignAdmissionSubject($id);
+        if(!$hasSubject){
+            abort(404);
+        }
         // sessionid,programid,groupid,mediumid,shiftid,tableName And last one compareid
+        $aAdmissionProgram=new AdmissionProgram();
         $programList=$aAdmissionProgram->getAllOnIDS(0,0,0,0,0,"programs",'programid');
         $mediumList=$aAdmissionProgram->getAllOnIDS(0,0,0,0,0,"mediums",'mediumid');
         $shiftList=$aAdmissionProgram->getAllOnIDS(0,0,0,0,0,"shifts",'shiftid');
         $groupList=$aAdmissionProgram->getAllOnIDS(0,0,0,0,0,"groups",'groupid');
-        $obj=new AdmissionProgramSubject();
-        $bean=$obj->getAllAdmissionProgram($id);
+        $bean=$obj->admissionSubjectEdit($id);
+        // dd($bean);
         $dataList=[
             'institute'=>Institute::getInstituteName(),
             'sidebarMenu'=>$sidebarMenu,
@@ -148,7 +155,6 @@ class AdmissionProgramSubjectController extends Controller
             'shiftList'=>$shiftList,
             'groupList'=>$groupList,
             'bean'=>$bean,
-            'admissionSubList'=>$obj->getProgramSubjects($aAdmissionProgram->id),
         ];
         return view('admin.admissionsettings.admissionprogramsubject.edit',$dataList);
     }
@@ -159,18 +165,16 @@ class AdmissionProgramSubjectController extends Controller
         'mediumid' => 'required|',
         'shiftid' => 'required|',
         ]);
-        $yearName = date('Y');
-        $aSession=new Session();
-        $sessionid=$aSession->getSessionId($yearName);
         $programid=$request->programid;
         $groupid=$request->groupid;
         $mediumid=$request->mediumid;
         $shiftid=$request->shiftid;
         $data=$request->data;
-        \DB::table('admission_program_subjects')->where('admission_programid', '=', $id)->delete();
+        die("Die Here");
+        \DB::table('admission_program_subjects')->where('programofferid', '=', $id)->delete();
         $aAdmissionProgram=AdmissionProgram::findOrfail($id);
        
-        $admission_programid=$aAdmissionProgram->getAdmissionProgramID($sessionid,$programid,$groupid,$mediumid,$shiftid);
+        $admission_programid=$aAdmissionProgram->getAdmissionProgramID(0,$programid,$groupid,$mediumid,$shiftid);
         // Check Program Offer is assign or not
         $obj=new AdmissionProgramSubject();
         $isExist=$obj->CheckAssignAdmissionSubject($admission_programid);

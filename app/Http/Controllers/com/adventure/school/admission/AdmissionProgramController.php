@@ -120,12 +120,11 @@ class AdmissionProgramController extends Controller
         }
         $sidebarMenu=$aMenu->getSidebarMenu();
         $pList=$aMenu->getPermissionOnMenu('admissionprogram');
-    	$aAdmissionProgram=AdmissionProgram::findOrfail($id);
-        $obj=$aAdmissionProgram->getAdmissionProgram($id);
         if($pList[3]->id!=3){
             return redirect('error');
         }
-        
+        $aAdmissionProgram=AdmissionProgram::findOrfail($id);
+        $obj=$aAdmissionProgram->getAdmissionProgram($id);
         $aProgramOffer=new ProgramOffer();
         // sessionid,programid,groupid,mediumid,shiftid,tableName And last one compareid
         $programList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,"programs",'programid');
@@ -169,7 +168,8 @@ class AdmissionProgramController extends Controller
         }
         $aAdmissionProgram=AdmissionProgram::findOrfail($id);
         $programofferid=$aProgramOffer->getProgramOfferId(0,$programid,$groupid,$mediumid,$shiftid);
-        $admission_programid=$aAdmissionProgram->getAdmissionProgram_id($programofferid);
+        $obj=$aAdmissionProgram->getAdmissionProgramOnPO($programofferid);
+        $admission_programid=$obj->id;
         if($id==$admission_programid){
             $aAdmissionProgram->required_gpa=$required_gpa;
             $aAdmissionProgram->exam_marks=$exam_marks;
