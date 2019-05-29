@@ -18,6 +18,14 @@
                   {{ $msg }}
                 </span>
                 @endif
+              @if ($errors->any())
+                  <span style="float: right;font-size: 15px;">{{$errors->all()[0] }}</span>
+              @endif
+              @if(session()->has('msg'))
+              <span style="float: right;font-size: 15px;">
+                {{ session()->get('msg') }}
+              </span>
+              @endif
             </ol>
           </div>
         </div>
@@ -72,7 +80,7 @@
                     <div class="row">
                       <div class="col-sm-12">
                         <div class="btn-container">
-                          <button type="submit" class="btn btn-success result-btn" name="result_btn" value="result_btn">Applicant Search</button>
+                          <button type="submit" class="btn btn-success result-btn" name="search_btn" value="search_btn">Applicant Search</button>
                           <a class="btn btn-info refresh-btn" href="{{URL::to('admissionmarkentry')}}"><i class="ace-icon fa fa-refresh bigger-120"></i>Refresh</a>
                         </div>
                       </div>
@@ -82,28 +90,28 @@
                 @if(isset($result)&&$result!=null)
                 <div class="programofferinfo">
                     <div class="programofferinfo_item">
-                        <span>Session: {{$result['admissionprogram']->sessionName}}</span>
+                        <span>Session: {{$result['programoffer']->sessionName}}</span>
                     </div>
                     <div class="programofferinfo_item">
-                        <span>Class Level: {{$result['admissionprogram']->levelName}}</span>
+                        <span>Class Level: {{$result['programoffer']->levelName}}</span>
                     </div>
                     <div class="programofferinfo_item">
-                        <span>Class: {{$result['admissionprogram']->programName}}</span>
+                        <span>Class: {{$result['programoffer']->programName}}</span>
                     </div>
                     <div class="programofferinfo_item">
-                        <span>Medium: {{$result['admissionprogram']->mediumName}}</span>
+                        <span>Medium: {{$result['programoffer']->mediumName}}</span>
                     </div>
                     <div class="programofferinfo_item">
-                        <span>Group: {{$result['admissionprogram']->groupName}}</span>
+                        <span>Group: {{$result['programoffer']->groupName}}</span>
                     </div>
                     <div class="programofferinfo_item">
-                        <span>Shift: {{$result['admissionprogram']->shiftName}}</span>
+                        <span>Shift: {{$result['programoffer']->shiftName}}</span>
                     </div>
                 </div>
                 <div class="bottom_form">
                   <form action="{{URL::to('admissionmarkentry')}}" method="POST">
                   {{csrf_field()}}
-                  <input type="hidden" name="programofferid" value="{{$result['admissionprogram']->id}}">
+                  <input type="hidden" name="programofferid" value="{{$result['programoffer']->id}}">
                   <table class="table table-striped table-bordered table-hover" id="admissionmark">
                     <thead>
                       <tr>
@@ -112,7 +120,7 @@
                         <th>Student Name</th>
                         <th>Roll</th>
                         @foreach($result['subjectinfo'] as $x)
-                        <th>{{$x->subjectName}}(<span class="subjectmarks">{{$x->marks}}</span>)</th>
+                        <th>{{$x->name}}(<span class="subjectmarks">{{$x->marks}}</span>)</th>
                         @endforeach
                         <th>Total Marks({{$result['admissionprogram']->exam_marks}})</th>
                         <th><input id="markcheck" type="checkbox"></th>
@@ -124,7 +132,7 @@
                       <tr>
                         <td>{{++$id}}</td>
                         <td>{{$ap->applicantid}}</td>
-                        <td>{{$ap->firstName}}</td>
+                        <td>{{sprintf("%s%s%s",$ap->firstName,$ap->middleName,$ap->lastName)}}</td>
                         <td>{{$ap->admssion_roll}}</td>
                         @foreach($result['subjectinfo'] as $x)
                           <td class="item_{{$ap->applicantid}}">

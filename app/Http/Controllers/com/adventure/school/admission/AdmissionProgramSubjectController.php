@@ -31,6 +31,7 @@ class AdmissionProgramSubjectController extends Controller
         $pList=$aMenu->getPermissionOnMenu('admissionprogramsubject');
         $obj=new AdmissionProgramSubject();
         $aList=$obj->admissionSubjectDisplay();
+        // dd($aList);
         $dataList=[
             'institute'=>Institute::getInstituteName(),
             'sidebarMenu'=>$sidebarMenu,
@@ -170,23 +171,30 @@ class AdmissionProgramSubjectController extends Controller
         $mediumid=$request->mediumid;
         $shiftid=$request->shiftid;
         $data=$request->data;
-        die("Die Here");
-        \DB::table('admission_program_subjects')->where('programofferid', '=', $id)->delete();
-        $aAdmissionProgram=AdmissionProgram::findOrfail($id);
-       
-        $admission_programid=$aAdmissionProgram->getAdmissionProgramID(0,$programid,$groupid,$mediumid,$shiftid);
-        // Check Program Offer is assign or not
         $obj=new AdmissionProgramSubject();
-        $isExist=$obj->CheckAssignAdmissionSubject($admission_programid);
+        $hasSubject=$obj->CheckAssignAdmissionSubject($id);
+        if(!$hasSubject){
+            abort(404);
+        }
+        \DB::table('admission_program_subjects')->where('programofferid', '=', $id)->delete();
+        // Check Program Offer is assign or not
+        $aProgramOffer=new ProgramOffer();
+        $hasProgramoffer=$aProgramOffer->checkValue(0,$programid,$groupid,$mediumid,$shiftid);
+        if(!$hasProgramoffer){
+            $msg="Program offer Create at First";
+            return redirect()->back()->with('msg',$msg);
+        }
+        $programofferid=$aProgramOffer->getProgramOfferId(0,$programid,$groupid,$mediumid,$shiftid);
+        $isExist=$obj->CheckAssignAdmissionSubject($programofferid);
         if($isExist){
             $msg="Admission Subject Already Assign";
             return redirect()->back()->with('msg',$msg);
         }
-        $status=\DB::transaction(function()use($data,$admission_programid){
+        $status=\DB::transaction(function()use($data,$programofferid){
             foreach ($data as $key => $x) {
                 if($x!=null){
                     $aVAdmissionSubject=new AdmissionProgramSubject();
-                    $aVAdmissionSubject->admission_programid=$admission_programid;
+                    $aVAdmissionSubject->programofferid=$programofferid;
                     $aVAdmissionSubject->subjectid=$key;
                     $aVAdmissionSubject->marks=$x;
                     $aVAdmissionSubject->save();

@@ -91,9 +91,9 @@
                   </div>
                    <div class="form-group row">
                     @foreach ($bean[0]['subjects'] as $x)
-                        <label class="col-sm-2 control-label" for="{{$x->subjectid}}">{{$x->name}}</label>
+                        <label class="col-sm-2 control-label" for="{{$x->id}}">{{$x->name}}</label>
                         <div class="col-sm-4" style="margin-bottom: 13px;">
-                          <input type="text" class="form-control" name="data[{{$x->subjectid}}]" id="{{$x->subjectid}}" placeholder="Enter Marks(%)" value="{{$x->marks}}">
+                          <input type="text" class="form-control" name="data[{{$x->id}}]" id="{{$x->id}}" placeholder="Enter Marks(%)" value="{{$x->marks}}">
                       </div> 
                     @endforeach
                   </div>

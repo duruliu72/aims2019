@@ -24,6 +24,21 @@ class AdmissionProgramSubject extends Model
 		$result=collect($qresult);
 		return $result;
 	}
+	// only assign subject retrive
+	public function getAdmissionSubject($programofferid){
+		$sql="SELECT 
+		admission_subjects.*,
+		t1.programofferid,
+		IFNULL(t1.subjectid,0) AS subjectid,
+		t1.marks
+		FROM admission_subjects
+		INNER JOIN
+		(SELECT * FROM `admission_program_subjects`
+		WHERE programofferid=?) AS t1 ON t1.subjectid=admission_subjects.id";
+		$qresult=\DB::select($sql,[$programofferid]);
+		$result=collect($qresult);
+		return $result;
+	}
 	private function getAllAdmissionProgram(){
 		$sql="SELECT
 		programofferid
@@ -56,9 +71,9 @@ class AdmissionProgramSubject extends Model
 		));
 		return $data;
 	}
-   	public function CheckAssignAdmissionSubject($programofferid){
+   	public function checkAssignAdmissionSubject($programofferid){
    		return \DB::table('admission_program_subjects')->where('programofferid', $programofferid)->exists();
-	} 	 
+	}	 
 }
 	
    

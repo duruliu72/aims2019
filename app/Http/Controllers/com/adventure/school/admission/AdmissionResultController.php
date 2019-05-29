@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\com\adventure\school\basic\Institute;
 use App\com\adventure\school\menu\Menu;
 use App\com\adventure\school\program\Session;
+use App\com\adventure\school\program\ProgramOffer;
 use App\com\adventure\school\admission\AdmissionProgram;
 use App\com\adventure\school\admission\AdmissionMarkEntry;
 use App\com\adventure\school\admission\Admission;
@@ -33,21 +34,26 @@ class AdmissionResultController extends Controller
         $programinfo=null;
         $result=null;
         if($request->isMethod('post')&&$request->search_btn=='search_btn'){
-        	$aAdmissionResult=new AdmissionResult();
-        	$programid=$request->programid;
+            $programid=$request->programid;
 	        $groupid=$request->groupid;
 	        $mediumid=$request->mediumid;
             $shiftid=$request->shiftid;
-            $result=$aAdmissionResult->getAdmissionResults(0,$programid,$groupid,$mediumid,$shiftid);
+            $aProgramOffer=new ProgramOffer();
+            $hasProgramoffer=$aProgramOffer->checkValue(0,$programid,$groupid,$mediumid,$shiftid);
+            if(!$hasProgramoffer){
+                $msg="Program offer Create at First";
+                return redirect()->back()->with('msg',$msg);
+            }
+            $programofferid=$aProgramOffer->getProgramOfferId(0,$programid,$groupid,$mediumid,$shiftid);
+        	$aAdmissionResult=new AdmissionResult();
+            $result=$aAdmissionResult->getAdmissionResults($programofferid);
         }
-        $aApplicant=new Applicant();
         $aAdmissionProgram=new AdmissionProgram();
         // sessionid,programid,groupid,mediumid,shiftid,tableName And last one compareid
         $programList=$aAdmissionProgram->getAllOnIDS(0,0,0,0,0,"programs",'programid');
         $mediumList=$aAdmissionProgram->getAllOnIDS(0,0,0,0,0,"mediums",'mediumid');
         $shiftList=$aAdmissionProgram->getAllOnIDS(0,0,0,0,0,"shifts",'shiftid');
         $groupList=$aAdmissionProgram->getAllOnIDS(0,0,0,0,0,"groups",'groupid');
-        // dd($result);
         $dataList=[
             'institute'=>Institute::getInstituteName(),
             'sidebarMenu'=>$sidebarMenu,

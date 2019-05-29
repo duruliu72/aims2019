@@ -79,31 +79,31 @@
                     </div>
                   </form>
                 </div>
-                @if(isset($result)&&$result!=null))
+                @if(isset($result)&&$result!=null)
                 <div class="programofferinfo">
                     <div class="programofferinfo_item">
-                      <span>Session: {{$result['admissionprogram']->sessionName}}</span>
+                      <span>Session: {{$result['programoffer']->sessionName}}</span>
                     </div>
                     <div class="programofferinfo_item">
-                      <span>Class Level: {{$result['admissionprogram']->levelName}}</span>
+                      <span>Class Level: {{$result['programoffer']->levelName}}</span>
                     </div>
                     <div class="programofferinfo_item">
-                      <span>Class: {{$result['admissionprogram']->programName}}</span>
+                      <span>Class: {{$result['programoffer']->programName}}</span>
                     </div>
                     <div class="programofferinfo_item">
-                      <span>Medium: {{$result['admissionprogram']->mediumName}}</span>
+                      <span>Medium: {{$result['programoffer']->mediumName}}</span>
                     </div>
                     <div class="programofferinfo_item">
-                      <span>Group: {{$result['admissionprogram']->groupName}}</span>
+                      <span>Group: {{$result['programoffer']->groupName}}</span>
                     </div>
                     <div class="programofferinfo_item">
-                      <span>Shift: {{$result['admissionprogram']->shiftName}}</span>
+                      <span>Shift: {{$result['programoffer']->shiftName}}</span>
                     </div>
                 </div>
                 <div class="bottom_form">
                   <form action="{{URL::to('admissionmarkentry/edit')}}" method="POST">
                   {{csrf_field()}}
-                  <input type="hidden" name="programofferid" value="{{$result['admissionprogram']->id}}">
+                  <input type="hidden" name="programofferid" value="{{$result['programoffer']->id}}">
                   <table class="table table-striped table-bordered table-hover" id="admissionmark">
                     <thead>
                       <tr>
@@ -112,7 +112,7 @@
                         <th>Student Name</th>
                         <th>Roll</th>
                         @foreach($result['subjectinfo'] as $x)
-                        <th>{{$x->subjectName}}(<span class="subjectmarks">{{$x->marks}}</span>)</th>
+                        <th>{{$x->name}}(<span class="subjectmarks">{{$x->marks}}</span>)</th>
                         @endforeach
                         <th>Total Marks({{$result['admissionprogram']->exam_marks}})</th>
                         <th><input id="markcheck" type="checkbox"></th>

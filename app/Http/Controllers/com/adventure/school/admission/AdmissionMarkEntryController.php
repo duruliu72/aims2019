@@ -6,7 +6,9 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\com\adventure\school\basic\Institute;
 use App\com\adventure\school\menu\Menu;
+use App\com\adventure\school\program\ProgramOffer;
 use App\com\adventure\school\admission\AdmissionProgram;
+use App\com\adventure\school\admission\AdmissionProgramSubject;
 use App\com\adventure\school\admission\AdmissionMarkEntry;
 use App\com\adventure\school\admission\AdmissionResult;
 class AdmissionMarkEntryController extends Controller
@@ -29,11 +31,32 @@ class AdmissionMarkEntryController extends Controller
         $sidebarMenu=$aMenu->getSidebarMenu();
         $aAdmissionMarkEntry=new AdmissionMarkEntry();
         $result=null;
-        if($request->isMethod('post')&&$request->result_btn=='result_btn'){
-            $result=$aAdmissionMarkEntry->getAllForMarkEntry(0,$programid,$groupid,$mediumid,$shiftid);
+        if($request->isMethod('post')&&$request->search_btn=='search_btn'){
+            // check Programoffer,admission programoffer and admission program subject
+            $aProgramOffer=new ProgramOffer();
+            $hasProgramoffer=$aProgramOffer->checkValue(0,$programid,$groupid,$mediumid,$shiftid);
+            if(!$hasProgramoffer){
+                $msg="This Program Offer is not Created Yet";
+                return redirect()->back()->with('msg',$msg);
+            }
+            $programofferid=$aProgramOffer->getProgramOfferId(0,$programid,$groupid,$mediumid,$shiftid);
+            // dd($programofferid);
+            $aAdmissionProgram=new AdmissionProgram();
+            $hasAdmissionProgram=$aAdmissionProgram->checkValue($programofferid);
+            if(!$hasAdmissionProgram){
+                $msg="Please Admission Program Offer create";
+                return redirect()->back()->with('msg',$msg);
+            }
+            $aAdmissionProgramSubject=new AdmissionProgramSubject();
+            $hasSubject=$aAdmissionProgramSubject->CheckAssignAdmissionSubject($programofferid);
+            if(!$hasSubject){
+                $msg="Please Assign Admission Subject";
+                return redirect()->back()->with('msg',$msg);
+            }
+            $result=$aAdmissionMarkEntry->getAllForMarkEntry($programofferid);
         }
         if($request->isMethod('post')&&$request->save_btn=='save_btn'){
-            $admission_programid=$request->programofferid;
+            $programofferid=$request->programofferid;
             $checkLst=$request->checkbox;
             if($checkLst!=null){
                 foreach ($checkLst as $key=>$value){
@@ -51,6 +74,7 @@ class AdmissionMarkEntryController extends Controller
                         foreach ($markList as $k=>$x) {
                             if ($x!="") {
                                 $aAdmissionResult=new AdmissionResult();
+                                $aAdmissionResult->programofferid=$programofferid;
                                 $aAdmissionResult->applicantid=$key;
                                 $aAdmissionResult->subjectid=$subjectidList[$k];
                                 $aAdmissionResult->marks=$x;
@@ -61,10 +85,10 @@ class AdmissionMarkEntryController extends Controller
                 }
                 $msg="Your input item save Successfully";
             }
-            $result=$aAdmissionMarkEntry->getResultOnID($admission_programid);
+            $result=$aAdmissionMarkEntry->getAllForMarkEntry($programofferid);
         }
+         // sessionid,programid,groupid,mediumid,shiftid,tableName And last one compareid
         $aAdmissionProgram=new AdmissionProgram();
-        // sessionid,programid,groupid,mediumid,shiftid,tableName And last one compareid
         $programList=$aAdmissionProgram->getAllOnIDS(0,0,0,0,0,"programs",'programid');
         $mediumList=$aAdmissionProgram->getAllOnIDS(0,0,0,0,0,"mediums",'mediumid');
         $shiftList=$aAdmissionProgram->getAllOnIDS(0,0,0,0,0,"shifts",'shiftid');
@@ -96,11 +120,32 @@ class AdmissionMarkEntryController extends Controller
         $aAdmissionMarkEntry=new AdmissionMarkEntry();
         $result=null;
         if($request->isMethod('post')&&$request->search_btn=='search_btn'){
-            $result=$aAdmissionMarkEntry->getAllForMarkEdit(0,$programid,$groupid,$mediumid,$shiftid);
+             // check Programoffer,admission programoffer and admission program subject
+             $aProgramOffer=new ProgramOffer();
+             $hasProgramoffer=$aProgramOffer->checkValue(0,$programid,$groupid,$mediumid,$shiftid);
+             if(!$hasProgramoffer){
+                 $msg="This Program Offer is not Created Yet";
+                 return redirect()->back()->with('msg',$msg);
+             }
+             $programofferid=$aProgramOffer->getProgramOfferId(0,$programid,$groupid,$mediumid,$shiftid);
+             // dd($programofferid);
+             $aAdmissionProgram=new AdmissionProgram();
+             $hasAdmissionProgram=$aAdmissionProgram->checkValue($programofferid);
+             if(!$hasAdmissionProgram){
+                 $msg="Please Admission Program Offer create";
+                 return redirect()->back()->with('msg',$msg);
+             }
+             $aAdmissionProgramSubject=new AdmissionProgramSubject();
+             $hasSubject=$aAdmissionProgramSubject->CheckAssignAdmissionSubject($programofferid);
+             if(!$hasSubject){
+                 $msg="Please Assign Admission Subject";
+                 return redirect()->back()->with('msg',$msg);
+             }
+             $result=$aAdmissionMarkEntry->getAllForMarkEdit($programofferid);
+            //  dd($result);
         }
         if($request->isMethod('post')&&$request->update_btn=='update_btn'){
-            $admission_programid=$request->programofferid;
-            // dd($admission_programid);
+            $programofferid=$request->programofferid;
             $checkLst=$request->checkbox;
             if($checkLst!=null){
                 foreach ($checkLst as $key=>$value){
@@ -127,10 +172,10 @@ class AdmissionMarkEntryController extends Controller
                 }
                 $msg="Your input item update Successfully";
             }
-            $result=$aAdmissionMarkEntry->getAllForMarkEditOnId($admission_programid);
+            $result=$aAdmissionMarkEntry->getAllForMarkEdit($programofferid);
         }
-        $aAdmissionProgram=new AdmissionProgram();
         // sessionid,programid,groupid,mediumid,shiftid,tableName And last one compareid
+        $aAdmissionProgram=new AdmissionProgram();
         $programList=$aAdmissionProgram->getAllOnIDS(0,0,0,0,0,"programs",'programid');
         $mediumList=$aAdmissionProgram->getAllOnIDS(0,0,0,0,0,"mediums",'mediumid');
         $shiftList=$aAdmissionProgram->getAllOnIDS(0,0,0,0,0,"shifts",'shiftid');
