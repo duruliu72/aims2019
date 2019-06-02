@@ -93,22 +93,22 @@
                       <div class="col-sm-12 print-col">
                          <div class="programinfo">
                          <div class="programofferinfo_item">
-                          <span>Session: {{$result['admissionprogram']->sessionName}}</span>
+                          <span>Session: {{$result['programofferinfo']->sessionName}}</span>
                         </div>
                         <div class="programofferinfo_item">
-                            <span>Class Level: {{$result['admissionprogram']->levelName}}</span>
+                            <span>Class Level: {{$result['programofferinfo']->levelName}}</span>
                         </div>
                         <div class="programofferinfo_item">
-                            <span>Class: {{$result['admissionprogram']->programName}}</span>
+                            <span>Class: {{$result['programofferinfo']->programName}}</span>
                         </div>
                         <div class="programofferinfo_item">
-                            <span>Medium: {{$result['admissionprogram']->mediumName}}</span>
+                            <span>Medium: {{$result['programofferinfo']->mediumName}}</span>
                         </div>
                         <div class="programofferinfo_item">
-                            <span>Group: {{$result['admissionprogram']->groupName}}</span>
+                            <span>Group: {{$result['programofferinfo']->groupName}}</span>
                         </div>
                         <div class="programofferinfo_item">
-                            <span>Shift: {{$result['admissionprogram']->shiftName}}</span>
+                            <span>Shift: {{$result['programofferinfo']->shiftName}}</span>
                         </div>
                          </div>
                       </div>
@@ -126,12 +126,12 @@
                                 </tr>
                               </thead>
                               <tbody>
-                                 @foreach($result['applicants'] as $x)
+                                 @foreach($result['applicant_list'] as $x)
                                   <tr>
                                     <td>{{$x[0]->applicantid}}</td>
                                     <td>{{sprintf('%s %s %s',$x[0]->firstName,$x[0]->middleName,$x[0]->lastName)}}</td>
-                                    <td>{{$x[1]}}</td>
-                                    <td>{{$x[0]->tot_marks}}</td>
+                                    <td>{{$x[2]}}</td>
+                                    <td>{{$x[1]->tot_marks}}</td>
                                   </tr>
                                  @endforeach
                               </tbody>

@@ -96,11 +96,11 @@
                     <div class="row print-row">
                       <div class="col-sm-12 print-col">
                          <div class="programinfo">
-                            <div class="programinfo_item"><span>Session&nbsp:</span> <span>{{$result['admissionprogram']->sessionName}}</span></div>
-                            <div class="programinfo_item"><span>Class&nbsp:</span> <span>{{$result['admissionprogram']->programName}}</span></div>
-                            <div class="programinfo_item"><span>Group&nbsp:</span> <span>{{$result['admissionprogram']->groupName}}</span></div>
-                            <div class="programinfo_item"><span>Medium&nbsp:</span> <span>{{$result['admissionprogram']->mediumName}}</span></div>
-                            <div class="programinfo_item"><span>Shift&nbsp: </span> <span>{{$result['admissionprogram']->shiftName}}</span></div>
+                            <div class="programinfo_item"><span>Session&nbsp:</span> <span>{{$result['programofferinfo']->sessionName}}</span></div>
+                            <div class="programinfo_item"><span>Class&nbsp:</span> <span>{{$result['programofferinfo']->programName}}</span></div>
+                            <div class="programinfo_item"><span>Group&nbsp:</span> <span>{{$result['programofferinfo']->groupName}}</span></div>
+                            <div class="programinfo_item"><span>Medium&nbsp:</span> <span>{{$result['programofferinfo']->mediumName}}</span></div>
+                            <div class="programinfo_item"><span>Shift&nbsp: </span> <span>{{$result['programofferinfo']->shiftName}}</span></div>
                          </div>
                       </div>
                     </div>
@@ -109,7 +109,7 @@
                       {{csrf_field()}}
                       <div class="col-sm-7 print-col">
                         <div class="applicant_info">
-                            <input type="hidden" name="programofferid" value="{{$result['admissionprogram']->programofferid}}">
+                            <input type="hidden" name="programofferid" value="{{$result['programofferinfo']->id}}">
                             <table>
                               <thead>
                                 <tr>
@@ -125,23 +125,21 @@
                               </thead>
                               <tbody>
                               <?php $i=0; ?>
-                              @foreach($result['applicants'] as $applicant)
+                              @foreach($result['applicant_list'] as $applicant)
                                 <tr>
                                   <td>{{++$i}}</td>
                                   <td>{{$applicant[0]->applicantid}}</td>
                                   <td>{{sprintf('%s %s %s',$applicant[0]->firstName,$applicant[0]->middleName,$applicant[0]->lastName)}}</td>
-                                  <td>{{$applicant[1]}}</td>
+                                  <td>{{$applicant[2]}}</td>
                                   <td>{{$applicant[0]->religionName}}</td>
                                   <td style="margin:0px;padding:0px;"> <img style="width:80px;height:60px;" src="{{asset('clientAdmin/admission/student')}}/{{$applicant[0]->picture}}"></td>
-                                  @if($applicant[0]->sapplicantid!=0)
-                                    <td>{{$applicant[0]->classroll}}</td>
+                                  @if($applicant[1]->capplicantid!=0)
+                                    <td>{{$applicant[1]->classroll}}</td>
                                     <td><span style='font-size:18px;'>&#10003;</span></td>
                                   @else
-                                 
                                     <td><input type="text" class="form-control" name="classroll[{{$applicant[0]->applicantid}}]" id="classroll"></td>
                                     <td><input class="applicantcheck" type="checkbox" name="applicantcheck[{{$applicant[0]->applicantid}}]"></td>
-                                    @endif
-                               
+                                  @endif
                                 </tr>
                                @endforeach
                               </tbody>

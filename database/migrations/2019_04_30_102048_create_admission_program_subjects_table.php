@@ -14,7 +14,7 @@ class CreateAdmissionProgramSubjectsTable extends Migration
     public function up()
     {
         Schema::create('admission_program_subjects', function (Blueprint $table) {
-            $table->integer('admission_programid')->length(11);
+            $table->integer('programofferid')->length(11);
             $table->integer('subjectid')->length(11);
             $table->double('marks', 8, 2);
             $table->integer('status')->length(5)->default(0);

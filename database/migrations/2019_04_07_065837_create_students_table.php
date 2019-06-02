@@ -17,7 +17,7 @@ class CreateStudentsTable extends Migration
             $table->increments('id');
             $table->integer('programofferid')->length(11);
             $table->integer('sectionid')->length(11);
-            $table->integer('applicantid')->length(11);
+            $table->integer('applicantid')->length(11)->unique();
             $table->integer('classroll')->length(11);
             $table->integer('fromclass')->length(11);
             $table->integer('fromsection')->length(11);

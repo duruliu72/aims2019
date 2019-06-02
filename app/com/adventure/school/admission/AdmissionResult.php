@@ -12,86 +12,53 @@ class AdmissionResult extends Model
 {
     protected $table="admissionresult";
 	protected $fillable = ['programofferid','applicantid','subjectid','marks'];
-	// // Admission Result For single Applicant 
-	// public function getAdmissionResult($applicantid,$pin_code){
-	// 	$aApplicant=new Applicant();
-	// 	$applicant_id=$aApplicant->getApplicantid($applicantid,$pin_code);
-	// 	$aAdmissionApplicant=new AdmissionApplicant();
-	// 	$admission_programid=$aAdmissionApplicant->getAdmissionProgramId($applicant_id);
-	// 	$aAdmissionProgram=new AdmissionProgram();
-	// 	$programinfo=$aAdmissionProgram->getAdmissionPrograminfo($admission_programid);
-	// 	$aApplicant=new Applicant();
-	// 	$applicant_list=$this->getSerial($admission_programid);
-	// 	$applicant=$this->searchApplicant($applicant_list,$applicant_id);
-	// 	$result=array(
-	// 		'admissionprogram'=>$programinfo,
-	// 		'applicants'=>$applicant
-	// 	);
-	// 	return $result;
-	// }
-	// private function searchApplicant($applicant_list,$applicant_id){
-	// 	foreach($applicant_list as $x){
-	// 		if($x[0]->applicantid==$applicant_id){
-	// 			return $x;
-	// 		}
-	// 	}
-	// 	return null;
-	// }
-	// Program offer wise
-	public function getAdmissionResults($programofferid){
+	public function getAdmissionResult($applicantid){
+		$aAdmissionApplicant=new AdmissionApplicant();
+		$admissionApplicant=$aAdmissionApplicant->getAdmissionApplicant($applicantid);
 		$aProgramOffer=new ProgramOffer();
-		$programofferinfo=$aProgramOffer->getProgramOffer($programofferid);
-		$applicant_list=$this->getSerial($programofferid);
+		$programofferinfo=$aProgramOffer->getProgramOffer($admissionApplicant->programofferid);
+		$applicant_list=$this->getApplicantOnMerits($admissionApplicant->programofferid);
 		$result=array(
-			'admissionprogram'=>$programinfo,
-			'applicants'=>$applicant_list
+			'programofferinfo'=>$programofferinfo,
+			'applicant'=>$applicant_list[$applicantid],
+			'admissionApplicant'=>$admissionApplicant
 		);
 		return $result;
 	}
-	// public function getAdmissionApplicants($programofferid){
-	// 	$aAdmissionProgram=new AdmissionProgram();
-	// 	$admission_programid=$aAdmissionProgram->getAdmissionProgram_id($programofferid);
-	// 	$programinfo=$aAdmissionProgram->getAdmissionPrograminfo($admission_programid);
-	// 	$applicant_list=$this->getSerial($admission_programid);
-	// 	$result=array(
-	// 		'admissionprogram'=>$programinfo,
-	// 		'applicants'=>$applicant_list
-	// 	);
-	// 	return $result;
-	// }
-	// public function getResultOnPO($programofferid){
-	// 	$aAdmissionProgram=new AdmissionProgram();
-	// 	$admission_programid=$aAdmissionProgram->getAdmissionProgram_id($programofferid);
-	// 	$programinfo=$aAdmissionProgram->getAdmissionPrograminfo($admission_programid);
-	// 	$applicant_list=$this->getSerial1($programofferid);
-	// 	$result=array(
-	// 		'admissionprogram'=>$programinfo,
-	// 		'applicants'=>$applicant_list
-	// 	);
-	// 	return $result;
-	// }
-	// private function getSerial($admission_programid){
-	// 	$aApplicant=new Applicant();
-	// 	$applicants=$aApplicant->allApplicantForResult($admission_programid);
-	// 	$applicant_list=array();
-	// 	$serialno=1;
-	// 	foreach($applicants as $applicant){
-	// 		$applicant_list[$applicant->applicantid]=[$applicant,$serialno];
-	// 		$serialno++;
-	// 	}
-	// 	asort($applicant_list);
-	// 	return $applicant_list;
-	// }
-	// private function getSerial1($programofferid){
-	// 	$aApplicant=new Applicant();
-	// 	$applicants=$aApplicant->getRegistrationStudent($programofferid);
-	// 	$applicant_list=array();
-	// 	$serialno=1;
-	// 	foreach($applicants as $applicant){
-	// 		$applicant_list[$applicant->applicantid]=[$applicant,$serialno];
-	// 		$serialno++;
-	// 	}
-	// 	asort($applicant_list);
-	// 	return $applicant_list;
-	// }
+	public function getAdmissionResults($programofferid){
+		$aProgramOffer=new ProgramOffer();
+		$programofferinfo=$aProgramOffer->getProgramOffer($programofferid);
+		$applicant_list=$this->getApplicantOnMerits($programofferid);
+		asort($applicant_list);
+		$result=array(
+			'programofferinfo'=>$programofferinfo,
+			'applicant_list'=>$applicant_list
+		);
+		return $result;
+	}
+	public function getApplicantOnMerits($programofferid){
+		$sql="select table1.* ,
+		table2.tot_marks
+		FROM(SELECT * FROM `admissionapplicants`
+		WHERE programofferid=?) table1
+		LEFT JOIN (SELECT 
+		t1.programofferid,
+		t1.applicantid,
+		SUM(marks) AS tot_marks
+		FROM `admissionresult` AS t1
+		WHERE programofferid=? GROUP BY t1.programofferid,t1.applicantid) AS table2
+		ON table1.programofferid=table2.programofferid && table1.applicantid=table2.applicantid 
+		ORDER BY table2.tot_marks DESC";
+		$qresult=\DB::select($sql,[$programofferid,$programofferid]);
+		$merit_list=collect($qresult);
+		$applicant_list=array();
+		$serial=1;
+		foreach($merit_list as $item){
+			$aApplicant=new Applicant();
+			$applicant=$aApplicant->getApplicant($item->applicantid);
+			$applicant_list[$item->applicantid]=[$applicant,$item,$serial];
+			$serial++;
+		}
+		return $applicant_list;
+	}
 }

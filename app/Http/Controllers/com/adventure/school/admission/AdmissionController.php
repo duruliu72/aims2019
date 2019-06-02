@@ -37,6 +37,7 @@ class AdmissionController extends Controller
         $shiftList=$aAdmissionProgram->getAllOnIDS(0,0,0,0,0,"shifts",'shiftid');
         $groupList=$aAdmissionProgram->getAllOnIDS(0,0,0,0,0,"groups",'groupid');
     	$dataList=[
+			'institute'=>Institute::getInstituteName(),
     		'programList'=>$programList,
 	    	'mediumList'=>$mediumList,
             'shiftList'=>$shiftList,
@@ -294,6 +295,7 @@ class AdmissionController extends Controller
     public function applicantCopyPage(){
 		$msg="";
 		$dataList=[
+			'institute'=>Institute::getInstituteName(),
             'msg'=>$msg,
         ];
         return view('school.admission.applicantview',$dataList);
@@ -309,19 +311,30 @@ class AdmissionController extends Controller
 			return redirect()->back()->with('msg',$msg)->withInput($request->input());
 		}
         $dataList=[
+			'institute'=>Institute::getInstituteName(),
             'bean'=>$aObj,
         ];
         return view('school.admission.applicantcopy',$dataList);
     }
     public function getAdmitCardForm(){
-        return view('school.admission.admitcardview');
+		$msg="";
+		$dataList=[
+			'institute'=>Institute::getInstituteName(),
+            'msg'=>$msg,
+        ];
+        return view('school.admission.admitcardview',$dataList);
     }
     public function getAdmitCard(Request $request){
         $applicantid=$request->applicantid;
-        $pin_code=$request->pin_code;
+		$pin_code=$request->pin_code;
 		$aAdmission=new Admission();
 		$aObj=$aAdmission->getApplicantAdmitCard($applicantid,$pin_code);
+		if($aObj['applicant']==null){
+			$msg="Applicantid or pincode is incorrect";
+			return redirect()->back()->with('msg',$msg)->withInput($request->input());
+		}
         $dataList=[
+			'institute'=>Institute::getInstituteName(),
             'bean'=>$aObj,
         ];
         return view('school.admission.admitcard',$dataList);
@@ -331,7 +344,7 @@ class AdmissionController extends Controller
     }
     public function getAplicantResult(Request $request){
       	$applicantid=$request->applicantid;
-        $pin_code=$request->pin_code;
+		$pin_code=$request->pin_code;
 		$isExist=\DB::table('applicants')
 		->where('applicantid',$applicantid)
 		->where('pin_code',$pin_code)

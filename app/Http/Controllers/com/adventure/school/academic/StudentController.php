@@ -14,6 +14,7 @@ use App\com\adventure\school\admission\Applicant;
 use App\com\adventure\school\admission\AdmissionResult;
 use App\com\adventure\school\program\CourseType;
 use App\com\adventure\school\academic\Student;
+use App\com\adventure\school\academic\StudentRegistration;
 use App\com\adventure\school\academic\StudentCourse;
 
 class StudentController extends Controller
@@ -89,11 +90,11 @@ class StudentController extends Controller
                 
             }
             $aAdmissionResult=new AdmissionResult();
+            $aStudentRegistration=new StudentRegistration();
             $courseTypeList=CourseType::all();
             $sectionList=$aSectionOffer->getSectionsOnPO($programofferid);
-            $result=$aAdmissionResult->getResultOnPO($programofferid);
-            // dd($result);
-            $courseList=$aCourseOffer->getStudentCoursesOnProgramOffer($programofferid);
+            $result=$aStudentRegistration->getApplcantsForRegistration($programofferid);
+            $courseList=$aCourseOffer->getCoursesOnProgramOffer($programofferid);
         }
         // sessionid,programid,groupid,mediumid,shiftid,tableName and $compaireid
         $programList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,"programs",'programid');
@@ -141,13 +142,14 @@ class StudentController extends Controller
                 $aStudent=new Student();
                 $aStudent->programofferid=$programofferid;
                 $aStudent->sectionid=$sectionid;
+                $aStudent->applicantid=$applicantid;
                 $aStudent->classroll=$classroll;
-                $registerOrNot=$aStudent->checkRegisterOrNot($programofferid,$applicantid);
+                $aStudent->fromclass=0;
+                $aStudent->fromsection=0;
+                $aStudent->studenttype=1;
+                $aStudent->currentclass=1;
+                $registerOrNot=$aStudent->checkStudent($programofferid,$applicantid);
                 if(!$registerOrNot){
-                    $studentregid=$aStudent->generateStudentRegID($programofferid);
-                    // will be generate
-                    $aStudent->studentregid=$studentregid;
-                    $aStudent->studenttype=1;
                     $aStudent->save();
                     $studentid=$aStudent->getLastID();
                     foreach ($checkboxList as $key => $value) {
@@ -162,20 +164,20 @@ class StudentController extends Controller
                 }
             }
         }
-        // die("Die Here");
-        $applicant=$aApplicant->getApplicant1($applicantid);
+        $applicant=$aApplicant->getApplicant($applicantid);
         if($applicant==null) {
             $msg="Wrong Appicant Id";
             return redirect()->back()->with('msg',$msg)->withInput($request->input());
         }
-        dd($applicant);
-        $aObj=$aAdmissionResult->getMeritPosition($applicant->programofferid,$applicantid);
-        $aProgramOffer=new ProgramOffer();
-        $programofferinfo=$aProgramOffer->getProgramofferDetails($applicant->programofferid);
+        $aObj=$aAdmissionResult->getAdmissionResult($applicantid);
+        // dd($aObj);
+        $aStudentRegistration=new StudentRegistration();
+        $dd=$aStudentRegistration->getApplcantForRegistration($applicantid);
+        // dd($dd);
         $aCourseOffer=new CourseOffer();
         $aSectionOffer=new SectionOffer();
-        $courseList=$aCourseOffer->getStudentCourses($applicantid,$aObj->programofferid);
-        $sectionList=$aSectionOffer->getSectionsOnPO($aObj->programofferid);
+        $courseList=$aCourseOffer->getCoursesOnProgramOffer($aObj['programofferinfo']->id);
+        $sectionList=$aSectionOffer->getSectionsOnPO($aObj['programofferinfo']->id);
         $courseTypeList=CourseType::all();
         $dataList=[
                 'institute'=>Institute::getInstituteName(),
@@ -183,7 +185,6 @@ class StudentController extends Controller
                 'courseList'=>$courseList,
                 'courseTypeList'=>$courseTypeList,
                 'sectionList'=>$sectionList,
-                'programofferinfo'=>$programofferinfo,
                 'bean'=>$aObj,
                 'msg'=>$msg
         ];
@@ -240,12 +241,12 @@ class StudentController extends Controller
     }
 }
 private function getAllOnIDS($sessionid,$programid,$groupid,$mediumid,$shiftid,$tableName,$compareid){
-    $aProgramOffer=new ProgramOffer();
-    $result=$aProgramOffer->getAllOnIDS($sessionid,$programid,$groupid,$mediumid,$shiftid,$tableName,$compareid);
-    $output="<option value=''>SELECT</option>";
-    foreach($result as $x){
-        $output.="<option value='$x->id'>$x->name</option>";
-    }
-    echo  $output;
+        $aProgramOffer=new ProgramOffer();
+        $result=$aProgramOffer->getAllOnIDS($sessionid,$programid,$groupid,$mediumid,$shiftid,$tableName,$compareid);
+        $output="<option value=''>SELECT</option>";
+        foreach($result as $x){
+            $output.="<option value='$x->id'>$x->name</option>";
+        }
+        echo  $output;
 }
 }

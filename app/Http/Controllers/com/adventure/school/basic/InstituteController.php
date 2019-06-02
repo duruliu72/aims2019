@@ -177,4 +177,35 @@ class InstituteController extends Controller
         }
         return redirect()->back()->with('msg',$msg);
     }
+         // For Ajax Call ===============
+    //    ================================================================
+   public function changeAddress(Request $request){
+    $option=$request->option;
+    $methodid=$request->methodid;
+    $id=$request->id;
+    if($option=="division"){
+        if($methodid==1){
+			$this->getDropDownValue("districts","divisionid",$id);
+        }
+    }elseif($option=="district"){
+        if($methodid==1){
+			$this->getDropDownValue("thanas","districtid",$id);
+        }
+    }elseif($option=="thana"){
+        if($methodid==1){
+			$this->getDropDownValue("postoffices","thanaid",$id);
+        }elseif($methodid==2){
+			$this->getDropDownValue("localgovs","thanaid",$id);
+		}
+	}
+}
+private function getDropDownValue($tableName,$conditionid,$id){
+    $aAddress=new Address();
+    $result=$aAddress->getDropDownValue($tableName,$conditionid,$id);
+    $output="<option value=''>SELECT</option>";
+    foreach($result as $x){
+        $output.="<option value='$x->id'>$x->name</option>";
+    }
+    echo  $output;
+}
 }

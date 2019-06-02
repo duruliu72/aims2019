@@ -27,6 +27,7 @@ Route::resource('district', 'com\adventure\school\basic\DistrictController');
 Route::resource('thana', 'com\adventure\school\basic\ThanaController');
 Route::resource('postoffice', 'com\adventure\school\basic\PostOfficeController');
 Route::resource('localgov', 'com\adventure\school\basic\LocalGovController');
+Route::get('institute/changeaddress', 'com\adventure\school\basic\InstituteController@changeAddress');
 Route::resource('institute', 'com\adventure\school\basic\InstituteController');
 Route::resource('admissionsubject', 'com\adventure\school\basic\AdmissionSubjectController');
 Route::resource('departments', 'com\adventure\school\basic\DepartmentController');
@@ -115,6 +116,8 @@ Route::post('childexam', 'com\adventure\school\exam\ChildExamController@childExa
 Route::get('childexam/{id}/edit', 'com\adventure\school\exam\ChildExamController@childExamCrete');
 Route::post('childexam/{id}/edit', 'com\adventure\school\exam\ChildExamController@childExamCrete');
 Route::get('childexam/getValue', 'com\adventure\school\exam\ChildExamController@getValue');
+// Class Result
+Route::get('mstexammarkentry', 'com\adventure\school\classexam\MstExamMarkEntryController@markentry');
 // Menu Settings
 Route::resource('menu', 'com\adventure\school\menu\MenuController');
 
@@ -127,9 +130,7 @@ Route::resource('user', 'com\adventure\school\usermanager\UserManagerController'
 
 // ===========================================
 // route For School front part
-Route::get('/', function () {
-    return view('school.home');
-});
+Route::get('/','SchoolHomeController@index');
 Route::get('/admission/applicantcopy','com\adventure\school\admission\AdmissionController@applicantCopyPage');
 Route::post('/admission/applicantcopy','com\adventure\school\admission\AdmissionController@applicantCopy');
 Route::get('/admission/admitcard','com\adventure\school\admission\AdmissionController@getAdmitCardForm');

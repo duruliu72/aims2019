@@ -40,7 +40,6 @@ class CourseOfferController extends Controller
         $sectionList=null;
         $sectionOfferList=null;
         $sectionTeacherList=null;
-        $list=null;
         if($request->isMethod('post')&&$request->search_btn=='search_btn' || $request->save_btn=='save_btn'){
             $programofferid=$aProgramOffer->getProgramOfferId(0,$programid,$groupid,$mediumid,$shiftid);
             if($request->programofferid!=null){
@@ -75,10 +74,9 @@ class CourseOfferController extends Controller
                 }
                 
             }
-            $programofferinfo=$aProgramOffer->getProgramOfferinfo($programofferid);
+            $programofferinfo=$aProgramOffer->getProgramOffer($programofferid);
             $courseList=$aCourseCode->getAllCourseOnProgramOffer($programofferid);
         }
-        $aProgramOffer=new ProgramOffer();
         // sessionid,programid,groupid,mediumid,shiftid and tableName
         $programList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,"programs",'programid');
         $mediumList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,"mediums",'mediumid');
@@ -93,7 +91,6 @@ class CourseOfferController extends Controller
             'shiftList'=>$shiftList,
             'programofferinfo'=>$programofferinfo,
             'courseList'=>$courseList,
-            'list'=>$list,
             'msg'=>$msg
         ];
         return view('admin.courseoffer.courseoffer.index',$dataList);

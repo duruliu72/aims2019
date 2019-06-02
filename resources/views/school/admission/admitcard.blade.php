@@ -91,7 +91,7 @@
                                             <table>
                                                 <tr>
                                                     @foreach($bean['subject'] as $x)
-                                                        <td>{{$x->subjectName}}</td>
+                                                        <td>{{$x->name}}</td>
                                                     @endforeach
                                                 </tr>
                                                 <tr>

@@ -33,50 +33,45 @@
                 <div class="col-md-5">
                     <div class="student">
                         <div class="student__photo">
-                            <img src="{{asset('clientAdmin/image/picture')}}/{{$bean->picture}}">
+                            <img src="{{asset('clientAdmin/admission/student')}}/{{$bean['applicant'][0]->picture}}">
                         </div>
                         <div class="student__info">
                         <table>
                                 <tr>
                                     <td>Id <span>:</span></td>
-                                    <td>{{$bean->applicantid}}</td>
+                                    <td>{{$bean['applicant'][0]->applicantid}}</td>
                                 </tr>
                                 <tr>
                                     <td>Name <span>:</span></td>
-                                    <td>{{$bean->name}}</td>
+                                    <td>{{$bean['applicant'][0]->firstName}}</td>
                                 </tr>
                                
                                 
                                 <tr>
                                     <td>Class <span>:</span></td>
-                                    <td>{{$programofferinfo->programName}}</td>
+                                    <td>{{$bean['programofferinfo']->programName}}</td>
                                 </tr>
                                 <tr>
                                     <td>Group <span>:</span></td>
-                                    <td>{{$programofferinfo->groupName}}</td>
+                                    <td>{{$bean['programofferinfo']->groupName}}</td>
                                 </tr>
                                 <tr>
                                     <td>Shift <span>:</span></td>
-                                    <td>{{$programofferinfo->shiftName}}</td>
+                                    <td>{{$bean['programofferinfo']->shiftName}}</td>
                                 </tr>
                                 <tr>
                                     <td>Class <span>:</span></td>
-                                    <td>{{$programofferinfo->mediumName}}</td>
+                                    <td>{{$bean['programofferinfo']->mediumName}}</td>
                                 </tr>
                                  <tr>
                                     <td>Session <span>:</span></td>
-                                    <td>{{$programofferinfo->sessionName}}</td>
+                                    <td>{{$bean['programofferinfo']->sessionName}}</td>
                                 </tr>
                                 <tr>
                                     <td>Merit Position <span>:</span></td>
-                                    <td>{{$bean->serialno}}</td>
+                                    <td>{{$bean['applicant'][2]}}</td>
                                 </tr>
-                                @if($bean->studentregid!=0)
-                                <tr>
-                                    <td>Student <span>:</span></td>
-                                    <td>Registred</td>
-                                </tr>
-                                @endif
+                               
                             </table>
                         </div>
                     </div>
@@ -89,8 +84,8 @@
                                <div class="from-group row" style="margin-bottom:15px;">
                                     <label class="col-sm-2 control-label" for="sectionid">Section</label>
                                     <div class="col-sm-4">
-                                        <input type="hidden" name="programofferid" value="{{$bean->programofferid}}">
-                                        <input type="hidden" name="applicantid" value="{{$bean->applicantid}}">
+                                        <input type="hidden" name="programofferid" value="{{$bean['programofferinfo']->id}}">
+                                        <input type="hidden" name="applicantid" value="{{$bean['applicant'][0]->applicantid}}">
                                         <select class="form-control" name="sectionid" id="sectionid">
                                             @foreach($sectionList as $x)
                                             <option value="{{$x->id}}">{{$x->name}}</option>
@@ -117,9 +112,6 @@
                                         <tr>
                                             <td>{{++$id}}</td>
                                             <td>{{$courseCode->courseNameWithCode}}</td>
-                                            @if($courseCode->vcoursecodeid!=0)
-                                            <td>{{$courseCode->courseTypeName}}</td>
-                                            @else
                                             <td>
                                             <select class="form-control" name="coursetypeid[{{$courseCode->coursecodeid}}]" id="coursetypeid">
                                             @foreach($courseTypeList as $x)
@@ -127,12 +119,9 @@
                                             @endforeach
                                             </select>
                                             </td>
-                                            @endif
-                                            @if($courseCode->vcoursecodeid!=0)
-                                            <td><span style='font-size:18px;'>&#10003;</span></td>    
-                                            @else
+                                            <!-- <td><span style='font-size:18px;'>&#10003;</span></td>     -->
                                             <td><input class="markcheck" type="checkbox" name="checkbox[{{$courseCode->coursecodeid}}]"></td>
-                                            @endif
+                                           
                                         </tr>
                                     @endforeach
                                     </tbody>

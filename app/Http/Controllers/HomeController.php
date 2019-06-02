@@ -13,7 +13,7 @@ class HomeController extends Controller
     }
     public function index()
     {
-    	$aMenu=new Menu();
+        $aMenu=new Menu();
         $sidebarMenu=$aMenu->getSidebarMenu();
         $dataList=[
             'institute'=>Institute::getInstituteName(),

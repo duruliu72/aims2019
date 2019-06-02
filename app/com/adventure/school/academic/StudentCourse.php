@@ -8,4 +8,11 @@ class StudentCourse extends Model
 {
     protected  $table='student_courses';
     protected $fillable = ['studentid','coursecodeid','coursetypeid','status'];
+    public function getStudentCourses($studentid){
+        $sql="SELECT * FROM `student_courses`
+        WHERE studentid=?";
+        $qResult=\DB::select($sql,[$studentid]);
+        $result=collect($qResult);
+        return $result;
+    }
 }

@@ -9,7 +9,12 @@
                         <a href="{{URL::to('/')}}"><img src="{{asset('school/img/school-logo.png')}}" alt=""></a>
                     </div>
                     <div class="institute-name">
-                        <h1>Chouddagram Secondary Pilot Girls' High School</h1>
+                        <h1>@if($institute!=null)
+                            {{$institute->name}}
+                            @else
+                            Dashboard
+                            @endif
+                        </h1>
                         <p>Chouddagram Pourasova, Chauddagram , Comilla</p>
                     </div>
                     <div class="mini-menu">

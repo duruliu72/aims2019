@@ -9969,10 +9969,8 @@ span.customSelect.changed {
     margin-bottom: 25px;
 }
 .programofferinfo{
-    /*margin-bottom: 25px;*/
     text-align: center;
     border: 1px solid #ccc;
-    border-bottom: none;
     padding: 9px 0px;
 
 }

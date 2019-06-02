@@ -38,26 +38,26 @@
                                 </div>
                                 <div class="applicant_item_desc">
                                     <div class="photo">
-                                        <img src="{{asset('clientAdmin/image/picture/Kalam.png')}}">
+                                    <img src="{{asset('clientAdmin/admission/student/')}}/{{$result['applicant'][0]->picture}}">
                                     </div>
                                     <div class="info">
                                         <table>
                                             <tr>
                                                 <td>Alpplicantid <span>:</span></td>
-                                                <td>{{$result['applicants'][0]->applicantid}}</td>
+                                                <td>{{$result['applicant'][0]->applicantid}}</td>
                                             </tr>
                                             <tr>
                                                 <td>Roll <span>:</span></td>
-                                                <td>{{$result['applicants'][0]->admssion_roll}}</td>
+                                                <td>{{$result['admissionApplicant']->admssion_roll}}</td>
                                             </tr>
                                             <tr>
                                                 <td>Name <span>:</span></td>
-                                                <td>{{$result['applicants'][0]->firstName}}</td>
+                                                <td>{{sprintf("%s %s %s",$result['applicant'][0]->firstName,$result['applicant'][0]->middleName,$result['applicant'][0]->lastName)}}</td>
                                             </tr>
                                             
                                             <tr>
                                                 <td>Merit Position <span>:</span></td>
-                                                <td>{{$result['applicants'][1]}}</td>
+                                                <td>{{$result['applicant'][2]}}</td>
                                             </tr>
                                         </table>
                                     </div>
@@ -65,23 +65,23 @@
                                         <table>
                                             <tr>
                                                 <td>Session <span>:</span></td>
-                                                <td>{{$applicantinfo->sessionName}}</td>
+                                                <td>{{$result['programofferinfo']->sessionName}}</td>
                                             </tr>
                                             <tr>
                                                 <td>Class <span>:</span></td>
-                                                <td>{{$applicantinfo->programName}}</td>
+                                                <td>{{$result['programofferinfo']->programName}}</td>
                                             </tr>
                                              <tr>
                                                 <td>Group <span>:</span></td>
-                                                <td>{{$applicantinfo->groupName}}</td>
+                                                <td>{{$result['programofferinfo']->groupName}}</td>
                                             </tr>
                                              <tr>
                                                 <td>Medium <span>:</span></td>
-                                                <td>{{$applicantinfo->mediumName}}</td>
+                                                <td>{{$result['programofferinfo']->mediumName}}</td>
                                             </tr>
                                             <tr>
                                                 <td>Shift <span>:</span></td>
-                                                <td>{{$applicantinfo->shiftName}}</td>
+                                                <td>{{$result['programofferinfo']->shiftName}}</td>
                                             </tr>
                                     
                                         </table>
