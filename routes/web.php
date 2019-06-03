@@ -117,7 +117,8 @@ Route::get('childexam/{id}/edit', 'com\adventure\school\exam\ChildExamController
 Route::post('childexam/{id}/edit', 'com\adventure\school\exam\ChildExamController@childExamCrete');
 Route::get('childexam/getValue', 'com\adventure\school\exam\ChildExamController@getValue');
 // Class Result
-Route::get('mstexammarkentry', 'com\adventure\school\classexam\MstExamMarkEntryController@markentry');
+Route::get('mstexammarkentry', 'com\adventure\school\classexam\MstExamMarkEntryController@marksentry');
+Route::post('mstexammarkentry', 'com\adventure\school\classexam\MstExamMarkEntryController@marksentry');
 // Menu Settings
 Route::resource('menu', 'com\adventure\school\menu\MenuController');
 

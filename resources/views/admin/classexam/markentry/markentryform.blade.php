@@ -11,8 +11,16 @@
              <ol class="breadcrumb">
                 <li>Mark Entry Form</li>
                 @if($msg!="")
-                <span style="float: right;font-size: 15px;">
+                  <span style="float: right;font-size: 15px;">
                   {{ $msg }}
+                  </span>
+                @endif
+                @if ($errors->any())
+                <span style="float: right;font-size: 15px;">{{$errors->all()[0] }}</span>
+                @endif
+                @if(session()->has('msg'))
+                <span style="float: right;font-size: 15px;">
+                  {{ session()->get('msg') }}
                 </span>
                 @endif
             </ol>
@@ -23,7 +31,7 @@
             <section class="panel">
               <div class="panel-body">
                 <div class="top_form">
-                    <form action="{{URL::to('courseoffercreate')}}" method="POST">
+                    <form action="{{URL::to('mstexammarkentry')}}" method="POST">
                     {{csrf_field()}}
                     <div class="form-group row">
                     <label class="col-sm-2 control-label" for="programid">Program</label>
@@ -65,26 +73,6 @@
                       </select>
                     </div>                              
                   </div>
-                  <div class="form-group row">
-                     <label class="col-sm-2 control-label" for="shiftid">Section</label>
-                    <div class="col-sm-4">
-                      <select class="form-control" name="shiftid" id="shiftid">
-                         <option value="">SELECT</option>
-                         @foreach ($shiftList as $x)
-                           <option value="{{$x->id}}">{{$x->name}}</option>
-                         @endforeach
-                      </select>
-                    </div>
-                    <label class="col-sm-2 control-label" for="groupid">Subject</label>
-                    <div class="col-sm-4">
-                      <select  class="form-control" name="groupid" id="groupid">
-                         <option value="">SELECT</option>
-                         @foreach ($groupList as $x)
-                           <option value="{{$x->id}}">{{$x->name}}</option>
-                         @endforeach
-                      </select>
-                    </div>                              
-                  </div>
                     <div class="row">
                       <div class="col-sm-12">
                         <div class="btn-container">
@@ -115,6 +103,32 @@
                     <div class="programofferinfo_item">
                         <span>Shift: {{$programofferinfo->shiftName}}</span>
                     </div>
+                </div>
+                <div class="bottom_form markentry-form">
+                  <form action="{{URL::to('mstexammarkentry')}}" method="POST">
+                    {{csrf_field()}}
+                    <input type="hidden" name="programofferid" value="{{$programofferinfo->id}}">
+                    <div class="form-group row">
+                     <label class="col-sm-2 control-label" for="sectionid">Section</label>
+                    <div class="col-sm-4">
+                      <select class="form-control" name="sectionid" id="sectionid">
+                         <option value="">SELECT</option>
+                         @foreach ($sectionList as $x)
+                           <option value="{{$x->id}}">{{$x->name}}</option>
+                         @endforeach
+                      </select>
+                    </div>
+                    <label class="col-sm-2 control-label" for="coursecodeid">Subject</label>
+                    <div class="col-sm-4">
+                      <select  class="form-control" name="coursecodeid" id="coursecodeid">
+                         <option value="">SELECT</option>
+                         @foreach ($groupList as $x)
+                           <option value="{{$x->id}}">{{$x->name}}</option>
+                         @endforeach
+                      </select>
+                    </div>                              
+                  </div>
+                  </form>
                 </div>
                 @endif
               </div>
