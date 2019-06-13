@@ -34,7 +34,15 @@ class CourseCode extends Model
 		WHERE courseoffer.programofferid=?) AS table1 ON course_codes.id=table1.coursecodeid";
 		$qResult=\DB::select($sql,[$programofferid]);
 		$result=collect($qResult);
-		// dd($result);
 		return $result;
+	}
+	public function getCourse($id){
+		$sql="SELECT course_codes.*,
+		courses.name AS courseName
+		FROM `course_codes`
+		INNER JOIN courses ON course_codes.courseid=courses.id where course_codes.id=?";
+   		$qResult=\DB::select($sql,[$id]);
+		$course=collect($qResult)->first();
+		return $course;
 	}  
 }

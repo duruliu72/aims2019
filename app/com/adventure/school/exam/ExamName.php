@@ -24,6 +24,13 @@ class ExamName extends Model
         $result=collect($qResult);
         return $result;
     }
+    public function getExamONID($id){
+        $sql="SELECT * FROM `exam_name`
+        WHERE id=?";
+        $qResult=\DB::select($sql,[$id]);
+        $exam=collect($qResult)->first();
+        return $exam;
+    }
     public function getExamNameOnProgramOffer($programofferid,$examtypeid){
         $sql="SELECT exam_name.*,
         master_exam.programofferid

@@ -82,6 +82,7 @@ class CourseOfferController extends Controller
         $mediumList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,"mediums",'mediumid');
         $shiftList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,"shifts",'shiftid');
         $groupList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,"groups",'groupid');
+        $teacherList=Employee::all();
         $dataList=[
             'institute'=>Institute::getInstituteName(),
             'sidebarMenu'=>$sidebarMenu,
@@ -89,6 +90,7 @@ class CourseOfferController extends Controller
             'groupList'=>$groupList,
             'mediumList'=>$mediumList,
             'shiftList'=>$shiftList,
+            'teacherList'=>$teacherList,
             'programofferinfo'=>$programofferinfo,
             'courseList'=>$courseList,
             'msg'=>$msg

@@ -39,4 +39,22 @@ class MarkDistribution extends Model
         $qResult=\DB::select($sql,[$programofferid,$coursecodeid]);
         return collect($qResult);
     }
+    public function checkMarkDistribution($programofferid,$coursecodeid){
+        $sql="SELECT * FROM `mark_distribution`
+        WHERE programofferid=? && coursecodeid=?";
+        $qResult=\DB::select($sql,[$programofferid,$coursecodeid]);
+        $result=collect($qResult);
+        if($result->count()>0){
+            return true;
+        }
+        return false;
+    }
+    public function getMarkCategory($programofferid,$coursecodeid){
+        $sql="SELECT mark_categories.* FROM `mark_categories`
+        INNER JOIN (SELECT * FROM `mark_distribution`
+        WHERE programofferid=? && coursecodeid=?) as t1
+        ON mark_categories.id=t1.markcategoryid";
+        $qResult=\DB::select($sql,[$programofferid,$coursecodeid]);
+        return collect($qResult);
+    }
 }

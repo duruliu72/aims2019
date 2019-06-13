@@ -16,9 +16,7 @@ class CourseOffer extends Model
         }
         return false;
     }
-    public function getCoursesOnProgramOffer1(){
-        
-    }
+
     public function getCoursesOnProgramOffer($programofferid){
         $sql="SELECT 
         courseoffer.coursecodeid,

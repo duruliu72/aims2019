@@ -62,6 +62,7 @@ class MasterExam extends Model
         $result=collect($qResult)->first();
         return $result;
     }
+    
     public function getMasterExamOnPOAndExamNameId($programofferid,$examnameid){
         $sql="SELECT * FROM `master_exam`
         WHERE programofferid=? && examnameid=?";

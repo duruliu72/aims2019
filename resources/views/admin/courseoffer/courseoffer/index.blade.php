@@ -106,8 +106,9 @@
                         <thead>
                           <tr>
                             <th width="2%">#</th>
-                            <th width="27%">Subject Name</th>
-                            <th width="10%">Marks</th>
+                            <th width="45%">Subject Name</th>
+                            <th width="35%">Subject Teacher</th>
+                            <th width="16%">Marks</th>
                             <th width="2%"><input id="markcheckid" type="checkbox"></th>
                           </tr>
                         </thead>
@@ -119,12 +120,26 @@
                               <td>{{++$id}}</td>                     
                               <td><input type="hidden" name="coursecodeid[]" value="{{$x->id}}" />{{$x->courseNameWithCode}}</td>
                               <td><div class="form-group"><input class="form-control" type="text" name="coursemarks[{{$x->id}}]" value="{{$x->coursemark}}" /></div></td>
+                              <td><select class="form-control" name="teacherid[{{$x->id}}]" id="teacherid">
+                                <option value="">SELECT</option>
+                                @foreach ($teacherList as $x)
+                                  <option value="{{$x->id}}">{{$x->firstName}}</option>
+                                @endforeach
+                              </select>
+                              </td>
                               <td><input class="markcheck" type="checkbox" name="checkbox[{{$x->id}}]"></td>
                             </tr>
                             @else
                             <tr>
                               <td>{{++$id}}</td>
                               <td>{{$x->courseNameWithCode}}</td>
+                              <td><select class="form-control" name="teacherid" id="teacherid">
+                                <option value="">SELECT</option>
+                                @foreach ($teacherList as $x)
+                                  <option value="{{$x->id}}">{{$x->firstName}}</option>
+                                @endforeach
+                              </select>
+                              </td>
                               <td>{{$x->coursemark}}</td>
                               <td><span style='font-size:18px;'>&#10003;</span></td>      
                             </tr>

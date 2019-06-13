@@ -31,7 +31,7 @@
             <section class="panel">
               <div class="panel-body">
                 <div class="top_form">
-                    <form action="{{URL::to('mstexammarkentry')}}" method="POST">
+                    <form action="{{URL::to('mstexammarkedit')}}" method="POST">
                     {{csrf_field()}}
                     <div class="form-group row">
                     <label class="col-sm-2 control-label" for="programid">Program</label>
@@ -142,7 +142,7 @@
                     </div>
                 </div>
                 <div class="bottom_form markentry-form">
-                  <form action="{{URL::to('mstexammarkentry')}}" method="POST">
+                  <form action="{{URL::to('mstexammarkedit')}}" method="POST">
                     {{csrf_field()}}
                     <input type="hidden" name="programofferid" value="{{$programofferinfo->id}}">
                     <input type="hidden" name="sectionid" value="{{$section->id}}">
@@ -165,28 +165,15 @@
                           <tbody>
                           <?php $id=0; ?>
                             @foreach($studentList as $student)
-                            @if($student->studentid==0)
-                            <tr>
-                              <td>{{++$id}}</td>
-                              <td>{{sprintf('%s %s %s',$student->firstName,$student->middleName,$student->lastName)}}</td>
-                              <td>{{$student->classroll}}</td>
-                              @foreach($mark_catList as $y)
-                                <td><input class="form-control" type="text" name="marks[{{$student->id}}][{{$y->id}}]" /></td>
-                              @endforeach
-                              <td><input class="markcheck" type="checkbox" name="checkbox[{{$student->id}}]"></td>
-                              <!-- <td><span style='font-size:18px;'>&#10003;</span></td>      -->
-                            </tr>
-                            @else
                             <tr>
                               <td>{{++$id}}</td>
                               <td>{{sprintf('%s %s %s',$student->firstName,$student->middleName,$student->lastName)}}</td>
                               <td>{{$student->classroll}}</td>
                               @foreach($student->markList as $y)
-                                <td>{{$y->marks}}</td>
+                                <td><input class="form-control" type="text" name="marks[{{$student->id}}][{{$y->markcategoryid}}]" value="{{$y->marks}}" /></td>
                               @endforeach
-                              <td><span style='font-size:18px;'>&#10003;</span></td>     
+                              <td><input class="markcheck" type="checkbox" name="checkbox[{{$student->id}}]"></td>
                             </tr>
-                            @endif
                             @endforeach
                           </tbody>
                         </table>
@@ -195,8 +182,8 @@
                     <div class="row">
                       <div class="col-sm-12">
                         <div class="btn-container">
-                          <button type="submit" class="btn btn-success result-btn" name="save_btn" value="save_btn">Save</button>
-                          <a class="btn btn-info refresh-btn" href="{{URL::to('mstexammarkentry')}}"><i class="ace-icon fa fa-refresh bigger-120"></i>Refresh</a>
+                          <button type="submit" class="btn btn-success result-btn" name="update_btn" value="update_btn">Update</button>
+                          <a class="btn btn-info refresh-btn" href="{{URL::to('mstexammarkedit')}}"><i class="ace-icon fa fa-refresh bigger-120"></i>Refresh</a>
                         </div>
                       </div>
                     </div>
