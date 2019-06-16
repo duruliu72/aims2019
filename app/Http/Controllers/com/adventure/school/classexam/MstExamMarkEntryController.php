@@ -78,7 +78,7 @@ class MstExamMarkEntryController extends Controller
             // Check mark Distributed or not
             $checkMarkDist=$markDistObj->checkMarkDistribution($programofferid,$coursecodeid);
             if(!$checkMarkDist){
-                $msg="This Course is not distributed Yet";
+                $msg="This Course Mark is not distributed";
                 return redirect()->back()->with('msg',$msg);
             }
             // Check Master Exam Setup Or Not

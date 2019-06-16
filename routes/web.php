@@ -104,6 +104,10 @@ Route::post('student/create', 'com\adventure\school\academic\StudentController@s
 Route::get('students/getValue','com\adventure\school\academic\StudentController@getValue');
 Route::get('students', 'com\adventure\school\academic\StudentController@allStudentReg');
 Route::post('students', 'com\adventure\school\academic\StudentController@allStudentReg');
+Route::get('studentimport', 'com\adventure\school\academic\StudentImportController@studentImport');
+Route::post('studentimport', 'com\adventure\school\academic\StudentImportController@studentImport');
+Route::get('studentimport/export', 'com\adventure\school\academic\StudentImportController@export');
+Route::get('studentimport/index', 'com\adventure\school\academic\StudentImportController@index');
 // Class Exam Settings
 Route::resource('examname', 'com\adventure\school\exam\ExamNameController');
 Route::get('masterexam/getValue', 'com\adventure\school\exam\MasterExamController@getValue');

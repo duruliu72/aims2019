@@ -97,7 +97,8 @@
 <script type="text/javascript">
  $(document).ready(function() {
   var table = $('#example').DataTable( {
-    responsive: true
+    responsive: true,
+    buttons:['copy','csv','excel','print','pdf']
   } );
 
   new $.fn.dataTable.FixedHeader( table );

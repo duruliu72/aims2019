@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 03, 2019 at 10:58 AM
+-- Generation Time: Jun 16, 2019 at 01:55 PM
 -- Server version: 10.1.36-MariaDB
 -- PHP Version: 7.2.10
 
@@ -298,7 +298,7 @@ CREATE TABLE `applicants` (
 --
 
 INSERT INTO `applicants` (`id`, `applicantid`, `pin_code`, `firstName`, `middleName`, `lastName`, `phone`, `localOrOutsider`, `fatherName`, `motherName`, `f_occupation`, `m_occupation`, `father_nid`, `mother_nid`, `father_Phone`, `mother_Phone`, `dob`, `age`, `birthregno`, `birthpalace`, `genderid`, `bloodgroupid`, `marital_status`, `religionid`, `nationalityid`, `ethnicty`, `quotaid`, `abled`, `parent_income`, `present_addressid`, `permanent_addressid`, `guardianName`, `g_religion`, `g_contactno`, `g_occupation`, `g_income`, `gurdian_addressid`, `prevschool`, `lastclass`, `result`, `passing_year`, `tcno`, `tcissueddate`, `picture`, `signature`, `father_picture`, `mother_picture`, `created_at`, `updated_at`) VALUES
-(1, 19100001, 'XGqnaM', 'Md.', 'Durul', 'Hoda', '01272720772', NULL, 'Masu', 'Amena', NULL, NULL, NULL, NULL, NULL, NULL, '2019-05-30', NULL, NULL, NULL, 1, 0, NULL, 2, 1, NULL, 1, NULL, NULL, 1, 2, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '0000-00-00', '19100001.png', NULL, NULL, NULL, '2019-05-08 00:23:16', '2019-05-08 00:23:16'),
+(1, 19100001, 'XGqnaM', 'Md.', 'Durul', 'Hoda', '01272720772', NULL, 'Masu', 'Amena', NULL, NULL, NULL, NULL, NULL, NULL, '2019-05-30', NULL, NULL, NULL, 1, 0, NULL, 2, 1, NULL, 1, NULL, NULL, 1, 2, NULL, 0, NULL, NULL, NULL, NULL, NULL, '4f', NULL, NULL, NULL, '0000-00-00', '19100001.png', NULL, NULL, NULL, '2019-05-08 00:23:16', '2019-05-08 00:23:16'),
 (2, 19100002, 'nEJtUA', 'Durul Hoda', NULL, NULL, '01272720772', NULL, 'Masu', 'Amena', NULL, NULL, NULL, NULL, NULL, NULL, '2019-05-30', NULL, NULL, NULL, 1, 0, NULL, 1, 1, NULL, 1, NULL, NULL, 3, 4, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '0000-00-00', '19100002.png', NULL, NULL, NULL, '2019-05-08 00:23:27', '2019-05-08 00:23:27'),
 (3, 19100003, '1z0VH6', 'Durul Hoda', NULL, NULL, '01272720772', NULL, 'Masu', 'Amena', NULL, NULL, NULL, NULL, NULL, NULL, '2019-05-30', NULL, NULL, NULL, 1, 0, NULL, 2, 1, NULL, 1, NULL, NULL, 5, 6, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '0000-00-00', '19100003.png', NULL, NULL, NULL, '2019-05-08 02:10:45', '2019-05-08 02:10:45'),
 (4, 19100004, 'rbXaNm', 'Durul Hoda', NULL, NULL, '01272720772', NULL, 'Masu', 'Amena', NULL, NULL, NULL, NULL, NULL, NULL, '2019-05-30', NULL, NULL, NULL, 1, 0, NULL, 1, 1, NULL, 1, NULL, NULL, 7, 8, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '0000-00-00', '19100004.png', NULL, NULL, NULL, '2019-05-08 02:10:50', '2019-05-08 02:10:50'),
@@ -419,6 +419,7 @@ CREATE TABLE `courseoffer` (
   `id` int(10) UNSIGNED NOT NULL,
   `programofferid` int(11) NOT NULL,
   `coursecodeid` int(11) NOT NULL,
+  `teacherid` int(11) DEFAULT NULL,
   `coursemark` double(8,2) DEFAULT NULL,
   `meargeid` int(11) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
@@ -429,13 +430,13 @@ CREATE TABLE `courseoffer` (
 -- Dumping data for table `courseoffer`
 --
 
-INSERT INTO `courseoffer` (`id`, `programofferid`, `coursecodeid`, `coursemark`, `meargeid`, `created_at`, `updated_at`) VALUES
-(1, 2, 1, 100.00, NULL, '2019-05-20 00:33:19', '2019-05-20 00:33:19'),
-(2, 2, 2, 120.00, 1, '2019-05-20 00:33:19', '2019-05-20 00:33:19'),
-(3, 2, 3, 100.00, 1, '2019-05-20 00:33:19', '2019-05-20 00:33:19'),
-(4, 1, 1, 100.00, NULL, '2019-06-01 23:04:01', '2019-06-01 23:04:01'),
-(5, 1, 2, 100.00, NULL, '2019-06-01 23:04:01', '2019-06-01 23:04:01'),
-(6, 1, 3, 100.00, NULL, '2019-06-01 23:04:01', '2019-06-01 23:04:01');
+INSERT INTO `courseoffer` (`id`, `programofferid`, `coursecodeid`, `teacherid`, `coursemark`, `meargeid`, `created_at`, `updated_at`) VALUES
+(1, 2, 1, NULL, 100.00, NULL, '2019-05-20 00:33:19', '2019-05-20 00:33:19'),
+(2, 2, 2, NULL, 120.00, 1, '2019-05-20 00:33:19', '2019-05-20 00:33:19'),
+(3, 2, 3, NULL, 100.00, 1, '2019-05-20 00:33:19', '2019-05-20 00:33:19'),
+(4, 1, 1, NULL, 100.00, NULL, '2019-06-01 23:04:01', '2019-06-01 23:04:01'),
+(5, 1, 2, NULL, 100.00, NULL, '2019-06-01 23:04:01', '2019-06-01 23:04:01'),
+(6, 1, 3, NULL, 100.00, NULL, '2019-06-01 23:04:01', '2019-06-01 23:04:01');
 
 -- --------------------------------------------------------
 
@@ -578,7 +579,9 @@ CREATE TABLE `divisions` (
 
 INSERT INTO `divisions` (`id`, `name`, `status`, `created_at`, `updated_at`) VALUES
 (1, 'Rajshahi', 0, '2019-05-05 03:21:05', '2019-05-05 03:21:05'),
-(2, 'Rongpur', 0, '2019-05-05 03:21:16', '2019-05-05 03:21:16');
+(2, 'Rangpur', 0, '2019-06-16 05:01:33', '2019-06-16 05:01:33'),
+(9, 'name', 0, '2019-06-16 05:03:17', '2019-06-16 05:03:17'),
+(10, 'Kumilla', 0, '2019-06-16 05:03:17', '2019-06-16 05:03:17');
 
 -- --------------------------------------------------------
 
@@ -961,7 +964,13 @@ INSERT INTO `mark_distribution` (`id`, `programofferid`, `coursecodeid`, `markca
 (8, 1, 1, 2, 45.00, 2, 0, '2019-06-03 00:53:59', '2019-06-03 00:53:59'),
 (9, 1, 1, 3, 30.00, 3, 0, '2019-06-03 00:53:59', '2019-06-03 00:53:59'),
 (10, 1, 1, 4, 5.00, 4, 0, '2019-06-03 00:53:59', '2019-06-03 00:53:59'),
-(11, 1, 2, 1, 100.00, 1, 0, '2019-06-03 00:54:15', '2019-06-03 00:54:15');
+(11, 1, 2, 1, 20.00, 1, 0, '2019-06-03 00:54:15', '2019-06-03 00:54:15'),
+(12, 1, 2, 2, 20.00, 2, 0, '2019-06-12 01:07:39', '2019-06-12 01:07:39'),
+(13, 1, 2, 3, 60.00, 3, 0, '2019-06-12 01:07:39', '2019-06-12 01:07:39'),
+(14, 2, 3, 1, 50.00, 1, 0, '2019-06-12 01:08:46', '2019-06-12 01:08:46'),
+(15, 2, 3, 2, 10.00, 2, 0, '2019-06-12 01:08:46', '2019-06-12 01:08:46'),
+(16, 2, 3, 3, 10.00, 3, 0, '2019-06-12 01:08:46', '2019-06-12 01:08:46'),
+(17, 2, 3, 4, 30.00, 4, 0, '2019-06-12 01:08:46', '2019-06-12 01:08:46');
 
 -- --------------------------------------------------------
 
@@ -1103,17 +1112,23 @@ INSERT INTO `menus` (`id`, `name`, `url`, `parentid`, `menuorder`, `status`, `cr
 (46, 'Grade Point', 'gradepoint', 7, 100, 0, '2019-05-20 23:46:47', '2019-05-20 23:46:47'),
 (47, 'Edit Grade Point', 'gradepoint/edit', 7, 100, 0, '2019-05-21 00:12:01', '2019-05-21 00:12:01'),
 (48, 'Course Type', 'coursetype', 7, 100, 0, '2019-05-21 00:17:35', '2019-05-21 00:17:35'),
-(49, 'Academic Settings', NULL, 0, 100, 0, '2019-05-21 00:32:56', '2019-05-21 00:32:56'),
-(50, 'Student', 'student', 49, 100, 0, '2019-05-21 00:33:28', '2019-05-21 00:33:28'),
-(51, 'Students Registration', 'students', 49, 100, 0, '2019-05-21 00:34:24', '2019-05-21 00:34:24'),
+(49, 'Students Registration', NULL, 0, 100, 0, '2019-05-21 00:32:56', '2019-06-16 05:35:28'),
+(50, 'Student Enroll', 'student', 49, 100, 0, '2019-05-21 00:33:28', '2019-06-16 05:37:19'),
+(51, 'Students Enroll', 'students', 49, 100, 0, '2019-05-21 00:34:24', '2019-06-16 05:36:53'),
 (52, 'Exam Settings', NULL, 0, 100, 0, '2019-05-23 00:24:53', '2019-05-23 00:24:53'),
 (53, 'Exam Name', 'examname', 52, 100, 0, '2019-05-23 00:25:17', '2019-05-23 00:25:17'),
 (54, 'Master Exam', 'masterexam', 52, 100, 0, '2019-05-23 00:55:06', '2019-05-23 00:55:06'),
 (55, 'Child Exam', 'childexam', 52, 100, 0, '2019-05-23 01:32:45', '2019-05-23 01:32:45'),
 (56, 'Institute Settings', NULL, 0, 100, 0, '2019-05-30 02:12:24', '2019-05-30 02:12:24'),
 (57, 'Institute', 'institute', 56, 100, 0, '2019-05-30 02:12:47', '2019-05-30 02:12:47'),
-(58, 'Class Result', NULL, 0, 100, 0, '2019-05-31 23:09:33', '2019-05-31 23:09:33'),
-(59, 'Master Mark Entry', 'mstexammarkentry', 58, 100, 0, '2019-06-01 00:49:04', '2019-06-01 00:49:04');
+(58, 'Mark Entryt', NULL, 0, 100, 0, '2019-05-31 23:09:33', '2019-06-15 00:29:52'),
+(59, 'Master Mark Entry', 'mstexammarkentry', 58, 100, 0, '2019-06-01 00:49:04', '2019-06-01 00:49:04'),
+(60, 'Master Mark Edit', 'mstexammarkedit', 58, 100, 0, '2019-06-13 02:01:38', '2019-06-13 02:01:38'),
+(61, 'Child Mark Entry', 'childexammarkentry', 58, 100, 0, '2019-06-13 06:11:23', '2019-06-13 06:11:50'),
+(62, 'Child Mark Edit', 'childexammarkedit', 58, 100, 0, '2019-06-13 06:13:03', '2019-06-13 06:13:03'),
+(63, 'Import/Export', NULL, 0, 100, 0, '2019-06-14 23:32:39', '2019-06-14 23:32:39'),
+(64, 'Student Import', 'studentimport', 63, 100, 0, '2019-06-14 23:34:07', '2019-06-14 23:34:07'),
+(65, 'Academic Result', NULL, 0, 100, 0, '2019-06-16 05:31:43', '2019-06-16 05:31:43');
 
 -- --------------------------------------------------------
 
@@ -1198,7 +1213,8 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (66, '2019_02_05_064553_create_applicants_table', 3),
 (68, '2019_05_26_054545_create_level_programs_table', 4),
 (69, '2019_05_26_055224_create_program_groups_table', 4),
-(71, '2019_06_02_090752_create_mst_exam_marks_table', 5);
+(72, '2019_06_02_090752_create_mst_exam_marks_table', 5),
+(73, '2019_06_15_052029_create_students_house_table', 6);
 
 -- --------------------------------------------------------
 
@@ -1221,6 +1237,16 @@ CREATE TABLE `mst_exam_marks` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `mst_exam_marks`
+--
+
+INSERT INTO `mst_exam_marks` (`id`, `programofferid`, `sectionid`, `teacherid`, `studentid`, `coursecodeid`, `examnameid`, `examtypeid`, `markcategoryid`, `marks`, `status`, `created_at`, `updated_at`) VALUES
+(1, 1, 1, 0, 1, 1, 1, 1, 1, 24.00, 0, '2019-06-13 05:22:57', '2019-06-13 05:22:57'),
+(2, 1, 1, 0, 1, 1, 1, 1, 2, 24.00, 0, '2019-06-13 05:22:57', '2019-06-13 05:22:57'),
+(3, 1, 1, 0, 1, 1, 1, 1, 3, 12.00, 0, '2019-06-13 05:22:57', '2019-06-13 05:22:57'),
+(4, 1, 1, 0, 1, 1, 1, 1, 4, 50.00, 0, '2019-06-13 05:22:57', '2019-06-13 05:22:57');
 
 -- --------------------------------------------------------
 
@@ -1656,15 +1682,6 @@ INSERT INTO `role_menu` (`roleid`, `menuid`, `permissionid`) VALUES
 (1, 48, 2),
 (1, 48, 3),
 (1, 48, 4),
-(1, 49, 0),
-(1, 50, 1),
-(1, 50, 2),
-(1, 50, 3),
-(1, 50, 4),
-(1, 51, 1),
-(1, 51, 2),
-(1, 51, 3),
-(1, 51, 4),
 (1, 52, 0),
 (1, 53, 1),
 (1, 53, 2),
@@ -1695,11 +1712,38 @@ INSERT INTO `role_menu` (`roleid`, `menuid`, `permissionid`) VALUES
 (1, 57, 2),
 (1, 57, 3),
 (1, 57, 4),
-(1, 58, 0),
 (1, 59, 1),
 (1, 59, 2),
 (1, 59, 3),
-(1, 59, 4);
+(1, 59, 4),
+(1, 60, 1),
+(1, 60, 2),
+(1, 60, 3),
+(1, 60, 4),
+(1, 61, 1),
+(1, 61, 2),
+(1, 61, 3),
+(1, 61, 4),
+(1, 62, 1),
+(1, 62, 2),
+(1, 62, 3),
+(1, 62, 4),
+(1, 63, 0),
+(1, 64, 1),
+(1, 64, 2),
+(1, 64, 3),
+(1, 64, 4),
+(1, 58, 0),
+(1, 65, 0),
+(1, 49, 0),
+(1, 51, 1),
+(1, 51, 2),
+(1, 51, 3),
+(1, 51, 4),
+(1, 50, 1),
+(1, 50, 2),
+(1, 50, 3),
+(1, 50, 4);
 
 -- --------------------------------------------------------
 
@@ -1863,6 +1907,22 @@ INSERT INTO `students` (`id`, `programofferid`, `sectionid`, `applicantid`, `cla
 (1, 1, 1, 19100001, 1, 0, 0, 1, 1, 0, '2019-06-01 23:57:16', '2019-06-01 23:57:16'),
 (2, 1, 1, 19100002, 2, 0, 0, 1, 1, 0, '2019-06-02 00:02:23', '2019-06-02 00:02:23'),
 (3, 1, 1, 19100004, 4, 0, 0, 1, 1, 0, '2019-06-02 01:22:30', '2019-06-02 01:22:30');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `students_house`
+--
+
+CREATE TABLE `students_house` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `programofferid` int(11) NOT NULL,
+  `applicantid` int(11) NOT NULL,
+  `admittedtypeid` int(11) DEFAULT NULL,
+  `status` int(11) NOT NULL DEFAULT '0',
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -2301,6 +2361,12 @@ ALTER TABLE `students`
   ADD UNIQUE KEY `applicantid` (`applicantid`);
 
 --
+-- Indexes for table `students_house`
+--
+ALTER TABLE `students_house`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `student_courses`
 --
 ALTER TABLE `student_courses`
@@ -2429,7 +2495,7 @@ ALTER TABLE `districts`
 -- AUTO_INCREMENT for table `divisions`
 --
 ALTER TABLE `divisions`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `educationinfo`
@@ -2531,7 +2597,7 @@ ALTER TABLE `mark_categories`
 -- AUTO_INCREMENT for table `mark_distribution`
 --
 ALTER TABLE `mark_distribution`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT for table `master_exam`
@@ -2555,13 +2621,13 @@ ALTER TABLE `mediums`
 -- AUTO_INCREMENT for table `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=72;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=74;
 
 --
 -- AUTO_INCREMENT for table `mst_exam_marks`
 --
 ALTER TABLE `mst_exam_marks`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `nationalities`
@@ -2652,6 +2718,12 @@ ALTER TABLE `shifts`
 --
 ALTER TABLE `students`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `students_house`
+--
+ALTER TABLE `students_house`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `student_courses`
