@@ -16,7 +16,7 @@
               @endif
             </h3>
              <ol class="breadcrumb">
-                <li>All Applicants for Registration</li>
+                <li>Direct Student Registration</li>
                 @if ($errors->any())
                   <span style="float: right;font-size: 15px;">{{$errors->all()[0] }}</span>
                 @endif
@@ -37,163 +37,211 @@
           <div class="col-lg-12">
             <section class="panel">
               <div class="panel-body">
-                <div class="top_form notprint">
-                    <form action="{{URL::to('students')}}" method="POST">
+                <div class="notprint">
+                    <form action="{{URL::to('directenroll')}}" method="POST" enctype="multipart/form-data">
                     {{csrf_field()}}
-                    <div class="form-group row">
-                      <label class="col-sm-2 control-label" for="programid">Program</label>
-                      <div class="col-sm-4">
-                        <select onchange="getChange(this,'program')" class="form-control" name="programid" id="programid">
-                            <option  value="">SELECT</option>
-                            @foreach ($programList as $x)
-                            <option value="{{$x->id}}">{{$x->name}}</option>
+                    @if($programofferinfo==null)
+                      <div class="form-group row">
+                        <label class="col-sm-2 control-label" for="programid">Class<span class="star">*</span></label>
+                        <div class="col-sm-4">
+                            <select onchange="getChange(this,'program')"  class="form-control" name="programid" id="programid">
+                              <option value="">SELECT</option>
+                                  @foreach ($programList as $x)
+                                  <option <?php echo (old('programid')==$x->id)? 'selected':''; ?> value="{{$x->id}}">{{$x->name}}</option>
+                                  @endforeach
+                            </select>
+                        </div>
+                        <label class="col-sm-2 control-label" for="mediumid">Medium <span class="star">*</span></label>
+                        <div class="col-sm-4">
+                          <select onchange="getChange(this,'medium')" class="form-control" name="mediumid" id="mediumid">
+                            <option value="">SELECT</option>
+                            @foreach ($mediumList as $x)
+                              <option <?php echo (old('mediumid')==$x->id)? 'selected':''; ?> value="{{$x->id}}">{{$x->name}}</option>
                             @endforeach
-                        </select>
+                          </select>
+                        </div>
+    				 		      </div>
+                       <div class="form-group row">
+                        <label class="col-sm-2 control-label" for="shiftid">Shift<span class="star">*</span></label>
+                        <div class="col-sm-4">
+                            <select onchange="getChange(this,'shift')"  class="form-control" name="shiftid" id="shiftid">
+                              <option value="">SELECT</option>
+                                  @foreach ($shiftList as $x)
+                                  <option <?php echo (old('shiftid')==$x->id)? 'selected':''; ?> value="{{$x->id}}">{{$x->name}}</option>
+                                  @endforeach
+                            </select>
+                        </div>
+                        <label class="col-sm-2 control-label" for="groupid">Group <span class="star">*</span></label>
+                        <div class="col-sm-4">
+                          <select class="form-control" name="groupid" id="groupid">
+                            <option value="">SELECT</option>
+                            @foreach ($groupList as $x)
+                              <option <?php echo (old('groupid')==$x->id)? 'selected':''; ?> value="{{$x->id}}">{{$x->name}}</option>
+                            @endforeach
+                          </select>
+                        </div>
+    				 		      </div>
+                      <div class="form-group row">
+                          <label class="col-md-2 control-label" for="firstName">First Name<span class="star">*</span></label>
+                          <div class="col-md-4">
+                            <input type="text" class="form-control" placeholder="First Name" id="firstName" name="firstName" value="{{old('firstName')}}">
+								         </div>  
+								          <label class="col-md-2 control-label" for="middleName">Middle Name</label>
+	                        <div class="col-md-4">
+	                          <input type="text" class="form-control" placeholder="First Name" id="middleName" name="middleName" value="{{old('middleName')}}">
+								          </div>                     
+							        </div>
+                      <div class="form-group row">
+	                      <label class="col-md-2 control-label" for="lastName">Last Name</label>
+	                      <div class="col-md-4">
+									        <input type="text" class="form-control" placeholder="Last Name" id="lastName" name="lastName" value="{{old('lastName')}}">
+								        </div> 
+								        <label class="col-md-2 control-label" for="phone">Phone<span class="star">*</span></label>
+	                      <div class="col-md-4">
+									        <input type="text" class="form-control" placeholder="Phone" id="phone" name="phone" value="{{old('phone')}}">
+								        </div>                    
+							        </div>
+                      <div class="form-group row">
+                          <label class="col-md-2 control-label" for="fatherName">Father Name<span class="star">*</span></label>
+                          <div class="col-md-4">
+                            <input type="text" class="form-control" placeholder="Father Name" id="fatherName" name="fatherName" value="{{old('fatherName')}}">
+                          </div>    
+                          <label class="col-md-2 control-label" for="motherName">Mother Name<span class="star">*</span></label>
+                          <div class="col-md-4">
+                            <input type="text" class="form-control" placeholder="Mother Name" id="motherName" name="motherName" value="{{old('motherName')}}">
+                          </div>                         
+                    	</div>
+                      <div class="form-group row">
+                        <label class="col-md-2 control-label" for="dob">Date of Birth<span class="star">*</span></label>
+		                    <div class="col-md-4 date" id="datetimepicker1">
+		                      <input autocomplete="off" onchange="agecalculate(this)" type="text" class="form-control" id="dob" name="dob" value="{{old('dob')}}">
+								        </div>
+                        <label class="col-md-2 control-label" for="genderid">Gender<span class="star">*</span></label>
+                          <div class="col-md-4">
+                            <?php
+                            $check=true;
+                            ?>
+                            @foreach ($genderList as $x)
+                              <label><input @if($check) checked <?php $check=false; ?> @endif type="radio" name="genderid" value="{{$x->id}}">{{$x->name}}</label>
+                            @endforeach
+                          </div>
                       </div>
-                      <label class="col-sm-2 control-label" for="mediumid">Medium</label>
-                      <div class="col-sm-4">
-                        <select onchange="getChange(this,'medium')" class="form-control" name="mediumid" id="mediumid">
-                           <option value="">SELECT</option>
-                           @foreach ($mediumList as $x)
-                             <option value="{{$x->id}}">{{$x->name}}</option>
-                           @endforeach
-                           
-                        </select>
-                      </div>                  
-                    </div>
-                    <div class="form-group row">
-                      <label class="col-sm-2 control-label" for="shiftid">Shift</label>
-                      <div class="col-sm-4">
-                        <select onchange="getChange(this,'shift')" class="form-control" name="shiftid" id="shiftid">
-                          <option value="">SELECT</option>
-                           @foreach ($shiftList as $x)
-                             <option value="{{$x->id}}">{{$x->name}}</option>
-                           @endforeach
-                        </select>
-                      </div>
-                      <label class="col-sm-2 control-label" for="groupid">Group</label>
-                      <div class="col-sm-4">
-                        <select  class="form-control" name="groupid" id="groupid">
-                           <option value="">SELECT</option>
-                          @foreach ($groupList as $x)
-                             <option value="{{$x->id}}">{{$x->name}}</option>
-                           @endforeach
-                        </select>
-                      </div>                              
-                    </div>
-                    <div class="row">
-                      <div class="col-sm-12">
-                        <div class="btn-container">
-                          <button type="submit" class="btn btn-success result-btn" name="search_btn" value="search_btn">Search</button>
-                          <a class="btn btn-info refresh-btn" href="{{URL::to('students')}}"><i class="ace-icon fa fa-refresh bigger-120"></i>Refresh</a>
+                      <div class="form-group row">
+                        <label class="col-md-2 control-label" for="religionid">Religion<span class="star">*</span></label>
+                        <div class="col-md-4">
+                          <select class="form-control" name="religionid" id="religionid">
+                              <option value="">SELECT</option>
+                                @foreach ($religionList as $x)
+                                <option <?php echo (old('religionid')==$x->id)? 'selected':''; ?> value="{{$x->id}}">{{$x->name}}</option>
+                                @endforeach
+                          </select>
+                        </div>
+                        <label class="col-md-2 control-label" for="quotaid">Quota<span class="star">*</span></label>
+		                    <div class="col-md-4">
+                            <select class="form-control" name="quotaid" id="quotaid">
+                                <option value="0">SELECT</option>
+                                @foreach ($quotaList as $x)
+                                <option <?php echo (old('quotaid')==$x->id)? 'selected':''; ?> value="{{$x->id}}">{{$x->name}}</option>
+                            @endforeach
+                            </select>
                         </div>
                       </div>
-                    </div>
-                  </form>
-                </div>
-                @if(isset($result))
-                  <div class="printarea" id="printarea">
-                    <div class="row print-row">
-                      <div class="col-sm-12 print-col">
-                         <div class="programinfo">
-                            <div class="programinfo_item"><span>Session&nbsp:</span> <span>{{$result['programofferinfo']->sessionName}}</span></div>
-                            <div class="programinfo_item"><span>Class&nbsp:</span> <span>{{$result['programofferinfo']->programName}}</span></div>
-                            <div class="programinfo_item"><span>Group&nbsp:</span> <span>{{$result['programofferinfo']->groupName}}</span></div>
-                            <div class="programinfo_item"><span>Medium&nbsp:</span> <span>{{$result['programofferinfo']->mediumName}}</span></div>
-                            <div class="programinfo_item"><span>Shift&nbsp: </span> <span>{{$result['programofferinfo']->shiftName}}</span></div>
-                         </div>
+                      <div class="form-group row">
+                        <label class="col-md-2 control-label" for="picture">Picture</label>
+                        <div class="col-md-4">
+                            <input type="file" class="form-control-file" id="picture" name="picture">
+                        </div>
+                        <label class="col-md-2 control-label" for="signature">Signature</label>
+                        <div class="col-md-4">
+                            <input type="file" class="form-control-file" name="signature" id="signature">
+                        </div>
+					            </div>
+                      <div style="text-align:right;">
+                          <button type="submit" class="btn btn-success result-btn result-btn-margin-zero" name="next_btn" value="next_btn">Next</button>
                       </div>
-                    </div>
-                    <div class="row print-row">
-                    <form action="{{URL::to('students')}}" method="POST">
-                      {{csrf_field()}}
-                      <div class="col-sm-7 print-col">
-                        <div class="applicant_info">
-                            <input type="hidden" name="programofferid" value="{{$result['programofferinfo']->id}}">
-                            <table>
-                              <thead>
-                                <tr>
-                                  <th>SL NO</th>
-                                  <th>Applicantid</th>
-                                  <th>Name</th>
-                                  <th>Merit</th>
-                                  <th>Religion</th>
-                                  <th width="80px;">Picture</th>
-                                  <th width="100px">Class Roll</th>
-                                  <th width="2%"><input id="applicantcheckid" type="checkbox"></th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                              <?php $i=0; ?>
-                              @foreach($result['applicant_list'] as $applicant)
-                                <tr>
-                                  <td>{{++$i}}</td>
-                                  <td>{{$applicant[0]->applicantid}}</td>
-                                  <td>{{sprintf('%s %s %s',$applicant[0]->firstName,$applicant[0]->middleName,$applicant[0]->lastName)}}</td>
-                                  <td>{{$applicant[2]}}</td>
-                                  <td>{{$applicant[0]->religionName}}</td>
-                                  <td style="margin:0px;padding:0px;"> <img style="width:80px;height:60px;" src="{{asset('clientAdmin/admission/student')}}/{{$applicant[0]->picture}}"></td>
-                                  @if($applicant[1]->capplicantid!=0)
-                                    <td>{{$applicant[1]->classroll}}</td>
-                                    <td><span style='font-size:18px;'>&#10003;</span></td>
-                                  @else
-                                    <td><input type="text" class="form-control" name="classroll[{{$applicant[0]->applicantid}}]" id="classroll"></td>
-                                    <td><input class="applicantcheck" type="checkbox" name="applicantcheck[{{$applicant[0]->applicantid}}]"></td>
-                                  @endif
-                                </tr>
-                               @endforeach
-                              </tbody>
-                            </table>
+                    </form>
+                      @else
+                      <div class="row print-row">
+                        <div class="col-sm-12 print-col">
+                          <div class="programinfo">
+                              <div class="programinfo_item"><span>Session&nbsp:</span> <span>{{$programofferinfo->sessionName}}</span></div>
+                              <div class="programinfo_item"><span>Class&nbsp:</span> <span>{{$programofferinfo->programName}}</span></div>
+                              <div class="programinfo_item"><span>Group&nbsp:</span> <span>{{$programofferinfo->groupName}}</span></div>
+                              <div class="programinfo_item"><span>Medium&nbsp:</span> <span>{{$programofferinfo->mediumName}}</span></div>
+                              <div class="programinfo_item"><span>Shift&nbsp: </span> <span>{{$programofferinfo->shiftName}}</span></div>
+                          </div>
                         </div>
                       </div>
-                      <div class="col-md-5">
-                        <div class="applicant_info">
-                          <table class="table table-striped table-bordered table-hover customtable" id="studentcourse">
-                              <thead>
-                                  <tr>
-                                      <th width="2%">#</th>
-                                      <th>Course</th>
-                                      <th>Course Type</th>
-                                      <th width="2%"><input id="coursecheckid" type="checkbox"></th>
-                                  </tr>
-                              </thead>
-                              <tbody>
+                      <div class="row print-row" style="margin-top:25px;">
+                        <form action="{{URL::to('directenroll')}}" method="POST" enctype="multipart/form-data">
+                          {{csrf_field()}}
+                          <input type="hidden" name="programofferid" value={{$field_data['programofferid']}}>
+                          <input type="hidden" name="firstName" value={{$field_data['firstName']}}>
+                          <input type="hidden" name="middleName" value={{$field_data['middleName']}}>
+                          <input type="hidden" name="lastName" value={{$field_data['lastName']}}>
+                          <input type="hidden" name="phone" value={{$field_data['phone']}}>
+                          <input type="hidden" name="fatherName" value={{$field_data['fatherName']}}>
+                          <input type="hidden" name="motherName" value={{$field_data['motherName']}}>
+                          <input type="hidden" name="dob" value={{$field_data['dob']}}>
+                          <input type="hidden" name="genderid" value={{$field_data['genderid']}}>
+                          <input type="hidden" name="religionid" value={{$field_data['religionid']}}>
+                          <input type="hidden" name="quotaid" value={{$field_data['quotaid']}}>
+                          <input type="hidden" name="picture" value={{$field_data['picture']}}>
+                          <input type="hidden" name="signature" value={{$field_data['signature']}}>
+                          <div class="col-md-12">
+                            <div class="course_info">
+                              <table class="table table-striped table-bordered table-hover customtable" id="studentcourse">
+                                <thead>
+                                    <tr>
+                                        <th width="2%">#</th>
+                                        <th>Course</th>
+                                        <th>Course Type</th>
+                                        <th width="2%"><input id="coursecheckid" type="checkbox"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
                                <?php $id=0; ?>
-                                @foreach($courseList as $course)
-                                  <tr>
-                                    <td>{{++$id}}</td>
-                                    <td>{{$course->courseNameWithCode}}</td>
-                                    <td>
-                                        <select class="form-control" name="coursetypeid[{{$course->coursecodeid}}]" id="coursetypeid">
-                                        @foreach($courseTypeList as $x)
-                                        <option value="{{$x->id}}">{{$x->name}}</option>
-                                        @endforeach
-                                        </select>
-                                    </td>
-                                    <td><input class="coursecheck" type="checkbox" name="coursecheck[{{$course->coursecodeid}}]"></td>
-                                  </tr>
+                                  @foreach($courseList as $course)
+                                    <tr>
+                                      <td>{{++$id}}</td>
+                                      <td>{{$course->courseNameWithCode}}</td>
+                                      <td>
+                                          <select class="form-control" name="coursetypeid[{{$course->coursecodeid}}]" id="coursetypeid">
+                                          @foreach($courseTypeList as $x)
+                                          <option value="{{$x->id}}">{{$x->name}}</option>
+                                          @endforeach
+                                          </select>
+                                      </td>
+                                      <td><input class="coursecheck" type="checkbox" name="coursecheck[{{$course->coursecodeid}}]"></td>
+                                    </tr>
                                   @endforeach
                               </tbody>
-                            </table>
-                          <div class="from-group row" style="margin-bottom:15px;">
-                            <label class="col-sm-4 control-label" for="sectionid">Section</label>
-                            <div class="col-sm-8">
-                                <select class="form-control" name="sectionid" id="sectionid">
-                                  @foreach($sectionList as $x)
-                                      <option value="{{$x->id}}">{{$x->name}}</option>
-                                  @endforeach
-                                </select>
+                              </table>
+                            </div>
+                            <div class="from-group row" style="margin-bottom:15px;">
+                                <label class="col-sm-2 control-label" for="sectionid">Section</label>
+                                <div class="col-sm-4">
+                                    <select class="form-control" name="sectionid" id="sectionid">
+                                      @foreach($sectionList as $x)
+                                          <option value="{{$x->id}}">{{$x->name}}</option>
+                                      @endforeach
+                                    </select>
+                                </div>
+                                <label class="col-md-2 control-label" for="classroll">Class Roll</label>
+                                <div class="col-md-4">
+                                  <input type="text" class="form-control" placeholder="class Roll" id="classroll" name="classroll" value="{{old('classroll')}}">
+                              </div> 
+                            </div>
+                              <div style="text-align:right;">
+                                <button type="submit" class="btn btn-success result-btn result-btn-margin-zero" name="save_btn" value="save_btn">Save</button>
+                              </div>
                             </div>
                           </div>
-                          <div style="text-align:right;">
-                             <button type="submit" class="btn btn-success result-btn result-btn-margin-zero" name="save_btn" value="save_btn">Save</button>
-                          </div>
-                        </div>
+                        </form>
                       </div>
-                      </form>
-                    </div>
+                      @endif
                   </div>
-                @endif
+                </div>
               </div>
             </section>
           </div><!--/.col-->
@@ -203,6 +251,19 @@
 
 @endsection
 @section('uniqueScript')
+<script src="{{asset('clientAdmin/js/bootstrap-datepicker.js')}}"></script>
 <script src="{{asset('clientAdmin/js/baseUrl.js')}}"></script>
 <script src="{{asset('clientAdmin/js/student.js')}}"></script>
+<script type="text/javascript">
+    var Script = function() {
+  //date picker
+  $(function() {
+    $('#dob').datepicker({
+      format: 'dd-mm-yyyy',
+      orientation: 'bottom',
+    });
+  });
+
+}();
+</script>
 @endsection

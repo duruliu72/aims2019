@@ -26,7 +26,6 @@ class StudentRegistration extends Model
             // 'student'=>$student
             
         );
-        dd($result);
 		return $result;
     }
     public function getApplcantsForRegistration($programofferid){

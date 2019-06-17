@@ -145,3 +145,11 @@ fieldset.menu legend{
 .markentry-form{
     margin-top: 25px;
 }
+.star {
+    display: block;
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    color: red;
+}
