@@ -238,6 +238,7 @@ class MstExamMarkEntryController extends Controller
             // $checkStudensAdmit=$aStudent->checkStudentOnPO($programofferid);
             
         }
+        $aCourseCode=new CourseCode();
         if($request->isMethod('post')&&$request->update_btn=='update_btn'){
             $programofferid=$request->programofferid;
             $sectionid=$request->sectionid;
@@ -249,12 +250,15 @@ class MstExamMarkEntryController extends Controller
                 foreach($checkboxList as $studentid=>$v){
                     $courseCatsMarks=$marksList[$studentid];
                     $isRowValFill=true;
+                    $tot_marks=0;
                     foreach($courseCatsMarks as $markcatid=>$catMark){
+                        $tot_marks=$tot_marks+$catMark;
                         if($catMark==null){
                             $isRowValFill=false;
                         }
                     }
-                    if($isRowValFill==true){
+                    $courseCode=$aCourseOffer->getCourseCode($programofferid,$coursecodeid);
+                    if($isRowValFill==true && ($tot_marks<=$courseCode->coursemark)){
                         foreach($courseCatsMarks as $markcatid=>$catMark){
                             \DB::table('mst_exam_marks')
                             ->where('programofferid', $programofferid)
@@ -270,21 +274,21 @@ class MstExamMarkEntryController extends Controller
         }
         $programofferinfo=$aProgramOffer->getProgramOffer($programofferid);
         $mark_catList=$markDistObj->getMarkCategory($programofferid,$coursecodeid);
+        // dd($mark_catList);
         $aSection=new Section();
         $section=$aSection->getSection($sectionid);
-        $aCourseCode=new CourseCode();
-        $courseCode=$aCourseCode->getCourse($coursecodeid);
         $aMstExamMarks=new MstExamMarks();
         $studentList=$aMstExamMarks->getStudentsOnClsNSec($programofferid,$sectionid,$coursecodeid,$examnameid,'INNER');     
+        // dd($studentList);
         // sessionid,programid,groupid,mediumid,shiftid and tableName
         $programList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,"programs",'programid');
         $mediumList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,"mediums",'mediumid');
         $shiftList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,"shifts",'shiftid');
         $groupList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,"groups",'groupid');
-        $aCourseCode=new CourseCode();
         $courseList=$aCourseCode->getAllCourse();
         $aExamName=new ExamName();
         $exam=$aExamName->getExamONID($examnameid);
+        // dd($exam);
         $examNameList=$aExamName->getExamName(1);
         $dataList=[
             'institute'=>Institute::getInstituteName(),

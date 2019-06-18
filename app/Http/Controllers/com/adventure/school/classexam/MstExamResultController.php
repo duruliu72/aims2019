@@ -7,5 +7,7 @@ use App\Http\Controllers\Controller;
 
 class MstExamResultController extends Controller
 {
-    
+    public function mstexamresult(Request $request){
+        
+    }
 }

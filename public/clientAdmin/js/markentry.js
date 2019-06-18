@@ -92,4 +92,46 @@ markcheckid.addEventListener("click",function(e){
 	checkUncheck();
 });
 
+/////////////////
+let markentry=document.getElementById("markentry");
+if(markentry!=null){
+	let trarray=markentry.children[1].getElementsByTagName("tr");
+	let subjectmarks=document.getElementsByClassName("categorymarks");
+	for(var tr of trarray){
+		var tdarray=tr.children;
+		var tdclass;
+		for(var td of tdarray){
+			if(td.getAttribute("class")!=null){
+				tdclass=td.getAttribute("class");
+			}
+		}
+		let markfield=document.getElementsByClassName(tdclass);
+		// console.log(markfield);
+		let duplicate=[];
+		for (let x=0;x<markfield.length-1;x++) {
+			duplicate.push(markfield[x].children[0].value);
+		}
+		for(let x=0;x<markfield.length-1;x++){
+			markfield[x].children[0].addEventListener("keyup",function(e){
+				if(markfield[x].children[0].value!=""){
+					if (parseInt(markfield[x].children[0].value)>parseInt(subjectmarks[x].innerHTML)) {
+						markfield[x].children[0].value=duplicate[x];
+						confirm("Input must be less than or equil : "+subjectmarks[x].innerHTML);
+					}
+				}
+				let sum=0;
+				for(let i=0;i<markfield.length-1;i++){
+					if(markfield[i].children[0].value!=""){
+						sum=parseInt(sum)+parseInt(markfield[i].children[0].value);
+						markfield[markfield.length-1].children[0].innerHTML=sum;
+					}else{
+						sum=parseInt(sum)+0;
+						markfield[markfield.length-1].children[0].innerHTML=sum;
+					}
+				}
+			});
+		}
+	}
+}
+
 

@@ -43,9 +43,15 @@ class MstExamMarks extends Model
         return $students;
     }
     public function getCatMarks($programofferid,$sectionid,$coursecodeid,$examnameid,$studentid){
-        $sql="SELECT * FROM `mst_exam_marks`
-        WHERE programofferid=? && sectionid=? && coursecodeid=? && examnameid=? && studentid=?";
-        $qResult=\DB::select($sql,[$programofferid,$sectionid,$coursecodeid,$examnameid,$studentid]);
+        $sql="SELECT
+        t1.markcategoryid AS markcatid,
+        t2.*
+        FROM(SELECT * FROM `mark_distribution`
+        WHERE programofferid=? && coursecodeid=?) AS t1
+        LEFT JOIN (SELECT * FROM `mst_exam_marks`
+                WHERE programofferid=? && sectionid=? && coursecodeid=? && examnameid=? && studentid=?) AS t2
+                ON t1.programofferid=t2.programofferid && t1.coursecodeid=t2.coursecodeid && t1.markcategoryid=t2.markcategoryid";
+        $qResult=\DB::select($sql,[$programofferid,$coursecodeid,$programofferid,$sectionid,$coursecodeid,$examnameid,$studentid]);
         $catsMarks=collect($qResult);
         return $catsMarks;
     }

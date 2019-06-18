@@ -1,0 +1,14 @@
+SELECT 
+mexm.programofferid,
+mexm.examnameid,
+mexm.studentid,
+mexm.coursecodeid,
+mexm.markcategoryid,
+md.passtypeid,
+courseoffer.coursemark,
+FORMAT((courseoffer.coursemark*md.distribution_mark)/100,0) AS categorymarks,
+mexm.marks AS obt_marks
+FROM `mst_exam_marks` mexm
+INNER JOIN courseoffer ON mexm.programofferid=courseoffer.programofferid && mexm.coursecodeid=courseoffer.coursecodeid
+INNER JOIN mark_distribution as md ON mexm.programofferid=md.programofferid && mexm.coursecodeid=md.coursecodeid && mexm.markcategoryid=md.markcategoryid
+WHERE mexm.programofferid=1 && mexm.examnameid=1

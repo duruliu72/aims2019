@@ -122,11 +122,13 @@ Route::post('childexam', 'com\adventure\school\exam\ChildExamController@childExa
 Route::get('childexam/{id}/edit', 'com\adventure\school\exam\ChildExamController@childExamCrete');
 Route::post('childexam/{id}/edit', 'com\adventure\school\exam\ChildExamController@childExamCrete');
 Route::get('childexam/getValue', 'com\adventure\school\exam\ChildExamController@getValue');
-// Class Result
+// Mark Entry
 Route::get('mstexammarkentry', 'com\adventure\school\classexam\MstExamMarkEntryController@marksentry');
 Route::post('mstexammarkentry', 'com\adventure\school\classexam\MstExamMarkEntryController@marksentry');
 Route::get('mstexammarkedit', 'com\adventure\school\classexam\MstExamMarkEntryController@marksedit');
 Route::post('mstexammarkedit', 'com\adventure\school\classexam\MstExamMarkEntryController@marksedit');
+// Class Result
+Route::get('mstexamresult', 'com\adventure\school\classexam\MstExamResultController@mstexamresult');
 // Menu Settings
 Route::resource('menu', 'com\adventure\school\menu\MenuController');
 

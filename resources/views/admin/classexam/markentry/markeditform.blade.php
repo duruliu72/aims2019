@@ -140,6 +140,9 @@
                     <div class="programofferinfo_item">
                         <span>Subject: {{sprintf('%s %s%s%s',$courseCode->courseName,'(',$courseCode->name,')')}}</span>
                     </div>
+                    <div class="programofferinfo_item">
+                        <span>Exam Name: {{$exam->name}}</span>
+                    </div>
                 </div>
                 <div class="bottom_form markentry-form">
                   <form action="{{URL::to('mstexammarkedit')}}" method="POST">
@@ -155,10 +158,11 @@
                             <tr>
                               <th width="2%">#</th>
                               <th>Student Name</th>
-                              <th>Class Roll</th>
+                              <th width="10%">Class Roll</th>
                               @foreach($mark_catList as $x)
-                                <th>{{$x->name}}</th>
+                              <th>{{$x->name}}(<span class="categorymarks">{{$x->categorymarks}}</span>)</th>
                               @endforeach
+                              <th>Tot Marks({{$courseCode->coursemark}})</th>
                               <th width="2%"><input id="markcheckid" type="checkbox"></th>
                             </tr>
                           </thead>
@@ -170,8 +174,9 @@
                               <td>{{sprintf('%s %s %s',$student->firstName,$student->middleName,$student->lastName)}}</td>
                               <td>{{$student->classroll}}</td>
                               @foreach($student->markList as $y)
-                                <td><input class="form-control" type="text" name="marks[{{$student->id}}][{{$y->markcategoryid}}]" value="{{$y->marks}}" /></td>
+                                <td class="item"><input class="form-control" type="text" name="marks[{{$student->id}}][{{$y->markcatid}}]" value="{{$y->marks}}" /></td>
                               @endforeach
+                              <td class="item"><label>0</label></td>
                               <td><input class="markcheck" type="checkbox" name="checkbox[{{$student->id}}]"></td>
                             </tr>
                             @endforeach

@@ -50,10 +50,17 @@ class MarkDistribution extends Model
         return false;
     }
     public function getMarkCategory($programofferid,$coursecodeid){
-        $sql="SELECT mark_categories.* FROM `mark_categories`
-        INNER JOIN (SELECT * FROM `mark_distribution`
-        WHERE programofferid=? && coursecodeid=?) as t1
-        ON mark_categories.id=t1.markcategoryid";
+        $sql="SELECT mark_categories.*,
+        t1.categorymarks
+        FROM `mark_categories`
+                INNER JOIN (SELECT mark_distribution.* ,
+        courseoffer.coursemark,
+        FORMAT((courseoffer.coursemark*mark_distribution.distribution_mark)/100,0) as categorymarks
+        FROM `mark_distribution`
+        INNER JOIN courseoffer ON mark_distribution.programofferid=courseoffer.programofferid &&
+        mark_distribution.coursecodeid=courseoffer.coursecodeid
+        WHERE mark_distribution.programofferid=? && mark_distribution.coursecodeid=?) as t1
+                ON mark_categories.id=t1.markcategoryid";
         $qResult=\DB::select($sql,[$programofferid,$coursecodeid]);
         return collect($qResult);
     }

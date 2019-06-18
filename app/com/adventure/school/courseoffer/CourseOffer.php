@@ -16,7 +16,19 @@ class CourseOffer extends Model
         }
         return false;
     }
-
+    public function getCourseCode($programofferid,$coursecodeid){
+        $sql="SELECT 
+        course_codes.* ,
+        courses.name AS courseName,
+        courseoffer.coursemark
+        FROM `courseoffer`
+        INNER JOIN course_codes on courseoffer.coursecodeid=course_codes.id
+        INNER JOIN courses ON course_codes.courseid=courses.id
+        WHERE programofferid=? && coursecodeid=?";
+        $qResult=\DB::select($sql,[$programofferid,$coursecodeid]);
+        $courseCode=collect($qResult)->first();
+        return $courseCode;
+    }
     public function getCoursesOnProgramOffer($programofferid){
         $sql="SELECT 
         courseoffer.coursecodeid,
