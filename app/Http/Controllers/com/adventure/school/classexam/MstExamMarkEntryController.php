@@ -251,6 +251,7 @@ class MstExamMarkEntryController extends Controller
                     $courseCatsMarks=$marksList[$studentid];
                     $isRowValFill=true;
                     $tot_marks=0;
+                    // dd($courseCatsMarks);
                     foreach($courseCatsMarks as $markcatid=>$catMark){
                         $tot_marks=$tot_marks+$catMark;
                         if($catMark==null){
@@ -259,14 +260,47 @@ class MstExamMarkEntryController extends Controller
                     }
                     $courseCode=$aCourseOffer->getCourseCode($programofferid,$coursecodeid);
                     if($isRowValFill==true && ($tot_marks<=$courseCode->coursemark)){
+                        // Check Here Data Exit Or Not
+                        // $aMstExamMarks=new MstExamMarks();
+                        // $aMstExamMarks->programofferid=$programofferid;
+                        // $aMstExamMarks->sectionid=$sectionid;
+                        // $aMstExamMarks->teacherid=0;
+                        // $aMstExamMarks->studentid=$studentid;
+                        // $aMstExamMarks->coursecodeid=$coursecodeid;
+                        // $aMstExamMarks->examnameid=$examnameid;
+                        // $aMstExamMarks->examtypeid=1;  
+                        // $aMstExamMarks->markcategoryid=$markcatid;
+                        // $aMstExamMarks->marks=$catMark;
+                        // $checkentry=$aMstExamMarks->checkEntry($programofferid,$coursecodeid,$studentid,$markcatid);
+                        // if($checkentry==false){
+                        //     $aMstExamMarks->save();
+                        // }
                         foreach($courseCatsMarks as $markcatid=>$catMark){
-                            \DB::table('mst_exam_marks')
-                            ->where('programofferid', $programofferid)
-                            ->where('studentid', $studentid)
-                            ->where('coursecodeid', $coursecodeid)
-                            ->where('examnameid', $examnameid)
-                            ->where('markcategoryid', $markcatid)
-                            ->update(['marks' => $catMark]);
+                            $aMstExamMarks=new MstExamMarks();
+                            $checkentry=$aMstExamMarks->checkEntry($programofferid,$coursecodeid,$studentid,$markcatid);
+                            if($checkentry){
+                                \DB::table('mst_exam_marks')
+                                ->where('programofferid', $programofferid)
+                                ->where('studentid', $studentid)
+                                ->where('coursecodeid', $coursecodeid)
+                                ->where('examnameid', $examnameid)
+                                ->where('markcategoryid', $markcatid)
+                                ->update(['marks' => $catMark]);
+                            }else{
+                                $aMstExamMarks->programofferid=$programofferid;
+                                $aMstExamMarks->sectionid=$sectionid;
+                                $aMstExamMarks->teacherid=0;
+                                $aMstExamMarks->studentid=$studentid;
+                                $aMstExamMarks->coursecodeid=$coursecodeid;
+                                $aMstExamMarks->examnameid=$examnameid;
+                                $aMstExamMarks->examtypeid=1;  
+                                $aMstExamMarks->markcategoryid=$markcatid;
+                                $aMstExamMarks->marks=$catMark;
+                                // $checkentry=$aMstExamMarks->checkEntry($programofferid,$coursecodeid,$studentid,$markcatid);
+                                if($checkentry==false){
+                                    $aMstExamMarks->save();
+                                }
+                            }
                         }
                     }
                 }
@@ -278,6 +312,7 @@ class MstExamMarkEntryController extends Controller
         $aSection=new Section();
         $section=$aSection->getSection($sectionid);
         $aMstExamMarks=new MstExamMarks();
+        $courseCode=$aCourseOffer->getCourseCode($programofferid,$coursecodeid);
         $studentList=$aMstExamMarks->getStudentsOnClsNSec($programofferid,$sectionid,$coursecodeid,$examnameid,'INNER');     
         // dd($studentList);
         // sessionid,programid,groupid,mediumid,shiftid and tableName

@@ -1,6 +1,0 @@
-SELECT 
-grade_point.*,
-grade_letter.name
-FROM `grade_point`
-INNER JOIN grade_letter ON grade_point.gradeletterid=grade_letter.id
-WHERE programofferid=1

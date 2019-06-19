@@ -8,6 +8,13 @@ class CourseOffer extends Model
 {
     protected $table='courseoffer';
     protected $fillable = ['programofferid','coursecodeid','coursemark','meargeid','status'];
+    public function getOfferedCourses($programofferid){
+        $sql="SELECT * FROM courseoffer
+        WHERE programofferid=?";
+        $qResult=\DB::select($sql,[$programofferid]);
+        $result=collect($qResult);
+        return $result;
+    }
     public function isSameCourse($programofferid,$coursecodeid){
         $sql="SELECT * FROM `courseoffer` WHERE programofferid=? AND coursecodeid=?";
         $qResult=\DB::select($sql,[$programofferid,$coursecodeid]);
@@ -16,6 +23,7 @@ class CourseOffer extends Model
         }
         return false;
     }
+
     public function getCourseCode($programofferid,$coursecodeid){
         $sql="SELECT 
         course_codes.* ,
