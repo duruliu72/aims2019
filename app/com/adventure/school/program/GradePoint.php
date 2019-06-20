@@ -38,4 +38,14 @@ class GradePoint extends Model
         $qResult=\DB::select($sql,[$programofferid]);
         return collect($qResult);
     }
+    public function getGradePointNLetter($programofferid){
+        $sql="SELECT grade_point.*,
+        grade_letter.name
+        FROM `grade_point`
+        INNER JOIN grade_letter ON grade_point.gradeletterid=grade_letter.id
+        WHERE programofferid=?";
+        $qResult=\DB::select($sql,[$programofferid]);
+        return collect($qResult);
+    }
+    
 }

@@ -33,7 +33,6 @@ class MstExamMarkEntryController extends Controller
         }
         $sidebarMenu=$aMenu->getSidebarMenu();
         ///////////////////////
-        $msg="";
         $programid=$request->programid;
         $groupid=$request->groupid;
         $mediumid=$request->mediumid;
@@ -260,21 +259,6 @@ class MstExamMarkEntryController extends Controller
                     }
                     $courseCode=$aCourseOffer->getCourseCode($programofferid,$coursecodeid);
                     if($isRowValFill==true && ($tot_marks<=$courseCode->coursemark)){
-                        // Check Here Data Exit Or Not
-                        // $aMstExamMarks=new MstExamMarks();
-                        // $aMstExamMarks->programofferid=$programofferid;
-                        // $aMstExamMarks->sectionid=$sectionid;
-                        // $aMstExamMarks->teacherid=0;
-                        // $aMstExamMarks->studentid=$studentid;
-                        // $aMstExamMarks->coursecodeid=$coursecodeid;
-                        // $aMstExamMarks->examnameid=$examnameid;
-                        // $aMstExamMarks->examtypeid=1;  
-                        // $aMstExamMarks->markcategoryid=$markcatid;
-                        // $aMstExamMarks->marks=$catMark;
-                        // $checkentry=$aMstExamMarks->checkEntry($programofferid,$coursecodeid,$studentid,$markcatid);
-                        // if($checkentry==false){
-                        //     $aMstExamMarks->save();
-                        // }
                         foreach($courseCatsMarks as $markcatid=>$catMark){
                             $aMstExamMarks=new MstExamMarks();
                             $checkentry=$aMstExamMarks->checkEntry($programofferid,$coursecodeid,$studentid,$markcatid);
@@ -296,10 +280,7 @@ class MstExamMarkEntryController extends Controller
                                 $aMstExamMarks->examtypeid=1;  
                                 $aMstExamMarks->markcategoryid=$markcatid;
                                 $aMstExamMarks->marks=$catMark;
-                                // $checkentry=$aMstExamMarks->checkEntry($programofferid,$coursecodeid,$studentid,$markcatid);
-                                if($checkentry==false){
-                                    $aMstExamMarks->save();
-                                }
+                                $aMstExamMarks->save();
                             }
                         }
                     }

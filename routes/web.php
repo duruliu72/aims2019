@@ -104,6 +104,8 @@ Route::post('student/create', 'com\adventure\school\academic\StudentController@s
 Route::get('students/getValue','com\adventure\school\academic\StudentController@getValue');
 Route::get('students', 'com\adventure\school\academic\StudentController@allStudentReg');
 Route::post('students', 'com\adventure\school\academic\StudentController@allStudentReg');
+Route::get('editstudents', 'com\adventure\school\academic\StudentController@editStudentsSubjects');
+Route::post('editstudents', 'com\adventure\school\academic\StudentController@editStudentsSubjects');
 Route::get('directenroll', 'com\adventure\school\academic\StdDirectEnrollController@stdDirectEroll');
 Route::post('directenroll', 'com\adventure\school\academic\StdDirectEnrollController@stdDirectEroll');
 Route::get('studentimport', 'com\adventure\school\academic\StudentImportController@studentImport');

@@ -119,7 +119,6 @@
                             <tr>
                               <td>{{++$id}}</td>                     
                               <td><input type="hidden" name="coursecodeid[]" value="{{$x->id}}" />{{$x->courseNameWithCode}}</td>
-                              <td><div class="form-group"><input class="form-control" type="text" name="coursemarks[{{$x->id}}]" value="{{$x->coursemark}}" /></div></td>
                               <td><select class="form-control" name="teacherid[{{$x->id}}]" id="teacherid">
                                 <option value="">SELECT</option>
                                 @foreach ($teacherList as $x)
@@ -127,6 +126,7 @@
                                 @endforeach
                               </select>
                               </td>
+                              <td><div class="form-group"><input class="form-control" type="text" name="coursemarks[{{$x->id}}]" value="{{$x->coursemark}}" /></div></td>
                               <td><input class="markcheck" type="checkbox" name="checkbox[{{$x->id}}]"></td>
                             </tr>
                             @else

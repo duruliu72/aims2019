@@ -116,6 +116,99 @@ class StudentController extends Controller
         ];
         return view('admin.academic.student.index',$dataList);
     }
+    public function editStudentsSubjects(Request $request){
+        $msg="";
+        $aMenu=new Menu();
+        $hasMenu=$aMenu->hasMenu('students');
+        if($hasMenu==false){
+            return redirect('error');
+        }
+        $sidebarMenu=$aMenu->getSidebarMenu();
+        $result=null;
+        $sectionList=null;
+        $courseList=null;
+        $courseTypeList=null;
+        $aProgramOffer=new ProgramOffer();
+        if($request->isMethod('post')){
+            $aCourseOffer=new CourseOffer();
+            $aSectionOffer=new SectionOffer();
+            if($request->search_btn=='search_btn'){
+                $programid=$request->programid;
+                $groupid=$request->groupid;
+                $mediumid=$request->mediumid;
+                $shiftid=$request->shiftid;
+                $programofferid=$aProgramOffer->getProgramOfferId(0,$programid,$groupid,$mediumid,$shiftid);
+                $isCourseAssgn=$aCourseOffer->hasCourseAssign($programofferid);
+                if($isCourseAssgn==false){
+                    $msg="First Assign Course Offer to Class";
+                    return redirect()->back()->with('msg',$msg);
+                }
+                $isSectionAssign=$aSectionOffer->hasSectionAssign($programofferid);
+                if($isSectionAssign==false){
+                    $msg="First Assign Section Offer to Class";
+                    return redirect()->back()->with('msg',$msg);
+                }   
+            }
+            if($request->save_btn=='save_btn'){
+                $programofferid=$request->programofferid;
+                $aStudent=new Student();
+                $applicantcheckLst=$request->applicantcheck;
+                $coursecheckList=$request->coursecheck;
+                $sectionid=$request->sectionid;
+                $classrollList=$request->classroll;
+                $coursetypeidList=$request->coursetypeid;
+                foreach ($applicantcheckLst as $applicantid => $value) {
+                    $aStudent=new Student();
+                    $isTrue=$aStudent->checkStudent($programofferid,$applicantid);
+                    if($isTrue==false){
+                        $aStudent->programofferid=$programofferid;
+                        $aStudent->sectionid=$sectionid;
+                        $aStudent->applicantid=$applicantid;
+                        $aStudent->classroll=$classrollList[$applicantid];
+                        $aStudent->fromclass=0;
+                        $aStudent->fromsection=0;
+                        $aStudent->studenttype=1;
+                        $aStudent->currentclass=1;
+                        $aStudent->save();
+                        $studentid=$aStudent->getLastID();
+                        foreach ($coursecheckList as $coursecodeid => $value) {
+                            $aStudentCourse= new StudentCourse();
+                            $aStudentCourse->studentid=$studentid;
+                            $aStudentCourse->coursecodeid=$coursecodeid;
+                            $aStudentCourse->coursetypeid=$coursetypeidList[$coursecodeid];
+                            $aStudentCourse->save();
+                        }
+                    }
+                }
+                
+            }
+            $aAdmissionResult=new AdmissionResult();
+            $aStudentRegistration=new StudentRegistration();
+            $courseTypeList=CourseType::all();
+            $sectionList=$aSectionOffer->getSectionsOnPO($programofferid);
+            $result=$aStudentRegistration->getApplcantsForRegistration($programofferid);
+            $courseList=$aCourseOffer->getCoursesOnProgramOffer($programofferid);
+        }
+        // sessionid,programid,groupid,mediumid,shiftid,tableName and $compaireid
+        $programList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,"programs",'programid');
+        $mediumList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,"mediums",'mediumid');
+        $shiftList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,"shifts",'shiftid');
+        $groupList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,"groups",'groupid');
+        $dataList=[
+            'institute'=>Institute::getInstituteName(),
+            'sidebarMenu'=>$sidebarMenu,
+            'programList'=>$programList,
+            'groupList'=>$groupList,
+            'mediumList'=>$mediumList,
+            'shiftList'=>$shiftList,
+            'sectionList'=>$sectionList,
+            'courseTypeList'=>$courseTypeList,
+            'courseList'=>$courseList,
+            'result'=>$result,
+            'msg'=>$msg
+        ];
+        return view('admin.academic.student.index',$dataList);
+    }
     public function studentReg(Request $request){
         $aMenu=new Menu();
         $hasMenu=$aMenu->hasMenu('student');
