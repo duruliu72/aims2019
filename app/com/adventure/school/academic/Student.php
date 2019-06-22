@@ -68,4 +68,11 @@ class Student extends Model
         $students=collect($qResult);
         return $students;
     }
+    public function getStudents($programofferid){
+        $sql="SELECT * FROM `students`
+        WHERE programofferid=1";
+        $qResult=\DB::select($sql,[$programofferid]);
+        $students=collect($qResult);
+        return $students;
+    }
 }
