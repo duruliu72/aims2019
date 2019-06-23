@@ -7,7 +7,12 @@
       <section class="wrapper">
         <div class="row">
           <div class="col-lg-12">
-            <h3 class="page-header"><i class="fa fa-laptop"></i>Horinagor High School</h3>
+            <h3 class="page-header"><i class="fa fa-laptop"></i>
+            @if($institute!=null)
+              {{$institute->name}}
+            @else
+              Dashboard
+            @endif</h3>
              <ol class="breadcrumb">
                 <li>Academic Result</li>
                 @if($msg!="")
@@ -30,6 +35,7 @@
           <div class="col-lg-12">
             <section class="panel">
               <div class="panel-body">
+                @if($exam_result==null)
                 <div class="top_form">
                     <form action="{{URL::to('mstexammarkentry')}}" method="POST">
                     {{csrf_field()}}
@@ -94,6 +100,7 @@
                     </div>
                   </form>
                 </div>
+                @else
                 <div class="programofferinfo">
                     <div class="programofferinfo_item">
                         <span>Session: {{$programofferinfo->sessionName}}</span>
@@ -110,7 +117,46 @@
                     <div class="programofferinfo_item">
                         <span>Group: {{$programofferinfo->groupName}}</span>
                     </div>
+                    <div class="programofferinfo_item">
+                        <span>Exam: {{$exam->name}}</span>
+                    </div>
                 </div>
+                <div class="mst_result">
+                  <table class="table table-striped table-bordered table-hover">
+                      <thead>
+                        <tr>
+                          <th>SL.</th>
+                          <th>StudentID</th>
+                          <th>Student Name</th>
+                          <th>Roll No</th>
+                          <th>Full Marks</th>
+                          <th>Obtain Marks</th>
+                          <th>GPA</th>
+                          <th>Grade Letter</th>
+                          <th>Class Position</th>
+                          <th>Print</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                      <?php $id=0; ?>
+                        @foreach($exam_result as $item)
+                          <tr>
+                            <td>{{++$id}}</td>
+                            <td>{{$item->applicantid}}</td>
+                            <td>{{sprintf("%s%s%s",$item->firstName,$item->middleName,$item->lastName)}}</td>
+                            <td>{{$item->classroll}}</td>
+                            <td>{{$item->grand_courses_marks}}</td>
+                            <td>{{$item->grand_obt_marks}}</td>
+                            <td>{{$item->tot_gradepoint}}</td>
+                            <td>{{"A"}}</td>
+                            <td>{{$id}}</td>
+                            <td><a href="">Print</a></td>
+                          </tr>
+                        @endforeach
+                      <tbody>
+                  </table>
+                <div>
+                @endif
               </div>
             </section>
           </div><!--/.col-->

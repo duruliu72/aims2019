@@ -24,9 +24,7 @@ class MstExamResultController extends Controller
             return redirect('error');
         }
         $sidebarMenu=$aMenu->getSidebarMenu();
-        /////////////
-        // $aCourseOffer=new CourseOffer();
-        // $courseList=$aCourseOffer->getOfferedCourses(1);
+        // ==========================
         $aMstExamResult=new MstExamResult();
         $exam_result=$aMstExamResult->getMstExamResult(1,1);
         $aProgramOffer=new ProgramOffer();
@@ -39,6 +37,8 @@ class MstExamResultController extends Controller
         $groupList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,"groups",'groupid');
         $aExamName=new ExamName();
         $examNameList=$aExamName->getExamName(1);
+        $exam=$aExamName->getExamONID(1);
+        // dd($exam_result);
         $dataList=[
             'institute'=>Institute::getInstituteName(),
             'sidebarMenu'=>$sidebarMenu,
@@ -47,6 +47,7 @@ class MstExamResultController extends Controller
             'mediumList'=>$mediumList,
             'shiftList'=>$shiftList,
             'examNameList'=>$examNameList,
+            "exam"=>$exam,
             'programofferinfo'=>$programofferinfo,
             'exam_result'=>$exam_result,
             'msg'=>$msg

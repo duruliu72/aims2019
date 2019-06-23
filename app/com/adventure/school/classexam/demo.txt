@@ -55,52 +55,32 @@ class MstExamResult extends Model
                 );
             }
             $tot_pass_status=true;
-            $grand_courses_marks=0;
-            $grand_obt_marks=0;
+            $grand_tot_mark=0;
             $tot_gradepoint=0;
             $collect_courses=collect($course_data);
             foreach($collect_courses as $item){
-                // $grand_obt_marks=$grand_tot_mark+$item["tot_mark"];
-                // $tot_gradepoint=$tot_gradepoint+$item["gradepoint"];
+                $grand_tot_mark=$grand_tot_mark+$item["tot_mark"];
+                $tot_gradepoint=$tot_gradepoint+$item["gradepoint"];
             }
             $group_courses11 = $collect_courses->where("meargeid","=",NULL)->where("coursetypeid","=",1);
             foreach($group_courses11 as $item){
                 if($item["pass_status"]==false){
                     $tot_pass_status=false;
                 }
-                $grand_obt_marks=$grand_obt_marks+$item["tot_mark"];
-                $tot_gradepoint=$tot_gradepoint+$item["gradepoint"];
-            }
-            $group_courses12 = $collect_courses->where("meargeid","!=",NULL)->where("coursetypeid","=",1);
-            foreach($group_courses12 as $item){
-                $grand_obt_marks=$grand_obt_marks+$item["tot_mark"];
-                $tot_gradepoint=$tot_gradepoint+$item["gradepoint"];
+                // $grand_tot_mark=$grand_tot_mark+$item["tot_mark"];
+                // $tot_gradepoint=$tot_gradepoint+$item["gradepoint"];
             }
             $group_courses21 = $collect_courses->where("meargeid","=",NULL)->where("coursetypeid","=",2);
             foreach($group_courses21 as $item){
                 if($item["pass_status"]==false){
                     $tot_pass_status=false;
                 }
-                $grand_obt_marks=$grand_obt_marks+$item["tot_mark"];
-                $tot_gradepoint=$tot_gradepoint+$item["gradepoint"];
-            }
-            $group_courses22 = $collect_courses->where("meargeid","!=",NULL)->where("coursetypeid","=",2);
-            foreach($group_courses22 as $item){
-                $grand_obt_marks=$grand_obt_marks+$item["tot_mark"];
-                $tot_gradepoint=$tot_gradepoint+$item["gradepoint"];
             }
             $group_courses31 = $collect_courses->where("meargeid","=",NULL)->where("coursetypeid","=",3);
             foreach($group_courses31 as $item){
                 if($item["pass_status"]==false){
                     $tot_pass_status=false;
                 }
-                $grand_obt_marks=$grand_obt_marks+$item["tot_mark"];
-                $tot_gradepoint=$tot_gradepoint+$item["gradepoint"];
-            }
-            $group_courses32 = $collect_courses->where("meargeid","!=",NULL)->where("coursetypeid","=",3);
-            foreach($group_courses32 as $item){
-                $grand_obt_marks=$grand_obt_marks+$item["tot_mark"];
-                $tot_gradepoint=$tot_gradepoint+$item["gradepoint"];
             }
             // ========
             $group_mearge_courses1=$mearge_courses->where("coursetypeid","=",1);
@@ -117,7 +97,6 @@ class MstExamResult extends Model
                 if($item->obt_marks<$t){
                     $tot_pass_status=false;
                 }
-
             }
             foreach($group_mearge_courses3 as $item){
                 $t=($item->categorymarks*33)/100;
@@ -125,33 +104,75 @@ class MstExamResult extends Model
                     $tot_pass_status=false;
                 }
             }
+            // =====================================
+            // $group_courses12 = $collect_courses->where("meargeid","!=",NULL)
+            //     ->where("coursetypeid","=",1)->groupBy("meargeid")->map(function($item,$key){
+            //     $c["g_tot_mark"]=$item->sum("tot_mark");
+            //     $c["g_tot_course_marks"]=$item->sum("tot_course_marks");
+            //     $c["meargeid"]=$item[0]["meargeid"];
+            //     $p=collect($c);
+            //     return $p;
+            // });
+            // foreach($group_courses12 as $item){
+            //     $comp=$item["g_tot_course_marks"]*33/100;
+            //     if($item["g_tot_mark"]<$comp){
+            //         $tot_pass_status=false;
+            //     }
+            //     $point_letter=$this->getGradePoint($tot_mark);
+            //     $gradepoint=$point_letter["gradepoint"];
+            //     $tot_gradepoint=$tot_gradepoint+$gradepoint;
+            //     $grand_tot_mark=$grand_tot_mark+$item["g_tot_mark"];
+            // }
+            
+            // $group_courses22 = $collect_courses->where("meargeid","!=",NULL)->where("coursetypeid","=",2)->groupBy("meargeid")->map(function($item,$key){
+            //     $c["g_tot_mark"]=$item->sum("tot_mark");
+            //     $c["g_tot_course_marks"]=$item->sum("tot_course_marks");
+            //     $c["meargeid"]=$item[0]["meargeid"];
+            //     $p=collect($c);
+            //     return $p;
+            // });
+            // foreach($group_courses22 as $item){
+            //     $comp=$item["g_tot_course_marks"]*33/100;
+            //     if($item["g_tot_mark"]<$comp){
+            //         $tot_pass_status=false;
+            //     }
+            //     $point_letter=$this->getGradePoint($tot_mark);
+            //     $gradepoint=$point_letter["gradepoint"];
+            //     $tot_gradepoint=$tot_gradepoint+$gradepoint;
+            //     $grand_tot_mark=$grand_tot_mark+$item["g_tot_mark"];
+            // }
+            
+            // $group_courses32 = $collect_courses->where("meargeid","!=",NULL)->where("coursetypeid","=",3)->groupBy("meargeid")->map(function($item,$key){
+            //     $c["g_tot_mark"]=$item->sum("tot_mark");
+            //     $c["g_tot_course_marks"]=$item->sum("tot_course_marks");
+            //     $c["meargeid"]=$item[0]["meargeid"];
+            //     $p=collect($c);
+            //     return $p;
+            // });
+            // foreach($group_courses32 as $item){
+            //     $comp=$item["g_tot_course_marks"]*33/100;
+            //     if($item["g_tot_mark"]<$comp){
+            //         $tot_pass_status=false;
+            //     }
+            //     $point_letter=$this->getGradePoint($tot_mark);
+            //     $gradepoint=$point_letter["gradepoint"];
+            //     $tot_gradepoint=$tot_gradepoint+$gradepoint;
+            //     $grand_tot_mark=$grand_tot_mark+$item["g_tot_mark"];
+            // }
             $x->course_array=$course_data;
             $x->tot_pass_status=$tot_pass_status;
-            $x->grand_courses_marks=$grand_courses_marks;
-            $x->grand_obt_marks=$grand_obt_marks;
+            $x->grand_tot_mark=$grand_tot_mark;
             $x->tot_gradepoint=$tot_gradepoint;
         }
-        $students1=$students->where("tot_pass_status",TRUE)
-        ->sortByDesc("tot_gradepoint")->sortByDesc("grand_tot_mark");
-        $students2=$students->where("tot_pass_status",false)
-        ->sortByDesc("tot_gradepoint")->sortByDesc("grand_tot_mark");
-        $students=$students1->concat($students2);
-        // dd($students);
+        dd($students);
         return $students;
     }
     public function getStudents($programofferid,$examnameid){
         $sql="SELECT 
         mem.programofferid,
         mem.examnameid,
-        applicants.firstName,
-        applicants.middleName,
-        applicants.lastName,
-        mem.studentid,
-        students.applicantid,
-        students.classroll
+        mem.studentid
         FROM `mst_exam_marks` AS mem
-        INNER JOIN students ON mem.studentid=students.id
-        INNER JOIN applicants ON students.applicantid=applicants.applicantid
         INNER JOIN courseoffer ON mem.programofferid=courseoffer.programofferid && mem.coursecodeid=courseoffer.coursecodeid
         INNER JOIN student_courses ON mem.studentid=student_courses.studentid && mem.coursecodeid=student_courses.coursecodeid
         INNER JOIN mark_distribution as md on mem.programofferid=md.programofferid && mem.coursecodeid=md.coursecodeid && mem.markcategoryid=md.markcategoryid
