@@ -37,7 +37,7 @@
               <div class="panel-body">
                 @if($exam_result==null)
                 <div class="top_form">
-                    <form action="{{URL::to('mstexammarkentry')}}" method="POST">
+                    <form action="{{URL::to('mstexamresult')}}" method="POST">
                     {{csrf_field()}}
                     <div class="form-group row">
                     <label class="col-sm-2 control-label" for="programid">Program</label>
@@ -93,7 +93,7 @@
                     <div class="row">
                       <div class="col-sm-12">
                         <div class="btn-container">
-                          <button type="submit" class="btn btn-success result-btn" name="search_btn" value="search_btn">Search</button>
+                          <button type="submit" class="btn btn-success result-btn" name="search_btn" value="search_btn">Search Student</button>
                           <a class="btn btn-info refresh-btn" href="{{URL::to('mstexammarkentry')}}"><i class="ace-icon fa fa-refresh bigger-120"></i>Refresh</a>
                         </div>
                       </div>
@@ -143,14 +143,14 @@
                           <tr>
                             <td>{{++$id}}</td>
                             <td>{{$item->applicantid}}</td>
-                            <td>{{sprintf("%s%s%s",$item->firstName,$item->middleName,$item->lastName)}}</td>
+                            <td>{{sprintf("%s %s %s",$item->firstName,$item->middleName,$item->lastName)}}</td>
                             <td>{{$item->classroll}}</td>
                             <td>{{$item->grand_courses_marks}}</td>
                             <td>{{$item->grand_obt_marks}}</td>
-                            <td>{{$item->tot_gradepoint}}</td>
-                            <td>{{"A"}}</td>
+                            <td>{{$item->gpa}}</td>
+                            <td>{{$item->grade_letter}}</td>
                             <td>{{$id}}</td>
-                            <td><a href="">Print</a></td>
+                            <td><a target="_blank" href="{{URL::to('/mstexamresult')}}/{{$programofferinfo->id}}/{{$exam->id}}/{{$item->studentid}}">Print</a></td>
                           </tr>
                         @endforeach
                       <tbody>

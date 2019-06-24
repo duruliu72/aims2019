@@ -131,6 +131,8 @@ Route::get('mstexammarkedit', 'com\adventure\school\classexam\MstExamMarkEntryCo
 Route::post('mstexammarkedit', 'com\adventure\school\classexam\MstExamMarkEntryController@marksedit');
 // Class Result
 Route::get('mstexamresult', 'com\adventure\school\classexam\MstExamResultController@mstexamresult');
+Route::post('mstexamresult', 'com\adventure\school\classexam\MstExamResultController@mstexamresult');
+Route::get('mstexamresult/{id1}/{id2}/{id3}', 'com\adventure\school\classexam\MstExamResultController@mstSingleResult');
 // Menu Settings
 Route::resource('menu', 'com\adventure\school\menu\MenuController');
 

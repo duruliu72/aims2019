@@ -132,7 +132,7 @@
                                 <td><input class="markcheck" type="checkbox" name="checkbox[{{$x->id}}]"></td>
                               </tr>
                             @else
-                              tr>
+                              <tr>
                                 <td>{{++$id}}</td>  
                                 <td>{{$x->name}}</td>
                                 <td>{{$x->from_mark}}</td>

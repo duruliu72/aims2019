@@ -8,6 +8,16 @@ use Illuminate\Database\Eloquent\Model;
 
 class MstExamResult extends Model
 {
+    public function getSingleResult($programofferid,$examnameid,$studentid){
+        $studentList=$this->getMstExamResult($programofferid,$examnameid);
+        $increment=1;
+        foreach($studentList as $item){
+            $item->position=$increment;
+            $increment++;
+        }
+        $student=$studentList->where("studentid",$studentid)->first();
+        return $student;
+    }
     public function getMstExamResult($programofferid,$examnameid){
         $students=$this->getStudents(1,1);
         foreach($students as $x){
@@ -59,21 +69,22 @@ class MstExamResult extends Model
             $grand_obt_marks=0;
             $tot_gradepoint=0;
             $collect_courses=collect($course_data);
-            foreach($collect_courses as $item){
-                // $grand_obt_marks=$grand_tot_mark+$item["tot_mark"];
-                // $tot_gradepoint=$tot_gradepoint+$item["gradepoint"];
-            }
+            $compalsary_subj=0;
             $group_courses11 = $collect_courses->where("meargeid","=",NULL)->where("coursetypeid","=",1);
             foreach($group_courses11 as $item){
                 if($item["pass_status"]==false){
                     $tot_pass_status=false;
                 }
+                $compalsary_subj++;
                 $grand_obt_marks=$grand_obt_marks+$item["tot_mark"];
+                $grand_courses_marks=$grand_courses_marks+$item["tot_course_marks"];
                 $tot_gradepoint=$tot_gradepoint+$item["gradepoint"];
             }
             $group_courses12 = $collect_courses->where("meargeid","!=",NULL)->where("coursetypeid","=",1);
             foreach($group_courses12 as $item){
+                $compalsary_subj++;
                 $grand_obt_marks=$grand_obt_marks+$item["tot_mark"];
+                $grand_courses_marks=$grand_courses_marks+$item["tot_course_marks"];
                 $tot_gradepoint=$tot_gradepoint+$item["gradepoint"];
             }
             $group_courses21 = $collect_courses->where("meargeid","=",NULL)->where("coursetypeid","=",2);
@@ -82,11 +93,13 @@ class MstExamResult extends Model
                     $tot_pass_status=false;
                 }
                 $grand_obt_marks=$grand_obt_marks+$item["tot_mark"];
+                $grand_courses_marks=$grand_courses_marks+$item["tot_course_marks"];
                 $tot_gradepoint=$tot_gradepoint+$item["gradepoint"];
             }
             $group_courses22 = $collect_courses->where("meargeid","!=",NULL)->where("coursetypeid","=",2);
             foreach($group_courses22 as $item){
                 $grand_obt_marks=$grand_obt_marks+$item["tot_mark"];
+                $grand_courses_marks=$grand_courses_marks+$item["tot_course_marks"];
                 $tot_gradepoint=$tot_gradepoint+$item["gradepoint"];
             }
             $group_courses31 = $collect_courses->where("meargeid","=",NULL)->where("coursetypeid","=",3);
@@ -95,11 +108,13 @@ class MstExamResult extends Model
                     $tot_pass_status=false;
                 }
                 $grand_obt_marks=$grand_obt_marks+$item["tot_mark"];
+                $grand_courses_marks=$grand_courses_marks+$item["tot_course_marks"];
                 $tot_gradepoint=$tot_gradepoint+$item["gradepoint"];
             }
             $group_courses32 = $collect_courses->where("meargeid","!=",NULL)->where("coursetypeid","=",3);
             foreach($group_courses32 as $item){
                 $grand_obt_marks=$grand_obt_marks+$item["tot_mark"];
+                $grand_courses_marks=$grand_courses_marks+$item["tot_course_marks"];
                 $tot_gradepoint=$tot_gradepoint+$item["gradepoint"];
             }
             // ========
@@ -130,6 +145,15 @@ class MstExamResult extends Model
             $x->grand_courses_marks=$grand_courses_marks;
             $x->grand_obt_marks=$grand_obt_marks;
             $x->tot_gradepoint=$tot_gradepoint;
+            $x->gpa=round(($tot_gradepoint)/$compalsary_subj,2);
+        }
+        foreach($students as $item){
+            if($item->tot_pass_status==true){
+                $item->grade_letter=$this->getGradeLetter($item->gpa);;
+            }else{
+                $item->grade_letter="F";
+                $item->gpa=0;
+            }
         }
         $students1=$students->where("tot_pass_status",TRUE)
         ->sortByDesc("tot_gradepoint")->sortByDesc("grand_tot_mark");
@@ -264,5 +288,20 @@ class MstExamResult extends Model
             "gradepoint"=>0,
             "gradeletter"=>"F"
         );
+    }
+    public function getGradeLetter($point){
+        $aGradePoint=new GradePoint();
+        $point_letters=$aGradePoint->getGradePointNLetter(1);
+        $point_letters=$point_letters->sortByDesc("gradepoint");
+        $point_letter_array=array();
+        foreach($point_letters as $x){
+            array_push($point_letter_array,array("gradepoint"=>$x->gradepoint,"grade_letter"=>$x->name));
+        }
+        for ($i=0;$i<(count($point_letter_array)-2);$i++){
+            if(($point<$point_letter_array[$i]["gradepoint"]) && ($point>=$point_letter_array[$i+1]["gradepoint"])){
+                return $point_letter_array[$i+1]["grade_letter"];
+            }
+        }
+        return $point_letter_array[0]["grade_letter"];
     }
 }

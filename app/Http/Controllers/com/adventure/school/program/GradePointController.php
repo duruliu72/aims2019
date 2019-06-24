@@ -137,7 +137,7 @@ class GradePointController extends Controller
             }elseif($request->checkbox==null&&$request->save_btn=='edit_btn'){
                 $msg="Select  Course";
             }
-            $programofferinfo=$aProgramOffer->getProgramOfferinfo($programofferid);
+            $programofferinfo=$aProgramOffer->getProgramOffer($programofferid);
             $gradePointObj=new GradePoint();
             $gradeList=$gradePointObj->getEditedGradeLetter($programofferid);
         }
