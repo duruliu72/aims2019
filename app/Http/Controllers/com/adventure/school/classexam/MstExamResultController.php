@@ -11,6 +11,7 @@ use App\com\adventure\school\exam\MasterExam;
 use App\com\adventure\school\classexam\MstExamResult;
 use App\com\adventure\school\exam\ExamName;
 use App\com\adventure\school\courseoffer\CourseOffer;
+use App\com\adventure\school\program\GradePoint;
 class MstExamResultController extends Controller
 {
     public function __construct()
@@ -20,7 +21,7 @@ class MstExamResultController extends Controller
     public function mstexamresult(Request $request){
         $msg="";
         $aMenu=new Menu();
-        $hasMenu=$aMenu->hasMenu('mstexammarkentry');
+        $hasMenu=$aMenu->hasMenu('mstexamresult');
         if($hasMenu==false){
             return redirect('error');
         }
@@ -82,8 +83,32 @@ class MstExamResultController extends Controller
         return view('admin.classexam.examresult.mstexamresult',$dataList);
     }
     public function mstSingleResult($programofferid,$examnameid,$studentid){
+        $msg="";
+        $aMenu=new Menu();
+        $hasMenu=$aMenu->hasMenu('mstexamresult');
+        if($hasMenu==false){
+            return redirect('error');
+        }
+        $sidebarMenu=$aMenu->getSidebarMenu();
+        // ==========================
+        $aProgramOffer=new ProgramOffer();
         $aMstExamResult=new MstExamResult();
+        $aExamName=new ExamName();
+        $programofferinfo=$aProgramOffer->getProgramOffer($programofferid);
         $student=$aMstExamResult->getSingleResult($programofferid,$examnameid,$studentid);
-        dd($student);
+        // dd($student);
+        $exam=$aExamName->getExamONID($examnameid);
+        $aGradePoint=new GradePoint();
+        $point_letters=$aGradePoint->getGradePointNLetter($programofferid);
+        $dataList=[
+            'institute'=>Institute::getInstituteName(),
+            'sidebarMenu'=>$sidebarMenu,
+            "exam"=>$exam,
+            'programofferinfo'=>$programofferinfo,
+            'point_letters'=>$point_letters,
+            'student'=>$student,
+            'msg'=>$msg
+        ];
+        return view('admin.classexam.examresult.mstsingleresult',$dataList);
     }
 }

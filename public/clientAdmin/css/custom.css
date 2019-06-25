@@ -153,3 +153,144 @@ fieldset.menu legend{
     transform: translateY(-50%);
     color: red;
 }
+/* Academic institute */
+.academic-transcript{
+    border:3px solid #d9d9d9;
+    padding: 10px 0px;
+    width: 80%;
+    margin: 0 auto;
+}
+.academic-transcript__heading{
+    text-align: center;
+    border-bottom:3px solid #d9d9d9;
+}
+.institute-logo{
+    margin-bottom: 5px;
+}
+.institute-logo img{
+    width: 110px;
+    height: 110px;
+}
+.institute-title{
+    margin-bottom: 15px;
+}
+.institute-title h2{
+    margin: 0px;
+}
+.institute-title h3{
+    margin: 0px;
+}
+.institute-title .institute-name{
+    font-size: 35px;
+    color: royalblue;
+    font-weight: bold;
+}
+.institute-title .institute-add{
+    font-size: 18px;
+}
+.institute-title .std-transcript{
+    color: red;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+.institute-title .exam-name{
+    color: green;
+    font-weight: bold;
+}
+.academic-transcript__student{
+    padding: 10px 0px;
+}
+.academic-transcript__student::after{
+    content: "";
+    display: block;
+    clear: both;
+}
+.item{
+    float: left;
+    padding: 0px 15px;
+}
+.academic-transcript__student .student-img{
+  
+}
+.academic-transcript__student .student-info{
+    width: 50%;
+    font-size: 20px;
+    font-family: Segoe UI Semibold;
+    font-weight: bold;
+}
+.academic-transcript__student .student-info table{
+    width: 100%;
+}
+.academic-transcript__student .grade-letter{
+    float: right;
+}
+.academic-transcript__student .grade-letter table{
+    border: 3px solid #cccccc;
+    margin-right: 8px;
+    border-collapse: collapse
+}
+.academic-transcript__student .grade-letter table tr td{
+    padding: 0px;
+    border: 1px solid #cccccc;
+    text-align: center;
+}
+.academic-transcript__result{
+    padding: 0px 15px;
+    margin-bottom: 15px;
+}
+.academic-transcript__result table{
+    border: 3px solid #cccccc;
+    margin-right: 8px;
+    border-collapse: collapse;
+    width: 100%;
+}
+.academic-transcript__result table tr th{
+    text-align: center;
+}
+.academic-transcript__result table tr td{
+    padding: 5px;
+    border: 1px solid #cccccc;
+    text-align: center;
+}
+.academic-transcript__grand-result{
+    padding: 0px 15px;
+}
+.academic-transcript__grand-result::after{
+    content: "";
+    display: block;
+    clear: both;
+}
+.academic-transcript__grand-result__left{
+    float: left;
+}
+.academic-transcript__grand-result__right{
+    float: right;
+}
+.academic-transcript__grand-result__left table{
+    border: 3px solid #cccccc;
+    margin-right: 8px;
+    border-collapse: collapse;
+    width: 100%;
+}
+.academic-transcript__grand-result__left table tr th{
+    text-align: center;
+}
+.academic-transcript__grand-result__left table tr td{
+    padding: 5px;
+    border: 1px solid #cccccc;
+    text-align: center;
+}
+.academic-transcript__grand-result__right table{
+    border: 3px solid #cccccc;
+    margin-right: 8px;
+    border-collapse: collapse;
+    width: 100%;
+}
+.academic-transcript__grand-result__right table tr th{
+    text-align: center;
+}
+.academic-transcript__grand-result__right table tr td{
+    padding: 5px;
+    border: 1px solid #cccccc;
+    text-align: center;
+}
