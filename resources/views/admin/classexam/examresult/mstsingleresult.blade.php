@@ -1,11 +1,12 @@
 @extends('admin.admin')
 @section('uniqueStyle')
-<link href="{{asset('clientAdmin/css/custom.css')}}" rel="stylesheet">
+<link href="{{asset('clientAdmin/css/custom.css')}}" rel="stylesheet" media="all">
+<link href="{{asset('clientAdmin/css/print.css')}}" rel="stylesheet" media="print">
 @endsection
 @section('content')
 <section id="main-content">
-      <section class="wrapper">
-        <div class="row">
+      <section class="wrapper no-padding no-margin">
+        <div class="row no-print">
           <div class="col-lg-12">
             <h3 class="page-header"><i class="fa fa-laptop"></i>
             @if($institute!=null)
@@ -28,13 +29,14 @@
                   {{ session()->get('msg') }}
                 </span>
                 @endif
+                <button class="print-btn" onclick="Print()">Print</button>
             </ol>
           </div>
         </div>
-        <div class="row">
+        <div class="row no-margin">
           <div class="col-lg-12">
             <section class="panel">
-              <div class="panel-body">
+              <div class="panel-body no-border">
                 <div class="academic-transcript">
                   <div class="academic-transcript__heading">
                       <div class="institute-logo">
@@ -122,6 +124,7 @@
                         <tbody>
                           <?php $id=0; ?>
                           @foreach($student->course_array as $key=>$course)
+                            @if($student->course_array[$key]["coursetypeid"]==1)
                             <tr>
                               <td>{{++$id}}</td>
                               <td>{{$student->course_array[$key]["courseName"]}}</td>
@@ -136,16 +139,59 @@
                               <td>{{$student->course_array[$key]["gradeletter"]}}</td>
                               <td>{{$student->course_array[$key]["gradepoint"]}}</td>
                             </tr>
+                            @endif
+                          @endforeach
+                          <tr>
+                            <td colspan="8" style="text-align: left;">Optional Subject:</td>
+                          </tr>
+                          @foreach($student->course_array as $key=>$course)
+                            @if($student->course_array[$key]["coursetypeid"]==2)
+                            <tr>
+                              <td>{{++$id}}</td>
+                              <td>{{$student->course_array[$key]["courseName"]}}</td>
+                              <td>{{$student->course_array[$key]["courseCode"]}}</td>
+                              <td>{{$student->course_array[$key]["tot_course_marks"]}}</td>
+                              <td>
+                                @foreach($student->course_array[$key]["markcat"] as $k=>$val)
+                                {{sprintf("%s%s%.1f%s",$student->course_array[$key]["markcat"][$k]["markcatName"],":",$student->course_array[$key]["markcat"][$k]["obt_marks"]," ")}}
+                                @endforeach
+                              </td>
+                              <td>{{$student->course_array[$key]["tot_mark"]}}</td>
+                              <td>{{$student->course_array[$key]["gradeletter"]}}</td>
+                              <td>{{$student->course_array[$key]["gradepoint"]}}</td>
+                            </tr>
+                            @endif
+                          @endforeach
+                          <tr>
+                            <td colspan="8" style="text-align: left;">Additional Subject:</td>
+                          </tr>
+                          @foreach($student->course_array as $key=>$course)
+                            @if($student->course_array[$key]["coursetypeid"]==3)
+                            <tr>
+                              <td>{{++$id}}</td>
+                              <td>{{$student->course_array[$key]["courseName"]}}</td>
+                              <td>{{$student->course_array[$key]["courseCode"]}}</td>
+                              <td>{{$student->course_array[$key]["tot_course_marks"]}}</td>
+                              <td>
+                                @foreach($student->course_array[$key]["markcat"] as $k=>$val)
+                                {{sprintf("%s%s%.1f%s",$student->course_array[$key]["markcat"][$k]["markcatName"],":",$student->course_array[$key]["markcat"][$k]["obt_marks"]," ")}}
+                                @endforeach
+                              </td>
+                              <td>{{$student->course_array[$key]["tot_mark"]}}</td>
+                              <td>{{$student->course_array[$key]["gradeletter"]}}</td>
+                              <td>{{$student->course_array[$key]["gradepoint"]}}</td>
+                            </tr>
+                            @endif
                           @endforeach
                         </tbody>
                       </table>
                     </div>
-                    <div class="optional">
+                    <!-- <div class="optional">
 
                     </div>
                     <div class="additional">
 
-                    </div>
+                    </div> -->
                   </div>
                   <div class="academic-transcript__grand-result">
                     <div class="academic-transcript__grand-result__left">
@@ -164,9 +210,9 @@
                               <td>{{$student->grand_obt_marks}}</td>
                             </tr>
                             <tr>
-                              <td>Total Common Marks</td>
-                              <td>1050</td>
-                              <td>900</td>
+                              <td>Grand Total Marks</td>
+                              <td>{{$student->all_course_marks}}</td>
+                              <td>{{$student->all_course_obt_marks}}</td>
                             </tr>
                           </tbody>
                         </table>
@@ -184,19 +230,28 @@
                             </tr>
                             <tr>
                               <td>Percentage Marks</td>
-                              <td>0%</td>
+                              <td>{{sprintf("%.2f",$student->percentage_mark)}}%</td>
                             </tr>
                             <tr>
                               <td>Failed Subject</td>
-                              <td>2</td>
+                              <td>{{$student->tot_fail_sub}}</td>
                             </tr>
                           </tbody>
                         </table>
                     </div>
                   </div>
                   <div class="academic-transcript__signature">
+                      <div class="class_tacher-signature">
+                        <img src="{{asset('clientAdmin/admission/emaxcontroller/')}}/{{'examcontroller.jpg'}}">
+                        <p>Class Teacher</p>
+                      </div>
+                      <div class="authorized-signature">
+                        <img src="{{asset('clientAdmin/admission/emaxcontroller/')}}/{{'examcontroller.jpg'}}">
+                        <p>Authorized Signature</p>
+                      </div>
                   </div>
                   <div class="academic-transcript__footer">
+                      <p>Result generated by:   aims  ||  Powerd by:  www.adventure-soft.com</p>
                   </div>
                 </div>
               </div>
@@ -210,4 +265,5 @@
 @section('uniqueScript')
 <script src="{{asset('clientAdmin/js/baseUrl.js')}}"></script>
 <script src="{{asset('clientAdmin/js/examresult.js')}}"></script>
+<script src="{{asset('clientAdmin/js/print.js')}}"></script>
 @endsection

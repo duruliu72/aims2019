@@ -294,3 +294,45 @@ fieldset.menu legend{
     border: 1px solid #cccccc;
     text-align: center;
 }
+.academic-transcript__signature{
+    padding: 0px 15px;
+    margin-top: 25px;
+}
+.academic-transcript__signature::after{
+    content: "";
+    display: block;
+    clear: both;
+}
+.class_tacher-signature{
+    float: left;
+}
+.class_tacher-signature img{
+    width: 150px;
+    padding-bottom: 7px;
+    border-bottom: 2px dashed #000;
+}
+.authorized-signature{
+    float: right;
+}
+.authorized-signature img{
+    width: 150px;
+    padding-bottom: 7px;
+    border-bottom: 2px dashed #000;
+}
+.academic-transcript__footer{
+    margin-top: 15px;
+}
+.academic-transcript__footer p{
+    text-align: center;
+}
+.print-btn{
+    position: absolute;
+    cursor: pointer;
+    color: #007bff;
+    position: absolute;
+    right: 20px;
+    padding: 0px 5px;
+    border-style: none;
+    background: #ffffff;
+    border: none;
+}

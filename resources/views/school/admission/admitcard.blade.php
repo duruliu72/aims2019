@@ -150,6 +150,5 @@
 <!-- for admission form -->
 <script src="{{asset('school/js/print.js')}}"></script>
 <script type="text/javascript">
-
 </script>
 @endsection

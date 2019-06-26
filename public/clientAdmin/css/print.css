@@ -3,40 +3,204 @@
  	body { 
  		-webkit-print-color-adjust: exact; 
  		 print-color-adjust: exact;
- 	}
-    #main-content{
-        margin: 0px;
-    }
- 	.container {
-    	max-width: 1140px;
-    	padding: 0px;
+     }
+     .container {
+    	padding: 0px !important;
 	}
-    .panel-body{
-        border: 0px !important;
-    }
-    .headernoprint{
-        display: none;
-    }
-    .sidebarnoprint{
-        display: none;
-    }
-    .notprint{
-        display: none;;
-    }
-    .wrapper{
-        padding: 0px;
-        margin: 0px;
-    }
- 	.printarea .print-row{
- 		margin:0px;
- 	}
- 	.printarea .print-col{
- 		padding: 0px;
- 	}
-    /*Design Area Start*/
-    .printarea{
-    	
-    }
+     #sidebar{
+         display: none;
+     }
+   .headernoprint{
+    display: none;
+   }
+   .no-print{
+       display: none;
+   }
+   .no-margin{
+       margin: 0px !important;
+   }
+   .no-padding{
+       padding: 0px !important;
+   }
+   .no-border{
+       border:0 !important;
+   }
+   #main-content{
+    margin-left: 0px !important;
+   }
+   /* =============== */
+  /* Academic institute */
+.academic-transcript{
+    border:3px solid #d9d9d9 !important;
+    padding: 10px 0px;
+    width: 70%;
+    margin: 0 auto;
+}
+.academic-transcript__heading{
+    text-align: center;
+    border-bottom:3px solid #d9d9d9;
+}
+.institute-logo{
+    margin-bottom: 5px;
+}
+.institute-logo img{
+    width: 110px;
+    height: 110px;
+}
+.institute-title{
+    margin-bottom: 15px;
+}
+.institute-title h2{
+    margin: 0px;
+}
+.institute-title h3{
+    margin: 0px;
+}
+.institute-title .institute-name{
+    font-size: 35px;
+    color: royalblue !important;
+    font-weight: bold;
+}
+.institute-title .institute-add{
+    font-size: 18px;
+}
+.institute-title .std-transcript{
+    color: red !important;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+.institute-title .exam-name{
+    color: green !important;
+    font-weight: bold;
+}
+.academic-transcript__student{
+    padding: 10px 0px;
+}
+.academic-transcript__student::after{
+    content: "";
+    display: block;
+    clear: both;
+}
+.item{
+    float: left;
+    padding: 0px 15px;
+}
+.academic-transcript__student .student-img{
+  
+}
+.academic-transcript__student .student-info{
+    width: 50%;
+    font-size: 20px;
+    font-family: Segoe UI Semibold;
+    font-weight: bold;
+}
+.academic-transcript__student .student-info table{
+    width: 100%;
+}
+.academic-transcript__student .grade-letter{
+    float: right;
+}
+.academic-transcript__student .grade-letter table{
+    border: 3px solid #cccccc;
+    margin-right: 8px;
+    border-collapse: collapse
+}
+.academic-transcript__student .grade-letter table tr td{
+    padding: 0px;
+    border: 1px solid #cccccc;
+    text-align: center;
+}
+.academic-transcript__result{
+    padding: 0px 15px;
+    margin-bottom: 15px;
+}
+.academic-transcript__result table{
+    border: 3px solid #cccccc;
+    margin-right: 8px;
+    border-collapse: collapse;
+    width: 100%;
+}
+.academic-transcript__result table tr th{
+    text-align: center;
+}
+.academic-transcript__result table tr td{
+    padding: 5px;
+    border: 1px solid #cccccc !important;
+    text-align: center;
+}
+.academic-transcript__grand-result{
+    padding: 0px 15px;
+}
+.academic-transcript__grand-result::after{
+    content: "";
+    display: block;
+    clear: both;
+}
+.academic-transcript__grand-result__left{
+    float: left;
+}
+.academic-transcript__grand-result__right{
+    float: right;
+}
+.academic-transcript__grand-result__left table{
+    border: 3px solid #cccccc !important;
+    margin-right: 8px;
+    border-collapse: collapse;
+    width: 100%;
+}
+.academic-transcript__grand-result__left table tr th{
+    text-align: center;
+}
+.academic-transcript__grand-result__left table tr td{
+    padding: 5px;
+    border: 1px solid #cccccc !important;
+    text-align: center;
+}
+.academic-transcript__grand-result__right table{
+    border: 3px solid #cccccc !important;
+    margin-right: 8px;
+    border-collapse: collapse;
+    width: 100%;
+}
+.academic-transcript__grand-result__right table tr th{
+    text-align: center;
+}
+.academic-transcript__grand-result__right table tr td{
+    padding: 5px;
+    border: 1px solid #cccccc !important;
+    text-align: center;
+}
+.academic-transcript__signature{
+    padding: 0px 15px;
+    margin-top: 25px;
+}
+.academic-transcript__signature::after{
+    content: "";
+    display: block;
+    clear: both;
+}
+.class_tacher-signature{
+    float: left;
+}
+.class_tacher-signature img{
+    width: 150px;
+    padding-bottom: 7px;
+    border-bottom: 2px dashed #000 !important;
+}
+.authorized-signature{
+    float: right;
+}
+.authorized-signature img{
+    width: 150px;
+    padding-bottom: 7px;
+    border-bottom: 2px dashed #000 !important;
+}
+.academic-transcript__footer{
+    margin-top: 15px;
+}
+.academic-transcript__footer p{
+    text-align: center;
+}
  }
 
 
@@ -46,9 +210,9 @@
 
 
  @page {
- 	size: A4;
-   /* margin-top: 2cm;
-    margin-bottom: 2cm;
+ 	/* size: A4; */
+   margin-top: 0cm;
+    /* margin-bottom: 2cm;
     margin-left: 2cm;
-    margin-right: 2cm;*/
+    margin-right: 2cm; */
  }
