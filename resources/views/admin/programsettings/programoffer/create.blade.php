@@ -96,6 +96,10 @@
                     <div class="col-sm-4">
                       <input type="text" class="form-control" name="seat" id="seat">
                     </div>
+                    <label class="col-sm-2 control-label" for="number_of_courses">Number of courses</label>
+                    <div class="col-sm-4">
+                      <input type="text" class="form-control" name="number_of_courses" id="number_of_courses">
+                    </div>
                   </div>
                   <button type="submit" class="btn btn-default">Save</button>
                 </form>

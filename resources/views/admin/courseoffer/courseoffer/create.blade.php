@@ -10,7 +10,7 @@
             <h3 class="page-header"><i class="fa fa-laptop"></i>Horinagor High School</h3>
             <ol class="breadcrumb">
               <li><a href="{{URL::to('/group')}}">All</a></li>
-              <li>Edit Course Offer</li>
+              <li>Course Offer</li>
               @if ($errors->any())
                   <span style="float: right;font-size: 15px;">{{$errors->all()[0] }}</span>
               @endif
@@ -32,7 +32,7 @@
             <section class="panel">
               <div class="panel-body">
                 <div class="top_form">
-                    <form action="{{URL::to('editcourseoffer')}}" method="POST">
+                    <form action="{{URL::to('courseoffercreate')}}" method="POST">
                     {{csrf_field()}}
                     <div class="form-group row">
                     <label class="col-sm-2 control-label" for="programid">Program</label>
@@ -78,7 +78,7 @@
                       <div class="col-sm-12">
                         <div class="btn-container">
                           <button type="submit" class="btn btn-success result-btn" name="search_btn" value="search_btn">Search</button>
-                          <a class="btn btn-info refresh-btn" href="{{URL::to('editcourseoffer')}}"><i class="ace-icon fa fa-refresh bigger-120"></i>Refresh</a>
+                          <a class="btn btn-info refresh-btn" href="{{URL::to('courseoffercreate')}}"><i class="ace-icon fa fa-refresh bigger-120"></i>Refresh</a>
                         </div>
                       </div>
                     </div>
@@ -106,7 +106,7 @@
                     </div>
                 </div>
                 <div class="bottom_form">
-                  <form action="{{URL::to('editcourseoffer')}}" method="POST">
+                  <form action="{{URL::to('courseoffercreate')}}" method="POST">
                   {{csrf_field()}}
                   <input type="hidden" name="programofferid" value="{{$programofferinfo->id}}">
                   <div class="row">
@@ -126,7 +126,7 @@
                           @foreach($courseList as $x)
                             @if($x->coursecodeid==0)
                             <tr>
-                              <td>{{++$id}}</td>                     
+                              <td>{{++$id}}</td>                    
                               <td><input type="hidden" name="coursecodeid[]" value="{{$x->id}}" />{{sprintf("%s %s%s%s",$x->courseName,"(",$x->name,")")}}</td>
                               <td><select class="form-control" name="teacherid[{{$x->id}}]" id="teacherid">
                                 <option value="">SELECT</option>
@@ -149,8 +149,8 @@
                                 @endforeach
                               </select>
                               </td>
-                              <td><div class="form-group"><input class="form-control" type="text" name="coursemarks[{{$x->id}}]" value="{{$x->coursemark}}" /></div></td>
-                              <td><input class="markcheck" type="checkbox" name="checkbox[{{$x->id}}]"></td>
+                              <td>{{$x->coursemark}}</td>
+                              <td><span style='font-size:18px;'>&#10003;</span></td>      
                             </tr>
                             @endif
                           @endforeach
@@ -161,8 +161,8 @@
                      <div class="row">
                       <div class="col-sm-12">
                         <div class="btn-container">
-                          <button type="submit" class="btn btn-success result-btn" name="update_btn" value="update_btn">Update</button>
-                          <a class="btn btn-info refresh-btn" href="{{URL::to('editcourseoffer')}}"><i class="ace-icon fa fa-refresh bigger-120"></i>Refresh</a>
+                          <button type="submit" class="btn btn-success result-btn" name="save_btn" value="save_btn">Save</button>
+                          <a class="btn btn-info refresh-btn" href="{{URL::to('admissionmarkentry')}}"><i class="ace-icon fa fa-refresh bigger-120"></i>Refresh</a>
                         </div>
                       </div>
                     </div>

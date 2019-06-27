@@ -45,8 +45,8 @@ class MeargeOfferControllder extends Controller
         $shiftList=$aMeargeOffer->getAllOnIDS(0,0,0,0,0,"shifts",'shiftid');
         $groupList=$aMeargeOffer->getAllOnIDS(0,0,0,0,0,"groups",'groupid');
         $courseCodeList=$aMeargeOffer->getCourseCodes($sessionid);
-        $meargeList=Mearge::all();
         $aList=$aMeargeOffer->meargeDetails();
+        // dd($aList);
         $dataList=[
             'institute'=>Institute::getInstituteName(),
             'sidebarMenu'=>$sidebarMenu,
@@ -57,7 +57,6 @@ class MeargeOfferControllder extends Controller
             'pList'=>$pList,
             'result'=>$aList,
             'courseCodeList'=>$courseCodeList,
-            'meargeList'=>$meargeList,
             'msg'=>$msg
         ];
     	return view('admin.courseoffer.meargeoffer.index',$dataList);
@@ -75,10 +74,10 @@ class MeargeOfferControllder extends Controller
      	$shiftid=$request->shiftid;     	
         $firstsubjectcodeid=$request->firstsubjectcodeid;
         $secondsubjectcodeid=$request->secondsubjectcodeid;
-        $meargeid=$request->meargeid;
+        // $meargeid=$request->meargeid;
         $aProgramOffer=new ProgramOffer();
         $programofferid=$aProgramOffer->getProgramOfferId(0,$programid,$groupid,$mediumid,$shiftid);
-        $status=$this->doTransaction($programofferid,$firstsubjectcodeid,$secondsubjectcodeid,$meargeid);
+        $status=$this->doTransaction($programofferid,$firstsubjectcodeid,$secondsubjectcodeid);
      	if($status){
      		$msg="Mearging Successfully";
 		  }else{
@@ -99,17 +98,17 @@ class MeargeOfferControllder extends Controller
         $msg="Mearging Deleted";
         return redirect()->back()->with('msg',$msg);
     }
-    private function doTransaction($programofferid,$firstsubjectcodeid,$secondsubjectcodeid,$meargeid){
+    private function doTransaction($programofferid,$firstsubjectcodeid,$secondsubjectcodeid){
         try{
-            \DB::transaction(function () use($programofferid,$firstsubjectcodeid,$secondsubjectcodeid,$meargeid){
+            \DB::transaction(function () use($programofferid,$firstsubjectcodeid,$secondsubjectcodeid){
                 \DB::table('courseoffer')
                 ->where('programofferid', $programofferid)
                 ->where('coursecodeid', $firstsubjectcodeid)
-                ->update(['meargeid' => $meargeid]);
+                ->update(['meargeid' => $firstsubjectcodeid]);
                 \DB::table('courseoffer')
                 ->where('programofferid', $programofferid)
                 ->where('coursecodeid', $secondsubjectcodeid)
-                ->update(['meargeid' => $meargeid]);
+                ->update(['meargeid' => $firstsubjectcodeid]);
             });
             return true;
         }catch( \PDOException $e ){

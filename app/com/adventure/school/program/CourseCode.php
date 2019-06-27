@@ -19,7 +19,6 @@ class CourseCode extends Model
 	public function getAllCourseOnProgramOffer($programofferid){
 		$sql="SELECT course_codes.*,
 		courses.name AS courseName,
-		CONCAT(courses.name,'(',course_codes.name,')') AS courseNameWithCode,
 		IFNULL(table1.programofferid,0) AS programofferid,
 		IFNULL(table1.coursecodeid,0) AS coursecodeid,
 		table1.coursemark

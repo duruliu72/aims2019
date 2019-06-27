@@ -21,62 +21,78 @@ class CourseOfferController extends Controller
     {
         $this->middleware('auth');
     }
-    public function courseofferCreate(Request $request){
+    public function createCourseOffer(Request $request){
         $msg="";
-        $programid=$request->programid;
-        $groupid=$request->groupid;
-        $mediumid=$request->mediumid;
-        $shiftid=$request->shiftid;
         $aMenu=new Menu();
         $hasMenu=$aMenu->hasMenu('courseoffercreate');
         if($hasMenu==false){
             return redirect('error');
         }
         $sidebarMenu=$aMenu->getSidebarMenu();
+        ///////////////////////////////////
         $aProgramOffer=new ProgramOffer();
-        $aCourseOffer=new CourseOffer();
-        $programofferinfo=null;
-        $courseList=null;
-        $sectionList=null;
-        $sectionOfferList=null;
-        $sectionTeacherList=null;
-        if($request->isMethod('post')&&$request->search_btn=='search_btn' || $request->save_btn=='save_btn'){
-            $programofferid=$aProgramOffer->getProgramOfferId(0,$programid,$groupid,$mediumid,$shiftid);
-            if($request->programofferid!=null){
-                $programofferid=$request->programofferid;
+        $aCourseCode=new CourseCode();
+        $programofferid=0;
+        if($request->isMethod('post')&&$request->search_btn=='search_btn'){
+            $programid=$request->programid;
+            $groupid=$request->groupid;
+            $mediumid=$request->mediumid;
+            $shiftid=$request->shiftid;
+            $checkProgramoffer=$aProgramOffer->checkValue(0,$programid,$groupid,$mediumid,$shiftid);
+            if(!$checkProgramoffer){
+                $msg="Program Offer is not created yet";
+                return redirect()->back()->with('msg',$msg);
             }
-            $aCourseCode=new CourseCode();
-            if(isset($request->checkbox) && $request->checkbox!=null && $request->save_btn=='save_btn'){
-                $checkboxList=$request->checkbox;
-                $coursecodeidList=$request->coursecodeid;
-                $coursemarksList=$request->coursemarks;
-                $isSaveCourseOffer=false;
-                foreach($coursecodeidList as $courseitem){
-                    $coursecodeid=(int)$courseitem;
-                    $aCourseOffer=new CourseOffer();
-                    $aCourseOffer->programofferid=$programofferid;
-                    $aCourseOffer->coursecodeid=$coursecodeid;
-                    $aCourseOffer->coursemark=$coursemarksList[$coursecodeid];
-                   if($aCourseOffer->coursemark!=null){
-                        if($aCourseOffer->isSameCourse($programofferid,$coursecodeid)==false){
-                            $aCourseOffer->save();
-                            $isSaveCourseOffer=false;
+            $programofferid=$aProgramOffer->getProgramOfferId(0,$programid,$groupid,$mediumid,$shiftid);
+        }
+        if($request->isMethod('post')&&$request->save_btn=='save_btn'){
+            $programofferid=$request->programofferid;
+            $checkboxList=$request->checkbox;
+            // $coursecodeidList=$request->coursecodeid;
+            $teacherList=$request->teacherid;
+            $coursemarksList=$request->coursemarks;
+            $programofferinfo=$aProgramOffer->getProgramOffer($programofferid);
+            if($checkboxList!=null && count($checkboxList)>=$programofferinfo->number_of_courses){
+                // transition will have to done
+                $status=\DB::transaction(function () use($programofferid,$checkboxList,$coursemarksList,$teacherList){
+                    $checkfield=true;
+                    foreach($checkboxList as $key=>$v){
+                        if($coursemarksList[$key]==null){
+                            $checkfield=false;
                         }
-                        $isSaveCourseOffer=true;
                     }
-                }
-                if($isSaveCourseOffer){
+                    $save_item=0;
+                    foreach($checkboxList as $key=>$v){
+                        $aCourseOffer=new CourseOffer();
+                        $aCourseOffer->programofferid=$programofferid;
+                        $aCourseOffer->coursecodeid=$key;
+                        if($teacherList[$key]!=null){
+                            $aCourseOffer->teacherid=$teacherList[$key];
+                        }
+                        $aCourseOffer->coursemark=$coursemarksList[$key];
+                        $aCourseOffer->meargeid=$key;
+                        if($aCourseOffer->isSameCourse($programofferid,$key)==false&&$checkfield==true){
+                            $aCourseOffer->save();
+                            $save_item++;
+                        }
+                    }
+                    if($save_item==count($checkboxList)){
+                        return true;
+                    }
+                    return false;
+                });
+                if($status){
                     $msg="Item save Successfully";
-                }elseif($aCourseOffer->coursemark==null){
-                    $msg="Plesase input Course marks";
                 }else{
                     $msg="Item not save";
                 }
-                
+            }else{
+                $msg="Select at Lest ".$programofferinfo->number_of_courses." Courses";
+                return redirect()->back()->with('msg',$msg);
             }
-            $programofferinfo=$aProgramOffer->getProgramOffer($programofferid);
-            $courseList=$aCourseCode->getAllCourseOnProgramOffer($programofferid);
         }
+        $programofferinfo=$aProgramOffer->getProgramOffer($programofferid);
+        $courseList=$aCourseCode->getAllCourseOnProgramOffer($programofferid);
         // sessionid,programid,groupid,mediumid,shiftid and tableName
         $programList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,"programs",'programid');
         $mediumList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,"mediums",'mediumid');
@@ -95,7 +111,108 @@ class CourseOfferController extends Controller
             'courseList'=>$courseList,
             'msg'=>$msg
         ];
-        return view('admin.courseoffer.courseoffer.index',$dataList);
+        return view('admin.courseoffer.courseoffer.create',$dataList);
     }
-   
+    public function editCourseOffer(Request $request){
+        $msg="";
+        $aMenu=new Menu();
+        $hasMenu=$aMenu->hasMenu('courseoffercreate');
+        if($hasMenu==false){
+            return redirect('error');
+        }
+        $sidebarMenu=$aMenu->getSidebarMenu();
+        ///////////////////////////////////
+        $aProgramOffer=new ProgramOffer();
+        $aCourseCode=new CourseCode();
+        $programofferid=0;
+        if($request->isMethod('post')&&$request->search_btn=='search_btn'){
+            $programid=$request->programid;
+            $groupid=$request->groupid;
+            $mediumid=$request->mediumid;
+            $shiftid=$request->shiftid;
+            $checkProgramoffer=$aProgramOffer->checkValue(0,$programid,$groupid,$mediumid,$shiftid);
+            if(!$checkProgramoffer){
+                $msg="Program Offer is not created yet";
+                return redirect()->back()->with('msg',$msg);
+            }
+            $programofferid=$aProgramOffer->getProgramOfferId(0,$programid,$groupid,$mediumid,$shiftid);
+        }
+        if($request->isMethod('post')&&$request->update_btn=='update_btn'){
+            $programofferid=$request->programofferid;
+            $checkboxList=$request->checkbox;
+            // $coursecodeidList=$request->coursecodeid;
+            $teacherList=$request->teacherid;
+            $coursemarksList=$request->coursemarks;
+            $programofferinfo=$aProgramOffer->getProgramOffer($programofferid);
+            if($checkboxList!=null&&count($checkboxList)>=$programofferinfo->number_of_courses){
+                // transition will have to done
+                $status=\DB::transaction(function () use($programofferid,$checkboxList,$coursemarksList,$teacherList){
+                    $checkfield=true;
+                    foreach($checkboxList as $key=>$v){
+                        if($coursemarksList[$key]==null){
+                            $checkfield=false;
+                        }
+                    }
+                    $save_item=0;
+                    foreach($checkboxList as $key=>$v){
+                        $aCourseOffer=new CourseOffer();
+                        $aCourseOffer->programofferid=$programofferid;
+                        $aCourseOffer->coursecodeid=$key;
+                        if($teacherList[$key]!=null){
+                            $aCourseOffer->teacherid=$teacherList[$key];
+                        }
+                        $aCourseOffer->coursemark=$coursemarksList[$key];
+                        $aCourseOffer->meargeid=$key;
+                        if($aCourseOffer->isSameCourse($programofferid,$key)==true&&$checkfield==true){
+                            \DB::table('courseoffer')
+                            ->where('programofferid', $programofferid)
+                            ->where('coursecodeid', $key)
+                            ->update([
+                                'coursemark' => $coursemarksList[$key],
+                                'teacherid'=>$teacherList[$key],
+                                "meargeid"=>$key
+                            ]);
+                            $save_item++;
+                        }elseif($aCourseOffer->isSameCourse($programofferid,$key)==false&&$checkfield==true){
+                            $aCourseOffer->save();
+                            $save_item++;
+                        }
+                    }
+                    if($save_item==count($checkboxList)){
+                        return true;
+                    }
+                    return false;
+                });
+                if($status){
+                    $msg="Item save Successfully";
+                }else{
+                    $msg="Item not save";
+                }
+            }else{
+                $msg="Select at Lest ".$programofferinfo->number_of_courses." Courses";
+                return redirect()->back()->with('msg',$msg);
+            }
+        }
+        $programofferinfo=$aProgramOffer->getProgramOffer($programofferid);
+        $courseList=$aCourseCode->getAllCourseOnProgramOffer($programofferid);
+        // sessionid,programid,groupid,mediumid,shiftid and tableName
+        $programList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,"programs",'programid');
+        $mediumList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,"mediums",'mediumid');
+        $shiftList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,"shifts",'shiftid');
+        $groupList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,"groups",'groupid');
+        $teacherList=Employee::all();
+        $dataList=[
+            'institute'=>Institute::getInstituteName(),
+            'sidebarMenu'=>$sidebarMenu,
+            'programList'=>$programList,
+            'groupList'=>$groupList,
+            'mediumList'=>$mediumList,
+            'shiftList'=>$shiftList,
+            'teacherList'=>$teacherList,
+            'programofferinfo'=>$programofferinfo,
+            'courseList'=>$courseList,
+            'msg'=>$msg
+        ];
+        return view('admin.courseoffer.courseoffer.edit',$dataList);
+    }
 }

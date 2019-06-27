@@ -14,7 +14,7 @@ class Program extends Model
           programs.name,
           t1.programlevelid,
           programlevels.name AS levelName
-          FROM `vlevel_programs` AS t1
+          FROM `level_programs` AS t1
           INNER JOIN programlevels ON t1.programlevelid=programlevels.id
           INNER JOIN programs ON t1.programid=programs.id
           GROUP BY t1.programid";

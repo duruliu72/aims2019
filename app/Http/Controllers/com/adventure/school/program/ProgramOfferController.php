@@ -69,13 +69,16 @@ class ProgramOfferController extends Controller
         return view('admin.programsettings.programoffer.create',$dataList);
     }
     public function store(Request $request){
+        
      	$validatedData = $request->validate([
         'sessionid' => 'required|',
         'programid' => 'required|',
         'groupid' => 'required|',
         'mediumid' => 'required|',
         'shiftid' => 'required|',
-    	]);
+        'seat'=>'required|',
+        'number_of_courses'=>'required|'
+        ]);
      	$sessionid=$request->sessionid;
      	$programid=$request->programid;
      	$groupid=$request->groupid;
@@ -83,6 +86,7 @@ class ProgramOfferController extends Controller
         $shiftid=$request->shiftid;
         $cordinator=$request->cordinator;
         $seat=$request->seat;
+        $number_of_courses=$request->number_of_courses;
      	// Check Here Is programoffer is Created
      	$aProgramOffer=new ProgramOffer();
      	$hasSame=$aProgramOffer->checkValue($sessionid,$programid,$groupid,$mediumid,$shiftid);
@@ -99,6 +103,7 @@ class ProgramOfferController extends Controller
             $aProgramOffer->cordinator=$cordinator;
         }
         $aProgramOffer->seat=$seat;
+        $aProgramOffer->number_of_courses=$number_of_courses;
      	$status=$aProgramOffer->save();
      	if($status){
      		$msg="Program Offer Created Successfully";
@@ -154,6 +159,7 @@ class ProgramOfferController extends Controller
         $shiftid=$request->shiftid;
         $cordinator=$request->cordinator;
         $seat=$request->seat;
+        $number_of_courses=$request->number_of_courses;
      	// dd($shiftid);
      	// Check Here programoffer is Exist not
         $aProgramOffer=ProgramOffer::findOrfail($id);
@@ -174,6 +180,7 @@ class ProgramOfferController extends Controller
             $aProgramOffer->cordinator=$cordinator;
         }
         $aProgramOffer->seat=$seat;
+        $aProgramOffer->number_of_courses=$number_of_courses;
      	$status=$aProgramOffer->update();
      	if($status){
      		$msg="Program Offer Updated Successfully";

@@ -3,6 +3,7 @@
 <link href="{{asset('clientAdmin/css/dataTables.bootstrap.min.css')}}" rel="stylesheet">
 <link href="{{asset('clientAdmin/css/fixedHeader.bootstrap.min.css')}}" rel="stylesheet">
 <link href="{{asset('clientAdmin/css/responsive.bootstrap.min.css')}}" rel="stylesheet">
+<link href="{{asset('clientAdmin/css/custom.css')}}" rel="stylesheet">
 @endsection
 @section('content')
 <section id="main-content">
@@ -68,8 +69,8 @@
                          @endforeach
                       </select>
                     </div>                 
-                    <div class="col-sm-4 form-group clearfix">
-                      <label class="control-label" for="firstsubjectcodeid">Mearge First Subject</label>
+                    <div class="col-sm-3 form-group">
+                      <label class="control-label" for="firstsubjectcodeid">First Subject</label>
                       <select class="form-control" name="firstsubjectcodeid" id="firstsubjectcodeid">
                          <option value="">SELECT</option>
                          @foreach ($courseCodeList as $x)
@@ -77,8 +78,11 @@
                          @endforeach
                       </select>
                     </div>
-                    <div class="col-sm-4 form-group">
-                      <label class="control-label" for="secondsubjectcodeid">Mearge Second Subject</label>
+                    <div class="col-sm-2 form-group">
+                      <label class="control-label mearge" for="meargeid">Mearge With</label>
+                    </div>
+                    <div class="col-sm-3 form-group">
+                      <label class="control-label" for="secondsubjectcodeid">Second Subject</label>
                       <select class="form-control" name="secondsubjectcodeid" id="secondsubjectcodeid">
                          <option value="">SELECT</option>
                          @foreach ($courseCodeList as $x)
@@ -86,15 +90,7 @@
                          @endforeach
                       </select>
                     </div>                           
-                    <div class="col-sm-4 form-group">
-                      <label class="control-label" for="meargeid">Mearge</label>
-                      <select class="form-control" name="meargeid" id="meargeid">
-                         <option value="">SELECT</option>
-                         @foreach ($meargeList as $x)
-                           <option value="{{$x->id}}">{{$x->name}}</option>
-                         @endforeach
-                      </select>
-                    </div>
+                   
                   <div class="row">
                     <div class="col-sm-12">
                       <div class="btn-container">
@@ -112,9 +108,9 @@
                   <tr>
                     <th>SL NO</th>
                     <th>Class Information</th>
-                    <th>Merge Name</th>
-                    <th>Merge Subject Codes</th>
-                    <th>Merge Subject Names</th>
+                    <th>From Subject</th>
+                    <th>To</th>
+                    <th>Subject</th>
                     @if($pList[4]->id==4)
                     <th width="10px">Del</th>
                     @endif
@@ -126,8 +122,8 @@
                   <tr>
                     <td>{{++$id}}</td>
                     <td>{{$x->programdetails}}</td>
-                    <td>{{$x->meargeName}}</td>
                     <td>{{$x->meargeCourseCode}}</td>
+                    <td>To</td>
                     <td>{{$x->meargeCourseName}}</td>
                     @if($pList[4]->id==4)
                     <td>

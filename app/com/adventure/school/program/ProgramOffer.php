@@ -7,7 +7,7 @@ use App\com\adventure\school\program\Session;
 class ProgramOffer extends Model
 {
     protected $table='programoffers';
-    protected $fillable = ['sessionid','programid','groupid','mediumid','shiftid','cordinator','seat','status'];
+    protected $fillable = ['sessionid','programid','groupid','mediumid','shiftid','cordinator','seat','number_of_courses','status'];
 		public function getProgramOffer($id){
 			$sql="SELECT 
 			t1.*,

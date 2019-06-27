@@ -39,6 +39,7 @@
                 <th>Group</th>
                 <th>Coordinator</th>
                 <th>Seat</th>
+                <th>Number Of Courses</th>
                 @if($pList[3]->id==3)
                 <th width="10px">Edit</th>
                 @endif
@@ -59,6 +60,7 @@
                 <td>{{$x->shiftName}}</td>
                 <td>{{sprintf('%s%s%s',$x->first_name,$x->middle_name,$x->last_name)}}</td>
                 <td>{{$x->seat}}</td>
+                <td>{{$x->number_of_courses}}</td>
                 @if($pList[3]->id==3)
                 <td> 
                   <a href="{{URL::to('/programoffer')}}/{{$x->id}}/{{'edit'}}" class="tooltip-success" data-rel="tooltip" title="Edit">

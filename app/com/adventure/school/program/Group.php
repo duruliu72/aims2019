@@ -11,9 +11,9 @@ class Group extends Model
     public static function getGroupsOnProgram(){
         $sql="SELECT 
         groups.*
-        FROM `vprogram_groups`
-        INNER JOIN groups ON vprogram_groups.groupid=groups.id
-        GROUP BY vprogram_groups.groupid";
+        FROM `program_groups`
+        INNER JOIN groups ON program_groups.groupid=groups.id
+        GROUP BY program_groups.groupid";
         $qresul=\DB::select($sql);
         $result=collect($qresul);
         return $result;
@@ -21,9 +21,9 @@ class Group extends Model
     public static function getGroupsOnProgramID($programid){
         $sql="SELECT 
         groups.*
-        FROM `vprogram_groups`
-        INNER JOIN groups ON vprogram_groups.groupid=groups.id
-        WHERE vprogram_groups.programid=?";
+        FROM `program_groups`
+        INNER JOIN groups ON program_groups.groupid=groups.id
+        WHERE program_groups.programid=?";
         $qresul=\DB::select($sql,[$programid]);
         $result=collect($qresul);
         return $result;
