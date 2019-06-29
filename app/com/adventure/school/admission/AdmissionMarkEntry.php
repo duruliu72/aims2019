@@ -5,7 +5,6 @@ use App\com\adventure\school\program\ProgramOffer;
 use App\com\adventure\school\admission\AdmissionProgram;
 use App\com\adventure\school\admission\AdmissionProgramSubject;
 use App\com\adventure\school\admission\Applicant;
-use App\com\adventure\school\admission\AdmissionApplicant;
 use Illuminate\Database\Eloquent\Model;
 
 class AdmissionMarkEntry extends Model
@@ -73,8 +72,8 @@ class AdmissionMarkEntry extends Model
         LEFT JOIN nationalities ON t1.`nationalityid`=nationalities.id
         LEFT JOIN quotas ON t1.`quotaid`=quotas.id
         INNER JOIN 
-        admissionapplicants AS t2 ON t1.applicantid=t2.applicantid
-        WHERE t2.programofferid=? && t1.applicantid NOT IN(SELECT applicantid FROM `admissionresult`
+        students_house AS t2 ON t1.applicantid=t2.applicantid
+        WHERE t2.programofferid=? && t2.admittedtypeid=2 && t1.applicantid NOT IN(SELECT applicantid FROM `admissionresult`
         WHERE programofferid=? GROUP BY applicantid)";
         $qresult=\DB::select($sql,[$programofferid,$programofferid]);
         $result=collect($qresult);
@@ -97,8 +96,8 @@ class AdmissionMarkEntry extends Model
         LEFT JOIN religions ON t1.religionid=religions.id
         LEFT JOIN nationalities ON t1.`nationalityid`=nationalities.id
         LEFT JOIN quotas ON t1.`quotaid`=quotas.id
-        INNER JOIN admissionapplicants AS t2 ON t1.applicantid=t2.applicantid
-        WHERE t2.programofferid=?) AS maintabe
+        INNER JOIN students_house AS t2 ON t1.applicantid=t2.applicantid
+        WHERE t2.programofferid=? && t2.admittedtypeid=2) AS maintabe
         INNER JOIN(SELECT applicantid FROM `admissionresult`
         WHERE programofferid=? GROUP BY applicantid) AS childtable ON maintabe.applicantid=childtable.applicantid";
         $qresult=\DB::select($sql,[$programofferid,$programofferid]);

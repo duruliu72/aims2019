@@ -88,12 +88,13 @@ class MeargeOfferControllder extends Controller
     public function destroy(Request $request)
     {
         $programofferid=$request->programofferid;
-        $coursecodeidList=explode(',',$request->meargeCourseCodeid);
-        foreach($coursecodeidList as $coursecodeid){
+        $aCourseOffer=new CourseOffer();
+        $courses=$aCourseOffer->getOfferedCourses($programofferid);
+        foreach($courses as $x){
             \DB::table('courseoffer')
-                ->where('programofferid', $programofferid)
-                ->where('coursecodeid', (int)$coursecodeid)
-                ->update(['meargeid' => 0]);
+            ->where('programofferid', $programofferid)
+            ->where('coursecodeid', $x->coursecodeid)
+            ->update(['meargeid' => $x->coursecodeid]);
         }
         $msg="Mearging Deleted";
         return redirect()->back()->with('msg',$msg);

@@ -7,6 +7,7 @@ use App\com\adventure\school\basic\Institute;
 use App\com\adventure\school\program\Session;
 use App\com\adventure\school\admission\Applicant;
 use App\com\adventure\school\admission\AdmissionApplicant;
+use App\com\adventure\school\academic\StudentHouse;
 use App\com\adventure\school\admission\AdmissionProgram;
 use App\com\adventure\school\admission\AdmissionProgramSubject;
 use App\com\adventure\school\program\ProgramOffer;
@@ -20,8 +21,8 @@ class Admission extends Model
         if($applicant!=null){
             $present_addressid=$applicant->present_addressid;
         }
-        $aAdmissionApplicant=new AdmissionApplicant();
-        $admissionApplicant=$aAdmissionApplicant->getAdmissionApplicant($applicantid);
+        $aStudentHouse=new StudentHouse();
+        $admissionApplicant=$aStudentHouse->getAdmissionApplicant($applicantid);
 		$programofferid=$admissionApplicant->programofferid;
         $aProgramOffer=new ProgramOffer();
 		$programofferinfo=$aProgramOffer->getProgramOffer($programofferid);
@@ -39,8 +40,8 @@ class Admission extends Model
     public function getApplicantAdmitCard($applicantid,$pin_code=""){
 		$applicant=new Applicant();
 		$applicant=$applicant->getApplicant($applicantid,$pin_code);
-		$aAdmissionApplicant=new AdmissionApplicant();
-		$admissionApplicant=$aAdmissionApplicant->getAdmissionApplicant($applicantid);
+		$aStudentHouse=new StudentHouse();
+		$admissionApplicant=$aStudentHouse->getAdmissionApplicant($applicantid);
 		$programofferid=$admissionApplicant->programofferid;
 		$aProgramOffer=new ProgramOffer();
 		$programofferinfo=$aProgramOffer->getProgramOffer($programofferid);

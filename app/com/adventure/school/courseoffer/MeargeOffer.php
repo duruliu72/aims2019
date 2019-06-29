@@ -8,18 +8,48 @@ use App\com\adventure\school\program\ProgramOffer;
 class MeargeOffer extends Model
 {
     public function meargeDetails(){
-        $sql="SELECT 
-        courseoffer.id,
-        courseoffer.programofferid,
-        CONCAT(sessions.name,'--',programs.name,'--',groups.name,'--',mediums.name,'--',shifts.name) AS programdetails,
-        SUM(courseoffer.coursemark) AS total_coursemark,
-        mearges.name AS meargeName,
-        GROUP_CONCAT(courses.name SEPARATOR ', ') AS meargeCourseName,
-        GROUP_CONCAT(course_codes.id SEPARATOR ',') AS meargeCourseCodeid,
-        GROUP_CONCAT(course_codes.name SEPARATOR ', ') AS meargeCourseCode,
-        courseoffer.meargeid
+        // $sql="SELECT 
+        // courseoffer.id,
+        // courseoffer.programofferid,
+        // CONCAT(sessions.name,'--',programs.name,'--',groups.name,'--',mediums.name,'--',shifts.name) AS programdetails,
+        // SUM(courseoffer.coursemark) AS total_coursemark,
+        // mearges.name AS meargeName,
+        // GROUP_CONCAT(courses.name SEPARATOR ', ') AS meargeCourseName,
+        // GROUP_CONCAT(course_codes.id SEPARATOR ',') AS meargeCourseCodeid,
+        // GROUP_CONCAT(course_codes.name SEPARATOR ', ') AS meargeCourseCode,
+        // courseoffer.meargeid
+        // FROM `courseoffer`
+        // INNER JOIN mearges ON courseoffer.meargeid=mearges.id
+        // INNER JOIN programoffers ON courseoffer.programofferid=programoffers.id
+        // INNER JOIN sessions ON programoffers.sessionid=sessions.id
+        // INNER JOIN programs ON programoffers.programid=programs.id
+        // INNER JOIN groups ON programoffers.groupid=groups.id
+        // INNER JOIN mediums ON programoffers.mediumid=mediums.id
+        // INNER JOIN shifts ON programoffers.shiftid=shifts.id
+        // INNER JOIN course_codes ON courseoffer.coursecodeid=course_codes.id
+        // INNER JOIN courses ON course_codes.courseid=courses.id
+        //   GROUP BY courseoffer.programofferid, courseoffer.meargeid ORDER BY courseoffer.programofferid,course_codes.name";
+        // $qResult=\DB::select($sql);
+        // return collect($qResult);
+        $result=$this->getProgramoffer();
+        foreach($result as $x){
+            $meargeidList=$this->getMeargeid($x->programofferid);
+            // dd($meargeidList);
+            foreach($meargeidList as $y){
+                $x->meargesubjects[$y->meargeid]=$this->meargeSubjects($x->programofferid,$y->meargeid);
+            }
+        }
+        // dd($result);
+        return $result;        
+    }
+    public function getProgramoffer(){
+        $sql="SELECT courseoffer.programofferid,
+        sessions.name AS sessionName,
+        programs.name AS programName,
+        groups.name AS groupName,
+        mediums.name AS mediumName,
+        shifts.name AS shiftName
         FROM `courseoffer`
-        INNER JOIN mearges ON courseoffer.meargeid=mearges.id
         INNER JOIN programoffers ON courseoffer.programofferid=programoffers.id
         INNER JOIN sessions ON programoffers.sessionid=sessions.id
         INNER JOIN programs ON programoffers.programid=programs.id
@@ -28,8 +58,56 @@ class MeargeOffer extends Model
         INNER JOIN shifts ON programoffers.shiftid=shifts.id
         INNER JOIN course_codes ON courseoffer.coursecodeid=course_codes.id
         INNER JOIN courses ON course_codes.courseid=courses.id
-          GROUP BY courseoffer.programofferid, courseoffer.meargeid ORDER BY courseoffer.programofferid,course_codes.name";
+        INNER JOIN (SELECT 
+        programofferid,
+        meargeid  
+        FROM `courseoffer`
+        GROUP BY programofferid,meargeid HAVING COUNT(courseoffer.meargeid)>1) AS tbl_mearge
+        ON courseoffer.programofferid=tbl_mearge.programofferid && courseoffer.meargeid=tbl_mearge.meargeid GROUP BY courseoffer.programofferid";
         $qResult=\DB::select($sql);
+        return collect($qResult);
+    }
+    public function getMeargeid($programofferid){
+        $sql="SELECT courseoffer.meargeid
+        FROM `courseoffer`
+        INNER JOIN programoffers ON courseoffer.programofferid=programoffers.id
+        INNER JOIN sessions ON programoffers.sessionid=sessions.id
+        INNER JOIN programs ON programoffers.programid=programs.id
+        INNER JOIN groups ON programoffers.groupid=groups.id
+        INNER JOIN mediums ON programoffers.mediumid=mediums.id
+        INNER JOIN shifts ON programoffers.shiftid=shifts.id
+        INNER JOIN course_codes ON courseoffer.coursecodeid=course_codes.id
+        INNER JOIN courses ON course_codes.courseid=courses.id
+        INNER JOIN (SELECT 
+        programofferid,
+        meargeid  
+        FROM `courseoffer`
+        GROUP BY programofferid,meargeid HAVING COUNT(courseoffer.meargeid)>1) AS tbl_mearge
+        ON courseoffer.programofferid=tbl_mearge.programofferid && courseoffer.meargeid=tbl_mearge.meargeid WHERE courseoffer.programofferid=? GROUP BY courseoffer.meargeid";
+        $qResult=\DB::select($sql,[$programofferid]);
+        return collect($qResult);
+    }
+    public function meargeSubjects($programofferid,$meargeid){
+        $sql="SELECT courseoffer.coursecodeid,
+        courses.name AS courseName,
+        course_codes.name AS codeName
+        FROM `courseoffer`
+        INNER JOIN programoffers ON courseoffer.programofferid=programoffers.id
+        INNER JOIN sessions ON programoffers.sessionid=sessions.id
+        INNER JOIN programs ON programoffers.programid=programs.id
+        INNER JOIN groups ON programoffers.groupid=groups.id
+        INNER JOIN mediums ON programoffers.mediumid=mediums.id
+        INNER JOIN shifts ON programoffers.shiftid=shifts.id
+        INNER JOIN course_codes ON courseoffer.coursecodeid=course_codes.id
+        INNER JOIN courses ON course_codes.courseid=courses.id
+        INNER JOIN (SELECT 
+        programofferid,
+        meargeid  
+        FROM `courseoffer`
+        GROUP BY programofferid,meargeid HAVING COUNT(courseoffer.meargeid)>1) AS tbl_mearge
+        ON courseoffer.programofferid=tbl_mearge.programofferid && courseoffer.meargeid=tbl_mearge.meargeid
+        WHERE courseoffer.programofferid=? && courseoffer.meargeid=?";
+        $qResult=\DB::select($sql,[$programofferid,$meargeid]);
         return collect($qResult);
     }
     public function getAllOnIDS($sessionid,$programid,$groupid,$mediumid,$shiftid,$tableName,$compareid){

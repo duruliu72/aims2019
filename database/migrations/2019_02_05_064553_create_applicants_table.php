@@ -16,6 +16,7 @@ class CreateApplicantsTable extends Migration
         Schema::create('applicants', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('applicantid')->length(11)->unique();
+            $table->string('pin_code',150);
             $table->string('firstName',150);
             $table->string('middleName',150)->nullable();
             $table->string('lastName',150)->nullable();

@@ -5,15 +5,15 @@ namespace App\com\adventure\school\academic;
 use Illuminate\Database\Eloquent\Model;
 use App\com\adventure\school\program\ProgramOffer;
 use App\com\adventure\school\admission\AdmissionProgram;
-use App\com\adventure\school\admission\AdmissionApplicant;
+use App\com\adventure\school\academic\StudentHouse;
 use App\com\adventure\school\admission\Applicant;
 use App\com\adventure\school\academic\Student;
 class StudentRegistration extends Model
 {
     // Through Admission
     public function getApplcantForRegistration($applicantid){
-        $aAdmissionApplicant=new AdmissionApplicant();
-		$admissionApplicant=$aAdmissionApplicant->getAdmissionApplicant($applicantid);
+        $aStudentHouse=new StudentHouse();
+		$admissionApplicant=$aStudentHouse->getAdmissionApplicant($applicantid);
 		$aProgramOffer=new ProgramOffer();
 		$programofferinfo=$aProgramOffer->getProgramOffer($admissionApplicant->programofferid);
         $merit_list=$this->getApllicants($admissionApplicant->programofferid);
@@ -45,8 +45,8 @@ class StudentRegistration extends Model
         table4.classroll
         FROM(select table1.* ,
         table2.tot_marks
-        FROM(SELECT * FROM `admissionapplicants`
-        WHERE programofferid=?) table1
+        FROM(SELECT * FROM `students_house`
+        WHERE programofferid=? && admittedtypeid=2) table1
         INNER JOIN (SELECT 
         t1.programofferid,
         t1.applicantid,

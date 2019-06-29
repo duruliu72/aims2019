@@ -10,7 +10,9 @@ use App\com\adventure\school\admission\AdmissionProgram;
 use App\com\adventure\school\admission\Admission;
 use App\com\adventure\school\admission\VAdmissionSubject;
 use App\com\adventure\school\admission\Applicant;
-use App\com\adventure\school\admission\AdmissionApplicant;
+use App\com\adventure\school\academic\StudentHouse;
+// use App\com\adventure\school\admission\AdmissionApplicant;
+
 use App\com\adventure\school\admission\AdmissionResult;
 use App\com\adventure\school\basic\Gender;
 use App\com\adventure\school\basic\Quota;
@@ -251,11 +253,13 @@ class AdmissionController extends Controller
 		}
 		// $admssion_roll=0;
 		// ==============================
-		$aAdmissionApplicant=new AdmissionApplicant();
-		$aAdmissionApplicant->programofferid=$programofferid;
-		$aAdmissionApplicant->applicantid=$applicantid;
+		$aStudentHouse=new StudentHouse();
+		$aStudentHouse->programofferid=$programofferid;
+		$aStudentHouse->applicantid=$applicantid;
+		//  For through admission admittedtypeid=2
+		$aStudentHouse->admittedtypeid=2;
 		// $aAdmissionApplicant->admssion_roll=$admssion_roll;
-        $status=\DB::transaction(function () use($aApplicant,$aAdmissionApplicant,$presentAddress,$permanentAddress,$guardianAddress,$test){
+        $status=\DB::transaction(function () use($aApplicant,$aStudentHouse,$presentAddress,$permanentAddress,$guardianAddress,$test){
         	$presentAddress->save();
         	$lastOne=\DB::table('addresses')->orderBy('id', 'desc')->first();
         	$present_addressid=$lastOne->id;
@@ -270,8 +274,9 @@ class AdmissionController extends Controller
 				$gurdian_addressid=$lastOne->id;
 				$aApplicant->gurdian_addressid=$gurdian_addressid;
 			}
+			// dd($this->pingenerate());
 			$aApplicant->pin_code=$this->pingenerate();
-			$aAdmissionApplicant->save();
+			$aStudentHouse->save();
 			$sta=$aApplicant->save();
 			// if($sta){
 			// 	//Sending message to the applicant with applicationid and pincode
@@ -288,6 +293,7 @@ class AdmissionController extends Controller
 		$aAdmission=new Admission();
 		$aObj=$aAdmission->getApplicantCopy($applicantid);
         $dataList=[
+			'institute'=>Institute::getInstituteName(),
             'bean'=>$aObj,
         ];
         return view('school.admission.applicantcopy',$dataList);

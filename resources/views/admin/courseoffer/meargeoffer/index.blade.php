@@ -108,9 +108,7 @@
                   <tr>
                     <th>SL NO</th>
                     <th>Class Information</th>
-                    <th>From Subject</th>
-                    <th>To</th>
-                    <th>Subject</th>
+                    <th>mearge Subjects</th>
                     @if($pList[4]->id==4)
                     <th width="10px">Del</th>
                     @endif
@@ -121,17 +119,18 @@
                   @foreach($result as $x)
                   <tr>
                     <td>{{++$id}}</td>
-                    <td>{{$x->programdetails}}</td>
-                    <td>{{$x->meargeCourseCode}}</td>
-                    <td>To</td>
-                    <td>{{$x->meargeCourseName}}</td>
+                    <td>{{sprintf("%s %s %s %s %s",$x->sessionName,$x->programName,$x->mediumName,$x->shiftName,$x->groupName)}}</td>
+                    <td>
+                    @foreach($x->meargesubjects as $k=>$v)
+                      {{$x->meargesubjects[$k][0]->courseName}}-{{$x->meargesubjects[$k][1]->courseName}},
+                    @endforeach
+                    </td>
                     @if($pList[4]->id==4)
                     <td>
                         <form  action="{{URL::to('/meargeoffer')}}/{{'deleteMerge'}}" method="post" onsubmit="return confirm('Are you sure you want to delete?');">
                             @method('DELETE')
                             {!! csrf_field() !!}
                             <input type="hidden" name="programofferid" value="{{$x->programofferid}}">
-                            <input type="hidden" name="meargeCourseCodeid" value="{{$x->meargeCourseCodeid}}">
                             <button class="delete_btn"> <span class="red">
                       <i class="ace-icon fa fa-trash-o bigger-120"></i>
                     </span></button>
@@ -145,9 +144,7 @@
                   <tr>
                     <th>SL NO</th>
                     <th>Class Information</th>
-                    <th>Merge Name</th>
-                    <th>Merge Subject Codes</th>
-                    <th>Merge Subject Names</th>
+                    <th>mearge Subjects</th>
                     @if($pList[4]->id==4)
                     <th width="10px">Del</th>
                     @endif

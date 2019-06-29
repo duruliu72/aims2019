@@ -121,8 +121,8 @@ class MstExamResult extends Model
                 if($item["tot_mark"]>40){
                     $grand_obt_marks=$grand_obt_marks+$item["tot_mark"]-40;
                 }
-                if($item["gradepoint"]>3){
-                    $tot_gradepoint=$tot_gradepoint+$item["gradepoint"]-3;
+                if($item["gradepoint"]>2){
+                    $tot_gradepoint=$tot_gradepoint+$item["gradepoint"]-2;
                 }
                 $all_course_marks=$all_course_marks+$item["tot_course_marks"];
                 $all_course_obt_marks=$all_course_obt_marks+$item["tot_mark"];

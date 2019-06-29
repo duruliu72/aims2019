@@ -171,7 +171,7 @@
                               <td>{{sprintf('%s %s %s',$student->firstName,$student->middleName,$student->lastName)}}</td>
                               <td>{{$student->classroll}}</td>
                               @foreach($mark_catList as $y)
-                                <td class="item"><input class="form-control" type="text" name="marks[{{$student->id}}][{{$y->id}}]" /></td>
+                                <td class="id1"><input class="form-control" type="text" name="marks[{{$student->id}}][{{$y->id}}]" /></td>
                               @endforeach
                               <td><input class="markcheck" type="checkbox" name="checkbox[{{$student->id}}]"></td>
                               <!-- <td><span style='font-size:18px;'>&#10003;</span></td>      -->

@@ -6,15 +6,15 @@ use Illuminate\Database\Eloquent\Model;
 use App\com\adventure\school\basic\Institute;
 use App\com\adventure\school\program\ProgramOffer;
 use App\com\adventure\school\admission\AdmissionProgram;
-use App\com\adventure\school\admission\AdmissionApplicant;
+use App\com\adventure\school\academic\StudentHouse;
 use App\com\adventure\school\admission\Applicant;
 class AdmissionResult extends Model
 {
     protected $table="admissionresult";
 	protected $fillable = ['programofferid','applicantid','subjectid','marks'];
 	public function getAdmissionResult($applicantid){
-		$aAdmissionApplicant=new AdmissionApplicant();
-		$admissionApplicant=$aAdmissionApplicant->getAdmissionApplicant($applicantid);
+		$aStudentHouse=new StudentHouse();
+		$admissionApplicant=$aStudentHouse->getAdmissionApplicant($applicantid);
 		$aProgramOffer=new ProgramOffer();
 		$programofferinfo=$aProgramOffer->getProgramOffer($admissionApplicant->programofferid);
 		$applicant_list=$this->getApplicantOnMerits($admissionApplicant->programofferid);
@@ -39,7 +39,7 @@ class AdmissionResult extends Model
 	public function getApplicantOnMerits($programofferid){
 		$sql="select table1.* ,
 		table2.tot_marks
-		FROM(SELECT * FROM `admissionapplicants`
+		FROM(SELECT * FROM `students_house`
 		WHERE programofferid=?) table1
 		LEFT JOIN (SELECT 
 		t1.programofferid,
@@ -59,6 +59,7 @@ class AdmissionResult extends Model
 			$applicant_list[$item->applicantid]=[$applicant,$item,$serial];
 			$serial++;
 		}
+		// dd($applicant_list);
 		return $applicant_list;
 	}
 }
