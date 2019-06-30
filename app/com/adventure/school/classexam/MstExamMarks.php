@@ -8,7 +8,7 @@ use App\com\adventure\school\academic\Student;
 class MstExamMarks extends Model
 {
     protected $table='mst_exam_marks';
-    protected $fillable = ['programofferid','sectionid','teacherid','studentid','examnameid','examtypeid','coursecodeid','markcategoryid','marks','status'];
+    protected $fillable = ['programofferid','sectionid','examnameid','examtypeid','studentid','coursecodeid','coursetypeid','markcategoryid','mark_group_id','marks','status'];
     public function getStudentsOnClsNSec($programofferid,$sectionid,$coursecodeid,$examnameid,$join){
         $sql="SELECT 
         std.*,
@@ -27,7 +27,6 @@ class MstExamMarks extends Model
         ".$join." JOIN(SELECT 
         mem.programofferid,
         mem.sectionid,
-        mem.teacherid,
         mem.studentid,
         mem.coursecodeid,
         mem.examnameid,

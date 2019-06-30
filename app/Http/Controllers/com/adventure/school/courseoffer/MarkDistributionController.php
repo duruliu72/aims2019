@@ -63,8 +63,8 @@ class MarkDistributionController extends Controller
             if($request->save_btn=='save_btn'){
                 $programofferid=$request->programofferid;
                 $checkboxList=$request->checkbox;
-                $distribution_markList=$request->distribution_mark;
-                $passtypeidList=$request->passtypeid;
+                $distribution_markList=$request->mark_in_percentage;
+                $mark_group_idList=$request->mark_group_id;
                 if($checkboxList!=null){
                     $totalPercentage=array();
                     foreach($checkboxList as $key => $value){
@@ -81,8 +81,8 @@ class MarkDistributionController extends Controller
                             $aMarkDistribution->programofferid=$programofferid;
                             $aMarkDistribution->coursecodeid=$key;
                             $aMarkDistribution->markcategoryid=$catid->id;
-                            $aMarkDistribution->distribution_mark=$distribution_markList[$key][$catid->id];
-                            $aMarkDistribution->passtypeid=$passtypeidList[$key][$catid->id];
+                            $aMarkDistribution->mark_in_percentage=$distribution_markList[$key][$catid->id];
+                            $aMarkDistribution->mark_group_id=$mark_group_idList[$key][$catid->id];
                             $isSameCategory=$aMarkDistribution->isThereMarkCategory($programofferid,$key,$catid->id);
                             if($distribution_markList[$key][$catid->id]!=null&&!$isSameCategory&&$totalPercentage[$key]==100){
                                 $aMarkDistribution->save();
@@ -96,13 +96,16 @@ class MarkDistributionController extends Controller
             }
             $programofferinfo=$aProgramOffer->getProgramOffer($programofferid);
             $courseCodeList=$aCourseOffer->getCourseCodesOnProgramOffer($programofferid);
+            // dd($courseCodeList);
             $aMarkDistribution=new MarkDistribution();
             $markdistributionList=$aMarkDistribution->getMarkDistributionOnProgramOffer($programofferid);
+            // dd($selectedlist);
             $selectedlist=array();
             foreach ($courseCodeList as $course) {
                 $selectedlist[$course->id]=$aMarkDistribution->getCourseCategoryOnCourse($programofferid,$course->id);
             }
         }
+        // dd($selectedlist);
         $aList=[];
         // sessionid,programid,groupid,mediumid,shiftid,tableName And last one compareid
         $programList=$aCourseOffer->getAllOnIDS(0,0,0,0,0,"programs",'programid');
@@ -162,8 +165,8 @@ class MarkDistributionController extends Controller
             if($request->update_btn=='update_btn'){
                 $programofferid=$request->programofferid;
                 $checkboxList=$request->checkbox;
-                $distribution_markList=$request->distribution_mark;
-                $passtypeidList=$request->passtypeid;
+                $distribution_markList=$request->mark_in_percentage;
+                $mark_group_idList=$request->mark_group_id;
                 if($checkboxList!=null){
                     $totalPercentage=array();
                     foreach($checkboxList as $key => $value){
@@ -179,8 +182,8 @@ class MarkDistributionController extends Controller
                             $coursecodeid=$key;
                             $markcategoryid=$catid->id;
                             // Update only distribution_mark  and passtypeid
-                            $distribution_mark=$distribution_markList[$key][$catid->id];
-                            $passtypeid=$passtypeidList[$key][$catid->id];                            
+                            $mark_in_percentage=$distribution_markList[$key][$catid->id];
+                            $mark_group_id=$mark_group_idList[$key][$catid->id];                            
                             if($distribution_markList[$key][$catid->id]!=null){
                                 // Check Mark Category at  distribution_mark
                                 $aMarkDistribution=new MarkDistribution();
@@ -192,8 +195,8 @@ class MarkDistributionController extends Controller
                                         ->where('coursecodeid',$coursecodeid)
                                         ->where('markcategoryid',$markcategoryid)
                                         ->update([
-                                            'distribution_mark' => $distribution_mark,
-                                            'passtypeid'=>$passtypeid
+                                            'mark_in_percentage' => $mark_in_percentage,
+                                            'mark_group_id'=>$mark_group_id
                                         ]);
                                     }else{
                                         // not save
@@ -204,8 +207,8 @@ class MarkDistributionController extends Controller
                                         $aMarkDistribution->programofferid=$programofferid;
                                         $aMarkDistribution->coursecodeid=$coursecodeid;
                                         $aMarkDistribution->markcategoryid=$markcategoryid;
-                                        $aMarkDistribution->distribution_mark=$distribution_mark;
-                                        $aMarkDistribution->passtypeid=$passtypeid;
+                                        $aMarkDistribution->mark_in_percentage=$mark_in_percentage;
+                                        $aMarkDistribution->mark_group_id=$mark_group_id;
                                         $aMarkDistribution->save();
                                     }else{
                                         // not save

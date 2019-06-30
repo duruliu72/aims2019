@@ -31,7 +31,7 @@ class MstExamResult extends Model
                 $tot_mark=0;
                 $tot_course_marks=0;
                 $pass_status=true;
-                $group_result = $markCategories->groupBy("passtypeid")->map(function($item,$key){
+                $group_result = $markCategories->groupBy("mark_group_id")->map(function($item,$key){
                     $c["categorymarks"]=$item->sum("categorymarks");
                     $c["obt_marks"]=$item->sum("obt_marks");
                     return $c;
@@ -46,13 +46,20 @@ class MstExamResult extends Model
                     $markcat_data[$markcat->markcategoryid]=array(
                         "markcategoryid"=>$markcat->markcategoryid,
                         "markcatName"=>$markcat->markcatName,
-                        "passtypeid"=>$markcat->passtypeid,
+                        "mark_group_id"=>$markcat->mark_group_id,
                         "categorymarks"=>$markcat->categorymarks,
                         "obt_marks"=>$markcat->obt_marks
                     );
                     $tot_mark=$tot_mark+$markcat->obt_marks;
                     $tot_course_marks=$tot_course_marks+$markcat->categorymarks;
                     $point_letter=$this->getGradePoint($programofferid,$tot_mark);
+                }
+                if($pass_status){
+                    $gradepoint1=$point_letter["gradepoint"];
+                    $gradeletter1=$point_letter["gradeletter"];
+                }else{
+                    $gradepoint1=0;
+                    $gradeletter1="F";
                 }
                 $course_data[$y->coursecodeid]=array(
                     "coursecodeid"=>$y->coursecodeid,
@@ -64,8 +71,8 @@ class MstExamResult extends Model
                     "tot_course_marks"=>$tot_course_marks,
                     "tot_mark"=>$tot_mark,
                     "pass_status"=>$pass_status,
-                    "gradepoint"=>$point_letter["gradepoint"],
-                    "gradeletter"=>$point_letter["gradeletter"]
+                    "gradepoint"=>$gradepoint1,
+                    "gradeletter"=>$gradeletter1
                 );
             }
             $tot_pass_status=true;
@@ -180,7 +187,9 @@ class MstExamResult extends Model
         }
         foreach($students as $item){
             if($item->tot_pass_status==true){
-                $item->grade_letter=$this->getGradeLetter($programofferid,$item->gpa);;
+                $letter_grade=$this->getGradeLetter($programofferid,$item->gpa);
+                $item->grade_letter=$letter_grade["grade_letter"];
+                $item->gpa=$letter_grade["gradepoint"];
             }else{
                 $item->grade_letter="F";
                 $item->gpa=0;
@@ -201,6 +210,8 @@ class MstExamResult extends Model
         applicants.firstName,
         applicants.middleName,
         applicants.lastName,
+        applicants.picture,
+        applicants.signature,
         mem.studentid,
         students.applicantid,
         students.classroll
@@ -221,7 +232,6 @@ class MstExamResult extends Model
         mem.examnameid,
         mem.examtypeid,
         mem.sectionid,
-        mem.teacherid,
         mem.studentid,
         mem.coursecodeid,
     	course_codes.name AS courseCode,
@@ -245,18 +255,17 @@ class MstExamResult extends Model
         mem.examnameid,
         mem.examtypeid,
         mem.sectionid,
-        mem.teacherid,
         mem.studentid,
         student_courses.coursetypeid,
         courseoffer.meargeid,
-        md.passtypeid,
-        sum(FORMAT((courseoffer.coursemark*md.distribution_mark)/100,0)) AS categorymarks,
+        md.mark_group_id,
+        sum(FORMAT((courseoffer.coursemark*md.mark_in_percentage)/100,0)) AS categorymarks,
         sum(mem.marks) as obt_marks
         FROM `mst_exam_marks` AS mem
         INNER JOIN courseoffer ON mem.programofferid=courseoffer.programofferid && mem.coursecodeid=courseoffer.coursecodeid
         INNER JOIN student_courses ON mem.studentid=student_courses.studentid && mem.coursecodeid=student_courses.coursecodeid
         INNER JOIN mark_distribution as md on mem.programofferid=md.programofferid && mem.coursecodeid=md.coursecodeid && mem.markcategoryid=md.markcategoryid
-        WHERE mem.programofferid=? && mem.examnameid=? && mem.studentid=? && courseoffer.meargeid IS NOT NULL GROUP BY courseoffer.meargeid,md.passtypeid";
+        WHERE mem.programofferid=? && mem.examnameid=? && mem.studentid=? && courseoffer.meargeid IS NOT NULL GROUP BY courseoffer.meargeid,md.mark_group_id";
         $qResult=\DB::select($sql,[$programofferid,$examnameid,$studentid]);
         $result=collect($qResult);
         return $result;
@@ -267,13 +276,12 @@ class MstExamResult extends Model
         mem.examnameid,
         mem.examtypeid,
         mem.sectionid,
-        mem.teacherid,
         mem.studentid,
         mem.coursecodeid,
         mem.markcategoryid,
         mark_categories.name AS markcatName,
-        md.passtypeid,
-        FORMAT((courseoffer.coursemark*md.distribution_mark)/100,0) AS categorymarks,
+        md.mark_group_id,
+        FORMAT((courseoffer.coursemark*md.mark_in_percentage)/100,0) AS categorymarks,
         mem.marks as obt_marks
         FROM `mst_exam_marks` AS mem
         INNER JOIN courseoffer ON mem.programofferid=courseoffer.programofferid && mem.coursecodeid=courseoffer.coursecodeid
@@ -290,16 +298,15 @@ class MstExamResult extends Model
         $resultSql="SELECT 
         mem.programofferid,
         mem.sectionid,
-        mem.teacherid,
         mem.studentid,
         mem.coursecodeid,
         mem.examnameid,
         mem.examtypeid,
         mem.markcategoryid,
         student_courses.coursetypeid,
-        md.passtypeid,
+        md.mark_group_id,
         courseoffer.meargeid,
-        FORMAT((courseoffer.coursemark*md.distribution_mark)/100,0) AS categorymarks,
+        FORMAT((courseoffer.coursemark*md.mark_in_percentage)/100,0) AS categorymarks,
         mem.marks as obt_marks
         FROM `mst_exam_marks` AS mem
         INNER JOIN courseoffer ON mem.programofferid=courseoffer.programofferid && mem.coursecodeid=courseoffer.coursecodeid
@@ -336,9 +343,9 @@ class MstExamResult extends Model
         }
         for ($i=0;$i<(count($point_letter_array)-2);$i++){
             if(($point<$point_letter_array[$i]["gradepoint"]) && ($point>=$point_letter_array[$i+1]["gradepoint"])){
-                return $point_letter_array[$i+1]["grade_letter"];
+                return $point_letter_array[$i+1];
             }
         }
-        return $point_letter_array[0]["grade_letter"];
+        return $point_letter_array[0];
     }
 }

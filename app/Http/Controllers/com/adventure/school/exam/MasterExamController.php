@@ -31,7 +31,8 @@ class MasterExamController extends Controller
                 'mediumid' => 'required|',
                 'shiftid' => 'required|',
                 'examnameid'=>'required|',
-                'markinpercentage'=>'required'
+                'exhld_in_percentage'=>'required',
+                // 'cxm_in_percentage'=>'required'
             ]);
             $sessionid=$request->sessionid;
             $programid=$request->programid;
@@ -39,8 +40,12 @@ class MasterExamController extends Controller
             $mediumid=$request->mediumid;
             $shiftid=$request->shiftid;
             $examnameid=$request->examnameid;
-            $markinpercentage=$request->markinpercentage;
-            $with_child=$request->with_child;
+            $exhld_in_percentage=$request->exhld_in_percentage;
+            $cxm_in_percentage=0;
+            if($request->result_with_child!=null){
+                $cxm_in_percentage=$request->cxm_in_percentage;
+            }
+            $result_with_child=$request->result_with_child;
             $programofferid=$aProgramOffer->getProgramOfferId(0,$programid,$groupid,$mediumid,$shiftid);
             if($request->btn=="save_btn"){
                 if($programofferid==0){
@@ -50,9 +55,10 @@ class MasterExamController extends Controller
                 $obj=new MasterExam();
                 $obj->programofferid=$programofferid;
                 $obj->examnameid=$examnameid;
-                $obj->exhld_mark_in_percentage=$markinpercentage;
+                $obj->exhld_in_percentage=$exhld_in_percentage;
                 $obj->mxm_in_percentage=100;
-                $obj->with_child=$with_child;
+                $obj->cxm_in_percentage=$cxm_in_percentage;
+                $obj->result_with_child=$result_with_child;
                 $isTrue=$obj->hasItem($programofferid,$examnameid);
                 if(!$isTrue){
                     $obj->save();
@@ -64,8 +70,9 @@ class MasterExamController extends Controller
                 $obj=MasterExam::findOrfail($request->id1);
                 $obj->programofferid=$programofferid;
                 $obj->examnameid=$examnameid;
-                $obj->exhld_mark_in_percentage=$markinpercentage;
-                $obj->with_child=$with_child;
+                $obj->exhld_in_percentage=$exhld_in_percentage;
+                $obj->cxm_in_percentage=$cxm_in_percentage;
+                $obj->result_with_child=$result_with_child;
                 $isTrue=$obj->hasItem($programofferid,$examnameid);
                 if(($obj->programofferid==$programofferid&&$obj->examnameid==$examnameid)||!$isTrue){
                     $obj->Update();

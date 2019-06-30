@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class MarkDistribution extends Model
 {
     protected $table='mark_distribution';
-    protected $fillable = ['programofferid','coursecodeid','markcategoryid','distribution_mark','passtypeid','status'];
+    protected $fillable = ['programofferid','coursecodeid','markcategoryid','mark_in_percentage','mark_group_id','status'];
     public function isThereMarkCategory($programofferid,$coursecodeid,$markcategoryid){
         $sql="SELECT * FROM `mark_distribution` WHERE programofferid=? AND coursecodeid=? AND markcategoryid=?";
         $qResult=\DB::select($sql,[$programofferid,$coursecodeid,$markcategoryid]);
@@ -28,10 +28,10 @@ class MarkDistribution extends Model
         table1.programofferid,
         table1.coursecodeid,
         table1.markcategoryid,
-        table1.distribution_mark,
+        table1.mark_in_percentage,
         @row_number:=CASE
-            WHEN IFNULL(table1.passtypeid,0)=0 THEN mark_categories.id ELSE  table1.passtypeid
-        END AS passtypeid
+            WHEN IFNULL(table1.	mark_group_id,0)=0 THEN mark_categories.id ELSE  table1.	mark_group_id
+        END AS 	mark_group_id
         FROM  mark_categories
         LEFT JOIN (SELECT * FROM `mark_distribution`
         WHERE mark_distribution.programofferid=? AND coursecodeid=?  ORDER BY mark_distribution.coursecodeid) AS table1
@@ -55,7 +55,7 @@ class MarkDistribution extends Model
         FROM `mark_categories`
                 INNER JOIN (SELECT mark_distribution.* ,
         courseoffer.coursemark,
-        FORMAT((courseoffer.coursemark*mark_distribution.distribution_mark)/100,0) as categorymarks
+        FORMAT((courseoffer.coursemark*mark_distribution.mark_in_percentage)/100,0) as categorymarks
         FROM `mark_distribution`
         INNER JOIN courseoffer ON mark_distribution.programofferid=courseoffer.programofferid &&
         mark_distribution.coursecodeid=courseoffer.coursecodeid

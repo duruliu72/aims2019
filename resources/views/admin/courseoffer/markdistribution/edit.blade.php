@@ -141,13 +141,13 @@
                             @foreach($selectedlist[$course->id] as $cat)
                                 <td>
                                   <div class="form-group">                                 
-                                      <input class="form-control" type="text" name="distribution_mark[{{$course->id}}][{{$cat->id}}]" value="{{$cat->distribution_mark}}" />
+                                      <input class="form-control" type="text" name="mark_in_percentage[{{$course->id}}][{{$cat->id}}]" value="{{$cat->mark_in_percentage}}" />
                                   </div>
                                   <div style="text-align:center;">
-                                    <input type="radio" <?php echo ($cat->passtypeid==1) ? 'checked':''; ?> name="passtypeid[{{$course->id}}][{{$cat->id}}]" value="1">1
-                                    <input type="radio" <?php echo ($cat->passtypeid==2) ? 'checked':''; ?> name="passtypeid[{{$course->id}}][{{$cat->id}}]" value="2">2
-                                    <input type="radio" <?php echo ($cat->passtypeid==3) ? 'checked':''; ?> name="passtypeid[{{$course->id}}][{{$cat->id}}]" value="3">3
-                                    <input type="radio" <?php echo ($cat->passtypeid==4) ? 'checked':''; ?> name="passtypeid[{{$course->id}}][{{$cat->id}}]" value="4">4
+                                    <input type="radio" <?php echo ($cat->mark_group_id==1) ? 'checked':''; ?> name="mark_group_id[{{$course->id}}][{{$cat->id}}]" value="1">1
+                                    <input type="radio" <?php echo ($cat->mark_group_id==2) ? 'checked':''; ?> name="mark_group_id[{{$course->id}}][{{$cat->id}}]" value="2">2
+                                    <input type="radio" <?php echo ($cat->mark_group_id==3) ? 'checked':''; ?> name="mark_group_id[{{$course->id}}][{{$cat->id}}]" value="3">3
+                                    <input type="radio" <?php echo ($cat->mark_group_id==4) ? 'checked':''; ?> name="mark_group_id[{{$course->id}}][{{$cat->id}}]" value="4">4
                                   </div>
                                 </td>
                             @endforeach

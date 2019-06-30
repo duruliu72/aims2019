@@ -67,6 +67,9 @@ class MstExamResultController extends Controller
         $shiftList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,"shifts",'shiftid');
         $groupList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,"groups",'groupid');
         $examNameList=$aExamName->getExamName(1);
+        $aInstitute=new Institute();
+        $instituteObj=$aInstitute->getInstituteById(1);
+        // dd($instituteObj);
         $dataList=[
             'institute'=>Institute::getInstituteName(),
             'sidebarMenu'=>$sidebarMenu,
@@ -78,6 +81,7 @@ class MstExamResultController extends Controller
             "exam"=>$exam,
             'programofferinfo'=>$programofferinfo,
             'exam_result'=>$exam_result,
+            'instituteObj'=>$instituteObj,
             'msg'=>$msg
         ];
         return view('admin.classexam.examresult.mstexamresult',$dataList);
@@ -100,6 +104,8 @@ class MstExamResultController extends Controller
         $exam=$aExamName->getExamONID($examnameid);
         $aGradePoint=new GradePoint();
         $point_letters=$aGradePoint->getGradePointNLetter($programofferid);
+        $aInstitute=new Institute();
+        $instituteObj=$aInstitute->getInstituteById(1);
         $dataList=[
             'institute'=>Institute::getInstituteName(),
             'sidebarMenu'=>$sidebarMenu,
@@ -107,6 +113,7 @@ class MstExamResultController extends Controller
             'programofferinfo'=>$programofferinfo,
             'point_letters'=>$point_letters,
             'student'=>$student,
+            'instituteObj'=>$instituteObj,
             'msg'=>$msg
         ];
         return view('admin.classexam.examresult.mstsingleresult',$dataList);

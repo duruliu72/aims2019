@@ -90,19 +90,23 @@
                     @endforeach
                   </select>
                 </div>
-                <label class="col-sm-2 control-label" for="markinpercentage">Exam in(%) of 100%</label>
+                <label class="col-sm-2 control-label" for="exhld_in_percentage">Exam in(%) of 100%</label>
                 <div class="col-sm-4">
-                  <input type="text" class="form-control" name="markinpercentage" id="markinpercentage">
+                  <input type="text" class="form-control" name="exhld_in_percentage" id="exhld_in_percentage">
                 </div>                    
               </div>
               <div class="form-group row">
-                <label class="col-sm-2 control-label" for="markinpercentage">Result With Child</label>
+                <label class="col-sm-2 control-label" for="cxm_in_percentage">Child Exam(%) Of Master</label>
+                <div class="col-sm-4">
+                  <input type="text" class="form-control" name="cxm_in_percentage" id="cxm_in_percentage">
+                </div> 
+                <label class="col-sm-2 control-label" for="result_with_child">Result With Child</label>
                 <div class="col-sm-4">
                   <label class="radio-inline">
-                    <input type="radio" name="with_child" value="1" checked>yes
+                    <input type="radio" name="result_with_child" value="1" id="result_with_child" checked>yes
                   </label>
                   <label class="radio-inline">
-                    <input type="radio" name="with_child" value="2">No
+                    <input type="radio" name="result_with_child" value="2">No
                   </label>
                 </div> 
               </div>
@@ -184,19 +188,23 @@
                     @endforeach
                   </select>
                 </div>
-                <label class="col-sm-2 control-label" for="markinpercentage">Exam in(%) of 100%</label>
+                <label class="col-sm-2 control-label" for="exhld_in_percentage">Exam in(%) of 100%</label>
                 <div class="col-sm-4">
-                  <input type="text" class="form-control" name="markinpercentage" value="{{$editObj->exhld_mark_in_percentage}}" id="markinpercentage">
+                  <input type="text" class="form-control" name="exhld_in_percentage" value="{{$editObj->exhld_in_percentage}}" id="exhld_in_percentage">
                 </div>                    
               </div>
               <div class="form-group row">
-                <label class="col-sm-2 control-label" for="markinpercentage">Result With Child</label>
+                <label class="col-sm-2 control-label" for="cxm_in_percentage">Child Exam(%) Of Master</label>
+                <div class="col-sm-4">
+                  <input type="text" class="form-control" name="cxm_in_percentage" value="{{$editObj->cxm_in_percentage}}" id="cxm_in_percentage">
+                </div> 
+                <label class="col-sm-2 control-label" for="result_with_child">Result With Child</label>
                 <div class="col-sm-4">
                   <label class="radio-inline">
-                    <input type="radio" name="with_child" value="1" @if($editObj->with_child==1) checked @endif>yes
+                    <input type="radio" name="result_with_child" value="1" @if($editObj->result_with_child==1) checked @endif>yes
                   </label>
                   <label class="radio-inline">
-                    <input type="radio" name="with_child" value="2" @if($editObj->with_child==2) checked @endif>No
+                    <input type="radio" name="result_with_child" value="2" @if($editObj->result_with_child==2) checked @endif>No
                   </label>
                 </div> 
               </div>
@@ -219,6 +227,7 @@
                 <th>Exam Name</th>
                 <th>Marks(%)</th>
                 <th>Master Exam(%)</th>
+                <th>Child Exam(%)</th>
                 @if($pList[3]->id==3)
                 <th width="10px">Edit</th>
                 @endif
@@ -234,8 +243,9 @@
                 <td>{{++$id}}</td>
                 <td>{{$x->sessionName." "}}{{$x->programName." "}}{{$x->groupName." "}}{{$x->mediumName." "}}{{$x->shiftName." "}}</td>
                 <td>{{$x->examName}}</td>
-                <td>{{$x->exhld_mark_in_percentage}}</td>
+                <td>{{$x->exhld_in_percentage}}</td>
                 <td>{{$x->differ_mxm_in_percentage}}</td>
+                <td>{{$x->cxm_in_percentage}}</td>
                 @if($pList[3]->id==3)
                 <td> 
                   <a href="{{URL::to('/masterexam')}}/{{$x->id}}/{{'edit'}}" class="tooltip-success" data-rel="tooltip" title="Edit">
@@ -264,6 +274,7 @@
                 <th>Exam Name</th>
                 <th>Marks(%)</th>
                 <th>Master Exam(%)</th>
+                <th>Child Exam(%)</th>
                 @if($pList[3]->id==3)
                 <th width="10px">Edit</th>
                 @endif

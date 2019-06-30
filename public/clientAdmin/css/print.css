@@ -94,6 +94,9 @@
     font-family: Segoe UI Semibold;
     font-weight: bold;
 }
+.academic-transcript__student .student-info .name td,.academic-transcript__student .student-info .name td span{
+    color: royalblue !important;
+}
 .academic-transcript__student .student-info table{
     width: 100%;
 }
@@ -200,6 +203,13 @@
 }
 .academic-transcript__footer p{
     text-align: center;
+}
+.academic-result{
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+}
+.academic-result__heading{
+    border:0;
 }
  }
 

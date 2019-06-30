@@ -1,11 +1,12 @@
 @extends('admin.admin')
 @section('uniqueStyle')
-<link href="{{asset('clientAdmin/css/custom.css')}}" rel="stylesheet">
+<link href="{{asset('clientAdmin/css/custom.css')}}" rel="stylesheet" media="all">
+<link href="{{asset('clientAdmin/css/print.css')}}" rel="stylesheet" media="print">
 @endsection
 @section('content')
 <section id="main-content">
-      <section class="wrapper">
-        <div class="row">
+      <section class="wrapper no-padding no-margin">
+        <div class="row no-print">
           <div class="col-lg-12">
             <h3 class="page-header"><i class="fa fa-laptop"></i>
             @if($institute!=null)
@@ -28,13 +29,14 @@
                   {{ session()->get('msg') }}
                 </span>
                 @endif
+                <button class="print-btn" onclick="Print()">Print</button>
             </ol>
           </div>
         </div>
-        <div class="row">
+        <div class="row no-margin">
           <div class="col-lg-12">
             <section class="panel">
-              <div class="panel-body">
+              <div class="panel-body no-border">
                 @if($exam_result==null)
                 <div class="top_form">
                     <form action="{{URL::to('mstexamresult')}}" method="POST">
@@ -101,6 +103,19 @@
                   </form>
                 </div>
                 @else
+                <div class="academic-result">
+                  <div class="academic-transcript__heading academic-result__heading">
+                      <div class="institute-logo">
+                        <img src="{{asset('clientAdmin/image/logo/institute_logo.png')}}">
+                      </div>
+                      <div class="institute-title">
+                        <h2 class="institute-name">{{$instituteObj->name}}</h2>
+                        <p class="institute-add">{{sprintf("%s, %s, %s",$instituteObj->localgovName,$instituteObj->thanaName,$instituteObj->districtName)}}</p>
+                        <h3 class="std-transcript">STUDENT POSITION LIST</h3>
+                        <h3 class="exam-name">{{$exam->name}}</h3>
+                      </div>
+                  </div>
+                </div>
                 <div class="programofferinfo">
                     <div class="programofferinfo_item">
                         <span>Session: {{$programofferinfo->sessionName}}</span>
@@ -134,7 +149,7 @@
                           <th>GPA</th>
                           <th>Grade Letter</th>
                           <th>Class Position</th>
-                          <th>Print</th>
+                          <th class="no-print">Print</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -150,7 +165,7 @@
                             <td>{{$item->gpa}}</td>
                             <td>{{$item->grade_letter}}</td>
                             <td>{{$id}}</td>
-                            <td><a target="_blank" href="{{URL::to('/mstexamresult')}}/{{$programofferinfo->id}}/{{$exam->id}}/{{$item->studentid}}">Print</a></td>
+                            <td class="no-print"><a target="_blank" href="{{URL::to('/mstexamresult')}}/{{$programofferinfo->id}}/{{$exam->id}}/{{$item->studentid}}">Print</a></td>
                           </tr>
                         @endforeach
                       <tbody>
@@ -168,4 +183,5 @@
 @section('uniqueScript')
 <script src="{{asset('clientAdmin/js/baseUrl.js')}}"></script>
 <script src="{{asset('clientAdmin/js/examresult.js')}}"></script>
+<script src="{{asset('clientAdmin/js/print.js')}}"></script>
 @endsection

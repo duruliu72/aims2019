@@ -156,7 +156,6 @@ fieldset.menu legend{
 /* Academic institute */
 .academic-transcript{
     border:3px solid #d9d9d9;
-    padding: 10px 0px;
     width: 80%;
     margin: 0 auto;
 }
@@ -210,13 +209,21 @@ fieldset.menu legend{
     padding: 0px 15px;
 }
 .academic-transcript__student .student-img{
-  
+  width: 206px;
+  height: 200px;
+}
+.academic-transcript__student .student-img img{
+    width: 100%;
+    height: 100%;
 }
 .academic-transcript__student .student-info{
     width: 50%;
     font-size: 20px;
     font-family: Segoe UI Semibold;
     font-weight: bold;
+}
+.academic-transcript__student .student-info .name{
+    color: royalblue;
 }
 .academic-transcript__student .student-info table{
     width: 100%;
@@ -245,12 +252,11 @@ fieldset.menu legend{
     width: 100%;
 }
 .academic-transcript__result table tr th{
-    text-align: center;
+
 }
 .academic-transcript__result table tr td{
     padding: 5px;
     border: 1px solid #cccccc;
-    text-align: center;
 }
 .academic-transcript__grand-result{
     padding: 0px 15px;
@@ -320,13 +326,15 @@ fieldset.menu legend{
     border-bottom: 2px dashed #000;
 }
 .academic-transcript__footer{
-    margin-top: 15px;
+    /* margin-top: 15px; */
+    padding: 15px 0px 15px 0px;
+    border-top: 1px dashed #ccc;
 }
 .academic-transcript__footer p{
     text-align: center;
+    margin: 0px;
 }
 .print-btn{
-    position: absolute;
     cursor: pointer;
     color: #007bff;
     position: absolute;
@@ -338,4 +346,17 @@ fieldset.menu legend{
 }
 .mearge{
     padding-top: 25px;
+}
+.academic-result{
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+}
+.academic-result__heading{
+    border:0;
+}
+.position{
+    margin-top:15px;
+}
+.position p{
+    padding-left: 15px;
 }

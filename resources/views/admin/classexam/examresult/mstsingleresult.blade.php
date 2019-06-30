@@ -22,7 +22,7 @@
                   </span>
                 @endif
                 @if ($errors->any())
-                <span style="float: right;font-size: 15px;">{{$errors->all()[0] }}</span>
+                <span style="float: right;font-size: 15px;">{{$errors->all()[0]}}</span>
                 @endif
                 @if(session()->has('msg'))
                 <span style="float: right;font-size: 15px;">
@@ -43,15 +43,15 @@
                         <img src="{{asset('clientAdmin/image/logo/institute_logo.png')}}">
                       </div>
                       <div class="institute-title">
-                        <h2 class="institute-name">{{$institute->name}}</h2>
-                        <p class="institute-add">Akhra Bazar, Kishoreganj Sadar, Kishoreganj</p>
+                        <h2 class="institute-name">{{$instituteObj->name}}</h2>
+                        <p class="institute-add">{{sprintf("%s, %s, %s",$instituteObj->localgovName,$instituteObj->thanaName,$instituteObj->districtName)}}</p>
                         <h3 class="std-transcript">ACADEMIC TRANSCRIPT</h3>
-                        <h3 class="exam-name">{{$exam->name}}</h3>
+                        <h3 class="exam-name">{{$exam->name."' ".$programofferinfo->sessionName}}</h3>
                       </div>
                   </div>
                   <div class="academic-transcript__student">
                     <div class="student-img item">
-                      <img src="{{asset('clientAdmin/admission/student/')}}/{{'19100002.png'}}">
+                      <img src="{{asset('clientAdmin/admission/student/')}}/{{$student->picture}}">
                     </div>
                     <div class="student-info item">
                       <table>
@@ -59,7 +59,7 @@
                           <td>Student ID</td>
                           <td><span>:</span> <span>{{$student->applicantid}}</span></td>
                         </tr>
-                        <tr>
+                        <tr class="name">
                           <td>Name</td>
                           <td><span>:</span> <span>{{sprintf("%s %s %s",$student->firstName,$student->middleName,$student->lastName)}}</span></td>
                         </tr>
@@ -216,6 +216,9 @@
                             </tr>
                           </tbody>
                         </table>
+                        <div class="position">
+                            <p>{{sprintf("%s %s","Position :",$student->position)}}</p>
+                        </div>
                     </div>
                     <div class="academic-transcript__grand-result__right">
                     <table>

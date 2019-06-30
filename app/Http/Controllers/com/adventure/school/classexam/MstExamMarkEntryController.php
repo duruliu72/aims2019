@@ -117,7 +117,6 @@ class MstExamMarkEntryController extends Controller
                             $aMstExamMarks=new MstExamMarks();
                             $aMstExamMarks->programofferid=$programofferid;
                             $aMstExamMarks->sectionid=$sectionid;
-                            $aMstExamMarks->teacherid=0;
                             $aMstExamMarks->studentid=$studentid;
                             $aMstExamMarks->coursecodeid=$coursecodeid;
                             $aMstExamMarks->examnameid=$examnameid;
