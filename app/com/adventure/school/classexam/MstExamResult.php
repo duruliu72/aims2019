@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class MstExamResult extends Model
 {
+
     public function getSingleResult($programofferid,$examnameid,$studentid){
         $studentList=$this->getMstExamResult($programofferid,$examnameid);
         $increment=1;
@@ -21,6 +22,7 @@ class MstExamResult extends Model
     }
     public function getMstExamResult($programofferid,$examnameid){
         $students=$this->getStudents($programofferid,$examnameid);
+        // dd($students);
         foreach($students as $x){
             $mearge_courses=$this->getCourseOnMearge($x->programofferid,$x->examnameid,$x->studentid);
             $courses=$this->getCourses($x->programofferid,$x->examnameid,$x->studentid);
@@ -84,6 +86,7 @@ class MstExamResult extends Model
             $all_course_marks=0;
             $all_course_obt_marks=0;
             $collect_courses=collect($course_data);
+            // dd($collect_courses);
             $group_courses11 = $collect_courses->where("meargeid","=",NULL)->where("coursetypeid","=",1);
             foreach($group_courses11 as $item){
                 if($item["pass_status"]==false){
@@ -240,7 +243,7 @@ class MstExamResult extends Model
         courseoffer.meargeid
         FROM `mst_exam_marks` AS mem
         INNER JOIN courseoffer ON mem.programofferid=courseoffer.programofferid && mem.coursecodeid=courseoffer.coursecodeid
-  		 INNER JOIN course_codes ON mem.coursecodeid=course_codes.id
+  		INNER JOIN course_codes ON mem.coursecodeid=course_codes.id
         INNER JOIN courses ON course_codes.courseid=courses.id
         INNER JOIN student_courses ON mem.studentid=student_courses.studentid && mem.coursecodeid=student_courses.coursecodeid
         INNER JOIN mark_distribution as md on mem.programofferid=md.programofferid && mem.coursecodeid=md.coursecodeid && mem.markcategoryid=md.markcategoryid

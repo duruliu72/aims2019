@@ -120,7 +120,7 @@
                         <th>Student Name</th>
                         <th>Roll</th>
                         @foreach($result['subjectinfo'] as $x)
-                        <th>{{$x->name}}(<span class="subjectmarks">{{$x->marks}}</span>)</th>
+                        <th>{{$x->name}}(<span class="subjectmarks">{{sprintf("%.1f",($x->marks*$result['admissionprogram']->exam_marks)/100)}}</span>)</th>
                         @endforeach
                         <th>Total Marks({{$result['admissionprogram']->exam_marks}})</th>
                         <th><input id="markcheck" type="checkbox"></th>
