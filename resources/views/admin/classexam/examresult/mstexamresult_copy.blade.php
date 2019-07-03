@@ -37,7 +37,7 @@
           <div class="col-lg-12">
             <section class="panel">
               <div class="panel-body no-border">
-                @if($exam_result==null)
+                @if($exam_result_copy==null)
                 <div class="top_form">
                     <form action="{{URL::to('mstexamresult')}}" method="POST">
                     {{csrf_field()}}
@@ -154,16 +154,16 @@
                       </thead>
                       <tbody>
                       <?php $id=0; ?>
-                        @foreach($exam_result as $item)
+                        @foreach($exam_result_copy as $item)
                           <tr>
                             <td>{{++$id}}</td>
                             <td>{{$item->applicantid}}</td>
                             <td>{{sprintf("%s %s %s",$item->firstName,$item->middleName,$item->lastName)}}</td>
                             <td>{{$item->classroll}}</td>
-                            <td>{{$item->grand_courses_marks}}</td>
-                            <td>{{$item->grand_obt_marks}}</td>
-                            <td>{{$item->gpa}}</td>
-                            <td>{{$item->grade_letter}}</td>
+                            <td>{{$item->grand_common_marks}}</td>
+                            <td>{{$item->obt_common_marks}}</td>
+                            <td>{{$item->std_gpa}}</td>
+                            <td>{{$item->std_letter}}</td>
                             <td>{{$id}}</td>
                             <td class="no-print"><a target="_blank" href="{{URL::to('/mstexamresult')}}/{{$programofferinfo->id}}/{{$exam->id}}/{{$item->studentid}}">Print</a></td>
                           </tr>

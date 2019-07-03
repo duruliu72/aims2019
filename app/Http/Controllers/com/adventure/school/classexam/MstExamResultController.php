@@ -120,6 +120,39 @@ class MstExamResultController extends Controller
         return view('admin.classexam.examresult.mstsingleresult',$dataList);
     }
     // ================================
+    public function mstSingleResult1($programofferid,$examnameid,$studentid){
+        $msg="";
+        $aMenu=new Menu();
+        $hasMenu=$aMenu->hasMenu('mstexamresult');
+        if($hasMenu==false){
+            return redirect('error');
+        }
+        $sidebarMenu=$aMenu->getSidebarMenu();
+        // ==========================
+        $aProgramOffer=new ProgramOffer();
+        $aMstExamResult=new MstExamResult();
+        $aMstExamResult1=new MstExamResult1();
+        $aExamName=new ExamName();
+        $programofferinfo=$aProgramOffer->getProgramOffer($programofferid);
+        $student=$aMstExamResult1->getSingleResult($programofferid,$examnameid,$studentid);
+        // dd($student);
+        $exam=$aExamName->getExamONID($examnameid);
+        $aGradePoint=new GradePoint();
+        $point_letters=$aGradePoint->getGradePointNLetter($programofferid);
+        $aInstitute=new Institute();
+        $instituteObj=$aInstitute->getInstituteById(1);
+        $dataList=[
+            'institute'=>Institute::getInstituteName(),
+            'sidebarMenu'=>$sidebarMenu,
+            "exam"=>$exam,
+            'programofferinfo'=>$programofferinfo,
+            'point_letters'=>$point_letters,
+            'student'=>$student,
+            'instituteObj'=>$instituteObj,
+            'msg'=>$msg
+        ];
+        return view('admin.classexam.examresult.mstsingleresult1',$dataList);
+    }
     public function mstexamresult1(Request $request){
         $msg="";
         $aMenu=new Menu();
@@ -137,6 +170,7 @@ class MstExamResultController extends Controller
         $aExamName=new ExamName();
         $programofferinfo=null;
         $exam_result=null;
+        $exam_result_copy=null;
         $exam=null;
         if($request->isMethod('post')&&$request->search_btn=='search_btn'){
             $programid=$request->programid;
@@ -161,7 +195,7 @@ class MstExamResultController extends Controller
             $exam_result_copy=$aMstExamResult1->getMstExamResult($programofferid,$examnameid);
             // dd($exam_result);
             //  dd($exam_result_copy);
-            dd($exam_result_copy->where("applicantid",19100001));
+            // dd($exam_result_copy->where("applicantid",19100003));
             $programofferinfo=$aProgramOffer->getProgramOffer($programofferid);
             // dd($programofferinfo);
             $exam=$aExamName->getExamONID($examnameid);
@@ -188,6 +222,7 @@ class MstExamResultController extends Controller
             "exam"=>$exam,
             'programofferinfo'=>$programofferinfo,
             'exam_result'=>$exam_result,
+            "exam_result_copy"=>$exam_result_copy,
             'instituteObj'=>$instituteObj,
             'msg'=>$msg
         ];

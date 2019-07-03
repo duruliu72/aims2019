@@ -132,9 +132,9 @@ Route::post('mstexammarkentry', 'com\adventure\school\classexam\MstExamMarkEntry
 Route::get('mstexammarkedit', 'com\adventure\school\classexam\MstExamMarkEntryController@marksedit');
 Route::post('mstexammarkedit', 'com\adventure\school\classexam\MstExamMarkEntryController@marksedit');
 // Class Result
-Route::get('mstexamresult', 'com\adventure\school\classexam\MstExamResultController@mstexamresult');
-Route::post('mstexamresult', 'com\adventure\school\classexam\MstExamResultController@mstexamresult');
-Route::get('mstexamresult/{id1}/{id2}/{id3}', 'com\adventure\school\classexam\MstExamResultController@mstSingleResult');
+Route::get('mstexamresult', 'com\adventure\school\classexam\MstExamResultController@mstexamresult1');
+Route::post('mstexamresult', 'com\adventure\school\classexam\MstExamResultController@mstexamresult1');
+Route::get('mstexamresult/{id1}/{id2}/{id3}', 'com\adventure\school\classexam\MstExamResultController@mstSingleResult1');
 // Menu Settings
 Route::resource('menu', 'com\adventure\school\menu\MenuController');
 
