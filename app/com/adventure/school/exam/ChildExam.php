@@ -7,14 +7,14 @@ use App\com\adventure\school\program\Session;
 class ChildExam extends Model
 {
     protected $table="child_exam";
-    protected $fillable = ['master_exam_id','examnameid','cxm_in_percentage','status'];
+    protected $fillable = ['master_exam_id','examnameid','status'];
     public static function getAllChild(){
         $sql="SELECT 
         child_exam.id,
         child_exam.master_exam_id,
         child_exam.examnameid,
         childexam.name AS childexamName,
-        child_exam.cxm_in_percentage,
+        master_exam.cxm_in_percentage,
         master_exam.programofferid,
         sessions.name AS sessionName,
         programlevels.name AS levelName,
@@ -83,12 +83,19 @@ class ChildExam extends Model
          $master_exam_id=$result->id;
          return $master_exam_id;
     }
+    public function getChildExamOnMasterExam($master_exam_id,$examnameid){
+        $sql="SELECT * FROM `child_exam` 
+        WHERE master_exam_id=? && examnameid=?";
+        $qResult=\DB::select($sql,[$master_exam_id,$examnameid]);
+        $result=collect($qResult)->first();
+        return $result;
+    }
     public static function getChildExam($id){
         $sql="SELECT
         cex.id,
         mex.examnameid AS mxm_examnameid,
         cex.examnameid AS cxm_examnameid,
-        cex.cxm_in_percentage,
+        mex.cxm_in_percentage,
         po.sessionid,
         po.programid,
         po.groupid,

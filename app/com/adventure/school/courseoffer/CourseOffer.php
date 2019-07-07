@@ -7,7 +7,7 @@ use App\com\adventure\school\program\Session;
 class CourseOffer extends Model
 {
     protected $table='courseoffer';
-    protected $fillable = ['programofferid','coursecodeid','coursemark','meargeid','status'];
+    protected $fillable = ['programofferid','coursecodeid','coursemark','meargeid','mearge_name','status'];
     public function getOfferedCourses($programofferid){
         $sql="SELECT * FROM courseoffer
         WHERE programofferid=?";
@@ -39,7 +39,9 @@ class CourseOffer extends Model
     }
     public function getCoursesOnProgramOffer($programofferid){
         $sql="SELECT 
-        courseoffer.coursecodeid,
+        course_codes.id,
+        courses.name as courseName,
+        course_codes.name as courseCode,
         CONCAT(courses.name,' (',course_codes.name,')') AS courseNameWithCode
         FROM `courseoffer`
         INNER JOIN course_codes ON courseoffer.coursecodeid=course_codes.id
@@ -90,6 +92,15 @@ class CourseOffer extends Model
             return true;
         }
         return false;
+    }
+    public function getMinimumCourses($programofferid){
+        $sql="SELECT 
+        COUNT(coursecodeid) num_of_courses
+        FROM `courseoffer`
+        WHERE programofferid=?";
+        $qResult=\DB::select($sql,[$programofferid]);
+        $result=collect($qResult)->first();
+        return $result->num_of_courses;
     }
     //===========================For Dorpdown ==============
 	public function getAllOnIDS($sessionid,$programid,$groupid,$mediumid,$shiftid,$tableName,$compareid){

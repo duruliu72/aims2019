@@ -74,10 +74,11 @@ class MeargeOfferControllder extends Controller
      	$shiftid=$request->shiftid;     	
         $firstsubjectcodeid=$request->firstsubjectcodeid;
         $secondsubjectcodeid=$request->secondsubjectcodeid;
+        $mearge_name=$request->mearge_name;    
         // $meargeid=$request->meargeid;
         $aProgramOffer=new ProgramOffer();
         $programofferid=$aProgramOffer->getProgramOfferId(0,$programid,$groupid,$mediumid,$shiftid);
-        $status=$this->doTransaction($programofferid,$firstsubjectcodeid,$secondsubjectcodeid);
+        $status=$this->doTransaction($programofferid,$firstsubjectcodeid,$secondsubjectcodeid,$mearge_name);
      	if($status){
      		$msg="Mearging Successfully";
 		  }else{
@@ -99,17 +100,17 @@ class MeargeOfferControllder extends Controller
         $msg="Mearging Deleted";
         return redirect()->back()->with('msg',$msg);
     }
-    private function doTransaction($programofferid,$firstsubjectcodeid,$secondsubjectcodeid){
+    private function doTransaction($programofferid,$firstsubjectcodeid,$secondsubjectcodeid,$mearge_name){
         try{
-            \DB::transaction(function () use($programofferid,$firstsubjectcodeid,$secondsubjectcodeid){
+            \DB::transaction(function () use($programofferid,$firstsubjectcodeid,$secondsubjectcodeid,$mearge_name){
                 \DB::table('courseoffer')
                 ->where('programofferid', $programofferid)
                 ->where('coursecodeid', $firstsubjectcodeid)
-                ->update(['meargeid' => $firstsubjectcodeid]);
+                ->update(['meargeid' => $firstsubjectcodeid,"mearge_name"=>$mearge_name]);
                 \DB::table('courseoffer')
                 ->where('programofferid', $programofferid)
                 ->where('coursecodeid', $secondsubjectcodeid)
-                ->update(['meargeid' => $firstsubjectcodeid]);
+                ->update(['meargeid' => $firstsubjectcodeid,"mearge_name"=>$mearge_name]);
             });
             return true;
         }catch( \PDOException $e ){

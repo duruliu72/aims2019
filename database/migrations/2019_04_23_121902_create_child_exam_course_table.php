@@ -16,7 +16,7 @@ class CreateChildExamCourseTable extends Migration
         Schema::create('child_exam_course', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('child_exam_id')->length(11);
-            $table->integer('courseofferid')->length(11);
+            $table->integer('coursecodeid')->length(11);
             $table->double('marks',8,2);
             $table->integer('status')->length(5)->default(0);
             $table->timestamps();

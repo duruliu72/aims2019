@@ -17,9 +17,10 @@ class CreateMasterExamTable extends Migration
             $table->increments('id');
             $table->integer('programofferid')->length(11);
             $table->integer('examnameid')->length(11);
-            $table->double('exhld_mark_in_percentage',8,2);
+            $table->double('exhld_in_percentage',8,2);
             $table->double('mxm_in_percentage',8,2);
-            $table->integer('with_child')->length(11);
+            $table->double('cxm_in_percentage',8,2);
+            $table->integer('result_with_child')->length(11);
             $table->integer('status')->length(5)->default(0);
             $table->timestamps();
         });

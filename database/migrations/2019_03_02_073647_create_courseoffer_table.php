@@ -19,8 +19,7 @@ class CreateCourseofferTable extends Migration
             $table->integer('coursecodeid')->length(11);
             $table->double('coursemark',8,2)->nullable();
             $table->integer('meargeid')->length(11)->nullable();
-            //  mark distributuion type percentage or value
-            // $table->integer('markdistributiontypeid')->length(11)->nullable();
+            $table->string('mearge_name',100)->nullable();
             $table->timestamps();
         });
     }

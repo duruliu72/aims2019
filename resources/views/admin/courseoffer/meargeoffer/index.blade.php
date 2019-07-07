@@ -90,7 +90,10 @@
                          @endforeach
                       </select>
                     </div>                           
-                   
+                    <div class="col-sm-4 form-group">
+                      <label class="control-label" for="mearge_name">Mearge Name</label>
+                      <input type="text" class="form-control" name="mearge_name" id="mearge_name">
+                    </div>      
                   <div class="row">
                     <div class="col-sm-12">
                       <div class="btn-container">

@@ -102,12 +102,6 @@
                   </select>
                 </div>                  
               </div>
-              <div class="form-group row">
-                <label class="col-sm-2 control-label" for="cxm_in_percentage">Exam in(%) of 100%</label>
-                <div class="col-sm-4">
-                  <input type="text" class="form-control" name="cxm_in_percentage" id="cxm_in_percentage">
-                </div>  
-              </div>
               <div class="row">
                 <div class="col-md-6">
                   <table class="table table-striped table-bordered table-hover customtable">
@@ -216,12 +210,6 @@
                   </select>
                 </div>                   
               </div>
-              <div class="form-group row">
-                <label class="col-sm-2 control-label" for="cxm_in_percentage">Exam in(%) of 100%</label>
-                <div class="col-sm-4">
-                  <input type="text" class="form-control" name="cxm_in_percentage" value="{{$editBean->cxm_in_percentage}}" id="cxm_in_percentage">
-                </div> 
-              </div>
               <div class="row">
                 <div class="col-md-6">
                   <table class="table table-striped table-bordered table-hover customtable">
@@ -267,7 +255,6 @@
                 <th>Program Name</th>
                 <th>Master Name</th>
                 <th>Child Exam</th>
-                <th>Marks(%)</th>
                 @if($pList[3]->id==3)
                 <th width="10px">Edit</th>
                 @endif
@@ -284,7 +271,6 @@
                 <td>{{$x->sessionName." "}}{{$x->programName." "}}{{$x->groupName." "}}{{$x->mediumName." "}}{{$x->shiftName." "}}</td>
                 <td>{{$x->masterexamName}}</td>
                 <td>{{$x->childexamName}}</td>
-                <td>{{$x->cxm_in_percentage}}</td>
                 @if($pList[3]->id==3)
                 <td> 
                   <a href="{{URL::to('/childexam')}}/{{$x->id}}/{{'edit'}}" class="tooltip-success" data-rel="tooltip" title="Edit">
@@ -312,7 +298,6 @@
                 <th>Program Name</th>
                 <th>Master Name</th>
                 <th>Child Exam</th>
-                <th>Marks(%)</th>
                 @if($pList[3]->id==3)
                 <th width="10px">Edit</th>
                 @endif

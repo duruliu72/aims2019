@@ -36,6 +36,12 @@
     width: 70%;
     margin: 0 auto;
 }
+.academic-transcripts{
+    border:3px solid #d9d9d9 !important;
+    padding: 10px 0px;
+    width: 80%;
+    margin: 0 auto;
+}
 .academic-transcript__heading{
     text-align: center;
     border-bottom:3px solid #d9d9d9;
@@ -124,12 +130,11 @@
     width: 100%;
 }
 .academic-transcript__result table tr th{
-    text-align: center;
+   
 }
 .academic-transcript__result table tr td{
     padding: 5px;
     border: 1px solid #cccccc !important;
-    text-align: center;
 }
 .academic-transcript__grand-result{
     padding: 0px 15px;
@@ -210,6 +215,15 @@
 }
 .academic-result__heading{
     border:0;
+}
+.no_border{
+    border: 0 !important;
+}
+.no_margin{
+    margin: 0;
+}
+.no_padding{
+    padding:0px;
 }
  }
 

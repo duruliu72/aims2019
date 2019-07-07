@@ -1,322 +1,317 @@
 <?php
 
 namespace App\com\adventure\school\classexam;
-use App\com\adventure\school\program\GradePoint;
-use App\com\adventure\school\courseoffer\CourseOffer;
-use App\com\adventure\school\academic\Student;
+
 use Illuminate\Database\Eloquent\Model;
+use App\com\adventure\school\program\GradePoint;
 
 class MstExamResult extends Model
 {
-
     public function getSingleResult($programofferid,$examnameid,$studentid){
         $studentList=$this->getMstExamResult($programofferid,$examnameid);
-        $increment=1;
-        foreach($studentList as $item){
-            $item->position=$increment;
-            $increment++;
-        }
         $student=$studentList->where("studentid",$studentid)->first();
         // dd($student);
         return $student;
     }
     public function getMstExamResult($programofferid,$examnameid){
         $students=$this->getStudents($programofferid,$examnameid);
-        // dd($students);
         foreach($students as $x){
-            $mearge_courses=$this->getCourseOnMearge($x->programofferid,$x->examnameid,$x->studentid);
-            $courses=$this->getCourses($x->programofferid,$x->examnameid,$x->studentid);
-            $course_data=array();
-            foreach($courses as $y){
-                $markcat_data=array();
-                $markCategories=$this->getMarkCategory($x->programofferid,$x->examnameid,$x->studentid,$y->coursecodeid);
-                $tot_mark=0;
-                $tot_course_marks=0;
-                $pass_status=true;
-                $group_result = $markCategories->groupBy("mark_group_id")->map(function($item,$key){
-                    $c["categorymarks"]=$item->sum("categorymarks");
-                    $c["obt_marks"]=$item->sum("obt_marks");
-                    return $c;
-                });
-                foreach($group_result as $v){
-                    $t=($v["categorymarks"]*33)/100;
-                    if($v["obt_marks"]<$t){
-                        $pass_status=false;
+            $meargeCourseList=$this->getMerageSubject($x->programofferid,$x->examnameid,$x->studentid);
+            foreach($meargeCourseList as $mearge_course){
+                $courses=$this->getCoursesOnMearge($x->programofferid,$x->examnameid,$x->studentid,$mearge_course->meargeid);
+                $check=$this->check($x->programofferid,$x->examnameid,$x->studentid,$mearge_course->meargeid);
+                foreach($courses as $y){
+                    $markCategories=$this->getMarkCategory($x->programofferid,$x->examnameid,$x->studentid,$y->coursecodeid);
+                    $course_marks=0;
+                    $obt_course_marks=0;
+                    $course_pass_status=true;
+                    $group_result=$markCategories->groupBy("mark_group_id")->map(function($mearge_course,$key){
+                        $c["catmarks"]=$mearge_course->sum("catmarks");
+                        $c["obt_marks"]=$mearge_course->sum("obt_marks");
+                        return $c;
+                    });
+                    // for markcategory pass status
+                    foreach($markCategories as $mc){
+                        $cat_pass_status=true;
+                        $temp=($mc->catmarks*33)/100;
+                        if($mc->obt_marks<$temp){
+                            $cat_pass_status=false;
+                        }
+                        $mc->cat_pass_status=$cat_pass_status;
                     }
+                     // dd($group_result);
+                    foreach($group_result as $z){
+                        $course_pass_status=true;
+                        $temp=($z["catmarks"]*33)/100;
+                        if($z["obt_marks"]<$temp){
+                            $course_pass_status=false;
+                        }
+                        $course_marks=$course_marks+$z["catmarks"];
+                        $obt_course_marks=$obt_course_marks+$z["obt_marks"];
+                        // dd($z);
+                    }
+                    $y->obt_course_marks=$obt_course_marks;
+                    $y->course_marks=$course_marks;
+                    $y->course_pass_status=$course_pass_status;
+                    $y->markCategories=$markCategories;
+                    $point_letter=$this->getGradePoint($programofferid,round($obt_course_marks));
+                    if($course_pass_status==false){
+                        $gradepoint=0;
+                        $gradeletter="F";
+                    }else{
+                        $gradepoint=$point_letter["gradepoint"];
+                        $gradeletter=$point_letter["gradeletter"];
+                    }
+                    $y->gradepoint=$gradepoint;
+                    $y->gradeletter=$gradeletter;
+                    // dd($y);
                 }
-                foreach($markCategories as $markcat){
-                    $markcat_data[$markcat->markcategoryid]=array(
-                        "markcategoryid"=>$markcat->markcategoryid,
-                        "markcatName"=>$markcat->markcatName,
-                        "mark_group_id"=>$markcat->mark_group_id,
-                        "categorymarks"=>$markcat->categorymarks,
-                        "obt_marks"=>$markcat->obt_marks
-                    );
-                    $tot_mark=$tot_mark+$markcat->obt_marks;
-                    $tot_course_marks=$tot_course_marks+$markcat->categorymarks;
-                    $point_letter=$this->getGradePoint($programofferid,$tot_mark);
+                $mearge_marks=0;
+                $obt_mearge_marks=0;
+                $mearge_pass_status=true;
+                // dd($check);
+                foreach($check as $ck){
+                    $temp=($ck->catmarks*33)/100;
+                    if($ck->obt_mearge_marks<$temp){
+                        $mearge_pass_status=false;
+                    }
+                    $mearge_marks=$mearge_marks+$ck->catmarks;
+                    $obt_mearge_marks=$obt_mearge_marks+$ck->obt_mearge_marks;
                 }
-                if($pass_status){
-                    $gradepoint1=$point_letter["gradepoint"];
-                    $gradeletter1=$point_letter["gradeletter"];
-                }else{
-                    $gradepoint1=0;
-                    $gradeletter1="F";
+                // dd($obt_mearge_marks/$mearge_course->meargecount);
+                // dd($obt_mearge_marks);
+                $mearge_point_letter=$this->getGradePoint($programofferid,round($obt_mearge_marks/$mearge_course->meargecount));
+                $mearge_point=$mearge_point=$mearge_point_letter["gradepoint"];
+                $mearge_letter=$mearge_point_letter["gradeletter"];
+                if($mearge_pass_status==false){
+                    $mearge_point=0;
+                    $mearge_letter="F";
                 }
-                $course_data[$y->coursecodeid]=array(
-                    "coursecodeid"=>$y->coursecodeid,
-                    "courseCode"=>$y->courseCode,
-                    "courseName"=>$y->courseName,
-                    "coursetypeid"=>$y->coursetypeid,
-                    "meargeid"=>$y->meargeid,
-                    "markcat"=>$markcat_data,
-                    "tot_course_marks"=>$tot_course_marks,
-                    "tot_mark"=>$tot_mark,
-                    "pass_status"=>$pass_status,
-                    "gradepoint"=>$gradepoint1,
-                    "gradeletter"=>$gradeletter1
-                );
+                $mearge_course->mearge_pass_status=$mearge_pass_status;
+                $mearge_course->mearge_marks=$mearge_marks;
+                $mearge_course->obt_mearge_marks=$obt_mearge_marks;
+                $mearge_course->mearge_point=$mearge_point;
+                $mearge_course->mearge_letter=$mearge_letter;
+                $mearge_course->courses=$courses;
             }
-            $tot_pass_status=true;
-            $grand_courses_marks=0;
+            // dd($meargeCourseList);
+            $x->meargeCourseList=$meargeCourseList;
+            // For Compulsary Subject
+            $compalsary_courses = $meargeCourseList->where("coursetypeid","=",1);
+            // For Optional Subject
+            $optional_courses = $meargeCourseList->where("coursetypeid","=",2);
+            // For Additional Subject
+            $additional_courses = $meargeCourseList->where("coursetypeid","=",3);
+            $common_marks=0;
+            $obt_common_marks=0;
+            $grand_marks=0;
             $grand_obt_marks=0;
-            $tot_gradepoint=0;
-            $tot_fail_sub=0;
             $compalsary_subj=0;
-            $all_course_marks=0;
-            $all_course_obt_marks=0;
-            $collect_courses=collect($course_data);
-            // dd($collect_courses);
-            $group_courses11 = $collect_courses->where("meargeid","=",NULL)->where("coursetypeid","=",1);
-            foreach($group_courses11 as $item){
-                if($item["pass_status"]==false){
-                    $tot_pass_status=false;
+            $common_fail_sub=0;
+            $tot_fail_sub=0;
+            $std_tot_gpa=0;
+            $std_gpa=0.0;
+            $std_letter="F";
+            $status=1;
+            $student_pass_status=true;
+            foreach($compalsary_courses as $cc){
+                $common_marks=$common_marks+$cc->mearge_marks;
+                $obt_common_marks=$obt_common_marks+$cc->obt_mearge_marks;
+                $grand_marks=$grand_marks+$cc->mearge_marks;
+                $grand_obt_marks=$grand_obt_marks+$cc->obt_mearge_marks;
+                $std_tot_gpa=$std_tot_gpa+$cc->mearge_point;
+                if($cc->mearge_pass_status==false){
+                    $student_pass_status=false;
+                    $status=0;
+                    $common_fail_sub++;
                     $tot_fail_sub++;
                 }
                 $compalsary_subj++;
-                $grand_obt_marks=$grand_obt_marks+$item["tot_mark"];
-                $grand_courses_marks=$grand_courses_marks+$item["tot_course_marks"];
-                $tot_gradepoint=$tot_gradepoint+$item["gradepoint"];
-                $all_course_marks=$all_course_marks+$item["tot_course_marks"];
-                $all_course_obt_marks=$all_course_obt_marks+$item["tot_mark"];
             }
-            $group_courses12 = $collect_courses->where("meargeid","!=",NULL)->where("coursetypeid","=",1);
-            foreach($group_courses12 as $item){
-                if($item["pass_status"]==false){
+            foreach($optional_courses as $oc){
+                $grand_marks=$grand_marks+$oc->mearge_marks;
+                $grand_obt_marks=$grand_obt_marks+$oc->obt_mearge_marks;
+                if($oc->mearge_marks>2){
+                    $std_tot_gpa=$std_tot_gpa+($oc->mearge_point-2);
+                    $obt_common_marks=$obt_common_marks+$oc->obt_mearge_marks-40;
+                }
+                if($oc->mearge_pass_status==false){
                     $tot_fail_sub++;
                 }
-                $compalsary_subj++;
-                $grand_obt_marks=$grand_obt_marks+$item["tot_mark"];
-                $grand_courses_marks=$grand_courses_marks+$item["tot_course_marks"];
-                $tot_gradepoint=$tot_gradepoint+$item["gradepoint"];
-                $all_course_marks=$all_course_marks+$item["tot_course_marks"];
-                $all_course_obt_marks=$all_course_obt_marks+$item["tot_mark"];
             }
-            $group_courses21 = $collect_courses->where("meargeid","=",NULL)->where("coursetypeid","=",2);
-            foreach($group_courses21 as $item){
-                if($item["pass_status"]==false){
-                    $tot_pass_status=false;
-                }
-                if($item["tot_mark"]>40){
-                    $grand_obt_marks=$grand_obt_marks+$item["tot_mark"]-40;
-                }
-                if($item["gradepoint"]>3){
-                    $tot_gradepoint=$tot_gradepoint+$item["gradepoint"]-3;
-                }
-                $all_course_marks=$all_course_marks+$item["tot_course_marks"];
-                $all_course_obt_marks=$all_course_obt_marks+$item["tot_mark"];
-            }
-            $group_courses22 = $collect_courses->where("meargeid","!=",NULL)->where("coursetypeid","=",2);
-            foreach($group_courses22 as $item){
-                if($item["tot_mark"]>40){
-                    $grand_obt_marks=$grand_obt_marks+$item["tot_mark"]-40;
-                }
-                if($item["gradepoint"]>2){
-                    $tot_gradepoint=$tot_gradepoint+$item["gradepoint"]-2;
-                }
-                $all_course_marks=$all_course_marks+$item["tot_course_marks"];
-                $all_course_obt_marks=$all_course_obt_marks+$item["tot_mark"];
-            }
-            $group_courses31 = $collect_courses->where("meargeid","=",NULL)->where("coursetypeid","=",3);
-            foreach($group_courses31 as $item){
-                if($item["pass_status"]==false){
-                    $tot_pass_status=false;
-                }
-                $all_course_marks=$all_course_marks+$item["tot_course_marks"];
-                $all_course_obt_marks=$all_course_obt_marks+$item["tot_mark"];
-            }
-            $group_courses32 = $collect_courses->where("meargeid","!=",NULL)->where("coursetypeid","=",3);
-            foreach($group_courses32 as $item){
-                $all_course_marks=$all_course_marks+$item["tot_course_marks"];
-                $all_course_obt_marks=$all_course_obt_marks+$item["tot_mark"];
-            }
-            // ========
-            $group_mearge_courses1=$mearge_courses->where("coursetypeid","=",1);
-            $group_mearge_courses2=$mearge_courses->where("coursetypeid","=",2);
-            $group_mearge_courses3=$mearge_courses->where("coursetypeid","=",3);
-            foreach($group_mearge_courses1 as $item){
-                $t=($item->categorymarks*33)/100;
-                if($item->obt_marks<$t){
-                    $tot_pass_status=false;
+            foreach($additional_courses as $ac){
+                $grand_marks=$grand_marks+$ac->mearge_marks;
+                $grand_obt_marks=$grand_obt_marks+$ac->obt_mearge_marks;
+                if($ac->mearge_pass_status==false){
+                    $tot_fail_sub++;
                 }
             }
-            foreach($group_mearge_courses2 as $item){
-                $t=($item->categorymarks*33)/100;
-                if($item->obt_marks<$t){
-                    $tot_pass_status=false;
-                }
-
+            if($student_pass_status==false){
+                $std_tot_gpa=0;
             }
-            foreach($group_mearge_courses3 as $item){
-                $t=($item->categorymarks*33)/100;
-                if($item->obt_marks<$t){
-                    $tot_pass_status=false;
-                }
-            }
-            $x->course_array=$course_data;
-            $x->tot_pass_status=$tot_pass_status;
-            $x->grand_courses_marks=$grand_courses_marks;
+            $x->common_marks=$common_marks;
+            $x->obt_common_marks=$obt_common_marks;
+            $x->grand_marks=$grand_marks;
             $x->grand_obt_marks=$grand_obt_marks;
-            $x->percentage_mark=($grand_obt_marks*100)/$grand_courses_marks;
-            $x->tot_gradepoint=$tot_gradepoint;
-            $x->all_course_marks=$all_course_marks;
-            $x->all_course_obt_marks=$all_course_obt_marks;
-            if($tot_pass_status==true){
-                $x->tot_fail_sub=0;
-            }else{
-                $x->tot_fail_sub=$tot_fail_sub;
+            $x->compalsary_subj=$compalsary_subj;
+            $x->common_fail_sub=$common_fail_sub;
+            $x->tot_fail_sub=$tot_fail_sub;
+            $x->std_tot_gpa=$std_tot_gpa;
+            $letter_grade=$this->getGradeLetter($programofferid,$std_tot_gpa/$compalsary_subj);
+            $temp_gpa=$std_tot_gpa/$compalsary_subj;
+            if($std_tot_gpa/$compalsary_subj>5){
+               $temp_gpa=5;
             }
-            $x->gpa=round(($tot_gradepoint)/$compalsary_subj,2);
+            $x->std_gpa=$temp_gpa;
+            $x->std_letter=$letter_grade["grade_letter"];
+            $x->student_pass_status=$student_pass_status;
+            $x->percentage_mark=($obt_common_marks*100)/$common_marks;
+            $x->status=$status;
+            // dd($x);
         }
-        foreach($students as $item){
-            if($item->tot_pass_status==true){
-                $letter_grade=$this->getGradeLetter($programofferid,$item->gpa);
-                $item->grade_letter=$letter_grade["grade_letter"];
-                $item->gpa=$letter_grade["gradepoint"];
-            }else{
-                $item->grade_letter="F";
-                $item->gpa=0;
-            }
+        $students=$students->sortByDesc("obt_common_marks")->sortByDesc("std_gpa")->sortBy("tot_fail_sub")->sortByDesc("status");
+        // This loop for Class Position
+        $position=1;
+        foreach ($students as $std){
+            $std->class_position=$position++;
         }
-        $students1=$students->where("tot_pass_status",TRUE)
-        ->sortByDesc("tot_gradepoint")->sortByDesc("grand_tot_mark");
-        $students2=$students->where("tot_pass_status",false)
-        ->sortByDesc("tot_gradepoint")->sortByDesc("grand_tot_mark");
-        $students=$students1->concat($students2);
+        $student_on_section=$students->groupBy("sectionid");
+        foreach ($student_on_section as $section_item) {
+           $i=1;
+           foreach($section_item as $std){
+                $std->section_position=$i++;
+           }
+        }
+        $students=$student_on_section->collapse();
         // dd($students);
         return $students;
     }
+    public function check($programofferid,$examnameid,$studentid,$meargeid){
+        $sql="SELECT 
+        mxm.studentid,
+        student_courses.coursetypeid,
+        courseoffer.meargeid,
+        courseoffer.mearge_name,
+        md.mark_group_id,
+        mark_categories.name AS markcatName,
+       	SUM(FORMAT((courseoffer.coursemark*md.mark_in_percentage)/100,0)) AS catmarks,
+        sum(mxm.marks) AS obt_mearge_marks
+        FROM mst_exam_marks AS mxm
+        INNER JOIN courseoffer ON mxm.programofferid=courseoffer.programofferid && mxm.coursecodeid=courseoffer.coursecodeid
+        INNER JOIN mark_distribution as md on mxm.programofferid=md.programofferid && mxm.coursecodeid=md.coursecodeid && mxm.markcategoryid=md.markcategoryid
+        INNER JOIN student_courses ON mxm.studentid=student_courses.studentid && mxm.coursecodeid=student_courses.coursecodeid
+        INNER JOIN mark_categories on md.markcategoryid=mark_categories.id
+        INNER JOIN course_codes ON mxm.coursecodeid=course_codes.id
+        INNER JOIN courses ON course_codes.courseid=courses.id
+        WHERE mxm.programofferid=? && mxm.examnameid=? && mxm.studentid=? && courseoffer.meargeid=? GROUP BY  md.mark_group_id";
+        $qResult=\DB::select($sql,[$programofferid,$examnameid,$studentid,$meargeid]);
+        $result=collect($qResult);
+        return $result;
+    }
     public function getStudents($programofferid,$examnameid){
         $sql="SELECT 
-        mem.programofferid,
-        mem.examnameid,
+        mxm.programofferid,
+        mxm.sectionid,
+        mxm.examnameid,
+        mxm.studentid,
+        applicants.applicantid,
         applicants.firstName,
         applicants.middleName,
         applicants.lastName,
+        students.classroll,
         applicants.picture,
-        applicants.signature,
-        mem.studentid,
-        students.applicantid,
-        students.classroll
-        FROM `mst_exam_marks` AS mem
-        INNER JOIN students ON mem.studentid=students.id
+        applicants.signature
+        FROM mst_exam_marks AS mxm
+        INNER JOIN students ON mxm.studentid=students.id
         INNER JOIN applicants ON students.applicantid=applicants.applicantid
-        INNER JOIN courseoffer ON mem.programofferid=courseoffer.programofferid && mem.coursecodeid=courseoffer.coursecodeid
-        INNER JOIN student_courses ON mem.studentid=student_courses.studentid && mem.coursecodeid=student_courses.coursecodeid
-        INNER JOIN mark_distribution as md on mem.programofferid=md.programofferid && mem.coursecodeid=md.coursecodeid && mem.markcategoryid=md.markcategoryid
-        WHERE mem.programofferid=? && mem.examnameid=? GROUP BY studentid";
+        WHERE mxm.programofferid=? && mxm.examnameid=?
+        GROUP BY mxm.studentid";
         $qResult=\DB::select($sql,[$programofferid,$examnameid]);
         $result=collect($qResult);
         return $result;
     }
     public function getCourses($programofferid,$examnameid,$studentid){
         $sql="SELECT 
-        mem.programofferid,
-        mem.examnameid,
-        mem.examtypeid,
-        mem.sectionid,
-        mem.studentid,
-        mem.coursecodeid,
-    	course_codes.name AS courseCode,
+        mxm.studentid,
+        mxm.coursecodeid,
+        student_courses.coursetypeid,
+        course_codes.name AS courseCode,
         courses.name AS courseName,
-        student_courses.coursetypeid,
+        courseoffer.coursemark,
         courseoffer.meargeid
-        FROM `mst_exam_marks` AS mem
-        INNER JOIN courseoffer ON mem.programofferid=courseoffer.programofferid && mem.coursecodeid=courseoffer.coursecodeid
-  		INNER JOIN course_codes ON mem.coursecodeid=course_codes.id
+        FROM mst_exam_marks AS mxm
+        INNER JOIN courseoffer ON mxm.programofferid=courseoffer.programofferid && mxm.coursecodeid=courseoffer.coursecodeid
+        INNER JOIN student_courses ON mxm.studentid=student_courses.studentid && mxm.coursecodeid=student_courses.coursecodeid
+        INNER JOIN course_codes ON mxm.coursecodeid=course_codes.id
         INNER JOIN courses ON course_codes.courseid=courses.id
-        INNER JOIN student_courses ON mem.studentid=student_courses.studentid && mem.coursecodeid=student_courses.coursecodeid
-        INNER JOIN mark_distribution as md on mem.programofferid=md.programofferid && mem.coursecodeid=md.coursecodeid && mem.markcategoryid=md.markcategoryid
-        WHERE mem.programofferid=? && mem.examnameid=? && mem.studentid=? GROUP BY   mem.coursecodeid";
-         $qResult=\DB::select($sql,[$programofferid,$examnameid,$studentid]);
-         $result=collect($qResult);
-         return $result;
-    }
-    public function getCourseOnMearge($programofferid,$examnameid,$studentid){
-        $sql="SELECT 
-        mem.programofferid,
-        mem.examnameid,
-        mem.examtypeid,
-        mem.sectionid,
-        mem.studentid,
-        student_courses.coursetypeid,
-        courseoffer.meargeid,
-        md.mark_group_id,
-        sum(FORMAT((courseoffer.coursemark*md.mark_in_percentage)/100,0)) AS categorymarks,
-        sum(mem.marks) as obt_marks
-        FROM `mst_exam_marks` AS mem
-        INNER JOIN courseoffer ON mem.programofferid=courseoffer.programofferid && mem.coursecodeid=courseoffer.coursecodeid
-        INNER JOIN student_courses ON mem.studentid=student_courses.studentid && mem.coursecodeid=student_courses.coursecodeid
-        INNER JOIN mark_distribution as md on mem.programofferid=md.programofferid && mem.coursecodeid=md.coursecodeid && mem.markcategoryid=md.markcategoryid
-        WHERE mem.programofferid=? && mem.examnameid=? && mem.studentid=? && courseoffer.meargeid IS NOT NULL GROUP BY courseoffer.meargeid,md.mark_group_id";
+        WHERE mxm.programofferid=? && mxm.examnameid=? && mxm.studentid=? GROUP BY mxm.coursecodeid";
         $qResult=\DB::select($sql,[$programofferid,$examnameid,$studentid]);
         $result=collect($qResult);
         return $result;
     }
-    public function getMarkCategory($programofferid,$examnameid,$studentid,$coursecodeid){
-        $sql="SELECT 
-        mem.programofferid,
-        mem.examnameid,
-        mem.examtypeid,
-        mem.sectionid,
-        mem.studentid,
-        mem.coursecodeid,
-        mem.markcategoryid,
-        mark_categories.name AS markcatName,
-        md.mark_group_id,
-        FORMAT((courseoffer.coursemark*md.mark_in_percentage)/100,0) AS categorymarks,
-        mem.marks as obt_marks
-        FROM `mst_exam_marks` AS mem
-        INNER JOIN courseoffer ON mem.programofferid=courseoffer.programofferid && mem.coursecodeid=courseoffer.coursecodeid
-        INNER JOIN student_courses ON mem.studentid=student_courses.studentid && mem.coursecodeid=student_courses.coursecodeid
-        INNER JOIN mark_distribution as md on mem.programofferid=md.programofferid && mem.coursecodeid=md.coursecodeid && mem.markcategoryid=md.markcategoryid
-        INNER JOIN mark_categories on md.markcategoryid=mark_categories.id
-        WHERE mem.programofferid=? && mem.examnameid=? && mem.studentid=? && mem.coursecodeid=?";
-        $qResult=\DB::select($sql,[$programofferid,$examnameid,$studentid,$coursecodeid]);
+    public function getMerageSubject($programofferid,$examnameid,$studentid){
+        $sql="select 
+        table1.meargeid,
+        table1.coursetypeid,
+        COUNT(table1.meargeid) as meargecount,
+        CASE
+            WHEN COUNT(table1.meargeid)>1 THEN table1.mearge_name
+            ELSE table1.courseName
+        END AS courseName
+        FROM(SELECT 
+        mxm.studentid,
+        mxm.coursecodeid,
+        student_courses.coursetypeid,
+        course_codes.name AS courseCode,
+        courses.name AS courseName,
+        courseoffer.coursemark,
+        courseoffer.meargeid,
+        courseoffer.mearge_name
+        FROM mst_exam_marks AS mxm
+        INNER JOIN courseoffer ON mxm.programofferid=courseoffer.programofferid && mxm.coursecodeid=courseoffer.coursecodeid
+        INNER JOIN student_courses ON mxm.studentid=student_courses.studentid && mxm.coursecodeid=student_courses.coursecodeid
+        INNER JOIN course_codes ON mxm.coursecodeid=course_codes.id
+        INNER JOIN courses ON course_codes.courseid=courses.id
+        WHERE mxm.programofferid=? && mxm.examnameid=? && mxm.studentid=? GROUP BY mxm.coursecodeid) AS table1
+        GROUP BY table1.meargeid";
+        $qResult=\DB::select($sql,[$programofferid,$examnameid,$studentid]);
         $result=collect($qResult);
         return $result;
     }
-
-    public function getMstExamResultOnPOAndExax($programofferid,$examnameid){
-        $resultSql="SELECT 
-        mem.programofferid,
-        mem.sectionid,
-        mem.studentid,
-        mem.coursecodeid,
-        mem.examnameid,
-        mem.examtypeid,
-        mem.markcategoryid,
+    public function getCoursesOnMearge($programofferid,$examnameid,$studentid,$meargeid){
+        $sql="SELECT 
+        mxm.studentid,
+        mxm.coursecodeid,
         student_courses.coursetypeid,
+        course_codes.name AS courseCode,
+        courses.name AS courseName,
+        courseoffer.coursemark,
+        courseoffer.meargeid
+        FROM mst_exam_marks AS mxm
+        INNER JOIN courseoffer ON mxm.programofferid=courseoffer.programofferid && mxm.coursecodeid=courseoffer.coursecodeid
+        INNER JOIN student_courses ON mxm.studentid=student_courses.studentid && mxm.coursecodeid=student_courses.coursecodeid
+        INNER JOIN course_codes ON mxm.coursecodeid=course_codes.id
+        INNER JOIN courses ON course_codes.courseid=courses.id
+        WHERE mxm.programofferid=? && mxm.examnameid=? && mxm.studentid=? && courseoffer.meargeid=?  GROUP BY mxm.coursecodeid";
+        $qResult=\DB::select($sql,[$programofferid,$examnameid,$studentid,$meargeid]);
+        $result=collect($qResult);
+        return $result;
+    }
+    public function getMarkCategory($programofferid,$examnameid,$studentid,$coursecodeid){
+        $sql="SELECT
+        mxm.coursecodeid,
+        mxm.markcategoryid,
         md.mark_group_id,
-        courseoffer.meargeid,
-        FORMAT((courseoffer.coursemark*md.mark_in_percentage)/100,0) AS categorymarks,
-        mem.marks as obt_marks
-        FROM `mst_exam_marks` AS mem
-        INNER JOIN courseoffer ON mem.programofferid=courseoffer.programofferid && mem.coursecodeid=courseoffer.coursecodeid
-        INNER JOIN student_courses ON mem.studentid=student_courses.studentid && mem.coursecodeid=student_courses.coursecodeid
-        INNER JOIN mark_distribution as md on mem.programofferid=md.programofferid && mem.coursecodeid=md.coursecodeid && mem.markcategoryid=md.markcategoryid
-        WHERE mem.programofferid=1 && mem.examnameid=1";
-        $qResult=\DB::select($resultSql,[$programofferid,$examnameid]);
+        mark_categories.name AS markcatName,
+        md.mark_in_percentage,
+        FORMAT((courseoffer.coursemark*md.mark_in_percentage)/100,0) AS catmarks,
+        mxm.marks AS obt_marks
+        FROM mst_exam_marks AS mxm
+        INNER JOIN courseoffer ON mxm.programofferid=courseoffer.programofferid && mxm.coursecodeid=courseoffer.coursecodeid
+        INNER JOIN mark_distribution as md on mxm.programofferid=md.programofferid && mxm.coursecodeid=md.coursecodeid && mxm.markcategoryid=md.markcategoryid
+        INNER JOIN mark_categories on md.markcategoryid=mark_categories.id
+        WHERE mxm.programofferid=? && mxm.examnameid=? && mxm.studentid=? && mxm.coursecodeid=?";
+        $qResult=\DB::select($sql,[$programofferid,$examnameid,$studentid,$coursecodeid]);
         $result=collect($qResult);
         return $result;
     }
@@ -344,7 +339,7 @@ class MstExamResult extends Model
         foreach($point_letters as $x){
             array_push($point_letter_array,array("gradepoint"=>$x->gradepoint,"grade_letter"=>$x->name));
         }
-        for ($i=0;$i<(count($point_letter_array)-2);$i++){
+        for ($i=0;$i<(count($point_letter_array)-1);$i++){
             if(($point<$point_letter_array[$i]["gradepoint"]) && ($point>=$point_letter_array[$i+1]["gradepoint"])){
                 return $point_letter_array[$i+1];
             }

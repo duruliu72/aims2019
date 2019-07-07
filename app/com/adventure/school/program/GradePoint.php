@@ -43,7 +43,7 @@ class GradePoint extends Model
         grade_letter.name
         FROM `grade_point`
         INNER JOIN grade_letter ON grade_point.gradeletterid=grade_letter.id
-        WHERE programofferid=? ORDER BY name";
+        WHERE programofferid=? ORDER BY gradepoint DESC";
         $qResult=\DB::select($sql,[$programofferid]);
         return collect($qResult);
     }

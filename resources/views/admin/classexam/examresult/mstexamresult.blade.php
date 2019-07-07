@@ -149,6 +149,7 @@
                           <th>GPA</th>
                           <th>Grade Letter</th>
                           <th>Class Position</th>
+                          <th>Section Position</th>
                           <th class="no-print">Print</th>
                         </tr>
                       </thead>
@@ -160,11 +161,16 @@
                             <td>{{$item->applicantid}}</td>
                             <td>{{sprintf("%s %s %s",$item->firstName,$item->middleName,$item->lastName)}}</td>
                             <td>{{$item->classroll}}</td>
-                            <td>{{$item->grand_courses_marks}}</td>
+                            <td>{{$item->grand_marks}}</td>
                             <td>{{$item->grand_obt_marks}}</td>
-                            <td>{{$item->gpa}}</td>
-                            <td>{{$item->grade_letter}}</td>
-                            <td>{{$id}}</td>
+                            <td>{{sprintf("%.2f",$item->std_gpa)}}</td>
+                            @if($item->student_pass_status)
+                            <td>{{$item->std_letter}}</td>
+                            @else
+                            <td class="fail_status">{{$item->std_letter}}</td>
+                            @endif
+                            <td>{{$item->class_position}}</td>
+                            <td>{{$item->section_position}}</td>
                             <td class="no-print"><a target="_blank" href="{{URL::to('/mstexamresult')}}/{{$programofferinfo->id}}/{{$exam->id}}/{{$item->studentid}}">Print</a></td>
                           </tr>
                         @endforeach

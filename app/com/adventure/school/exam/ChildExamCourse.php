@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class ChildExamCourse extends Model
 {
     protected $table="child_exam_course";
-    protected $fillable = ['child_exam_id','courseofferid','marks','status'];
+    protected $fillable = ['child_exam_id','coursecodeid','marks','status'];
     public function getAllCourses($programofferid){
         $sql="SELECT 
         courseoffer.*,

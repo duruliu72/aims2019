@@ -65,10 +65,28 @@ class MasterExam extends Model
         $result=collect($qResult)->first();
         return $result;
     }
+    public function getMasterExamOnPO($programofferid){
+        $sql="SELECT exam_name.* FROM `master_exam`
+        INNER JOIN exam_name ON master_exam.examnameid=exam_name.id
+        WHERE programofferid=? && exam_name.examtypeid=1";
+        $qResult=\DB::select($sql,[$programofferid]);
+        $result=collect($qResult);
+        return $result;
+    }
     public function hasItem($programofferid,$examnameid){
         $sql="SELECT * FROM `master_exam`
         WHERE programofferid=? && examnameid=?";
         $qResult=\DB::select($sql,[$programofferid,$examnameid]);
+        $result=collect($qResult);
+        if($result->count()>0){
+            return true;
+        }
+        return false;
+    }
+    public function hasMasterExam($programofferid){
+        $sql="SELECT * FROM `master_exam`
+        WHERE programofferid=?";
+        $qResult=\DB::select($sql,[$programofferid]);
         $result=collect($qResult);
         if($result->count()>0){
             return true;

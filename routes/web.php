@@ -121,20 +121,24 @@ Route::get('masterexam', 'com\adventure\school\exam\MasterExamController@masterE
 Route::post('masterexam', 'com\adventure\school\exam\MasterExamController@masterExamCrete');
 Route::get('masterexam/{id}/edit', 'com\adventure\school\exam\MasterExamController@masterExamCrete');
 Route::post('masterexam/{id}/edit', 'com\adventure\school\exam\MasterExamController@masterExamCrete');
-Route::get('childexam', 'com\adventure\school\exam\ChildExamController@childExamCrete');
-Route::post('childexam', 'com\adventure\school\exam\ChildExamController@childExamCrete');
-Route::get('childexam/{id}/edit', 'com\adventure\school\exam\ChildExamController@childExamCrete');
-Route::post('childexam/{id}/edit', 'com\adventure\school\exam\ChildExamController@childExamCrete');
-Route::get('childexam/getValue', 'com\adventure\school\exam\ChildExamController@getValue');
+Route::get('childexam', 'com\adventure\school\exam\ChildExamCopyController@childExamCrete');
+Route::post('childexam', 'com\adventure\school\exam\ChildExamCopyController@childExamCrete');
+Route::get('childexam/{id}/edit', 'com\adventure\school\exam\ChildExamCopyController@childExamCrete');
+Route::post('childexam/{id}/edit', 'com\adventure\school\exam\ChildExamCopyController@childExamCrete');
+Route::get('childexam/getValue', 'com\adventure\school\exam\ChildExamCopyController@getValue');
 // Mark Entry
 Route::get('mstexammarkentry', 'com\adventure\school\classexam\MstExamMarkEntryController@marksentry');
 Route::post('mstexammarkentry', 'com\adventure\school\classexam\MstExamMarkEntryController@marksentry');
 Route::get('mstexammarkedit', 'com\adventure\school\classexam\MstExamMarkEntryController@marksedit');
 Route::post('mstexammarkedit', 'com\adventure\school\classexam\MstExamMarkEntryController@marksedit');
 // Class Result
-Route::get('mstexamresult', 'com\adventure\school\classexam\MstExamResultController@mstexamresult1');
-Route::post('mstexamresult', 'com\adventure\school\classexam\MstExamResultController@mstexamresult1');
-Route::get('mstexamresult/{id1}/{id2}/{id3}', 'com\adventure\school\classexam\MstExamResultController@mstSingleResult1');
+Route::get('mstexamresult', 'com\adventure\school\classexam\MstExamResultController@mstexamresult');
+Route::post('mstexamresult', 'com\adventure\school\classexam\MstExamResultController@mstexamresult');
+Route::get('transcripts', 'com\adventure\school\classexam\MstExamResultController@getTranscripts');
+Route::post('transcripts', 'com\adventure\school\classexam\MstExamResultController@getTranscripts');
+Route::get('mstexamresult/{id1}/{id2}/{id3}', 'com\adventure\school\classexam\MstExamResultController@mstSingleResult');
+Route::get('transfer_certificate', 'com\adventure\school\classexam\TransferCertificateController@transfer_certificate');
+Route::post('transfer_certificate', 'com\adventure\school\classexam\TransferCertificateController@transfer_certificate');
 // Menu Settings
 Route::resource('menu', 'com\adventure\school\menu\MenuController');
 

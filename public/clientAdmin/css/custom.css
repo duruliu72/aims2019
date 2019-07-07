@@ -360,3 +360,104 @@ fieldset.menu legend{
 .position p{
     padding-left: 15px;
 }
+.fail_status{
+    color:red !important;
+}
+.no_border{
+    border: 0 !important;
+}
+.academic-transcripts{
+    border:3px solid #d9d9d9;
+    width: 80%;
+    margin: 0 auto;
+}
+.no_margin{
+    margin: 0;
+}
+.no_padding{
+    padding:0px;
+}
+/* Tranfer certificate Style */
+.transfer_certificate_wrapper{
+    background: #ffffff;
+    margin-left: -15px;
+    margin-right: -15px;
+    padding:25px 0px;
+}
+.transfer_certificate_wrapper::after{
+    content: "";
+    display: block;
+    clear: both;
+}
+.transfer_certificate{
+    width: 400px;
+    margin: 0px auto;
+    margin-bottom: 25px;
+}
+.float-right{
+    float: right;
+}
+.tc-envelope{
+    margin:0px 50px;
+    border: 1px dashed #000000;
+    padding: 50px;
+
+}
+.institute-info{
+    text-align: center;
+}
+.tc_heading{
+    position: relative;
+    margin-bottom: 25px;
+}
+.tc_heading .tc-headline{
+    margin: 0px;
+    text-align: center;
+}
+.tc-serial{
+    position: absolute;
+    left:0px;
+    top: 8px;
+}
+.tc-date{
+    position: absolute;
+    top:8px;
+    right: 0px;
+}
+.tc-desc{
+    border:1px solid royalblue;
+    padding: 20px;
+    margin-bottom: 50px;
+}
+.tc-desc p.tc-para{
+    font-size: 18px;
+    line-height: 30px;
+    text-align: justify;
+    margin-bottom: 30px;
+}
+.tc-desc p.tm{
+    font-size: 18px;
+    margin: 0px;
+}
+.tc-desc p.bt-space{
+    margin-bottom: 25px;
+}
+.tc-auth::after{
+    content: "";
+    display: block;
+    clear: both;
+}
+.tc-auth .tc-auth_item p{
+    font-size: 18px;
+    margin: 0px;
+}
+.tc-auth_headmster{
+    float: right;
+}
+.tc-top{
+    top:10px;
+    right: 50px;
+}
+.tc-msg{
+    margin-right: 25px;
+}

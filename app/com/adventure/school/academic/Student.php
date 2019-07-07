@@ -45,6 +45,17 @@ class Student extends Model
         $student->courses=$courses;
         return $student;
     }
+    public function getCurrentStudent($applicantid){
+        $sql="SELECT * FROM `students`
+        WHERE applicantid=? && currentclass=1";
+        $qResult=\DB::select($sql,[$applicantid]);
+        $result=collect($qResult);
+        $student=$result->first();
+        $aStudentCourse=new StudentCourse();
+        $courses=$aStudentCourse->getStudentCourses($student->id);
+        $student->courses=$courses;
+        return $student;
+    }
     // Base on Program offer and section
     public function getStudentsOnClsNSec($programofferid,$sectionid){
         $sql="SELECT t2.* ,

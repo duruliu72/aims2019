@@ -36,7 +36,7 @@
                     <div class="col-sm-4">
                       <input type="text" class="form-control" name="name" id="name">
                     </div>
-                    <level class="col-sm-2 control-label" for="courseid">Course</level>
+                    <label class="col-sm-2 control-label" for="courseid">Course</label>
                     <div class="col-sm-4">
                        <select class="form-control" name="courseid" id="courseid">
                          <option value="">SELECT</option>
