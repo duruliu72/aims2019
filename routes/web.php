@@ -121,16 +121,20 @@ Route::get('masterexam', 'com\adventure\school\exam\MasterExamController@masterE
 Route::post('masterexam', 'com\adventure\school\exam\MasterExamController@masterExamCrete');
 Route::get('masterexam/{id}/edit', 'com\adventure\school\exam\MasterExamController@masterExamCrete');
 Route::post('masterexam/{id}/edit', 'com\adventure\school\exam\MasterExamController@masterExamCrete');
-Route::get('childexam', 'com\adventure\school\exam\ChildExamCopyController@childExamCrete');
-Route::post('childexam', 'com\adventure\school\exam\ChildExamCopyController@childExamCrete');
-Route::get('childexam/{id}/edit', 'com\adventure\school\exam\ChildExamCopyController@childExamCrete');
-Route::post('childexam/{id}/edit', 'com\adventure\school\exam\ChildExamCopyController@childExamCrete');
-Route::get('childexam/getValue', 'com\adventure\school\exam\ChildExamCopyController@getValue');
+Route::get('childexam', 'com\adventure\school\exam\ChildExamController@childExamCreate');
+Route::post('childexam', 'com\adventure\school\exam\ChildExamController@childExamCreate');
+Route::get('childexam/{id}/edit', 'com\adventure\school\exam\ChildExamController@childExamEdit');
+Route::post('childexam/{id}/edit', 'com\adventure\school\exam\ChildExamController@childExamEdit');
+Route::get('childexam/getValue', 'com\adventure\school\exam\ChildExamController@getValue');
 // Mark Entry
 Route::get('mstexammarkentry', 'com\adventure\school\classexam\MstExamMarkEntryController@marksentry');
 Route::post('mstexammarkentry', 'com\adventure\school\classexam\MstExamMarkEntryController@marksentry');
 Route::get('mstexammarkedit', 'com\adventure\school\classexam\MstExamMarkEntryController@marksedit');
 Route::post('mstexammarkedit', 'com\adventure\school\classexam\MstExamMarkEntryController@marksedit');
+Route::get('childexammarkentry', 'com\adventure\school\classexam\ChildExamMarksController@child_Exam_MarkEntry');
+Route::post('childexammarkentry', 'com\adventure\school\classexam\ChildExamMarksController@child_Exam_MarkEntry');
+Route::get('childexammarkedit', 'com\adventure\school\classexam\MstExamMarkEntryController@child_Exam_MarkEdit');
+Route::post('childexammarkedit', 'com\adventure\school\classexam\MstExamMarkEntryController@child_Exam_MarkEdit');
 // Class Result
 Route::get('mstexamresult', 'com\adventure\school\classexam\MstExamResultController@mstexamresult');
 Route::post('mstexamresult', 'com\adventure\school\classexam\MstExamResultController@mstexamresult');

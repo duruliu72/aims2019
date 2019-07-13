@@ -54,7 +54,7 @@ class ChildExamCopyController extends Controller
                 $msg="Program Offer is not created yet";
                 return redirect()->back()->with('msg',$msg);
             }
-            //Check Master Exam has jbeen Created or Not on Programoffer
+            //Check Master Exam has been Created or Not on Programoffer
             $programofferid=$aProgramOffer->getProgramOfferId(0,$programid,$groupid,$mediumid,$shiftid);
             $hasMasterExam=$aMasterExam->hasMasterExam($programofferid);
             if(!$hasMasterExam){

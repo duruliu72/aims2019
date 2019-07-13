@@ -20,7 +20,7 @@
         <ol class="breadcrumb">
               <li>Child Exam</li>
               @if($pList[2]->id==2)
-              <!-- <li><a href="{{URL::to('/childexam')}}">Edit</a></li> -->
+              <li><a href="{{URL::to('/childexam')}}">Create</a></li>
               @endif
               @if ($errors->any())
                   <span style="float: right;font-size: 15px;">{{$errors->all()[0] }}</span>
@@ -43,7 +43,7 @@
         <section class="panel margin-bottom-zero">
           <div class="child-exam-wrapper">
             <div class="child-exam__item">
-              <form action="{{URL::to('childexam')}}" method="POST">
+              <form action="{{URL::to('childexam')}}/{{$bean->id}}/{{'edit'}}" method="POST">
                 {{csrf_field()}}
                 <div class="form-group row">
                   <label class="col-sm-2 control-label" for="programid">Program</label>
@@ -51,7 +51,11 @@
                     <select onchange="getChange(this,'program')" class="form-control" name="programid" id="programid">
                       <option  value="">SELECT</option>
                       @foreach ($programList as $x)
-                      <option value="{{$x->id}}">{{$x->name}}</option>
+                        @if($x->id==$bean->programid)
+                            <option selected value="{{$x->id}}">{{$x->name}}</option>
+                        @else
+                            <option value="{{$x->id}}">{{$x->name}}</option>
+                        @endif
                       @endforeach
                     </select>
                   </div>
@@ -60,7 +64,11 @@
                     <select onchange="getChange(this,'medium')" class="form-control" name="mediumid" id="mediumid">
                       <option  value="">SELECT</option>
                       @foreach ($mediumList as $x)
-                          <option value="{{$x->id}}">{{$x->name}}</option>
+                        @if($x->id==$bean->mediumid)
+                            <option selected value="{{$x->id}}">{{$x->name}}</option>
+                        @else
+                            <option value="{{$x->id}}">{{$x->name}}</option>
+                        @endif
                       @endforeach
                     </select>
                   </div>
@@ -72,7 +80,11 @@
                     <select onchange="getChange(this,'shift')" class="form-control" name="shiftid" id="shiftid">
                       <option  value="">SELECT</option>
                       @foreach ($shiftList as $x)
-                          <option value="{{$x->id}}">{{$x->name}}</option>
+                        @if($x->id==$bean->shiftid)
+                            <option selected value="{{$x->id}}">{{$x->name}}</option>
+                        @else
+                            <option value="{{$x->id}}">{{$x->name}}</option>
+                        @endif
                       @endforeach
                     </select>
                   </div>
@@ -81,7 +93,11 @@
                     <select onchange="getChange(this,'group')" class="form-control" name="groupid" id="groupid">
                     <option  value="">SELECT</option>
                     @foreach ($groupList as $x)
-                        <option value="{{$x->id}}">{{$x->name}}</option>
+                        @if($x->id==$bean->groupid)
+                            <option selected value="{{$x->id}}">{{$x->name}}</option>
+                        @else
+                            <option value="{{$x->id}}">{{$x->name}}</option>
+                        @endif
                     @endforeach
                     </select>
                   </div>                          
@@ -92,7 +108,11 @@
                       <select class="form-control" name="mst_examnameid" id="mst_examnameid">
                         <option  value="">SELECT</option>
                         @foreach ($masterExamNameList as $x)
-                            <option value="{{$x->id}}">{{$x->name}}</option>
+                            @if($x->id==$bean->mst_examnameid)
+                                <option selected value="{{$x->id}}">{{$x->name}}</option>
+                            @else
+                                <option value="{{$x->id}}">{{$x->name}}</option>
+                            @endif
                         @endforeach
                       </select>
                     </div>
@@ -101,7 +121,11 @@
                       <select class="form-control" name="child_examnameid" id="child_examnameid">
                         <option  value="">SELECT</option>
                         @foreach ($childExamNameList as $x)
-                            <option value="{{$x->id}}">{{$x->name}}</option>
+                            @if($x->id==$bean->child_examnameid)
+                                <option selected value="{{$x->id}}">{{$x->name}}</option>
+                            @else
+                                <option value="{{$x->id}}">{{$x->name}}</option>
+                            @endif
                         @endforeach
                       </select>
                     </div>                 
@@ -109,11 +133,11 @@
                 <div class="form-group row">
                   <label class="col-sm-2 control-label" for="hld_marks">Marks</label>
                   <div class="col-sm-4">
-                    <input type="text" class="form-control" name="hld_marks" id="hld_marks">
+                    <input type="text" class="form-control" name="hld_marks" id="hld_marks" value="{{$bean->hld_marks}}">
                   </div>
                 </div>
                 <div style="text-align:right;">
-                  <button type="submit" class="btn btn-success result-btn result-btn-margin-zero" name="btn_save" value="btn_save">save</button>
+                  <button type="submit" class="btn btn-success result-btn result-btn-margin-zero" name="btn_update" value="btn_update">Update</button>
                 </div>
               </form>
             </div>

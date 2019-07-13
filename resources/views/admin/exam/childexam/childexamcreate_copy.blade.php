@@ -165,11 +165,5 @@
 <script src="{{asset('clientAdmin/js/baseUrl.js')}}"></script>
 <script src="{{asset('clientAdmin/js/childexam.js')}}"></script>
 <script type="text/javascript">
- $(document).ready(function() {
-  var table = $('#example').DataTable( {
-    responsive: true
-  } );
-  new $.fn.dataTable.FixedHeader( table );
-} );
 </script>
 @endsection

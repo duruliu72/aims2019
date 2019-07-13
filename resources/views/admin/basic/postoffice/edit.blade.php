@@ -38,7 +38,7 @@
                     <div class="col-sm-4">
                       <input type="text" class="form-control" name="name" id="name" value="{{$bean->name}}">
                     </div>
-                    <level class="col-sm-2 control-label" for="thanaid">Thana</level>
+                    <label class="col-sm-2 control-label" for="thanaid">Thana</label>
                     <div class="col-sm-4">
                        <select class="form-control" name="thanaid" id="thanaid">
                          <option value="">SELECT</option>

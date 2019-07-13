@@ -1,101 +1,101 @@
-.role_menu{
+.role_menu {
     padding: 0px;
 }
-.role_menu li{
-    
+.role_menu li {
 }
-.role_menu >li{
+.role_menu > li {
     border-bottom: 1px solid #ccc;
     padding: 10px 0px;
 }
-.role_menu >li:last-child{
+.role_menu > li:last-child {
     border-bottom: 0px;
 }
-.role_menu  li ul{
+.role_menu li ul {
     padding-left: 25px;
 }
-.role_menu  li ul li{}
-.role_menu  li ul li .menu{
+.role_menu li ul li {
+}
+.role_menu li ul li .menu {
     width: 20%;
     float: left;
 }
-.role_menu  li ul li .permission{}
-.role_menu  li ul li .permission label{
+.role_menu li ul li .permission {
+}
+.role_menu li ul li .permission label {
     color: green !important;
     margin-right: 15px;
 }
-.role_menu  li ul li .menu label{
+.role_menu li ul li .menu label {
     color: blue;
 }
-fieldset.permission{
-
+fieldset.permission {
 }
-fieldset.permission legend{
+fieldset.permission legend {
     border: 0px;
     font-size: 15px;
     font-weight: 100;
 }
-fieldset.menu{
-
+fieldset.menu {
 }
-fieldset.menu legend{
+fieldset.menu legend {
     border: 0px;
     font-size: 15px;
     font-weight: 100;
 }
-.programinfo{
- text-align: center;
+.programinfo {
+    text-align: center;
 }
-.programinfo:after{
+.programinfo:after {
     content: "";
     display: block;
     clear: both;
 }
-.programinfo_item{
+.programinfo_item {
     padding: 0px 5px;
     display: inline-block;
 }
-.programinfo_item span{
+.programinfo_item span {
     font-size: 17px;
 }
-.applicant_info{
+.applicant_info {
     padding: 25px 0px;
 }
 .applicant_info table {
-  font-family: arial, sans-serif;
-  border-collapse: collapse;
-  width: 100%;
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
 }
 
-.applicant_info td, th {
-  border: 1px solid #dddddd;
-  text-align: left;
-  padding: 8px;
+.applicant_info td,
+th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
 }
-.customtable  tbody > tr > td{
+.customtable tbody > tr > td {
     padding: 2px 8px !important;
 }
-.customtable .form-group{
-     margin: 0px !important;
+.customtable .form-group {
+    margin: 0px !important;
 }
 .customtable .form-control {
     height: 30px;
-   padding: 3px 12px 6px !important;
+    padding: 3px 12px 6px !important;
 }
-.plushbtn th{
+.plushbtn th {
     position: relative;
 }
-.plushbtn th span{
+.plushbtn th span {
     display: inline-block;
     height: 12px;
     width: 12px;
     cursor: pointer;
     position: absolute;
     top: 50%;
-    left:50%;
-    transform: translate(-50%,-50%);
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
-.plushbtn th span::before{
+.plushbtn th span::before {
     content: "";
     display: block;
     background-color: #000000;
@@ -103,10 +103,10 @@ fieldset.menu legend{
     height: 2px;
     position: absolute;
     top: 50%;
-    left:50%;
-    transform: translate(-50%,-50%);
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
-.plushbtn th span::after{
+.plushbtn th span::after {
     content: "";
     display: block;
     background-color: #000000;
@@ -114,23 +114,23 @@ fieldset.menu legend{
     height: 12px;
     position: absolute;
     top: 50%;
-    left:50%;
-    transform: translate(-50%,-50%);
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
-.plushbtn td{
+.plushbtn td {
     position: relative;
 }
-.plushbtn td span{
+.plushbtn td span {
     display: inline-block;
     height: 12px;
     width: 12px;
     cursor: pointer;
     position: absolute;
     top: 50%;
-    left:50%;
-    transform: translate(-50%,-50%);
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
-.plushbtn td span::before{
+.plushbtn td span::before {
     content: "";
     display: block;
     background-color: red;
@@ -138,11 +138,11 @@ fieldset.menu legend{
     height: 2px;
     position: absolute;
     top: 50%;
-    left:50%;
-    transform: translate(-50%,-50%);
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
-.markentry-form{
+.markentry-form {
     margin-top: 25px;
 }
 .star {
@@ -154,187 +154,186 @@ fieldset.menu legend{
     color: red;
 }
 /* Academic institute */
-.academic-transcript{
-    border:3px solid #d9d9d9;
+.academic-transcript {
+    border: 3px solid #d9d9d9;
     width: 80%;
     margin: 0 auto;
 }
-.academic-transcript__heading{
+.academic-transcript__heading {
     text-align: center;
-    border-bottom:3px solid #d9d9d9;
+    border-bottom: 3px solid #d9d9d9;
 }
-.institute-logo{
+.institute-logo {
     margin-bottom: 5px;
 }
-.institute-logo img{
+.institute-logo img {
     width: 110px;
     height: 110px;
 }
-.institute-title{
+.institute-title {
     margin-bottom: 15px;
 }
-.institute-title h2{
+.institute-title h2 {
     margin: 0px;
 }
-.institute-title h3{
+.institute-title h3 {
     margin: 0px;
 }
-.institute-title .institute-name{
+.institute-title .institute-name {
     font-size: 35px;
     color: royalblue;
     font-weight: bold;
 }
-.institute-title .institute-add{
+.institute-title .institute-add {
     font-size: 18px;
 }
-.institute-title .std-transcript{
+.institute-title .std-transcript {
     color: red;
     font-weight: bold;
     margin-bottom: 5px;
 }
-.institute-title .exam-name{
+.institute-title .exam-name {
     color: green;
     font-weight: bold;
 }
-.academic-transcript__student{
+.academic-transcript__student {
     padding: 10px 0px;
 }
-.academic-transcript__student::after{
+.academic-transcript__student::after {
     content: "";
     display: block;
     clear: both;
 }
-.item{
+.item {
     float: left;
     padding: 0px 15px;
 }
-.academic-transcript__student .student-img{
-  width: 206px;
-  height: 200px;
+.academic-transcript__student .student-img {
+    width: 206px;
+    height: 200px;
 }
-.academic-transcript__student .student-img img{
+.academic-transcript__student .student-img img {
     width: 100%;
     height: 100%;
 }
-.academic-transcript__student .student-info{
+.academic-transcript__student .student-info {
     width: 50%;
     font-size: 20px;
     font-family: Segoe UI Semibold;
     font-weight: bold;
 }
-.academic-transcript__student .student-info .name{
+.academic-transcript__student .student-info .name {
     color: royalblue;
 }
-.academic-transcript__student .student-info table{
+.academic-transcript__student .student-info table {
     width: 100%;
 }
-.academic-transcript__student .grade-letter{
+.academic-transcript__student .grade-letter {
     float: right;
 }
-.academic-transcript__student .grade-letter table{
+.academic-transcript__student .grade-letter table {
     border: 3px solid #cccccc;
     margin-right: 8px;
-    border-collapse: collapse
+    border-collapse: collapse;
 }
-.academic-transcript__student .grade-letter table tr td{
+.academic-transcript__student .grade-letter table tr td {
     padding: 0px;
     border: 1px solid #cccccc;
     text-align: center;
 }
-.academic-transcript__result{
+.academic-transcript__result {
     padding: 0px 15px;
     margin-bottom: 15px;
 }
-.academic-transcript__result table{
+.academic-transcript__result table {
     border: 3px solid #cccccc;
     margin-right: 8px;
     border-collapse: collapse;
     width: 100%;
 }
-.academic-transcript__result table tr th{
-
+.academic-transcript__result table tr th {
 }
-.academic-transcript__result table tr td{
+.academic-transcript__result table tr td {
     padding: 5px;
     border: 1px solid #cccccc;
 }
-.academic-transcript__grand-result{
+.academic-transcript__grand-result {
     padding: 0px 15px;
 }
-.academic-transcript__grand-result::after{
+.academic-transcript__grand-result::after {
     content: "";
     display: block;
     clear: both;
 }
-.academic-transcript__grand-result__left{
+.academic-transcript__grand-result__left {
     float: left;
 }
-.academic-transcript__grand-result__right{
+.academic-transcript__grand-result__right {
     float: right;
 }
-.academic-transcript__grand-result__left table{
+.academic-transcript__grand-result__left table {
     border: 3px solid #cccccc;
     margin-right: 8px;
     border-collapse: collapse;
     width: 100%;
 }
-.academic-transcript__grand-result__left table tr th{
+.academic-transcript__grand-result__left table tr th {
     text-align: center;
 }
-.academic-transcript__grand-result__left table tr td{
+.academic-transcript__grand-result__left table tr td {
     padding: 5px;
     border: 1px solid #cccccc;
     text-align: center;
 }
-.academic-transcript__grand-result__right table{
+.academic-transcript__grand-result__right table {
     border: 3px solid #cccccc;
     margin-right: 8px;
     border-collapse: collapse;
     width: 100%;
 }
-.academic-transcript__grand-result__right table tr th{
+.academic-transcript__grand-result__right table tr th {
     text-align: center;
 }
-.academic-transcript__grand-result__right table tr td{
+.academic-transcript__grand-result__right table tr td {
     padding: 5px;
     border: 1px solid #cccccc;
     text-align: center;
 }
-.academic-transcript__signature{
+.academic-transcript__signature {
     padding: 0px 15px;
     margin-top: 25px;
 }
-.academic-transcript__signature::after{
+.academic-transcript__signature::after {
     content: "";
     display: block;
     clear: both;
 }
-.class_tacher-signature{
+.class_tacher-signature {
     float: left;
 }
-.class_tacher-signature img{
+.class_tacher-signature img {
     width: 150px;
     padding-bottom: 7px;
     border-bottom: 2px dashed #000;
 }
-.authorized-signature{
+.authorized-signature {
     float: right;
 }
-.authorized-signature img{
+.authorized-signature img {
     width: 150px;
     padding-bottom: 7px;
     border-bottom: 2px dashed #000;
 }
-.academic-transcript__footer{
+.academic-transcript__footer {
     /* margin-top: 15px; */
     padding: 15px 0px 15px 0px;
     border-top: 1px dashed #ccc;
 }
-.academic-transcript__footer p{
+.academic-transcript__footer p {
     text-align: center;
     margin: 0px;
 }
-.print-btn{
+.print-btn {
     cursor: pointer;
     color: #007bff;
     position: absolute;
@@ -344,120 +343,128 @@ fieldset.menu legend{
     background: #ffffff;
     border: none;
 }
-.mearge{
+.mearge {
     padding-top: 25px;
 }
-.academic-result{
+.academic-result {
     margin-bottom: 15px;
     padding-bottom: 15px;
 }
-.academic-result__heading{
-    border:0;
+.academic-result__heading {
+    border: 0;
 }
-.position{
-    margin-top:15px;
+.position {
+    margin-top: 15px;
 }
-.position p{
+.position p {
     padding-left: 15px;
 }
-.fail_status{
-    color:red !important;
+.fail_status {
+    color: red !important;
 }
-.no_border{
+.no_border {
     border: 0 !important;
 }
-.academic-transcripts{
-    border:3px solid #d9d9d9;
+.academic-transcripts {
+    border: 3px solid #d9d9d9;
     width: 80%;
     margin: 0 auto;
 }
-.no_margin{
+.no_margin {
     margin: 0;
 }
-.no_padding{
-    padding:0px;
+.no_padding {
+    padding: 0px;
 }
 /* Tranfer certificate Style */
-.transfer_certificate_wrapper{
+.transfer_certificate_wrapper {
     background: #ffffff;
     margin-left: -15px;
     margin-right: -15px;
-    padding:25px 0px;
+    padding: 25px 0px;
 }
-.transfer_certificate_wrapper::after{
+.transfer_certificate_wrapper::after {
     content: "";
     display: block;
     clear: both;
 }
-.transfer_certificate{
+.transfer_certificate {
     width: 400px;
     margin: 0px auto;
     margin-bottom: 25px;
 }
-.float-right{
+.float-right {
     float: right;
 }
-.tc-envelope{
-    margin:0px 50px;
+.tc-envelope {
+    margin: 0px 50px;
     border: 1px dashed #000000;
     padding: 50px;
-
 }
-.institute-info{
+.institute-info {
     text-align: center;
 }
-.tc_heading{
+.tc_heading {
     position: relative;
     margin-bottom: 25px;
 }
-.tc_heading .tc-headline{
+.tc_heading .tc-headline {
     margin: 0px;
     text-align: center;
 }
-.tc-serial{
+.tc-serial {
     position: absolute;
-    left:0px;
+    left: 0px;
     top: 8px;
 }
-.tc-date{
+.tc-date {
     position: absolute;
-    top:8px;
+    top: 8px;
     right: 0px;
 }
-.tc-desc{
-    border:1px solid royalblue;
+.tc-desc {
+    border: 1px solid royalblue;
     padding: 20px;
     margin-bottom: 50px;
 }
-.tc-desc p.tc-para{
+.tc-desc p.tc-para {
     font-size: 18px;
     line-height: 30px;
     text-align: justify;
     margin-bottom: 30px;
 }
-.tc-desc p.tm{
+.tc-desc p.tm {
     font-size: 18px;
     margin: 0px;
 }
-.tc-desc p.bt-space{
+.tc-desc p.bt-space {
     margin-bottom: 25px;
 }
-.tc-auth::after{
+.tc-auth::after {
     content: "";
     display: block;
     clear: both;
 }
-.tc-auth .tc-auth_item p{
+.tc-auth .tc-auth_item p {
     font-size: 18px;
     margin: 0px;
 }
-.tc-auth_headmster{
+.tc-auth_headmster {
     float: right;
 }
-.tc-top{
-    top:10px;
+.tc-top {
+    top: 10px;
     right: 50px;
 }
-.tc-msg{
+.tc-msg {
     margin-right: 25px;
+}
+.child-exam-mark-entry-wrapper {
+    padding: 25px 15px;
+}
+.child-exam-mark-entry-item__m-bottom {
+    margin-bottom: 25px;
+}
+.child-exam-wrapper {
+    padding: 25px 15px;
 }
