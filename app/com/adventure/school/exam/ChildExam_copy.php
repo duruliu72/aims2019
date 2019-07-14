@@ -18,6 +18,15 @@ class ChildExam_Copy extends Model
         }
         return false;
     }
+    public function getChildExamOnPO($programofferid){
+        $sql="SELECT exam_name.*
+        FROM `tbl_child_exam`
+        INNER JOIN exam_name ON tbl_child_exam.child_examnameid=exam_name.id
+        WHERE programofferid=?";
+        $qResult=\DB::select($sql,[$programofferid]);
+        $result=collect($qResult);
+        return $result;
+    }
     public function getChildExam($programofferid,$mst_examnameid,$child_examnameid){
         $sql="SELECT * FROM `tbl_child_exam`
         WHERE programofferid=? && mst_examnameid=? && child_examnameid=?";

@@ -133,8 +133,9 @@ Route::get('mstexammarkedit', 'com\adventure\school\classexam\MstExamMarkEntryCo
 Route::post('mstexammarkedit', 'com\adventure\school\classexam\MstExamMarkEntryController@marksedit');
 Route::get('childexammarkentry', 'com\adventure\school\classexam\ChildExamMarksController@child_Exam_MarkEntry');
 Route::post('childexammarkentry', 'com\adventure\school\classexam\ChildExamMarksController@child_Exam_MarkEntry');
-Route::get('childexammarkedit', 'com\adventure\school\classexam\MstExamMarkEntryController@child_Exam_MarkEdit');
-Route::post('childexammarkedit', 'com\adventure\school\classexam\MstExamMarkEntryController@child_Exam_MarkEdit');
+Route::get('childexammarkedit', 'com\adventure\school\classexam\ChildExamMarksController@child_Exam_MarkEdit');
+Route::post('childexammarkedit', 'com\adventure\school\classexam\ChildExamMarksController@child_Exam_MarkEdit');
+Route::get('childexammarkentry/getValue', 'com\adventure\school\classexam\ChildExamMarksController@getValue');
 // Class Result
 Route::get('mstexamresult', 'com\adventure\school\classexam\MstExamResultController@mstexamresult');
 Route::post('mstexamresult', 'com\adventure\school\classexam\MstExamResultController@mstexamresult');

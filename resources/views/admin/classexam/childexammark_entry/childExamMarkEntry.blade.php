@@ -83,6 +83,33 @@
                       </select>
                     </div>                          
                   </div>
+                  <div style="text-align:right;">
+                    <button type="submit" class="btn btn-success result-btn result-btn-margin-zero" name="btn_next" value="btn_next">Next</button>
+                  </div>
+                </form>
+              </div>
+            @elseif($programofferinfo!=null && $studentList==null)
+              <div class="child-exam-mark-entry-item">
+                <div class="programofferinfo child-exam-mark-entry-item__m-bottom">
+                    <div class="programofferinfo_item">
+                        <span>Session: {{$programofferinfo->sessionName}}</span>
+                    </div>
+                    <div class="programofferinfo_item">
+                        <span>Class: {{$programofferinfo->programName}}</span>
+                    </div>
+                    <div class="programofferinfo_item">
+                        <span>Medium: {{$programofferinfo->mediumName}}</span>
+                    </div>
+                    <div class="programofferinfo_item">
+                        <span>Group: {{$programofferinfo->groupName}}</span>
+                    </div>
+                    <div class="programofferinfo_item">
+                        <span>Shift: {{$programofferinfo->shiftName}}</span>
+                    </div>
+                </div>
+                <form action="{{URL::to('childexammarkentry')}}" method="POST">
+                  {{csrf_field()}}
+                  <input type="hidden" name="programofferid" value="{{$programofferinfo->id}}" id="programofferid">
                   <div class="form-group row">
                       <label class="col-sm-2 control-label" for="sectionid">Section</label>
                       <div class="col-sm-4">
@@ -92,21 +119,47 @@
                               <option value="{{$x->id}}">{{$x->name}}</option>
                           @endforeach
                         </select>
+                      </div>   
+                      <label class="col-sm-2 control-label" for="coursecodeid">Subject</label>
+                      <div class="col-sm-4">
+                        <select class="form-control" name="coursecodeid" id="coursecodeid">
+                          <option  value="">SELECT</option>
+                          @foreach ($courseList as $x)
+                              <option value="{{$x->id}}">{{sprintf("%s%s%s%s",$x->courseName,"(",$x->courseCode,")")}}</option>
+                          @endforeach
+                        </select>
+                      </div>                
+                  </div>
+                  <div class="form-group row">
+                      <label class="col-sm-2 control-label" for="mst_examnameid">Master Exam</label>
+                      <div class="col-sm-4">
+                        <select class="form-control" name="mst_examnameid" id="mst_examnameid">
+                          <option  value="">SELECT</option>
+                          @foreach ($masterExamNameList as $x)
+                              <option value="{{$x->id}}">{{$x->name}}</option>
+                          @endforeach
+                        </select>
+                      </div>
+                      <label class="col-sm-2 control-label" for="child_examnameid">Child Name</label>
+                      <div class="col-sm-4">
+                        <select onchange="getChange(this,'child_examname')" class="form-control" name="child_examnameid" id="child_examnameid">
+                          <option  value="">SELECT</option>
+                          @foreach ($childExamNameList as $x)
+                              <option value="{{$x->id}}">{{$x->name}}</option>
+                          @endforeach
+                        </select>
                       </div>                
                   </div>
                   <div style="text-align:right;">
-                    <button type="submit" class="btn btn-success result-btn result-btn-margin-zero" name="btn_next" value="btn_next">Next</button>
+                    <button type="submit" class="btn btn-success result-btn result-btn-margin-zero" name="btn_next2" value="btn_next2">next</button>
                   </div>
                 </form>
               </div>
-            @else
+            @elseif($programofferinfo!=null && $studentList!=null)
               <div class="child-exam-mark-entry-item">
                 <div class="programofferinfo child-exam-mark-entry-item__m-bottom">
                     <div class="programofferinfo_item">
                         <span>Session: {{$programofferinfo->sessionName}}</span>
-                    </div>
-                    <div class="programofferinfo_item">
-                        <span>Class Level: {{$programofferinfo->levelName}}</span>
                     </div>
                     <div class="programofferinfo_item">
                         <span>Class: {{$programofferinfo->programName}}</span>
@@ -121,44 +174,25 @@
                         <span>Shift: {{$programofferinfo->shiftName}}</span>
                     </div>
                     <div class="programofferinfo_item">
-                        <span>Shift: {{$section->name}}</span>
+                        <span>Section: {{$section->name}}</span>
+                    </div>
+                    <div class="programofferinfo_item">
+                        <span>Master Exam: {{$master_exam_name->name}}</span>
+                    </div>
+                    <div class="programofferinfo_item">
+                        <span>Child Exam: {{$child_exam_name->name}}</span>
+                    </div>
+                    <div class="programofferinfo_item">
+                        <span>Subject: {{sprintf("%s(%s)",$course->courseName,$course->name)}}</span>
                     </div>
                 </div>
                 <form action="{{URL::to('childexammarkentry')}}" method="POST">
                   {{csrf_field()}}
-                  <input type="hidden" name="programofferid" value="{{$programofferinfo->id}}">
-                  <input type="hidden" name="sectionid" value="{{$section->id}}">
-                  <div class="form-group row">
-                      <label class="col-sm-2 control-label" for="mst_examnameid">Master Exam</label>
-                      <div class="col-sm-4">
-                        <select class="form-control" name="mst_examnameid" id="mst_examnameid">
-                          <option  value="">SELECT</option>
-                          @foreach ($masterExamNameList as $x)
-                              <option value="{{$x->id}}">{{$x->name}}</option>
-                          @endforeach
-                        </select>
-                      </div>
-                      <label class="col-sm-2 control-label" for="child_examnameid">Child Name</label>
-                      <div class="col-sm-4">
-                        <select class="form-control" name="child_examnameid" id="child_examnameid">
-                          <option  value="">SELECT</option>
-                          @foreach ($childExamNameList as $x)
-                              <option value="{{$x->id}}">{{$x->name}}</option>
-                          @endforeach
-                        </select>
-                      </div>                
-                  </div>
-                  <div class="form-group row">
-                      <label class="col-sm-2 control-label" for="coursecodeid">Subject</label>
-                      <div class="col-sm-4">
-                        <select class="form-control" name="coursecodeid" id="coursecodeid">
-                          <option  value="">SELECT</option>
-                          @foreach ($courseList as $x)
-                              <option value="{{$x->id}}">{{sprintf("%s%s%s%s",$x->courseName,"(",$x->courseCode,")")}}</option>
-                          @endforeach
-                        </select>
-                      </div>                
-                  </div>
+                  <input type="hidden" name="programofferid" value="{{$programofferinfo->id}}" id="programofferid">
+                  <input type="hidden" name="sectionid" value="{{$section->id}}" id="sectionid">
+                  <input type="hidden" name="coursecodeid" value="{{$course->id}}" id="coursecodeid">
+                  <input type="hidden" name="mst_examnameid" value="{{$master_exam_name->id}}" id="mst_examnameid">
+                  <input type="hidden" name="child_examnameid" value="{{$child_exam_name->id}}" id="child_examnameid">
                   <div class="form-group row">
                     <div class="col-sm-12">
                       <table class="table table-striped table-bordered table-hover customtable">
@@ -168,7 +202,7 @@
                               <th>Student Name</th>
                               <th>Applicant Id</th>
                               <th>Class Roll</th>
-                              <th>Marks</th>
+                              <th id="hld_marksid">Marks({{$chld_exam->hld_marks}}) <input type="hidden" value="{{$chld_exam->hld_marks}}" id="hld_marks"></th>
                               <th width="2%"><input id="markcheckid" type="checkbox"></th>
                             </tr>
                         </thead>
@@ -180,8 +214,13 @@
                               <td>{{sprintf('%s %s %s',$student->firstName,$student->middleName,$student->lastName)}}</td>
                               <td>{{$student->applicantid}}</td>
                               <td>{{$student->classroll}}</td>
-                              <td class="id1"><input class="form-control" type="text" name="obt_marks[{{$student->id}}]" /></td>
+                              @if($student->studentid!=null)
+                              <td class="id1">{{$student->obt_marks}}</td>
+                               <td><span style='font-size:18px;'>&#10003;</span></td> 
+                              @else
+                              <td class="id1"><input class="form-control obt_marks" type="text" name="obt_marks[{{$student->id}}]" /></td>
                               <td><input class="markcheck" type="checkbox" name="checkbox[{{$student->id}}]"></td>
+                              @endif
                             </tr>
                           @endforeach
                         </tbody>
@@ -189,7 +228,7 @@
                     </div>
                   </div>
                   <div style="text-align:right;">
-                    <button type="submit" class="btn btn-success result-btn result-btn-margin-zero" name="btn_save" value="btn_save">Save</button>
+                    <button type="submit" class="btn btn-success result-btn result-btn-margin-zero" name="btn_save" value="btn_save">save</button>
                   </div>
                 </form>
               </div>

@@ -236,6 +236,10 @@ class ChildExamController extends Controller
             if($methodid==1){
                 $this->getAllOnIDS(0,$programid,0,$mediumid,$shiftid,"groups",'groupid');
             }
+        }elseif($option=="child_examname"){
+            if($methodid==1){
+                $this->getAllO(0,$programid,0,$mediumid,$shiftid,"groups",'groupid');
+            }
         }
     }
     private function getAllOnIDS($sessionid,$programid,$groupid,$mediumid,$shiftid,$tableName,$compareid){

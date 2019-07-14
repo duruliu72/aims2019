@@ -8,7 +8,9 @@ use App\com\adventure\school\basic\Institute;
 use App\com\adventure\school\menu\Menu;
 use App\com\adventure\school\program\ProgramOffer;
 use App\com\adventure\school\program\Section;
+use App\com\adventure\school\courseoffer\SectionOffer;
 use App\com\adventure\school\courseoffer\CourseOffer;
+use App\com\adventure\school\program\CourseCode;
 use App\com\adventure\school\exam\MasterExam;
 use App\com\adventure\school\exam\ExamName;
 use App\com\adventure\school\academic\Student;
@@ -31,26 +33,36 @@ class ChildExamMarksController extends Controller
         $sidebarMenu=$aMenu->getSidebarMenu();
         $pList=$aMenu->getPermissionOnMenu('childexammarkentry');
         $aProgramOffer=new ProgramOffer();
+        $aSectionOffer=new SectionOffer();
+        $aSection=new Section();
         $aMasterExam=new MasterExam();
+        $aChildExam_Copy=new ChildExam_Copy();
+        $aExamName=new ExamName();
         $aCourseOffer=new CourseOffer();
+        $aCourseCode=new CourseCode();
         $aStudent=new Student();
         $programofferinfo=null;
+        $sectionList=null;
         $courseList=null;
+        $masterExamNameList=null;
+        $childExamNameList=null;
         $studentList=null;
         $section=null;
+        $master_exam_name=null;
+        $child_exam_name=null;
+        $chld_exam=null;
+        $course=null;
         if($request->isMethod('post')&& $request->btn_next=="btn_next"){
             $validatedData = $request->validate([
                 'programid' => 'required|',
                 'groupid' => 'required|',
                 'mediumid' => 'required|',
                 'shiftid' => 'required|',
-                'sectionid' => 'required|',
             ]);
             $programid=$request->programid;
             $groupid=$request->groupid;
             $mediumid=$request->mediumid;
             $shiftid=$request->shiftid;
-            $sectionid=$request->sectionid;
             //    Check Program offer Created or Not
             $checkProgramoffer=$aProgramOffer->checkValue(0,$programid,$groupid,$mediumid,$shiftid);
             if(!$checkProgramoffer){
@@ -59,38 +71,40 @@ class ChildExamMarksController extends Controller
             }
             $programofferid=$aProgramOffer->getProgramOfferId(0,$programid,$groupid,$mediumid,$shiftid);
             $programofferinfo=$aProgramOffer->getProgramOffer($programofferid);
+            $sectionList=$aSectionOffer->getSectionsOnPO($programofferid);
             $courseList=$aCourseOffer->getCoursesOnProgramOffer($programofferid);
-            $studentList=$aStudent->getStudentsOnClsNSec($programofferid,$sectionid);
-            $aSection=new Section();
-            $section=$aSection->getSection($sectionid);
+            $masterExamNameList=$aMasterExam->getMasterExamOnPO($programofferid);
+            $childExamNameList=$aChildExam_Copy->getChildExamOnPO($programofferid);
         }
-        if($request->isMethod('post')&& $request->btn_save=="btn_save"){
-            $hasAllField=true;
-            if($request->mst_examnameid==""){
-                $msg="Select Master Exam";
-                $hasAllField=false;
-            }elseif($request->child_examnameid==""){
-                $msg="Select Chld Exam";
-                $hasAllField=false;
-            }elseif($request->coursecodeid==""){
-                $msg="Select Subject";
-                $hasAllField=false;
-            }elseif($request->checkbox==null){
-                $msg="Check at lest one student";
-                $hasAllField=false;
-            }
+        if($request->isMethod('post')&& $request->btn_next2=="btn_next2"){
             $programofferid=$request->programofferid;
             $sectionid=$request->sectionid;
+            $coursecodeid=$request->coursecodeid;
             $mst_examnameid=$request->mst_examnameid;
             $child_examnameid=$request->child_examnameid;
+            $programofferinfo=$aProgramOffer->getProgramOffer($programofferid);
+            $section=$aSection->getSection($sectionid);
+            $master_exam_name=$aExamName->getExamONID($mst_examnameid);
+            $child_exam_name=$aExamName->getExamONID($child_examnameid);
+            $course=$aCourseCode->getCourse($coursecodeid);
+            $chld_exam=$aChildExam_Copy->getChildExam($programofferid,$mst_examnameid,$child_examnameid);
+            $aChildExamMarks=new ChildExamMarks();
+            $studentList=$aChildExamMarks->getStudents($programofferid,$sectionid,$mst_examnameid,$child_examnameid,$coursecodeid);
+            // dd($studentList);
+        }
+        if($request->isMethod('post')&& $request->btn_save=="btn_save"){
+            $programofferid=$request->programofferid;
+            $sectionid=$request->sectionid;
             $coursecodeid=$request->coursecodeid;
+            $mst_examnameid=$request->mst_examnameid;
+            $child_examnameid=$request->child_examnameid;
             $obt_marksList=$request->obt_marks;
             $checkList=$request->checkbox;
             $aChildExam_Copy=new ChildExam_Copy();
-            $checkChildExam=$aChildExam_Copy->checkChildExam($programofferid,$mst_examnameid,$child_examnameid,$exam_no);
+            $checkChildExam=$aChildExam_Copy->checkChildExam($programofferid,$mst_examnameid,$child_examnameid);
             if(!$checkChildExam){
                 $msg="Child Exam Is Not Created yet";
-            }elseif($hasAllField){
+            }else{
                 $count=0;
                 foreach($checkList as $studentid=>$v){
                     $aChildExamMarks=new ChildExamMarks();
@@ -116,18 +130,18 @@ class ChildExamMarksController extends Controller
                 }
             }
             $programofferinfo=$aProgramOffer->getProgramOffer($programofferid);
-            $courseList=$aCourseOffer->getCoursesOnProgramOffer($programofferid);
-            $studentList=$aStudent->getStudentsOnClsNSec($programofferid,$sectionid);
-            $aSection=new Section();
             $section=$aSection->getSection($sectionid);
+            $master_exam_name=$aExamName->getExamONID($mst_examnameid);
+            $child_exam_name=$aExamName->getExamONID($child_examnameid);
+            $course=$aCourseCode->getCourse($coursecodeid);
+            $chld_exam=$aChildExam_Copy->getChildExam($programofferid,$mst_examnameid,$child_examnameid);
+            $aChildExamMarks=new ChildExamMarks();
+            $studentList=$aChildExamMarks->getStudents($programofferid,$sectionid,$mst_examnameid,$child_examnameid,$coursecodeid);
         }
         $programList=$aMasterExam->getAllOnIDS(0,0,0,0,0,"programs",'programid');
         $mediumList=$aMasterExam->getAllOnIDS(0,0,0,0,0,"mediums",'mediumid');
         $shiftList=$aMasterExam->getAllOnIDS(0,0,0,0,0,"shifts",'shiftid');
         $groupList=$aMasterExam->getAllOnIDS(0,0,0,0,0,"groups",'groupid');
-        $sectionList=Section::all();
-        $masterExamNameList=ExamName::getExamName(1);
-        $childExamNameList=ExamName::getExamName(2);
         $dataList=[
             'institute'=>Institute::getInstituteName(),
             'sidebarMenu'=>$sidebarMenu,
@@ -138,9 +152,13 @@ class ChildExamMarksController extends Controller
             'shiftList'=>$shiftList,
             'sectionList'=>$sectionList,
             'programofferinfo'=>$programofferinfo,
-            'section'=>$section,
             'masterExamNameList'=>$masterExamNameList,
             'childExamNameList'=>$childExamNameList,
+            'section'=>$section,
+            'master_exam_name'=>$master_exam_name,
+            'child_exam_name'=>$child_exam_name,
+            'chld_exam'=>$chld_exam,
+            'course'=>$course,
             'studentList'=>$studentList,
             'courseList'=>$courseList,
             "msg"=>$msg,
@@ -152,5 +170,21 @@ class ChildExamMarksController extends Controller
 
         ];
         return view('admin.classexam.childexammark_entry.childExamMarkEdit',$dataList);
+    }
+        // For Ajax Call ===============
+    //    ================================================================
+    public function getValue(Request $request){
+        $programofferid=$request->programofferid;
+        $mst_examnameid=$request->mst_examnameid;
+        $child_examnameid=$request->child_examnameid;
+        $this->getChildExam($programofferid,$mst_examnameid,$child_examnameid);
+    }
+    public function getChildExam($programofferid,$mst_examnameid,$child_examnameid){
+        $aChildExam_Copy=new ChildExam_Copy();
+       
+        $child_exam=$aChildExam_Copy->getChildExam($programofferid,$mst_examnameid,$child_examnameid);
+        $mark['value']=$child_exam->hld_marks;
+        $mark['output']="Marks($child_exam->hld_marks) <input type='hidden' id='hld_marks' value='$child_exam->hld_marks'>";
+        echo  json_encode($mark);
     }
 }
