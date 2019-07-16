@@ -91,6 +91,7 @@ class RoleController extends Controller
             }
             if($newRoleId){
                 foreach($selectmenu as $menuid){
+                    // dd($selectmenu,$permissionidList);
                     foreach ($permissionidList[$menuid] as $permissionid) {
                         $aRoleMenu=new RoleMenu();
                         $aRoleMenu->roleid=$newRoleId;

@@ -55,7 +55,7 @@ class ProgramGroupController extends Controller
         return view('admin.programsettings.programgroup.create',$dataList);
     }
     public function store(Request $request){
-     	$aVProgramGroup=new VProgramGroup();
+     	$aVProgramGroup=new ProgramGroup();
         $programid=$request->programid;
         $groupid=$request->groupid;
         $hasSame=$aVProgramGroup->checkValue($programid,$groupid);
@@ -81,7 +81,7 @@ class ProgramGroupController extends Controller
         }
         $sidebarMenu=$aMenu->getSidebarMenu();
         $pList=$aMenu->getPermissionOnMenu('programgroup');
-    	$aVProgramGroup=VProgramGroup::findOrfail($id);
+    	$aVProgramGroup=ProgramGroup::findOrfail($id);
         if($pList[3]->id!=3){
             return redirect('error');
        }
@@ -97,7 +97,7 @@ class ProgramGroupController extends Controller
         return view('admin.programsettings.programgroup.edit',$dataList); 
     }
     public function update(Request $request, $id){
-    	$aVProgramGroup=VProgramGroup::findOrfail($id);
+    	$aVProgramGroup=ProgramGroup::findOrfail($id);
     	$programid=$request->programid;
         $groupid=$request->groupid;
         $hasSame=$aVProgramGroup->checkValue($programid,$groupid);

@@ -136,7 +136,6 @@ class MstExamResultController extends Controller
         $aExamName=new ExamName();
         $programofferinfo=null;
         $exam_result=null;
-        $exam_result_copy=null;
         $exam=null;
         if($request->isMethod('post')&&$request->search_btn=='search_btn'){
             $programid=$request->programid;

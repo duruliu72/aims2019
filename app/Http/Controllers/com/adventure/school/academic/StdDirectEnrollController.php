@@ -68,9 +68,6 @@ class StdDirectEnrollController extends Controller
             $genderid=$request->genderid;
             $religionid=$request->religionid;
             $quotaid=$request->quotaid;
-            $picture=$request->picture;
-            $signature=$request->signature;
-            // dd($picture);
             // Check Program Offer Created Or Not
             $checkProgramOffer=$aProgramOffer->checkValue(0,$programid,$groupid,$mediumid,$shiftid);
             if(!$checkProgramOffer){
@@ -101,9 +98,7 @@ class StdDirectEnrollController extends Controller
                 "dob"=>$dob,
                 "genderid"=>$genderid,
                 "religionid"=>$religionid,
-                "quotaid"=>$quotaid,
-                "picture"=>$picture,
-                "signature"=>$signature
+                "quotaid"=>$quotaid
             ];
         }
         if($request->isMethod('post')&&$request->save_btn=='save_btn'){
@@ -117,8 +112,7 @@ class StdDirectEnrollController extends Controller
             $religionid=$request->religionid;
             $quotaid=$request->quotaid;
             $picture=$request->picture;
-            $signature=$request->signature;
-            
+            $signature=$request->signature;            
             $aApplicant=new Applicant();
             $applicantid=$aApplicant->makeAppicantid($programofferid);
             $aApplicant->applicantid=$applicantid;
@@ -133,6 +127,25 @@ class StdDirectEnrollController extends Controller
             $aApplicant->genderid=$request->genderid;
             $aApplicant->religionid=$request->religionid;
             $aApplicant->quotaid=$request->quotaid;
+
+            $upload_picture = $request->file('picture');
+            if($upload_picture!=null){
+                $explode_picture=explode('.',$upload_picture->getClientOriginalName());
+                $extention=end($explode_picture);
+                $picture=$applicantid.'.'.$extention;
+                $destination=public_path('clientAdmin/admission/student');
+                $upload_picture->move($destination,$picture);
+                $aApplicant->picture=$picture;
+            }
+            $upload_signature= $request->file('signature');
+            if($upload_signature!=null){
+                $explode_signature=explode('.',$upload_signature->getClientOriginalName());
+                $extention=end($explode_signature);
+                $signature=$applicantid.'_signature.'.$extention;
+                $destination=public_path('clientAdmin/admission/student');
+                $upload_signature->move($destination,$signature);
+                $aApplicant->signature=$signature;
+            }
             $coursecheckList=$request->coursecheck;
             if($coursecheckList){
                 $aStudentHouse=new StudentHouse();
@@ -170,8 +183,8 @@ class StdDirectEnrollController extends Controller
                             $aStudentCourse->coursetypeid=$coursetypeidList[$key];
                             $aStudentCourse->save();
                         }
-                        
                     });
+                    $msg="Student Registered Successfuly";
                 }else{
                     $msg="Applicant Already Registered";
                 }

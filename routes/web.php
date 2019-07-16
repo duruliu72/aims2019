@@ -144,6 +144,9 @@ Route::post('transcripts', 'com\adventure\school\classexam\MstExamResultControll
 Route::get('mstexamresult/{id1}/{id2}/{id3}', 'com\adventure\school\classexam\MstExamResultController@mstSingleResult');
 Route::get('transfer_certificate', 'com\adventure\school\classexam\TransferCertificateController@transfer_certificate');
 Route::post('transfer_certificate', 'com\adventure\school\classexam\TransferCertificateController@transfer_certificate');
+Route::get('childexamresult', 'com\adventure\school\classexam\ChildExamResultController@childExamResults');
+Route::post('childexamresult', 'com\adventure\school\classexam\ChildExamResultController@childExamResults');
+Route::get('childexamresult/getValue', 'com\adventure\school\classexam\ChildExamResultController@getValue');
 // Menu Settings
 Route::resource('menu', 'com\adventure\school\menu\MenuController');
 

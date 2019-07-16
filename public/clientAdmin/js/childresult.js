@@ -5,18 +5,15 @@ function getChange(thisref, option) {
         getChangeOnProgram(id, option, "#shiftid", 2);
         getChangeOnProgram(id, option, "#groupid", 3);
     } else if (option == "group") {
-        getChangeOnGroup(id, option, "#masterexamid", 1);
-        getChangeOnGroup(id, option, "#childexamcourse", 2);
+        getChangeOnGroup(id, option, "#mst_examnameid", 1);
+        getChangeOnGroup(id, option, "#child_examnameid", 2);
     } else if (option == "medium") {
         getChangeOnMedium(id, option, "#shiftid", 1);
         getChangeOnMedium(id, option, "#groupid", 2);
     } else if (option == "shift") {
         getChangeOnShift(id, option, "#groupid", 1);
-    } else if (option == "child_examname") {
-        // getChangeOnChild_ExamName(id);
     }
 }
-
 function getChangeOnProgram(id, option, output, methodid) {
     var programid = $("#" + id).val();
     var groupid = 0;
@@ -24,7 +21,7 @@ function getChangeOnProgram(id, option, output, methodid) {
     var shiftid = 0;
     $.ajax({
         type: "get",
-        url: baseUrl + "childexam/getValue",
+        url: baseUrl + "childexamresult/getValue",
         dataType: "html",
         data: {
             programid: programid,
@@ -46,9 +43,10 @@ function getChangeOnGroup(id, option, output, methodid) {
     var groupid = $("#" + id).val();
     var mediumid = $("#mediumid").val();
     var shiftid = $("#shiftid").val();
+    console.log(programid, groupid, mediumid, shiftid);
     $.ajax({
         type: "get",
-        url: baseUrl + "childexam/getValue",
+        url: baseUrl + "childexamresult/getValue",
         dataType: "html",
         data: {
             programid: programid,
@@ -72,7 +70,7 @@ function getChangeOnMedium(id, option, output, methodid) {
     var shiftid = 0;
     $.ajax({
         type: "get",
-        url: baseUrl + "childexam/getValue",
+        url: baseUrl + "childexamresult/getValue",
         dataType: "html",
         data: {
             programid: programid,
@@ -96,7 +94,7 @@ function getChangeOnShift(id, option, output, methodid) {
     var shiftid = $("#" + id).val();
     $.ajax({
         type: "get",
-        url: baseUrl + "childexam/getValue",
+        url: baseUrl + "childexamresult/getValue",
         dataType: "html",
         data: {
             programid: programid,
@@ -113,61 +111,3 @@ function getChangeOnShift(id, option, output, methodid) {
         }
     });
 }
-var hld_marks_field = document.getElementById("hld_marks");
-var hld_marks = hld_marks_field.value;
-function getChangeOnChild_ExamName(id) {
-    var programofferid = $("#programofferid").val();
-    var mst_examnameid = $("#mst_examnameid").val();
-    if (mst_examnameid == "") {
-        confirm("Please Select Master Exam");
-        return;
-    }
-    var child_examnameid = $("#" + id).val();
-    $.ajax({
-        type: "get",
-        url: baseUrl + "childexammarkentry/getValue",
-        dataType: "json",
-        data: {
-            programofferid: programofferid,
-            mst_examnameid: mst_examnameid,
-            child_examnameid: child_examnameid
-        },
-        success: function(result) {
-            hld_marks = result.value;
-            $("#hld_marksid")
-                .empty()
-                .append(result.output);
-        }
-    });
-}
-// ========================Check box========================
-let markcheckid = document.getElementById("markcheckid");
-let markcheckClass = document.getElementsByClassName("markcheck");
-function checkUncheck() {
-    if (markcheckid.checked === true) {
-        for (let i = 0; i < markcheckClass.length; i++) {
-            markcheckClass[i].checked = true;
-        }
-    } else {
-        for (let i = 0; i < markcheckClass.length; i++) {
-            markcheckClass[i].checked = false;
-        }
-    }
-}
-markcheckid.addEventListener("click", function(e) {
-    checkUncheck();
-});
-// Input validation
-function inputValidation() {
-    var obt_marks_fields = document.getElementsByClassName("obt_marks");
-    for (let i = 0; i < obt_marks_fields.length; i++) {
-        obt_marks_fields[i].addEventListener("keyup", function() {
-            let obt_marks = 0 + obt_marks_fields[i].value;
-            if (Number(obt_marks) > Number(hld_marks)) {
-                confirm("Input must be less than or equil : " + hld_marks);
-                obt_marks_fields[i].value = null;
-            }
-        });
-    }
-}
-inputValidation();

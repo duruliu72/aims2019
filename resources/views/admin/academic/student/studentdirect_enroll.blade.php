@@ -146,16 +146,6 @@
                             </select>
                         </div>
                       </div>
-                      <div class="form-group row">
-                        <label class="col-md-2 control-label" for="picture">Picture</label>
-                        <div class="col-md-4">
-                            <input type="file" class="form-control-file" id="picture" name="picture">
-                        </div>
-                        <label class="col-md-2 control-label" for="signature">Signature</label>
-                        <div class="col-md-4">
-                            <input type="file" class="form-control-file" name="signature" id="signature">
-                        </div>
-					            </div>
                       <div style="text-align:right;">
                           <button type="submit" class="btn btn-success result-btn result-btn-margin-zero" name="next_btn" value="next_btn">Next</button>
                       </div>
@@ -186,8 +176,6 @@
                           <input type="hidden" name="genderid" value={{$field_data['genderid']}}>
                           <input type="hidden" name="religionid" value={{$field_data['religionid']}}>
                           <input type="hidden" name="quotaid" value={{$field_data['quotaid']}}>
-                          <input type="hidden" name="picture" value={{$field_data['picture']}}>
-                          <input type="hidden" name="signature" value={{$field_data['signature']}}>
                           <div class="col-md-12">
                             <div class="course_info">
                               <table class="table table-striped table-bordered table-hover customtable" id="studentcourse">
@@ -206,13 +194,13 @@
                                       <td>{{++$id}}</td>
                                       <td>{{$course->courseNameWithCode}}</td>
                                       <td>
-                                          <select class="form-control" name="coursetypeid[{{$course->coursecodeid}}]" id="coursetypeid">
+                                          <select class="form-control" name="coursetypeid[{{$course->id}}]" id="coursetypeid">
                                           @foreach($courseTypeList as $x)
                                           <option value="{{$x->id}}">{{$x->name}}</option>
                                           @endforeach
                                           </select>
                                       </td>
-                                      <td><input class="coursecheck" type="checkbox" name="coursecheck[{{$course->coursecodeid}}]"></td>
+                                      <td><input class="coursecheck" type="checkbox" name="coursecheck[{{$course->id}}]"></td>
                                     </tr>
                                   @endforeach
                               </tbody>
@@ -232,6 +220,16 @@
                                   <input type="text" class="form-control" placeholder="class Roll" id="classroll" name="classroll" value="{{old('classroll')}}">
                               </div> 
                             </div>
+                            <div class="form-group row">
+                                <label class="col-md-2 control-label" for="picture">Picture</label>
+                                <div class="col-md-4">
+                                    <input type="file" class="form-control-file" id="picture" name="picture">
+                                </div>
+                                <label class="col-md-2 control-label" for="signature">Signature</label>
+                                <div class="col-md-4">
+                                    <input type="file" class="form-control-file" name="signature" id="signature">
+                                </div>
+                              </div>
                               <div style="text-align:right;">
                                 <button type="submit" class="btn btn-success result-btn result-btn-margin-zero" name="save_btn" value="save_btn">Save</button>
                               </div>

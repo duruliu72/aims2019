@@ -15,22 +15,23 @@
             @endif
       </h3>
         <ol class="breadcrumb">
-              <li>Child Exam Mark Entry </li>
+              <li>Child Exam Mark Entry</li>
               @if($pList[2]->id==2)
               @endif
               @if ($errors->any())
-                  <span style="float: right;font-size: 15px;">{{$errors->all()[0] }}</span>
+                  <span style="float: right;font-size: 15px;margin-left:25px;">{{$errors->all()[0] }}</span>
               @endif
               @if(session()->has('msg'))
-              <span style="float: right;font-size: 15px;">
+              <span style="float: right;font-size: 15px;margin-left:25px;">
                 {{ session()->get('msg') }}
               </span>
               @endif
               @if($msg!='')
-              <span style="float: right;font-size: 15px;">
+              <span style="float: right;font-size: 15px;margin-left:25px;">
                 {{ $msg }}
               </span>
               @endif
+              <a style="float:right" href="{{URL::to('/childexammarkentry')}}">Refresh</a>
           </ol>
       </div>
     </div>
@@ -155,7 +156,7 @@
                   </div>
                 </form>
               </div>
-            @elseif($programofferinfo!=null && $studentList!=null)
+              @elseif($programofferinfo!=null && $section!=null && $course!=null && $master_exam_name!=null && $child_exam_name!=null && $studentList!=null)
               <div class="child-exam-mark-entry-item">
                 <div class="programofferinfo child-exam-mark-entry-item__m-bottom">
                     <div class="programofferinfo_item">

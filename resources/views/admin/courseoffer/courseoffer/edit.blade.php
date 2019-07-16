@@ -142,7 +142,7 @@
                             <tr>
                               <td>{{++$id}}</td>
                               <td>{{sprintf("%s %s%s%s",$x->courseName,"(",$x->name,")")}}</td>
-                              <td><select class="form-control" name="teacherid" id="teacherid">
+                              <td><select class="form-control" name="teacherid[{{$x->id}}]" id="teacherid">
                                 <option value="">SELECT</option>
                                 @foreach ($teacherList as $x)
                                   <option value="{{$x->id}}">{{$x->firstName}}</option>

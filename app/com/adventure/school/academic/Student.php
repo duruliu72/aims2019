@@ -81,7 +81,34 @@ class Student extends Model
     }
     public function getStudents($programofferid){
         $sql="SELECT * FROM `students`
-        WHERE programofferid=1";
+        WHERE programofferid=?";
+        $qResult=\DB::select($sql,[$programofferid]);
+        $students=collect($qResult);
+        return $students;
+    }
+    public function getStudentsOnProgramofferID($programofferid){
+        $sql="SELECT 
+        students.*,
+        applicants.firstName,
+        applicants.middleName,
+        applicants.lastName,
+        students.classroll,
+        applicants.picture,
+        applicants.signature,
+        applicants.genderid,
+        genders.name AS genderName,
+        blood_groups.name AS bloodgroupName,
+        religions.name AS religionName,
+        nationalities.name AS nationalityName,
+        quotas.name AS quotaName  
+        FROM `students`
+        INNER JOIN applicants ON students.applicantid=applicants.applicantid
+        LEFT JOIN genders ON applicants.genderid=genders.id
+        LEFT JOIN blood_groups ON applicants.bloodgroupid=blood_groups.id
+        LEFT JOIN religions ON applicants.religionid=religions.id
+        LEFT JOIN nationalities ON applicants.`nationalityid`=nationalities.id
+        LEFT JOIN quotas ON applicants.`quotaid`=quotas.id
+        WHERE students.programofferid=?";
         $qResult=\DB::select($sql,[$programofferid]);
         $students=collect($qResult);
         return $students;

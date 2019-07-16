@@ -195,8 +195,8 @@ class AdmissionProgramController extends Controller
         }
         return redirect()->back()->with('msg',$msg);
     }
-     // For Ajax Call ===============
-   //    ================================================================
+    // For Ajax Call ===============
+    //    ================================================================
     public function getValue(Request $request){
         $option=$request->option;
         $methodid=$request->methodid;

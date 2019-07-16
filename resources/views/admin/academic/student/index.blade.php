@@ -164,13 +164,13 @@
                                     <td>{{++$id}}</td>
                                     <td>{{$course->courseNameWithCode}}</td>
                                     <td>
-                                        <select class="form-control" name="coursetypeid[{{$course->coursecodeid}}]" id="coursetypeid">
+                                        <select class="form-control" name="coursetypeid[{{$course->id}}]" id="coursetypeid">
                                         @foreach($courseTypeList as $x)
                                         <option value="{{$x->id}}">{{$x->name}}</option>
                                         @endforeach
                                         </select>
                                     </td>
-                                    <td><input class="coursecheck" type="checkbox" name="coursecheck[{{$course->coursecodeid}}]"></td>
+                                    <td><input class="coursecheck" type="checkbox" name="coursecheck[{{$course->id}}]"></td>
                                   </tr>
                                   @endforeach
                               </tbody>

@@ -22,7 +22,7 @@ class CreateProgramoffersTable extends Migration
             $table->integer('shiftid')->length(11);
             $table->integer('cordinator')->length(11)->nullable();
             $table->integer('seat')->length(6);
-            $table->integer('seat')->length(6);
+            $table->integer('number_of_courses')->length(11);
             $table->integer('status')->length(5)->default(0);
             $table->timestamps();
         });

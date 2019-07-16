@@ -96,6 +96,7 @@ class StudentController extends Controller
             $result=$aStudentRegistration->getApplcantsForRegistration($programofferid);
             $courseList=$aCourseOffer->getCoursesOnProgramOffer($programofferid);
         }
+        // dd($courseList);
         // sessionid,programid,groupid,mediumid,shiftid,tableName and $compaireid
         $programList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,"programs",'programid');
         $mediumList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,"mediums",'mediumid');

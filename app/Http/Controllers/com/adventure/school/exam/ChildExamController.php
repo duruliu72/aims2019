@@ -9,7 +9,7 @@ use App\com\adventure\school\menu\Menu;
 use App\com\adventure\school\program\ProgramOffer;
 use App\com\adventure\school\exam\ExamName;
 use App\com\adventure\school\exam\MasterExam;
-use App\com\adventure\school\exam\ChildExam_Copy;
+use App\com\adventure\school\exam\ChildExam;
 
 class ChildExamController extends Controller
 {
@@ -60,7 +60,7 @@ class ChildExamController extends Controller
                 $msg="This Master Exam is not exits";
                 return redirect()->back()->with('msg',$msg);
             }
-            $aChildExam=new ChildExam_Copy();
+            $aChildExam=new ChildExam();
             $aChildExam->programofferid=$programofferid;
             $aChildExam->mst_examnameid=$mst_examnameid;
             $aChildExam->child_examnameid=$child_examnameid;
@@ -84,7 +84,7 @@ class ChildExamController extends Controller
         $groupList=$aMasterExam->getAllOnIDS(0,0,0,0,0,"groups",'groupid');
         $masterExamNameList=ExamName::getExamName(1);
         $childExamNameList=ExamName::getExamName(2);
-        $aChildExam=new ChildExam_Copy();
+        $aChildExam=new ChildExam();
         $child_exam_list=$aChildExam->getChildExams();
         $dataList=[
             'institute'=>Institute::getInstituteName(),
@@ -102,7 +102,7 @@ class ChildExamController extends Controller
         return view('admin.exam.childexam.childexamcreate',$dataList);
     }
     public function childExamEdit(Request $request,$id){
-        $bean=ChildExam_Copy::findOrfail($id);
+        $bean=ChildExam::findOrfail($id);
         // dd($bean);
         $msg="";
         $aMenu=new Menu();
@@ -152,7 +152,7 @@ class ChildExamController extends Controller
                 $msg="This Master Exam is not exits";
                 return redirect()->back()->with('msg',$msg);
             }
-            $aChildExam=ChildExam_Copy::findOrfail($id);
+            $aChildExam=ChildExam::findOrfail($id);
             $aChildExam->programofferid=$programofferid;
             $aChildExam->mst_examnameid=$mst_examnameid;
             $aChildExam->child_examnameid=$child_examnameid;
@@ -183,7 +183,7 @@ class ChildExamController extends Controller
         $groupList=$aMasterExam->getAllOnIDS(0,0,0,0,0,"groups",'groupid');
         $masterExamNameList=ExamName::getExamName(1);
         $childExamNameList=ExamName::getExamName(2);
-        $aChildExam=new ChildExam_Copy();
+        $aChildExam=new ChildExam();
         $child_exam_list=$aChildExam->getChildExams();
         // dd($bean);
         // dd($programList);
