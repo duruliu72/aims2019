@@ -34,7 +34,8 @@ class AdmissionController extends Controller
 		// $sms_stutus = $sendMsg->MessageSend('01726720772', $message);
         $aAdmissionProgram=new AdmissionProgram();
         // sessionid,programid,groupid,mediumid,shiftid,tableName And last one compareid
-        $programList=$aAdmissionProgram->getAllOnIDS(0,0,0,0,0,"programs",'programid');
+		$programList=$aAdmissionProgram->getAllOnIDS(0,0,0,0,0,"programs",'programid');
+		dd($programList);
         $mediumList=$aAdmissionProgram->getAllOnIDS(0,0,0,0,0,"mediums",'mediumid');
         $shiftList=$aAdmissionProgram->getAllOnIDS(0,0,0,0,0,"shifts",'shiftid');
         $groupList=$aAdmissionProgram->getAllOnIDS(0,0,0,0,0,"groups",'groupid');

@@ -83,6 +83,7 @@ class AdmissionProgramSubjectController extends Controller
         $shiftid=$request->shiftid;
         $data=$request->data;
         $aProgramOffer=new ProgramOffer();
+        // cheeck program offer create or not
         $hasProgramoffer=$aProgramOffer->checkValue(0,$programid,$groupid,$mediumid,$shiftid);
         if(!$hasProgramoffer){
             $msg="Program offer Create at First";
