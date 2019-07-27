@@ -132,9 +132,9 @@
                         </thead>
                         <tbody>
                         <?php $id=0; ?>
-                        @foreach($courseCodeList as $course)
+                        @foreach($courseCodeList as $key=>$course)
                           @if($course->mcoursecodeid!=0)
-                          <tr class="subject_mark">
+                          <tr id="subject_mark{{$key}}" class="subject_mark">
                             <td>{{++$id}}</td>         
                             <td>
                               {{$course->name}}<br>Marks(<span class="coursemark">{{$course->coursemark}}</span>)
@@ -143,10 +143,10 @@
                             ?>
                             @foreach($selectedlist[$course->id] as $cat)
                                 <td>
-                                  <div class="course_subcat" style="text-align:center;" class="form-group">                                 
-                                      <input style="width:50px;"  type="text" name="mark_in_percentage[{{$course->id}}][{{$cat->id}}]" value="{{$cat->mark_in_percentage}}" placeholder="Mark" />
-                                      <input style="width:60px;" type="text" name="" value="" placeholder="% Mark" />
-                                      <input style="width:40px;" type="text" name="" value="" />
+                                  <div data-raw="subject_mark{{$key}}" class="course_subcat" style="text-align:center;" class="form-group">                                 
+                                    <input class="inputfield" style="width:50px;"  type="text" name="cat_hld_mark[{{$course->id}}][{{$cat->id}}]" value="{{$cat->cat_hld_mark}}" placeholder="Mark" />
+                                    <input class="inputfield" style="width:60px;" type="text" name="percentage_mark[{{$course->id}}][{{$cat->id}}]" value="{{$cat->percentage_mark}}" placeholder="% Mark" />
+                                    <input class="sumfield" style="width:40px;" type="text" name="" value="" />
                                   </div>
                                   <div style="text-align:center;">
                                     <input type="radio" <?php echo ($cat->mark_group_id==1) ? 'checked':''; ?> name="mark_group_id[{{$course->id}}][{{$cat->id}}]" value="1">1
@@ -169,7 +169,9 @@
                             @foreach($markCategoryList as $cat)
                             <td>
                               <div class="form-group">
-                                <input class="form-control" type="text" name="mark_in_percentage[{{$course->id}}][{{$cat->id}}]" />
+                                <input class="inputfield" style="width:50px;"  type="text" name="cat_hld_mark[{{$course->id}}][{{$cat->id}}]" value="{{$cat->cat_hld_mark}}" placeholder="Mark" />
+                                <input class="inputfield" style="width:60px;" type="text" name="percentage_mark[{{$course->id}}][{{$cat->id}}]" value="{{$cat->percentage_mark}}" placeholder="% Mark" />
+                                <input class="sumfield" style="width:40px;" type="text" name="" value="" />
                               </div>
                               <div style="text-align:center;">
                                 <input type="radio" <?php echo ($passid==1) ? 'checked':''; ?> name="mark_group_id[{{$course->id}}][{{$cat->id}}]" value="1">1

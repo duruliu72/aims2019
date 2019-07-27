@@ -64,6 +64,8 @@ class MarkDistributionController extends Controller
                 $programofferid=$request->programofferid;
                 $checkboxList=$request->checkbox;
                 $distribution_markList=$request->mark_in_percentage;
+                $cat_hld_mark_List=$request->cat_hld_mark;
+                $percentage_mark_List=$request->percentage_mark;
                 $mark_group_idList=$request->mark_group_id;
                 if($checkboxList!=null){
                     $totalPercentage=array();
@@ -82,6 +84,8 @@ class MarkDistributionController extends Controller
                             $aMarkDistribution->coursecodeid=$key;
                             $aMarkDistribution->markcategoryid=$catid->id;
                             $aMarkDistribution->mark_in_percentage=$distribution_markList[$key][$catid->id];
+                            $cat_hld_mark=$cat_hld_mark_List[$key][$catid->id];
+                            $percentage_mark=$percentage_mark_List[$key][$catid->id];
                             $aMarkDistribution->mark_group_id=$mark_group_idList[$key][$catid->id];
                             $isSameCategory=$aMarkDistribution->isThereMarkCategory($programofferid,$key,$catid->id);
                             if($distribution_markList[$key][$catid->id]!=null&&!$isSameCategory&&$totalPercentage[$key]==100){
@@ -166,6 +170,8 @@ class MarkDistributionController extends Controller
                 $programofferid=$request->programofferid;
                 $checkboxList=$request->checkbox;
                 $distribution_markList=$request->mark_in_percentage;
+                $cat_hld_mark_List=$request->cat_hld_mark;
+                $percentage_mark_List=$request->percentage_mark;
                 $mark_group_idList=$request->mark_group_id;
                 if($checkboxList!=null){
                     $totalPercentage=array();
@@ -183,6 +189,8 @@ class MarkDistributionController extends Controller
                             $markcategoryid=$catid->id;
                             // Update only distribution_mark  and passtypeid
                             $mark_in_percentage=$distribution_markList[$key][$catid->id];
+                            $cat_hld_mark=$cat_hld_mark_List[$key][$catid->id];
+                            $percentage_mark=$percentage_mark_List[$key][$catid->id];
                             $mark_group_id=$mark_group_idList[$key][$catid->id];                            
                             if($distribution_markList[$key][$catid->id]!=null){
                                 // Check Mark Category at  distribution_mark
@@ -196,6 +204,8 @@ class MarkDistributionController extends Controller
                                         ->where('markcategoryid',$markcategoryid)
                                         ->update([
                                             'mark_in_percentage' => $mark_in_percentage,
+                                            'cat_hld_mark' => $cat_hld_mark,
+                                            'percentage_mark' => $percentage_mark,
                                             'mark_group_id'=>$mark_group_id
                                         ]);
                                     }else{
@@ -208,6 +218,8 @@ class MarkDistributionController extends Controller
                                         $aMarkDistribution->coursecodeid=$coursecodeid;
                                         $aMarkDistribution->markcategoryid=$markcategoryid;
                                         $aMarkDistribution->mark_in_percentage=$mark_in_percentage;
+                                        $aMarkDistribution->cat_hld_mark=$cat_hld_mark;
+                                        $aMarkDistribution->percentage_mark=$percentage_mark;
                                         $aMarkDistribution->mark_group_id=$mark_group_id;
                                         $aMarkDistribution->save();
                                     }else{

@@ -1,0 +1,175 @@
+public function getMstExamResult($programofferid,$examnameid){
+        $students=$this->getStudents($programofferid,$examnameid);
+        foreach($students as $x){
+            $meargeCourseList=$this->getMerageSubject($x->programofferid,$x->examnameid,$x->studentid);
+            foreach($meargeCourseList as $mearge_course){
+                $courses=$this->getCoursesOnMearge($x->programofferid,$x->examnameid,$x->studentid,$mearge_course->meargeid);
+                $check=$this->check($x->programofferid,$x->examnameid,$x->studentid,$mearge_course->meargeid);
+                foreach($courses as $y){
+                    $markCategories=$this->getMarkCategory($x->programofferid,$x->examnameid,$x->studentid,$y->coursecodeid);
+                    // dd($markCategories);
+                    $course_marks=0;
+                    $obt_course_marks=0;
+                    $course_pass_status=true;
+                    $group_result=$markCategories->groupBy("mark_group_id")->map(function($mearge_course,$key){
+                        $c["catmarks"]=$mearge_course->sum("catmarks");
+                        $c["obt_marks"]=$mearge_course->sum("obt_marks");
+                        return $c;
+                    });
+                    // for markcategory pass status
+                    foreach($markCategories as $mc){
+                        $cat_pass_status=true;
+                        $temp=($mc->catmarks*33)/100;
+                        if($mc->obt_marks<$temp){
+                            $cat_pass_status=false;
+                        }
+                        $mc->cat_pass_status=$cat_pass_status;
+                    }
+                     // dd($group_result);
+                    foreach($group_result as $z){
+                        $course_pass_status=true;
+                        $temp=($z["catmarks"]*33)/100;
+                        if($z["obt_marks"]<$temp){
+                            $course_pass_status=false;
+                        }
+                        $course_marks=$course_marks+$z["catmarks"];
+                        $obt_course_marks=$obt_course_marks+$z["obt_marks"];
+                        // dd($z);
+                    }
+                    $y->obt_course_marks=$obt_course_marks;
+                    $y->course_marks=$course_marks;
+                    $y->course_pass_status=$course_pass_status;
+                    $y->markCategories=$markCategories;
+                    $point_letter=$this->getGradePoint($programofferid,round($obt_course_marks));
+                    // dd($point_letter);
+                    if($course_pass_status==false){
+                        $gradepoint=0;
+                        $gradeletter="F";
+                    }else{
+                        $gradepoint=$point_letter["gradepoint"];
+                        $gradeletter=$point_letter["gradeletter"];
+                    }
+                    $y->gradepoint=$gradepoint;
+                    $y->gradeletter=$gradeletter;
+                    // dd($y);
+                }
+                $mearge_marks=0;
+                $obt_mearge_marks=0;
+                $mearge_pass_status=true;
+                // dd($check);
+                foreach($check as $ck){
+                    $temp=($ck->catmarks*33)/100;
+                    if($ck->obt_mearge_marks<$temp){
+                        $mearge_pass_status=false;
+                    }
+                    $mearge_marks=$mearge_marks+$ck->catmarks;
+                    $obt_mearge_marks=$obt_mearge_marks+$ck->obt_mearge_marks;
+                }
+                // dd($obt_mearge_marks/$mearge_course->meargecount);
+                // dd($obt_mearge_marks);
+                $mearge_point_letter=$this->getGradePoint($programofferid,round($obt_mearge_marks/$mearge_course->meargecount));
+                $mearge_point=$mearge_point=$mearge_point_letter["gradepoint"];
+                $mearge_letter=$mearge_point_letter["gradeletter"];
+                if($mearge_pass_status==false){
+                    $mearge_point=0;
+                    $mearge_letter="F";
+                }
+                $mearge_course->mearge_pass_status=$mearge_pass_status;
+                $mearge_course->mearge_marks=$mearge_marks;
+                $mearge_course->obt_mearge_marks=$obt_mearge_marks;
+                $mearge_course->mearge_point=$mearge_point;
+                $mearge_course->mearge_letter=$mearge_letter;
+                $mearge_course->courses=$courses;
+            }
+            // dd($meargeCourseList);
+            $x->meargeCourseList=$meargeCourseList;
+            // For Compulsary Subject
+            $compalsary_courses = $meargeCourseList->where("coursetypeid","=",1);
+            // For Optional Subject
+            $optional_courses = $meargeCourseList->where("coursetypeid","=",2);
+            // For Additional Subject
+            $additional_courses = $meargeCourseList->where("coursetypeid","=",3);
+            $common_marks=0;
+            $obt_common_marks=0;
+            $grand_marks=0;
+            $grand_obt_marks=0;
+            $compalsary_subj=0;
+            $common_fail_sub=0;
+            $tot_fail_sub=0;
+            $std_tot_gpa=0;
+            $std_gpa=0.0;
+            $std_letter="F";
+            $status=1;
+            $student_pass_status=true;
+            foreach($compalsary_courses as $cc){
+                $common_marks=$common_marks+$cc->mearge_marks;
+                $obt_common_marks=$obt_common_marks+$cc->obt_mearge_marks;
+                $grand_marks=$grand_marks+$cc->mearge_marks;
+                $grand_obt_marks=$grand_obt_marks+$cc->obt_mearge_marks;
+                $std_tot_gpa=$std_tot_gpa+$cc->mearge_point;
+                if($cc->mearge_pass_status==false){
+                    $student_pass_status=false;
+                    $status=0;
+                    $common_fail_sub++;
+                    $tot_fail_sub++;
+                }
+                $compalsary_subj++;
+            }
+            foreach($optional_courses as $oc){
+                $grand_marks=$grand_marks+$oc->mearge_marks;
+                $grand_obt_marks=$grand_obt_marks+$oc->obt_mearge_marks;
+                if($oc->mearge_marks>2){
+                    $std_tot_gpa=$std_tot_gpa+($oc->mearge_point-2);
+                    $obt_common_marks=$obt_common_marks+$oc->obt_mearge_marks-40;
+                }
+                if($oc->mearge_pass_status==false){
+                    $tot_fail_sub++;
+                }
+            }
+            foreach($additional_courses as $ac){
+                $grand_marks=$grand_marks+$ac->mearge_marks;
+                $grand_obt_marks=$grand_obt_marks+$ac->obt_mearge_marks;
+                if($ac->mearge_pass_status==false){
+                    $tot_fail_sub++;
+                }
+            }
+            if($student_pass_status==false){
+                $std_tot_gpa=0;
+            }
+            $x->common_marks=$common_marks;
+            $x->obt_common_marks=$obt_common_marks;
+            $x->grand_marks=$grand_marks;
+            $x->grand_obt_marks=$grand_obt_marks;
+            $x->compalsary_subj=$compalsary_subj;
+            $x->common_fail_sub=$common_fail_sub;
+            $x->tot_fail_sub=$tot_fail_sub;
+            $x->std_tot_gpa=$std_tot_gpa;
+            $letter_grade=$this->getGradeLetter($programofferid,$std_tot_gpa/$compalsary_subj);
+            $temp_gpa=$std_tot_gpa/$compalsary_subj;
+            if($std_tot_gpa/$compalsary_subj>5){
+               $temp_gpa=5;
+            }
+            $x->std_gpa=$temp_gpa;
+            $x->std_letter=$letter_grade["grade_letter"];
+            $x->student_pass_status=$student_pass_status;
+            $x->percentage_mark=($obt_common_marks*100)/$common_marks;
+            $x->status=$status;
+            // dd($x);
+        }
+        $students=$students->sortByDesc("obt_common_marks")->sortByDesc("std_gpa")->sortBy("tot_fail_sub")->sortByDesc("status");
+        // This loop for Class Position
+        $position=1;
+        foreach ($students as $std){
+            $std->class_position=$position++;
+        }
+        $student_on_section=$students->groupBy("sectionid");
+        foreach ($student_on_section as $section_item) {
+           $i=1;
+           foreach($section_item as $std){
+                $std->section_position=$i++;
+           }
+        }
+        $students=$student_on_section->collapse();
+        // dd($students);
+        return $students;
+    }

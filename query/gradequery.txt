@@ -1,0 +1,12 @@
+SELECT grade_point.programofferid,
+courseoffer.coursemark,
+grade_letter.name,
+grade_point.from_mark,
+(grade_point.from_mark*courseoffer.coursemark)/100 AS cal_from_mark,
+(grade_point.to_mark*courseoffer.coursemark)/100 AS cal_to_mark,
+grade_point.to_mark,
+grade_point.gradepoint
+FROM `grade_point`  
+INNER JOIN grade_letter ON grade_point.gradeletterid=grade_letter.id
+INNER JOIN courseoffer ON grade_point.programofferid=courseoffer.programofferid
+WHERE grade_point.programofferid=2 && courseoffer.coursecodeid=2

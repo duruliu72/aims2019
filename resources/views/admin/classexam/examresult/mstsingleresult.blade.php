@@ -148,7 +148,7 @@
                               <td>{{$c->course_marks}}</td>
                               <td>
                                 @foreach($c->markCategories as $mark_c)
-                                {{sprintf("%s %s %.0f",$mark_c->markcatName,":",$mark_c->obt_marks)}}
+                                {{sprintf("%s %s %.2f",$mark_c->markcatName,":",$mark_c->obt_marks)}}
                                 @endforeach
                               </td>
                               <td>{{$c->obt_course_marks}}</td>

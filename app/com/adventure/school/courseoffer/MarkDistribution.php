@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class MarkDistribution extends Model
 {
     protected $table='mark_distribution';
-    protected $fillable = ['programofferid','coursecodeid','markcategoryid','mark_in_percentage','mark_group_id','status'];
+    protected $fillable = ['programofferid','coursecodeid','markcategoryid','mark_in_percentage','cat_hld_mark','percentage_mark','mark_group_id','status'];
     public function isThereMarkCategory($programofferid,$coursecodeid,$markcategoryid){
         $sql="SELECT * FROM `mark_distribution` WHERE programofferid=? AND coursecodeid=? AND markcategoryid=?";
         $qResult=\DB::select($sql,[$programofferid,$coursecodeid,$markcategoryid]);
@@ -29,6 +29,8 @@ class MarkDistribution extends Model
         table1.coursecodeid,
         table1.markcategoryid,
         table1.mark_in_percentage,
+        table1.cat_hld_mark,
+        table1.percentage_mark,
         @row_number:=CASE
             WHEN IFNULL(table1.	mark_group_id,0)=0 THEN mark_categories.id ELSE  table1.	mark_group_id
         END AS 	mark_group_id

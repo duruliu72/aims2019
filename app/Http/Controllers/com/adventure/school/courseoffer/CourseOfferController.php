@@ -144,7 +144,7 @@ class CourseOfferController extends Controller
             $teacherList=$request->teacherid;
             $coursemarksList=$request->coursemarks;
             $programofferinfo=$aProgramOffer->getProgramOffer($programofferid);
-            if($checkboxList!=null&&count($checkboxList)>=$programofferinfo->number_of_courses){
+            if($checkboxList!=null){
                 // transition will have to done
                 $status=\DB::transaction(function () use($programofferid,$checkboxList,$coursemarksList,$teacherList){
                     $checkfield=true;
@@ -189,7 +189,7 @@ class CourseOfferController extends Controller
                     $msg="Item not save";
                 }
             }else{
-                $msg="Select at Lest ".$programofferinfo->number_of_courses." Courses";
+                $msg="Select at Lest one Courses";
                 return redirect()->back()->with('msg',$msg);
             }
         }

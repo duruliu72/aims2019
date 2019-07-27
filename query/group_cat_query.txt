@@ -1,0 +1,33 @@
+select 
+table1.programofferid,
+table1.coursecodeid,
+table1.mark_group_id,
+COUNT(table1.mark_group_id) AS mark_group_frequency,
+table1.coursemark,
+sum(table1.mark_in_percentage)  AS group_mark_in_percentage,
+sum(table1.cal_coursemark) as group_cal_coursemark,
+sum(table1.cat_hld_mark) as group_cat_hld_mark,
+sum(table1.std_input_mark) AS group_std_input_mark,
+sum(table1.std_obt_mark) as group_std_obt_mark,
+sum(table1.pass_mark) AS group_pass_mark,
+CASE 
+WHEN std_obt_mark > pass_mark THEN 1
+ ELSE 0
+END AS group_cat_pass_status
+FROM(SELECT
+		mxm.programofferid,
+        mxm.coursecodeid,
+        md.mark_group_id,
+        courseoffer.coursemark,
+        md.mark_in_percentage,
+        (courseoffer.coursemark* md.mark_in_percentage)/100 AS cal_coursemark,
+        md.cat_hld_mark,
+        mxm.marks AS std_input_mark,
+        ((courseoffer.coursemark* md.mark_in_percentage)/100)*mxm.marks/md.cat_hld_mark as std_obt_mark,
+        (((courseoffer.coursemark* md.mark_in_percentage)/100)*33)/100 AS pass_mark
+        FROM mst_exam_marks AS mxm
+        INNER JOIN courseoffer ON mxm.programofferid=courseoffer.programofferid && mxm.coursecodeid=courseoffer.coursecodeid
+        INNER JOIN mark_distribution as md on mxm.programofferid=md.programofferid && mxm.coursecodeid=md.coursecodeid && mxm.markcategoryid=md.markcategoryid
+        INNER JOIN mark_categories on md.markcategoryid=mark_categories.id
+        WHERE mxm.programofferid=2 && mxm.examnameid=1 && mxm.studentid=6 && mxm.coursecodeid=1) AS table1
+        GROUP BY table1.mark_group_id

@@ -1,0 +1,46 @@
+SELECT table1.programofferid,
+table1.coursecodeid,
+table1.meargeid,
+count(table1.meargeid) AS mearge_course_frequency,
+sum(table1.coursemark) AS coursemark,
+SUM(table2.mark_in_percentage) AS mark_in_percentage,
+SUM((table1.coursemark*table2.mark_in_percentage)/100) AS cal_coursemark,
+SUM(table2.cat_hld_mark) AS cat_hld_mark,
+sum(table1.obt_coursemark) obt_coursemark,
+sum((table2.mark_in_percentage*table1.obt_coursemark)/table2.cat_hld_mark) AS std_obt_mark,
+SUM((((table1.coursemark*table2.mark_in_percentage)/100)*33)/100) AS passmark,
+CASE
+ WHEN SUM(((table2.mark_in_percentage*table1.obt_coursemark)/table2.cat_hld_mark))>SUM(((((table1.coursemark*table2.mark_in_percentage)/100)*33)/100)) THEN 1
+ ELSE 0
+END AS couse_pase_sttus,
+table1.meargeid,
+table1.mearge_name,
+table1.coursetypeid,
+table1.courseCode,
+table1.courseName
+FROM (SELECT 
+mxm.programofferid,
+mxm.coursecodeid,
+courseoffer.coursemark,
+courseoffer.meargeid,
+courseoffer.mearge_name,
+SUM(mxm.marks) obt_coursemark,
+student_courses.coursetypeid,
+course_codes.name AS courseCode,
+courses.name AS courseName
+FROM `mst_exam_marks` AS mxm
+INNER JOIN courseoffer ON mxm.programofferid=courseoffer.programofferid && mxm.coursecodeid=courseoffer.coursecodeid
+INNER JOIN student_courses ON mxm.studentid=student_courses.studentid && mxm.coursecodeid=student_courses.coursecodeid
+INNER JOIN course_codes ON mxm.coursecodeid=course_codes.id
+INNER JOIN courses ON course_codes.courseid=courses.id
+WHERE mxm.programofferid=2 && mxm.examnameid=1 && mxm.studentid=6
+GROUP BY mxm.coursecodeid) AS table1
+INNER JOIN (SELECT
+programofferid,
+coursecodeid,
+SUM(mark_in_percentage) AS mark_in_percentage,
+sum(cat_hld_mark) AS cat_hld_mark
+FROM `mark_distribution`
+WHERE programofferid=2 GROUP BY coursecodeid) AS table2
+ON table1.programofferid=table2.programofferid && table1.coursecodeid=table2.coursecodeid
+GROUP BY table1.meargeid
