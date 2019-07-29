@@ -35,7 +35,7 @@ class MstExamResultController extends Controller
         // dd($student);
         $exam=$aExamName->getExamONID($examnameid);
         $aGradePoint=new GradePoint();
-        $point_letters=$aGradePoint->getGradePointNLetter($programofferid);
+        $point_letters=$aGradePoint->getGradePointTable($programofferid);
         $aInstitute=new Institute();
         $instituteObj=$aInstitute->getInstituteById(1);
         $dataList=[
@@ -48,7 +48,7 @@ class MstExamResultController extends Controller
             'instituteObj'=>$instituteObj,
             'msg'=>$msg
         ];
-        return view('admin.classexam.examresult.mstsingleresult',$dataList);
+        return view('admin.classexam.examresult.mstsingleresult_copy',$dataList);
     }
     public function getTranscripts(Request $request){
         $msg="";
@@ -189,6 +189,6 @@ class MstExamResultController extends Controller
             'instituteObj'=>$instituteObj,
             'msg'=>$msg
         ];
-        return view('admin.classexam.examresult.mstexamresult',$dataList);
+        return view('admin.classexam.examresult.mstexamresult_copy',$dataList);
     }
 }

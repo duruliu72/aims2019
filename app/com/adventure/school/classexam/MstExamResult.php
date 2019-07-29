@@ -29,16 +29,17 @@ class MstExamResult extends Model
             $gpa=0.0;
             $letter="F";
             $meargeCourses=$this->getMearge_Courses($std->programofferid,$std->examnameid,$std->studentid);
-            // dd($meargeCourses);
             foreach($meargeCourses as $mc){
-                // dd($meargeCourses[1]);
                 $courses=$this->getCourses($std->programofferid,$std->examnameid,$std->studentid,$mc->meargeid);
-                //  dd($courses);
-              
                 foreach($courses as $course){
                     $group_marks_cats=$this->getGroupMarkCategories($std->programofferid,$std->examnameid,$std->studentid,$course->coursecodeid);
-                    //  dd($group_marks_cats);
-                     foreach($group_marks_cats as $g_cat){
+                    foreach($group_marks_cats as $g_cat){
+                        if($g_cat->group_cat_pass_status==0){
+                            $course->course_pass_status=0;
+                        }
+                    }
+                    // dd($course);
+                    foreach($group_marks_cats as $g_cat){
                         if($g_cat->group_cat_pass_status==0){
                             $mc->mearge_course_pass_satatus=0;
                             if($course->coursetypeid==1){
@@ -46,9 +47,8 @@ class MstExamResult extends Model
                             }
                         }
                      }
+                    // just add to course
                     $marks_cats=$this->getMarkCategories($std->programofferid,$std->examnameid,$std->studentid,$course->coursecodeid);
-                    // dd($marks_cats);
-                    // dd($course);
                     if($course->coursetypeid==1 && $course->meargeid==$mc->meargeid){
                         $common_marks=$common_marks+$course->coursemark;
                         $tot_marks=$tot_marks+$course->coursemark;
@@ -89,8 +89,7 @@ class MstExamResult extends Model
                 if($mc->mearge_course_pass_satatus==1){
                     $marks=$mc->mearge_std_obt_mark;
                 }
-                $point_letters=$this->getGradePoint($std->programofferid,$marks,$mc->mearge_cal_coursemark);
-                // dd($point_letters);
+                $point_letters=$this->getGradePoint($std->programofferid,$marks,$mc->mearge_cal_coursemark,$mc->mearge_course_pass_satatus);
                 $mc->gradepoint=$point_letters["gradepoint"];
                 $mc->gradeletter=$point_letters["gradeletter"];
                 if($mc->coursetypeid==1){
@@ -99,14 +98,22 @@ class MstExamResult extends Model
                 }                
             }
             // dd($meargeCourses);
-            $gl=$this->getGradeLetter($std->programofferid,$obt_common_marks,$common_marks);
+            $point=$tot_common_mearge_point/$merage_pass_sub;
+            // dd($point);
+            $gl=$this->getGradeLetter($std->programofferid,$point);
+            // dd($gl);
+            $status=1;
             if($student_pass_status){
-                $gpa=$gl->gradepoint;
-                $letter=$gl->name;
+                $gpa=$point;
+                $letter=$gl["grade_letter"];
+
+            }else{
+                $status=0;
             }
-            $std->mearge_course=$meargeCourses;
+            $std->mearge_courses=$meargeCourses;
             $std->common_marks=$common_marks;
             $std->obt_common_marks=$obt_common_marks;
+            $std->percentage_mark=($obt_common_marks*100)/$common_marks;
             $std->add_forth_sub_marks=$add_forth_sub_marks;
             $std->tot_marks=$tot_marks;
             $std->tot_obt_marks=$tot_obt_marks;
@@ -116,8 +123,10 @@ class MstExamResult extends Model
             $std->student_pass_status=$student_pass_status;
             $std->tot_common_mearge_point=$tot_common_mearge_point;
             $std->merage_pass_sub=$merage_pass_sub;
+            $std->tot_point=$point;
             $std->gpa=$gpa;
             $std->letter=$letter;
+            $std->status=$status;
             // dd($std);
         }
         $students=$students->sortByDesc("obt_common_marks")->sortByDesc("gpa")->sortBy("tot_fail_sub")->sortByDesc("status");
@@ -134,7 +143,7 @@ class MstExamResult extends Model
            }
         }
         $students=$student_on_section->collapse();
-        dd($students);
+        // dd($students);
         return $students;
     }
     public function getStudents($programofferid,$examnameid){
@@ -304,7 +313,7 @@ class MstExamResult extends Model
         sum(table1.std_obt_mark) as group_std_obt_mark,
         sum(table1.pass_mark) AS group_pass_mark,
         CASE 
-        WHEN std_obt_mark > pass_mark THEN 1
+            WHEN sum(table1.std_obt_mark) > sum(table1.pass_mark) THEN 1
          ELSE 0
         END AS group_cat_pass_status
         FROM(SELECT
@@ -333,6 +342,8 @@ class MstExamResult extends Model
 		mxm.programofferid,
         mxm.coursecodeid,
         md.mark_group_id,
+        md.markcategoryid,
+        mark_categories.name AS markcatName,
         courseoffer.coursemark,
         md.mark_in_percentage,
         (courseoffer.coursemark* md.mark_in_percentage)/100 AS cal_coursemark,
@@ -348,17 +359,17 @@ class MstExamResult extends Model
         INNER JOIN courseoffer ON mxm.programofferid=courseoffer.programofferid && mxm.coursecodeid=courseoffer.coursecodeid
         INNER JOIN mark_distribution as md on mxm.programofferid=md.programofferid && mxm.coursecodeid=md.coursecodeid && mxm.markcategoryid=md.markcategoryid
         INNER JOIN mark_categories on md.markcategoryid=mark_categories.id
-        WHERE mxm.programofferid=? && mxm.examnameid=? && mxm.studentid=6 && mxm.coursecodeid=?";
+        WHERE mxm.programofferid=? && mxm.examnameid=? && mxm.studentid=? && mxm.coursecodeid=?";
         $qResult=\DB::select($sql,[$programofferid,$examnameid,$studentid,$coursecodeid]);
         $result=collect($qResult);
         return $result;
     }
-    public function getGradePoint($programofferid,$obt_marks,$marks){
-        // dd($marks);
+    public function getGradePoint($programofferid,$marks,$mearge_cal_coursemark,$ddd){
+        // dd($marks,$ddd);
         $aGradePoint=new GradePoint();
-        $point_letters=$aGradePoint->getGradePointNLetter($programofferid,$marks);
+        $point_letters=$aGradePoint->getGradePointNLetter($programofferid,$mearge_cal_coursemark);
         foreach($point_letters as $item){
-            if($obt_marks>=$item->cal_from_mark && $obt_marks<=$item->cal_to_mark){
+            if($marks>=$item->cal_from_mark && $marks<=$item->cal_to_mark){
                 return array(
                     "gradepoint"=>$item->gradepoint,
                     "gradeletter"=>$item->name
@@ -370,23 +381,21 @@ class MstExamResult extends Model
             "gradeletter"=>"F"
         );
     }
-    public function getGradeLetter($programofferid,$obt_marks,$marks){
-        $sql="SELECT * 
-        FROM(SELECT grade_point.programofferid,
-        courseoffer.coursemark,
-        grade_letter.name,
-        grade_point.from_mark,
-        (grade_point.from_mark*".$marks.")/100 AS cal_from_mark,
-        (grade_point.to_mark*".$marks.")/100 AS cal_to_mark,
-        grade_point.to_mark,
-        grade_point.gradepoint
-        FROM `grade_point`  
-        INNER JOIN grade_letter ON grade_point.gradeletterid=grade_letter.id
-        INNER JOIN courseoffer ON grade_point.programofferid=courseoffer.programofferid
-        WHERE grade_point.programofferid=2 && courseoffer.coursecodeid=2) AS gradeletter
-        WHERE ".$obt_marks.">=cal_from_mark && ".$obt_marks."<=cal_to_mark";
-        $qResult=\DB::select($sql,[$programofferid]);
-        $result=collect($qResult)->first();
-        return $result;
+    public function getGradeLetter($programofferid,$point){
+        // dd($point);
+        $aGradePoint=new GradePoint();
+        $point_letters=$aGradePoint->getGradePointTable($programofferid);
+        $point_letters=$point_letters->sortByDesc("gradepoint");
+        // dd($point_letters);
+        $point_letter_array=array();
+        foreach($point_letters as $x){
+            array_push($point_letter_array,array("gradepoint"=>$x->gradepoint,"grade_letter"=>$x->name));
+        }
+        for ($i=0;$i<5;$i++){
+            if(($point<$point_letter_array[$i]["gradepoint"]) && ($point>=$point_letter_array[$i+1]["gradepoint"])){
+                return $point_letter_array[$i+1];
+            }
+        }
+        return $point_letter_array[0];
     }
 }

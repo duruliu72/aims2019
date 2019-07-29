@@ -48,7 +48,21 @@ class GradePoint extends Model
         grade_point.gradepoint
         FROM `grade_point`  
         INNER JOIN grade_letter ON grade_point.gradeletterid=grade_letter.id
-        WHERE grade_point.programofferid=2 ORDER BY gradepoint DESC";
+        WHERE grade_point.programofferid=? ORDER BY gradepoint DESC";
+        $qResult=\DB::select($sql,[$programofferid]);
+        return collect($qResult);
+    }
+    public function getGradePointTable($programofferid){
+        $sql="SELECT * 
+        FROM(SELECT grade_point.programofferid,
+        grade_letter.name,
+        grade_point.from_mark,
+        grade_point.to_mark,
+        grade_point.gradepoint
+        FROM `grade_point`  
+        INNER JOIN grade_letter ON grade_point.gradeletterid=grade_letter.id
+        WHERE grade_point.programofferid=?) AS gradeletter
+        GROUP BY gradepoint DESC";
         $qResult=\DB::select($sql,[$programofferid]);
         return collect($qResult);
     }
