@@ -143,9 +143,9 @@
                                 <td>
                                   <div data-raw="subject_mark{{$key}}" class="course_subcat">
                                     <input  class="percent" style="width:40px;" type="hidden" name="mark_in_percentage[{{$course->id}}][{{$cat->id}}]" value="{{$cat->mark_in_percentage}}">                                
-                                    <input class="inputfield input1" style="width:50px;"  type="text" name="cat_hld_mark[{{$course->id}}][{{$cat->id}}]" value="{{$cat->cat_hld_mark}}" placeholder="Mark" />
+                                    <input class="inputfield input1" style="width:40px;"  type="text" name="cat_hld_mark[{{$course->id}}][{{$cat->id}}]" value="{{$cat->cat_hld_mark}}" placeholder="Mark" />
                                     <input class="inputfield input2" style="width:60px;" type="text" name="percentage_mark[{{$course->id}}][{{$cat->id}}]" value="{{$cat->percentage_mark}}" placeholder="% Mark" />
-                                    <input class="sumfield input3" style="width:50px;" type="text" name="" value="" />
+                                    <input class="resultfield input3" style="width:50px;" type="text" name="" value="" />
                                   </div>
                                   <div style="text-align:center;">
                                     <input type="radio" <?php echo ($cat->mark_group_id==1) ? 'checked':''; ?> name="mark_group_id[{{$course->id}}][{{$cat->id}}]" value="1">1

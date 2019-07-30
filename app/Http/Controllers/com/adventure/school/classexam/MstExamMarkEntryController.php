@@ -256,8 +256,8 @@ class MstExamMarkEntryController extends Controller
                             $isRowValFill=false;
                         }
                     }
-                    $courseCode=$aCourseOffer->getCourseCode($programofferid,$coursecodeid);
-                    if($isRowValFill==true && ($tot_marks<=$courseCode->coursemark)){
+                    $courseCode=$aCourseOffer->getCourseMarks($programofferid,$coursecodeid);
+                    if($isRowValFill==true && ($tot_marks<=$courseCode->tot_hld_mark)){
                         foreach($courseCatsMarks as $markcatid=>$catMark){
                             $aMstExamMarks=new MstExamMarks();
                             $checkentry=$aMstExamMarks->checkEntry($programofferid,$coursecodeid,$studentid,$markcatid);

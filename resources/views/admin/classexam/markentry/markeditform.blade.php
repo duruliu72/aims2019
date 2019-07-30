@@ -160,7 +160,7 @@
                               <th>Student Name</th>
                               <th width="10%">Class Roll</th>
                               @foreach($mark_catList as $x)
-                              <th>{{$x->name}}(<span class="categorymarks">{{$x->categorymarks}}</span>)</th>
+                              <th>{{$x->name}}(<span class="categorymarks">{{$x->cat_hld_mark}}</span>)</th>
                               @endforeach
                               <!-- <th>Tot Marks({{$courseCode->coursemark}})</th> -->
                               <th width="2%"><input id="markcheckid" type="checkbox"></th>

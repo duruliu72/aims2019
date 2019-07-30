@@ -38,7 +38,6 @@ class MstExamResult extends Model
                             $course->course_pass_status=0;
                         }
                     }
-                    // dd($course);
                     foreach($group_marks_cats as $g_cat){
                         if($g_cat->group_cat_pass_status==0){
                             $mc->mearge_course_pass_satatus=0;
@@ -47,7 +46,7 @@ class MstExamResult extends Model
                             }
                         }
                      }
-                    // just add to course
+                    // just add to course markcats to margecourse
                     $marks_cats=$this->getMarkCategories($std->programofferid,$std->examnameid,$std->studentid,$course->coursecodeid);
                     if($course->coursetypeid==1 && $course->meargeid==$mc->meargeid){
                         $common_marks=$common_marks+$course->coursemark;
@@ -56,15 +55,19 @@ class MstExamResult extends Model
                             $obt_common_marks=$obt_common_marks+$course->std_obt_mark;
                             $tot_obt_marks=$tot_obt_marks+$course->std_obt_mark;
                         }else{
-                            $common_fail_sub++;
-                            $tot_fail_sub++;
+                            if($course->course_pass_status==0){
+                                $common_fail_sub++;
+                                $tot_fail_sub++;
+                            }
                         }
                     }elseif($course->coursetypeid==2 && $course->meargeid==$mc->meargeid){
                         $tot_marks=$tot_marks+$course->coursemark;
                         if($mc->mearge_course_pass_satatus==1){
                             $tot_obt_marks=$tot_obt_marks+$course->std_obt_mark;
                         }else{
-                            $tot_fail_sub++;
+                            if($course->course_pass_status==0){
+                                $tot_fail_sub++;
+                            }
                         }
                         if($mc->mearge_course_pass_satatus==1&&$course->mark_above_40_percent>0){
                             $obt_common_marks=$obt_common_marks+$course->mark_above_40_percent;
@@ -74,7 +77,9 @@ class MstExamResult extends Model
                         if($mc->mearge_course_pass_satatus==1){
                             $tot_obt_marks=$tot_obt_marks+$course->std_obt_mark;
                         }else{
-                            $tot_fail_sub++;
+                            if($course->course_pass_status==0){
+                                $tot_fail_sub++;
+                            }
                         }
                     }
                     $course->marks_cats=$marks_cats;
@@ -90,11 +95,15 @@ class MstExamResult extends Model
                     $marks=$mc->mearge_std_obt_mark;
                 }
                 $point_letters=$this->getGradePoint($std->programofferid,$marks,$mc->mearge_cal_coursemark,$mc->mearge_course_pass_satatus);
-                $mc->gradepoint=$point_letters["gradepoint"];
-                $mc->gradeletter=$point_letters["gradeletter"];
+                $mc->gradepoint=$point_letters["grade_point"];
+                $mc->gradeletter=$point_letters["grade_letter"];
                 if($mc->coursetypeid==1){
                     $merage_pass_sub++;
-                    $tot_common_mearge_point=$tot_common_mearge_point+$point_letters["gradepoint"];
+                    $tot_common_mearge_point=$tot_common_mearge_point+$point_letters["grade_point"];
+                }elseif($mc->coursetypeid==2){
+                    if($point_letters["grade_point"]>2){
+                        $tot_common_mearge_point=$tot_common_mearge_point+$point_letters["grade_point"]-2;
+                    }
                 }                
             }
             // dd($meargeCourses);
@@ -365,21 +374,41 @@ class MstExamResult extends Model
         return $result;
     }
     public function getGradePoint($programofferid,$marks,$mearge_cal_coursemark,$ddd){
-        // dd($marks,$ddd);
+        $compare=($marks*100)/$mearge_cal_coursemark;
+        // dd($compare,$ddd);
         $aGradePoint=new GradePoint();
         $point_letters=$aGradePoint->getGradePointNLetter($programofferid,$mearge_cal_coursemark);
-        foreach($point_letters as $item){
-            if($marks>=$item->cal_from_mark && $marks<=$item->cal_to_mark){
-                return array(
-                    "gradepoint"=>$item->gradepoint,
-                    "gradeletter"=>$item->name
-                );
+        $data_array=array();
+        $length=count($point_letters);
+        $start=1;
+        $diff= .5;
+        // dd($diff);
+        for($i=0;$i<$length;$i++){
+            if($start==1){
+                $from_mark=$point_letters[$i]->from_mark;
+                $to_mark=$point_letters[$i]->to_mark;
+                $compare_mark=$point_letters[$i]->to_mark;
+            }else{
+                $from_mark=$point_letters[$i]->from_mark;
+                $to_mark=$point_letters[$i]->to_mark;
+                $compare_mark=$point_letters[$i]->to_mark+$diff;
+            }
+            $start++;
+            array_push($data_array,array(
+                "from_mark"=>$from_mark,
+                "to_mark"=>$to_mark,
+                "compare_mark"=>$compare_mark,
+                "grade_letter"=>$point_letters[$i]->name,
+                "grade_point"=>$point_letters[$i]->gradepoint
+            ));
+        }
+        // dd($data_array);
+        for($i=0;$i<count($data_array)-1;$i++){
+            if($compare>=$data_array[$i+1]['compare_mark'] && $compare<=$data_array[$i]['to_mark']){
+                return $data_array[$i];
             }
         }
-        return array(
-            "gradepoint"=>0,
-            "gradeletter"=>"F"
-        );
+        return $data_array[count($data_array)-1];
     }
     public function getGradeLetter($programofferid,$point){
         // dd($point);
@@ -391,7 +420,7 @@ class MstExamResult extends Model
         foreach($point_letters as $x){
             array_push($point_letter_array,array("gradepoint"=>$x->gradepoint,"grade_letter"=>$x->name));
         }
-        for ($i=0;$i<5;$i++){
+        for ($i=0;$i<count($point_letter_array)-1;$i++){
             if(($point<$point_letter_array[$i]["gradepoint"]) && ($point>=$point_letter_array[$i+1]["gradepoint"])){
                 return $point_letter_array[$i+1];
             }

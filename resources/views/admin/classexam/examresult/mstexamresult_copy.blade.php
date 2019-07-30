@@ -162,7 +162,7 @@
                             <td>{{sprintf("%s %s %s",$item->firstName,$item->middleName,$item->lastName)}}</td>
                             <td>{{$item->classroll}}</td>
                             <td>{{$item->common_marks}}</td>
-                            <td>{{$item->obt_common_marks}}</td>
+                            <td>{{sprintf('%.2f',$item->obt_common_marks)}}</td>
                             <td>{{$item->gpa}}</td>
                             @if($item->student_pass_status)
                             <td>{{$item->letter}}</td>

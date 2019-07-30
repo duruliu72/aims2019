@@ -156,7 +156,7 @@
                                       @endif
                                     @endforeach
                                   </td>
-                                  <td>{{$c->std_obt_mark}}</td>
+                                  <td>{{sprintf('%.2f',$c->std_obt_mark)}}</td>
                                   <?php 
                                     if($grade_latterSpan && $mc->course_frequency>1){ ?>
                                         <td rowspan="2">{{$mc->gradeletter}}</td>
@@ -201,10 +201,14 @@
                                   <td>{{$c->coursemark}}</td>
                                   <td>
                                     @foreach($c->marks_cats as $mark_c)
-                                    {{sprintf("%.2f",$mark_c->std_obt_mark)}}
+                                      @if($mark_c->cat_pass_status==1)
+                                        <span>{{$mark_c->markcatName}}{{":"}} {{$mark_c->std_obt_mark}}</span>
+                                      @else
+                                        <span style="color:red;">{{$mark_c->markcatName}}{{":"}} {{$mark_c->std_obt_mark}}</span>
+                                      @endif
                                     @endforeach
                                   </td>
-                                  <td>{{$c->std_obt_mark}}</td>
+                                  <td>{{sprintf('%.2f',$c->std_obt_mark)}}</td>
                                   <?php 
                                     if($grade_latterSpan && $mc->course_frequency>1){ ?>
                                         <td rowspan="2">{{$mc->gradeletter}}</td>
@@ -249,10 +253,14 @@
                                   <td>{{$c->coursemark}}</td>
                                   <td>
                                     @foreach($c->marks_cats as $mark_c)
-                                    {{sprintf("%.2f",$mark_c->std_obt_mark)}}
+                                      @if($mark_c->cat_pass_status==1)
+                                        <span>{{$mark_c->markcatName}}{{":"}} {{$mark_c->std_obt_mark}}</span>
+                                      @else
+                                        <span style="color:red;">{{$mark_c->markcatName}}{{":"}} {{$mark_c->std_obt_mark}}</span>
+                                      @endif
                                     @endforeach
                                   </td>
-                                  <td>{{$c->std_obt_mark}}</td>
+                                  <td>{{sprintf('%.2f',$c->std_obt_mark)}}</td>
                                   <?php 
                                     if($grade_latterSpan && $mc->course_frequency>1){ ?>
                                         <td rowspan="2">{{$mc->gradeletter}}</td>
@@ -285,13 +293,13 @@
                           <tbody>
                             <tr>
                               <td>Total Common Marks</td>
-                              <td>{{$student->common_marks}}</td>
-                              <td>{{$student->obt_common_marks}}</td>
+                              <td>{{sprintf('%.2f',$student->common_marks)}}</td>
+                              <td>{{sprintf('%.2f',$student->obt_common_marks)}}</td>
                             </tr>
                             <tr>
                               <td>Grand Total Marks</td>
                               <td>{{$student->tot_marks}}</td>
-                              <td>{{$student->tot_obt_marks}}</td>
+                              <td>{{sprintf('%.2f',$student->tot_obt_marks)}}</td>
                             </tr>
                           </tbody>
                         </table>

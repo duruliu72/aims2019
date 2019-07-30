@@ -37,6 +37,22 @@ class CourseOffer extends Model
         $courseCode=collect($qResult)->first();
         return $courseCode;
     }
+    public function getCourseMarks($programofferid,$coursecodeid){
+        $sql="SELECT
+        course_codes.* ,
+        courses.name AS courseName,
+        co.coursemark,
+        SUM(md.cat_hld_mark) AS tot_hld_mark
+        FROM `courseoffer` AS co
+        INNER JOIN mark_distribution as md 
+        ON co.programofferid=md.programofferid  && co.coursecodeid=md.coursecodeid
+        INNER JOIN course_codes on co.coursecodeid=course_codes.id
+        INNER JOIN courses ON course_codes.courseid=courses.id
+        WHERE co.programofferid=? && co.coursecodeid=? GROUP BY co.coursecodeid";
+        $qResult=\DB::select($sql,[$programofferid,$coursecodeid]);
+        $courseCode=collect($qResult)->first();
+        return $courseCode;
+    }
     public function getCoursesOnProgramOffer($programofferid){
         $sql="SELECT 
         course_codes.id,

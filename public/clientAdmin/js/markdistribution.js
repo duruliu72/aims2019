@@ -143,16 +143,16 @@ markcheckid.addEventListener("click", function(e) {
 //         );
 //         course_subcat.forEach(element => {
 //             var inputfields = element.querySelectorAll(".inputfield");
-//             var sumfield = element.querySelector(".sumfield");
+//             var resultfield = element.querySelector(".resultfield");
 //             function cal() {
-//                 sumfield.value =
+//                 resultfield.value =
 //                     (parseInt(inputfields[0].value) *
 //                         parseInt(inputfields[1].value)) /
 //                     100;
-//                 if (sumfield.value == "NaN") {
-//                     sumfield.value = "";
+//                 if (resultfield.value == "NaN") {
+//                     resultfield.value = "";
 //                 }
-//                 var sumList = subject_mark[index].querySelectorAll(".sumfield");
+//                 var sumList = subject_mark[index].querySelectorAll(".resultfield");
 //                 var total = 0;
 //                 sumList.forEach(sum => {
 //                     if (sum.value == "") {
@@ -175,7 +175,7 @@ markcheckid.addEventListener("click", function(e) {
 //             }
 //             function reversecal() {}
 //             cal();
-//             sumfield.addEventListener("keyup", () => {
+//             resultfield.addEventListener("keyup", () => {
 //                 reversecal();
 //             });
 //             inputfields.forEach(input_field => {
@@ -193,7 +193,7 @@ $(document).ready(function() {
     function dispaly() {
         var raws = $(".subject_mark");
         raws.each(function(index, element) {
-            let coursemark = parseInt(
+            let coursemark = parseFloat(
                 $(element)
                     .find(".coursemark")
                     .text()
@@ -208,10 +208,10 @@ $(document).ready(function() {
                 var input2 = $(course_subcat)
                     .find(".input2")
                     .val();
-                var sumfield = $(course_subcat).find(".sumfield");
+                var resultfield = $(course_subcat).find(".resultfield");
                 var percentage = $(course_subcat).find(".percent");
                 var total = (input1 * input2) / 100;
-                sumfield.val(total);
+                resultfield.val(total);
                 total_mark = total_mark + total;
                 var mark_in_percentage = (total * 100) / coursemark;
                 percentage.val(mark_in_percentage);
@@ -228,29 +228,30 @@ $(document).ready(function() {
         let parent = $(this).parent();
         var input1 = parent.find(".input1").val();
         var input2 = parent.find(".input2").val();
-        var sumfield = parent.find(".sumfield");
+        var resultfield = parent.find(".resultfield");
         var percent = parent.find(".percent");
 
         var total = (input1 * input2) / 100;
         if (total == "NaN") {
             total = 0;
         }
-        sumfield.val(total);
+        resultfield.val(total);
         let tot_markObj = raw_obj.find(".tot_mark");
         let input3obj = raw_obj.find(".input3");
-        var coursemark = parseInt(raw_obj.find(".coursemark").text());
+        var coursemark = parseFloat(raw_obj.find(".coursemark").text());
         let mark_in_percentage = (total * 100) / coursemark;
         percent.val(mark_in_percentage);
         let total_mark = 0;
         for (let i = 0; i < input3obj.length; i++) {
             if ($(input3obj[i]).val() != "") {
-                total_mark = total_mark + parseInt($(input3obj[i]).val());
+                total_mark = total_mark + parseFloat($(input3obj[i]).val());
             }
         }
         if (total_mark > coursemark) {
             confirm("Mark Exceed limitation " + coursemark);
             tot_markObj.val(0);
         } else {
+            console.log(total_mark);
             tot_markObj.val(total_mark);
         }
     });

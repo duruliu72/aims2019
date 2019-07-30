@@ -53,7 +53,8 @@ class MarkDistribution extends Model
     }
     public function getMarkCategory($programofferid,$coursecodeid){
         $sql="SELECT mark_categories.*,
-        t1.categorymarks
+        t1.categorymarks,
+        t1.cat_hld_mark
         FROM `mark_categories`
                 INNER JOIN (SELECT mark_distribution.* ,
         courseoffer.coursemark,
