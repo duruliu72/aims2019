@@ -94,7 +94,7 @@ class MstExamResult extends Model
                 if($mc->mearge_course_pass_satatus==1){
                     $marks=$mc->mearge_std_obt_mark;
                 }
-                $point_letters=$this->getGradePoint($std->programofferid,$marks,$mc->mearge_cal_coursemark,$mc->mearge_course_pass_satatus);
+                $point_letters=$this->getGradePoint($std->programofferid,$marks,$mc->mearge_cal_coursemark);
                 $mc->gradepoint=$point_letters["grade_point"];
                 $mc->gradeletter=$point_letters["grade_letter"];
                 if($mc->coursetypeid==1){
@@ -138,7 +138,7 @@ class MstExamResult extends Model
             $std->status=$status;
             // dd($std);
         }
-        $students=$students->sortByDesc("obt_common_marks")->sortByDesc("gpa")->sortBy("tot_fail_sub")->sortByDesc("status");
+        $students=$students->sortByDesc("gpa")->sortBy("tot_fail_sub")->sortByDesc("status");
         // This loop for Class Position
         $position=1;
         foreach ($students as $std){
@@ -373,11 +373,11 @@ class MstExamResult extends Model
         $result=collect($qResult);
         return $result;
     }
-    public function getGradePoint($programofferid,$marks,$mearge_cal_coursemark,$ddd){
+    public function getGradePoint($programofferid,$marks,$mearge_cal_coursemark){
         $compare=($marks*100)/$mearge_cal_coursemark;
         // dd($compare,$ddd);
         $aGradePoint=new GradePoint();
-        $point_letters=$aGradePoint->getGradePointNLetter($programofferid,$mearge_cal_coursemark);
+        $point_letters=$aGradePoint->getGradePointTable($programofferid);
         $data_array=array();
         $length=count($point_letters);
         $start=1;

@@ -92,7 +92,7 @@ class MstExamResultController extends Controller
             $exam=$aExamName->getExamONID($examnameid);
             //  dd($exam);
             $aGradePoint=new GradePoint();
-            $point_letters=$aGradePoint->getGradePointNLetter($programofferid);
+            $point_letters=$aGradePoint->getGradePointNLetter($programofferid,100);
         }
         
         // sessionid,programid,groupid,mediumid,shiftid and tableName
