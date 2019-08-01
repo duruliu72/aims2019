@@ -10060,3 +10060,6 @@ span.customSelect.changed {
 .margin-bottom-zero{
     margin-bottom: 0;
 }
+.bg-white {
+    background: #ffffff;
+}

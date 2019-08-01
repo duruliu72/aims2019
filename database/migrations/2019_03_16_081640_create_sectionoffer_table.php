@@ -17,7 +17,8 @@ class CreateSectionofferTable extends Migration
             $table->increments('id');
             $table->integer('programofferid')->length(11);
             $table->integer('sectionid')->length(11);
-            $table->integer('section_student')->length(6);
+            $table->integer('section_std_num')->length(6);
+            $table->integer('section_teacher')->length(6)->nullable();
             $table->integer('status')->length(5)->default(0);
             $table->timestamps();
         });

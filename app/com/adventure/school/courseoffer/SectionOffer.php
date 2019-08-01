@@ -7,7 +7,7 @@ use App\com\adventure\school\program\Session;
 class SectionOffer extends Model
 {
     protected $table='sectionoffer';
-    protected $fillable = ['programofferid','sectionid','section_student','status'];
+    protected $fillable = ['programofferid','sectionid','section_std_num','section_teacher','status'];
 
     public function isAssignSectionToProgramOffer($programofferid){
         $sql="SELECT * FROM `sectionoffer` WHERE programofferid=?";

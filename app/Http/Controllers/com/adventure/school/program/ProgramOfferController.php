@@ -6,12 +6,14 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\com\adventure\school\basic\Institute;
 use App\com\adventure\school\program\ProgramOffer;
+use App\com\adventure\school\courseoffer\SectionOffer;
 use App\com\adventure\school\program\Session;
 use App\com\adventure\school\program\Program;
 use App\com\adventure\school\program\Group;
 use App\com\adventure\school\program\Medium;
 use App\com\adventure\school\program\Shift;
 use App\com\adventure\school\employee\Employee;
+use App\com\adventure\school\program\Section;
 use App\com\adventure\school\menu\Menu;
 
 class ProgramOfferController extends Controller
@@ -56,6 +58,7 @@ class ProgramOfferController extends Controller
         $groupList=Group::getGroupsOnProgram();
         $aEmployee=new Employee();
         $employeeList=$aEmployee->getEmployees();
+        $sectionList=Section::all();
         $dataList=[
             'institute'=>Institute::getInstituteName(),
             'sidebarMenu'=>$sidebarMenu,
@@ -65,8 +68,9 @@ class ProgramOfferController extends Controller
             'shiftList'=>$shiftList,
             'groupList'=>$groupList,
             'employeeList'=>$employeeList,
+            'sectionList'=>$sectionList
         ];
-        return view('admin.programsettings.programoffer.create',$dataList);
+        return view('admin.programsettings.programoffer.create_copy',$dataList);
     }
     public function store(Request $request){
         
@@ -87,7 +91,25 @@ class ProgramOfferController extends Controller
         $cordinator=$request->cordinator;
         $seat=$request->seat;
         $number_of_courses=$request->number_of_courses;
-     	// Check Here Is programoffer is Created
+        // For section table
+        $sectionidList=$request->sectionid;
+        $section_nameList=$request->section_name;
+        $section_student_numberList=$request->section_student_number;
+        $section_teacher_List=$request->section_teacher;
+        $checkboxList=$request->checkbox;
+        if($checkboxList==null){
+            $msg="Select Section";
+            return redirect()->back()->with('msg',$msg)->withInput($request->input());
+        }
+        // check Checked section student number field 
+        foreach($checkboxList as $key=>$x){
+            if($section_student_numberList[$key]==null){
+                $msg=$section_nameList[$key]." Number of Student is Empty";
+                return redirect()->back()->with('msg',$msg)->withInput($request->input());
+            }
+        }
+        // die("Die here");
+     	// Check Here. Is programoffer is Created
      	$aProgramOffer=new ProgramOffer();
      	$hasSame=$aProgramOffer->checkValue($sessionid,$programid,$groupid,$mediumid,$shiftid);
      	if($hasSame){
@@ -104,7 +126,28 @@ class ProgramOfferController extends Controller
         }
         $aProgramOffer->seat=$seat;
         $aProgramOffer->number_of_courses=$number_of_courses;
-     	$status=$aProgramOffer->save();
+        $status=\DB::transaction(function () use($aProgramOffer,$sectionidList,$section_nameList,$section_student_numberList,$section_teacher_List,$checkboxList){
+            try {
+                $aProgramOffer->save();
+                $lastOne=\DB::table('programoffers')->orderBy('id', 'desc')->first();
+                foreach($checkboxList as $key=>$x){
+                    if($section_student_numberList[$key]!=null){
+                        $aSectionOffer=new SectionOffer();
+                        $aSectionOffer->programofferid=$lastOne->id;
+                        $aSectionOffer->sectionid=$sectionidList[$key];
+                        $aSectionOffer->section_std_num=$section_student_numberList[$key];
+                        if($section_teacher_List[$key]!=null){
+                            $aSectionOffer->section_teacher=$section_teacher_List[$key];
+                        }
+                        $status=$aSectionOffer->save();
+                    }
+                }
+                return true;
+            }catch(\Exception $e){
+                    \DB::rollback();
+                    return false;
+            }
+        });
      	if($status){
      		$msg="Program Offer Created Successfully";
 		  }else{

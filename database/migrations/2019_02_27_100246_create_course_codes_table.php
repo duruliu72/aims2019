@@ -17,6 +17,7 @@ class CreateCourseCodesTable extends Migration
             $table->increments('id');
             $table->string('name',100);
             $table->integer('courseid')->length(11);
+            $table->integer('programlevelid')->length(11);
             $table->integer('status')->length(5)->default(0);
             $table->timestamps();
         });

@@ -29,7 +29,18 @@ class MstExamResult extends Model
             $gpa=0.0;
             $letter="F";
             $meargeCourses=$this->getMearge_Courses($std->programofferid,$std->examnameid,$std->studentid);
+            // dd($meargeCourses);
             foreach($meargeCourses as $mc){
+                $mg_courses=$this->getMGMarkCategories($std->programofferid,$std->examnameid,$std->studentid,$mc->meargeid);
+                // dd($mg_courses);
+                foreach($mg_courses as $mg_course){
+                    if($mg_course->mg_cat_pass_status==0){
+                        $mc->mearge_course_pass_satatus=0;
+                        if($mc->coursetypeid==1){
+                            $student_pass_status=false;
+                        }
+                    }
+                }
                 $courses=$this->getCourses($std->programofferid,$std->examnameid,$std->studentid,$mc->meargeid);
                 foreach($courses as $course){
                     $group_marks_cats=$this->getGroupMarkCategories($std->programofferid,$std->examnameid,$std->studentid,$course->coursecodeid);
@@ -38,14 +49,15 @@ class MstExamResult extends Model
                             $course->course_pass_status=0;
                         }
                     }
-                    foreach($group_marks_cats as $g_cat){
-                        if($g_cat->group_cat_pass_status==0){
-                            $mc->mearge_course_pass_satatus=0;
-                            if($course->coursetypeid==1){
-                                $student_pass_status=false;
-                            }
-                        }
-                     }
+                    // check mearge pass stattus after mearge course
+                    // foreach($group_marks_cats as $g_cat){
+                    //     if($g_cat->group_cat_pass_status==0){
+                    //         $mc->mearge_course_pass_satatus=0;
+                    //         if($course->coursetypeid==1){
+                    //             $student_pass_status=false;
+                    //         }
+                    //     }
+                    //  }
                     // just add to course markcats to margecourse
                     $marks_cats=$this->getMarkCategories($std->programofferid,$std->examnameid,$std->studentid,$course->coursecodeid);
                     if($course->coursetypeid==1 && $course->meargeid==$mc->meargeid){
@@ -108,7 +120,6 @@ class MstExamResult extends Model
             }
             // dd($meargeCourses);
             $point=$tot_common_mearge_point/$merage_pass_sub;
-            // dd($point);
             $gl=$this->getGradeLetter($std->programofferid,$point);
             // dd($gl);
             $status=1;
@@ -250,7 +261,50 @@ class MstExamResult extends Model
         $qResult=\DB::select($sql,[$programofferid,$examnameid,$studentid,$programofferid]);
         $result=collect($qResult);
         return $result;
-    } 
+    }
+    public function getMGMarkCategories($programofferid,$examnameid,$studentid,$meargeid){
+        $sql="SELECT
+        programofferid,
+        meargeid,
+        mark_group_id,
+        markcatName,
+        coursemark,
+        mg_mark_in_percentage,
+        mg_cal_coursemark,
+        mg_cat_hld_mark,
+        mg_std_input_mark,
+        mg_std_obt_mark,
+        mg_pass_mark,
+        mg_cat_pass_status
+        FROM(SELECT
+                mxm.programofferid,
+                mxm.coursecodeid,
+                courseoffer.meargeid,
+                md.mark_group_id,
+                md.markcategoryid,
+                mark_categories.name AS markcatName,
+                courseoffer.coursemark,
+                sum(md.mark_in_percentage) AS mg_mark_in_percentage,
+                SUM((courseoffer.coursemark* md.mark_in_percentage)/100) AS mg_cal_coursemark,
+                SUM(md.cat_hld_mark) AS mg_cat_hld_mark,
+                SUM(mxm.marks) AS mg_std_input_mark,
+                SUM(((courseoffer.coursemark* md.mark_in_percentage)/100)*mxm.marks/md.cat_hld_mark) as mg_std_obt_mark,
+                SUM((((courseoffer.coursemark* md.mark_in_percentage)/100)*33)/100) AS mg_pass_mark,
+                 CASE
+                 WHEN SUM((((courseoffer.coursemark* md.mark_in_percentage)/100)*mxm.marks/md.cat_hld_mark))>SUM((((courseoffer.coursemark* md.mark_in_percentage)/100)*33)/100) THEN 1
+                 else 0
+                end as mg_cat_pass_status
+                FROM mst_exam_marks AS mxm
+                INNER JOIN courseoffer ON mxm.programofferid=courseoffer.programofferid && mxm.coursecodeid=courseoffer.coursecodeid
+                INNER JOIN mark_distribution as md on mxm.programofferid=md.programofferid && mxm.coursecodeid=md.coursecodeid && mxm.markcategoryid=md.markcategoryid
+                INNER JOIN mark_categories on md.markcategoryid=mark_categories.id
+                WHERE mxm.programofferid=? && mxm.examnameid=? && mxm.studentid=?
+                GROUP BY courseoffer.meargeid,md.mark_group_id) AS mg_courses
+                WHERE meargeid=?";
+        $qResult=\DB::select($sql,[$programofferid,$examnameid,$studentid,$meargeid]);
+        $result=collect($qResult);
+        return $result;
+    }
     public function getCourses($programofferid,$examnameid,$studentid,$meargeid){
         $sql="SELECT table1.programofferid,
         table1.sectionid,

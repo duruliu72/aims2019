@@ -7,12 +7,14 @@ use Illuminate\Database\Eloquent\Model;
 class CourseCode extends Model
 {
     protected $table='course_codes';
-   	protected $fillable = ['name','courseid','status'];
+   	protected $fillable = ['name','courseid','programlevelid','status'];
    	public function getAllCourse(){
    		$sql="SELECT course_codes.*,
-		courses.name AS courseName
-		FROM `course_codes`
-		INNER JOIN courses ON course_codes.courseid=courses.id";
+		   courses.name AS courseName,
+		   programlevels.name AS programlevel
+		   FROM `course_codes`
+		   INNER JOIN courses ON course_codes.courseid=courses.id
+		   INNER JOIN programlevels on course_codes.programlevelid=programlevels.id";
    		$result=\DB::select($sql);
 		return $result;
 	}

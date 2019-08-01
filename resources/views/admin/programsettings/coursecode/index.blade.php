@@ -20,7 +20,7 @@
           @if($pList[2]->id==2)
             <li><a href="{{URL::to('/coursecode')}}/{{'create'}}">New</a></li>
           @endif
-          <li>Coure Code</li>
+          <li>Add Subject</li>
         </ol>
       </div>
     </div>
