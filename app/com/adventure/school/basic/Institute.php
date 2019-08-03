@@ -8,7 +8,7 @@ class Institute extends Model
 {
     protected $table='institutes';
    	protected $fillable = [
-   		'name','institutetypeid','categoryid','subcategoryid','addressid',
+   		'name','ins_mobile_no','institutetypeid','categoryid','subcategoryid','addressid',
    		'wordno','cluster','ein','institutelogo','status'
    	];
    	public function getAllInstitute(){

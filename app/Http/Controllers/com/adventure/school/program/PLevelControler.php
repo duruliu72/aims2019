@@ -82,9 +82,6 @@ class PLevelControler extends Controller
         return view('admin.programsettings.level.edit',$dataList); 
     }
     public function update(Request $request, $id){
-    	$validatedData = $request->validate([
-        'name' => 'required|unique:programlevels|max:255',
-    	]);
     	$name=$request->name;
      	$aProgramLevel=PLevel::findOrfail($id);
      	$aProgramLevel->name=$name;

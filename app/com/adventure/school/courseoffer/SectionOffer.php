@@ -41,11 +41,14 @@ class SectionOffer extends Model
         $sql="select sections.*,
         table1.programofferid,
         IFNULL(table1.sectionid,0) AS sectionid,
-        table1.section_student FROM sections
+        table1.section_std_num,
+        IFNULL(table1.section_teacher,0) AS section_teacher
+        FROM sections
         LEFT JOIN (SELECT sections.*,
                 sectionoffer.programofferid,
                 IFNULL(sectionoffer.sectionid,0) AS sectionid,
-                sectionoffer.section_student
+                sectionoffer.section_std_num,
+                sectionoffer.section_teacher
                 FROM `sections`
                 LEFT JOIN sectionoffer ON sectionoffer.sectionid=sections.id
                 WHERE sectionoffer.programofferid =? OR sectionoffer.programofferid IS NULL ORDER BY sections.id) AS table1
@@ -72,5 +75,14 @@ class SectionOffer extends Model
             return true;
         }
         return false;
-    }    
+    }
+    public function checkSection($programofferid,$sectionid){
+        $sql="SELECT * FROM `sectionoffer` WHERE programofferid=? && sectionid=?";
+        $qResult=\DB::select($sql,[$programofferid,$sectionid]);
+        $result=collect($qResult);
+        if($result->count()>0){
+            return true;
+        }
+        return false;
+    }   
 }

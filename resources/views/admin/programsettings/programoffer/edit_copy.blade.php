@@ -29,7 +29,8 @@
           <div class="col-lg-12">
             <section class="panel">
               <div class="panel-body">
-                <form action="{{URL::to('programoffer')}}" method="POST">
+                <form action="{{URL::to('programoffer')}}/{{$bean->id}}" method="POST">
+                    @method('PUT')
                   {{csrf_field()}}
                   <div class="form-group row">
                     <label class="col-sm-2 control-label" for="sessionid">Session</label>
@@ -37,85 +38,94 @@
                       <select class="form-control" name="sessionid" id="sessionid">
                          <option value="">SELECT</option>
                          @foreach ($sessionList as $x)
-                           <option value="{{$x->id}}">{{$x->name}}</option>
+                            @if($x->id==$bean->sessionid)
+                               <option selected value="{{$x->id}}">{{$x->name}}</option>
+                            @else
+                              <option value="{{$x->id}}">{{$x->name}}</option>
+                            @endif
                          @endforeach
                       </select>
                     </div>
-                    <label class="col-sm-2 control-label" for="programlevelid">Class Label</label>
-                    <div class="col-sm-4">
-                      <select onchange="getChange(this,'programlevel')" class="form-control" name="programlevelid" id="programlevelid">
-                          <option  value="">SELECT</option>
-                         @foreach ($pLevelList as $x)
-                           <option value="{{$x->id}}">{{$x->name}}</option>
-                         @endforeach
-                      </select>
-                    </div>                         
-                  </div>
-                  <div class="form-group row">
                     <label class="col-sm-2 control-label" for="programid">Program</label>
                     <div class="col-sm-4">
                       <select onchange="getChange(this,'program')" class="form-control" name="programid" id="programid">
                           <option  value="">SELECT</option>
                          @foreach ($programList as $x)
-                           <option value="{{$x->id}}">{{$x->name}}</option>
+                            @if($x->id==$bean->programid)
+                               <option selected value="{{$x->id}}">{{$x->name}}</option>
+                            @else
+                              <option value="{{$x->id}}">{{$x->name}}</option>
+                            @endif
                          @endforeach
                       </select>
-                    </div>
+                    </div>                         
+                  </div>
+                  <div class="form-group row">
                     <label class="col-sm-2 control-label" for="mediumid">Medium</label>
                     <div class="col-sm-4">
                       <select class="form-control" name="mediumid" id="mediumid">
                          <option value="">SELECT</option>
                          @foreach ($mediumList as $x)
-                           <option value="{{$x->id}}">{{$x->name}}</option>
+                            @if($x->id==$bean->mediumid)
+                                <option selected value="{{$x->id}}">{{$x->name}}</option>
+                            @else
+                                <option value="{{$x->id}}">{{$x->name}}</option>
+                            @endif
                          @endforeach
                       </select>
-                    </div>                        
-                  </div>
-                  <div class="form-group row">                  
+                    </div>
                     <label class="col-sm-2 control-label" for="shiftid">Shift</label>
                     <div class="col-sm-4">
                       <select class="form-control" name="shiftid" id="shiftid">
                          <option value="">SELECT</option>
                          @foreach ($shiftList as $x)
-                           <option value="{{$x->id}}">{{$x->name}}</option>
-                         @endforeach
-                      </select>
-                    </div>
-                    <label class="col-sm-2 control-label" for="groupid">Group</label>
-                    <div class="col-sm-4">
-                      <select class="form-control" name="groupid" id="groupid">
-                         <option value="">SELECT</option>
-                         @foreach ($groupList as $x)
-                           <option value="{{$x->id}}">{{$x->name}}</option>
+                            @if($x->id==$bean->shiftid)
+                                <option selected value="{{$x->id}}">{{$x->name}}</option>
+                            @else
+                                <option value="{{$x->id}}">{{$x->name}}</option>
+                            @endif
                          @endforeach
                       </select>
                     </div>                        
                   </div>
                   <div class="form-group row">
+                    <label class="col-sm-2 control-label" for="groupid">Group</label>
+                    <div class="col-sm-4">
+                      <select class="form-control" name="groupid" id="groupid">
+                         <option value="">SELECT</option>
+                         @foreach ($groupList as $x)
+                            @if($x->id==$bean->groupid)
+                                <option selected value="{{$x->id}}">{{$x->name}}</option>
+                            @else
+                                <option value="{{$x->id}}">{{$x->name}}</option>
+                            @endif
+                         @endforeach
+                      </select>
+                    </div>
                     <label class="col-sm-2 control-label" for="cordinator">Coordinator</label>
                     <div class="col-sm-4">
                       <select class="form-control" name="cordinator" id="cordinator">
                          <option value="">SELECT</option>
                          @foreach ($employeeList as $x)
-                           <option value="{{$x->id}}">{{$x->name}}</option>
+                            @if($x->id==$bean->cordinator)
+                                <option selected value="{{$x->id}}">{{$x->name}}</option>
+                            @else
+                                <option value="{{$x->id}}">{{$x->name}}</option>
+                            @endif
                          @endforeach
                       </select>
-                    </div>
-                    <label class="col-sm-2 control-label" for="number_of_courses">Number of courses</label>
-                    <div class="col-sm-4">
-                      <input type="text" class="form-control" name="number_of_courses" id="number_of_courses">
-                    </div>                               
+                    </div>                                
                   </div>
-                  <!-- <div class="form-group row">
+                  <div class="form-group row">
                     <label class="col-sm-2 control-label" for="seat">Seat</label>
                     <div class="col-sm-4">
-                      <input type="text" class="form-control" name="seat" id="seat">
+                        <input type="text" class="form-control" name="seat" id="seat" value="{{$bean->seat}}">
                     </div>
                     <label class="col-sm-2 control-label" for="number_of_courses">Number of courses</label>
                     <div class="col-sm-4">
-                      <input type="text" class="form-control" name="number_of_courses" id="number_of_courses">
+                    <input type="text" class="form-control" name="number_of_courses" id="number_of_courses" value="{{$bean->number_of_courses}}">
                     </div>
-                  </div> -->
+                  </div>
                   <div class="row">
                       <div class="col-md-12">
                         <table class="table table-striped table-bordered table-hover customtable sectionoffer" id="sectionoffer">
@@ -133,23 +143,31 @@
                                 <tr>
                                 <td>{{$x->id}}<input type="hidden" name="sectionid[{{$x->id}}]" value="{{$x->id}}" /></td>
                                 <td>{{$x->name}} <input type="hidden" name="section_name[{{$x->id}}]" value="{{$x->name}}" /></td>
-                                <td class="no-padding"><input class="form-control" type="text" name="section_student_number[{{$x->id}}]" value="{{ old('section_student.'.$x->id) }}" /></td>
+                                <td class="no-padding"><input class="form-control" type="text" name="section_student_number[{{$x->id}}]" value="{{$x->section_std_num}}" /></td>
                                 <td class="no-padding">
                                     <select class="form-control" name="section_teacher[{{$x->id}}]">
                                         <option value="">SELECT</option>
-                                        @foreach ($employeeList as $x)
-                                        <option value="{{$x->id}}">{{$x->name}}</option>
+                                        @foreach ($employeeList as $emp)
+                                            @if($emp->id==$bean->section_teacher)
+                                                <option selected value="{{$emp->id}}">{{$emp->name}}</option>
+                                            @else
+                                                <option value="{{$emp->id}}">{{$emp->name}}</option>
+                                            @endif
                                         @endforeach
                                     </select>
                                 </td>
-                                <td><input class="markcheck" type="checkbox" name="checkbox[{{$x->id}}]" <?php echo (old('checkbox.'.$x->id)=='on')? 'checked':''; ?> ></td>
+                                @if($x->sectionid!=0)
+                                <td><input class="markcheck" checked type="checkbox" name="checkbox[{{$x->id}}]"></td>
+                                @else
+                                <td><input class="markcheck"  type="checkbox" name="checkbox[{{$x->id}}]"></td>
+                                @endif
                                 </tr>
                                 @endforeach
                             </tbody>
                         </table>
                       </div>
                   </div>
-                  <button type="submit" class="btn btn-default">Save</button>
+                  <button type="submit" class="btn btn-default">Update</button>
                 </form>
               </div>
             </section>

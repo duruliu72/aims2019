@@ -31,10 +31,28 @@
               <div class="panel-body">
                 <form action="{{URL::to('institute')}}" method="POST" enctype="multipart/form-data">
                   {{csrf_field()}}
+                  <div class="form-group row">
+                    <label class="col-sm-2 control-label">Class Level</label>
+                    <div class="col-sm-10">
+                       @foreach($pLevel as $pl)
+                        <label style="margin-right:10px;" for="programlevelid[{{$pl->id}}]"><input class="form-check-input" type="checkbox" name="programlevelid[{{$pl->id}}]" value="{{$pl->id}}" id="programlevelid[{{$pl->id}}]">{{$pl->name}}</label>
+                       @endforeach
+                    </div>                  
+                  </div>
                    <div class="form-group row">
-                    <label class="col-sm-2 control-label" for="name">Name</label>
+                    <label class="col-sm-2 control-label" for="name">Institute Name</label>
                     <div class="col-sm-4">
                       <input type="text" class="form-control" name="name" id="name">
+                    </div> 
+                     <label class="col-sm-2 control-label" for="ins_mobile_no">Mobile No</label>
+                    <div class="col-sm-4">
+                      <input type="text" class="form-control" name="ins_mobile_no" id="ins_mobile_no">
+                    </div>                    
+                  </div>
+                  <div class="form-group row">
+                    <label class="col-sm-2 control-label" for="contact_person">Contact Person</label>
+                    <div class="col-sm-4">
+                      <input type="text" class="form-control" name="contact_person" id="contact_person">
                     </div> 
                      <label class="col-sm-2 control-label" for="eiin">EIIN</label>
                     <div class="col-sm-4">

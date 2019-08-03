@@ -107,11 +107,11 @@
                       <select class="form-control" name="cordinator" id="cordinator">
                          <option value="">SELECT</option>
                          @foreach ($employeeList as $x)
-                         @if($x->id==$bean->cordinator)
-                            <option selected value="{{$x->id}}">{{$x->name}}</option>
-                          @else
-                            <option value="{{$x->id}}">{{$x->name}}</option>
-                          @endif
+                            @if($x->id==$bean->cordinator)
+                              <option selected value="{{$x->id}}">{{$x->name}}</option>
+                            @else
+                              <option value="{{$x->id}}">{{$x->name}}</option>
+                            @endif
                          @endforeach
                       </select>
                     </div>                        

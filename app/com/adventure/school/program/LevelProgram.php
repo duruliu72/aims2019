@@ -26,6 +26,17 @@ class LevelProgram extends Model
 		$result=\DB::select($sql,[$programid]);
 		return $result;
 	}
+	public function getProgramOnLevel($programlevelid){
+		$sql="SELECT 
+		programs.* 
+		FROM `level_programs` AS t1
+		INNER JOIN programlevels ON t1.programlevelid=programlevels.id
+		INNER JOIN programs ON t1.programid=programs.id
+		WHERE programlevelid=?";
+		$qResult=\DB::select($sql,[$programlevelid]);
+		$result=collect($qResult);
+		return $result;
+	}
 	public function checkValue($programid){
 		$sql="SELECT * FROM `level_programs`
 		WHERE programid=?";

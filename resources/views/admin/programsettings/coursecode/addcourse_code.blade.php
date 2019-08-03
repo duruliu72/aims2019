@@ -77,21 +77,12 @@
                     {{csrf_field()}}
                     <div class="row">
                         <div class="form-group col-md-4">
-                            <label class=" control-label" for="name">Subject Code</label>
+                            <label class=" control-label" for="name">Subject name</label>
                             <input type="text" class="form-control" name="name" value="{{$bean->name}}" id="name">
                         </div>
                         <div class="form-group col-md-4">
-                            <label class="control-label" for="courseid">Course</label>
-                            <select class="form-control" name="courseid" id="courseid">
-                                <option value="">SELECT</option>
-                                @foreach($courseList as $x)
-                                    @if($x->id==$bean->courseid)
-                                    <option selected value="{{$x->id}}">{{$x->name}}</option>
-                                    @else
-                                    <option value="{{$x->id}}">{{$x->name}}</option>
-                                    @endif
-                                @endforeach
-                            </select>
+                            <label class=" control-label" for="name">Subject Code</label>
+                            <input type="text" class="form-control" name="name" value="{{$bean->name}}" id="name">
                         </div>
                         <div class="form-group col-md-4">
                             <label class="control-label" for="programlevelid">Class/Program Leve</label>

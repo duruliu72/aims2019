@@ -26,6 +26,14 @@
                 <form action="{{URL::to('institute')}}/{{$bean->id}}" method="POST" enctype="multipart/form-data">
                   @method('PUT')
                   {{csrf_field()}}
+                  <div class="form-group row">
+                    <label class="col-sm-2 control-label">Class Level</label>
+                    <div class="col-sm-10">
+                       @foreach($pLevel as $pl)
+                        <label style="margin-right:10px;" for="programlevelid[{{$pl->id}}]"><input class="form-check-input" type="checkbox" value="{{$pl->id}}" id="programlevelid[{{$pl->id}}]">{{$pl->name}}</label>
+                       @endforeach
+                    </div>                  
+                  </div>
                    <div class="form-group row">
                     <label class="col-sm-2 control-label" for="name">Name</label>
                     <div class="col-sm-4">

@@ -42,6 +42,9 @@ class MarkDistributionController extends Controller
         $markCategoryList=null;
         $markdistributionList=null;
         $selectedlist=null;
+        // Have to check Programoffer
+        
+        // Have to check CourseOffer
         $programofferid=$aProgramOffer->getProgramOfferId(0,$programid,$groupid,$mediumid,$shiftid);
         $markCategoryList=MarkCategory::all();
       
