@@ -1,7 +1,7 @@
 <?php
 
 namespace App\com\adventure\school\program;
-
+use App\com\adventure\school\program\Program;
 use Illuminate\Database\Eloquent\Model;
 
 class ProgramGroup extends Model
@@ -35,5 +35,31 @@ class ProgramGroup extends Model
 			return true;
 		}
 		return false;
+	}
+	// Add f
+	public function getGroupsOnProgramid($programid,$join){
+		$sql="SELECT groups.*,
+		IFNULL(pg_table.groupid,0) AS groupid,
+		pg_table.programid,
+		pg_table.name AS programName
+		FROM groups
+		".$join." JOIN
+		(select pg.*,
+		 programs.name
+		 FROM program_groups as pg
+		INNER JOIN programs ON pg.programid=programs.id
+		WHERE pg.programid=?) AS pg_table
+		ON groups.id=pg_table.groupid";
+		$qResult=\DB::select($sql,[$programid]);
+		$result=collect($qResult);
+		return $result;
+	}
+	public function displayProgram(){
+		$aProgram=new Program();
+		$programList=$aProgram->getPrograms();
+		foreach($programList as $p){
+			$p->groupList=$this->getGroupsOnProgramid($p->id,"INNER");
+		}
+		return $programList;
 	}
 }

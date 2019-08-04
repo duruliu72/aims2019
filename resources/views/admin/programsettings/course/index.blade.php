@@ -32,7 +32,9 @@
             <thead>
               <tr>
                 <th>SL NO</th>
-                <th>Name</th>
+                <th>Course Name</th>
+                <th>Course Code</th>
+                <th>Program Lavel</th>
                 @if($pList[3]->id==3)
                 <th width="10px">Edit</th>
                 @endif
@@ -46,7 +48,9 @@
               @foreach($result as $x)
               <tr>
                 <td>{{++$id}}</td>
-                <td>{{$x->name}}</td>
+                <td>{{$x->courseName}}</td>
+                <td>{{$x->courseCode}}</td>
+                <td>{{$x->programlavelid}}</td>
                 @if($pList[3]->id==3)
                 <td> 
                   <a href="{{URL::to('/course')}}/{{$x->id}}/{{'edit'}}" class="tooltip-success" data-rel="tooltip" title="Edit">
@@ -70,8 +74,9 @@
             </tbody>
             <tfoot>
               <tr>
-                <th>SL NO</th>
-                <th>Name</th>
+                <th>Course Name</th>
+                <th>Course Code</th>
+                <th>Program Lavel</th>
                 @if($pList[3]->id==3)
                 <th width="10px">Edit</th>
                 @endif

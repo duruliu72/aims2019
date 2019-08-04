@@ -42,8 +42,12 @@ Route::resource('educationdegree', 'com\adventure\school\basic\EducationDegreeCo
 Route::resource('employees', 'com\adventure\school\employee\EmployeeController');
 // Program Settings
 Route::resource('session', 'com\adventure\school\program\SessionControler');
-Route::resource('plevel', 'com\adventure\school\program\PLevelControler');
-Route::resource('program', 'com\adventure\school\program\ProgramControler');
+Route::resource('dddddddd', 'com\adventure\school\program\PLabelControler');
+Route::match(['get','post'],'plevel', 'com\adventure\school\program\PLabelControler@createLabel');
+Route::match(['get','post'],'plevel/{id}', 'com\adventure\school\program\PLabelControler@createLabel');
+Route::resource('ddddd', 'com\adventure\school\program\ProgramControler');
+Route::match(['get','post'],'program', 'com\adventure\school\program\ProgramControler@createProgram');
+Route::match(['get','post'],'program/{id}', 'com\adventure\school\program\ProgramControler@createProgram');
 Route::resource('levelprogram', 'com\adventure\school\program\LevelProgramController');
 Route::resource('group', 'com\adventure\school\program\GroupControler');
 Route::resource('programgroup', 'com\adventure\school\program\ProgramGroupController');
@@ -51,7 +55,9 @@ Route::resource('medium', 'com\adventure\school\program\MediumControler');
 Route::resource('shift', 'com\adventure\school\program\ShiftControler');
 Route::get('programoffer/getValue', 'com\adventure\school\program\ProgramOfferController@getValue');
 Route::resource('programoffer', 'com\adventure\school\program\ProgramOfferController');
-Route::resource('course', 'com\adventure\school\program\CourseController');
+Route::resource('dddd', 'com\adventure\school\program\CourseController');
+Route::match(['get','post'],'course', 'com\adventure\school\program\CourseController@createCourse');
+Route::match(['get','post'],'course/{id}', 'com\adventure\school\program\CourseController@createCourse');
 Route::resource('dd', 'com\adventure\school\program\CourseCodeController');
 Route::match(['get','post'],'coursecode', 'com\adventure\school\program\CourseCodeController@creteCourseCode');
 Route::match(['get','post'],'coursecode/{id}', 'com\adventure\school\program\CourseCodeController@creteCourseCode');

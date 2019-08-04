@@ -338,8 +338,8 @@ class ProgramOfferController extends Controller
         }
     }
     private function getProgramOnProgramLavel($programlevelid){
-        $aLevelProgram=new LevelProgram();
-        $result=$aLevelProgram->getProgramOnLevel($programlevelid);
+        $aProgram=new Program();
+        $result=$aProgram->getProgramOnLabelid($programlevelid);
         $output="<option value=''>SELECT</option>";
         foreach($result as $x){
            $output.="<option value='$x->id'>$x->name</option>";

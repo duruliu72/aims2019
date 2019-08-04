@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Program extends Model
 {
      protected  $table='programs';
-     protected $fillable = ['name','programsign','status'];
+     protected $fillable = ['name','programsign','programlabelid','status'];
      public static function getProgramsOnLevel(){
           $sql="SELECT 
           programs.id,
@@ -20,6 +20,24 @@ class Program extends Model
           GROUP BY t1.programid";
           $qresul=\DB::select($sql);
           $result=collect($qresul);
+          return $result;
+     }
+     public function getProgramOnLabelid($programlabelid){
+          $sql="SELECT * FROM `programs`
+          WHERE programlabelid=?";
+          $qresul=\DB::select($sql,[$programlabelid]);
+          $result=collect($qresul);
+          return $result;
+     }
+     public function getPrograms(){
+          $sql="SELECT 
+          programs.*,
+          pl.name AS programLabel
+          FROM `programs`
+          INNER JOIN programlevels AS pl ON programs.programlabelid=pl.id
+          ORDER BY programlabelid";
+          $qResult=\DB::select($sql);
+          $result=collect($qResult);
           return $result;
      }
 }
