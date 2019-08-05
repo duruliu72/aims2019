@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateLevelProgramsTable extends Migration
+class CreateInstituteLabelsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,12 @@ class CreateLevelProgramsTable extends Migration
      */
     public function up()
     {
-        Schema::create('level_programs', function (Blueprint $table) {
+        Schema::create('institute_labels', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('programlevelid')->length(11);
-            $table->integer('programid')->length(11);
+            $table->integer('instituteid')->length(4);
+            $table->integer('programlabelid')->length(4);
             $table->integer('status')->length(5)->default(0);
             $table->timestamps();
-            $table->unique('programid');
         });
     }
 
@@ -30,6 +29,6 @@ class CreateLevelProgramsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('level_programs');
+        Schema::dropIfExists('institute_labels');
     }
 }

@@ -5,7 +5,9 @@ namespace App\Http\Controllers\com\adventure\school\program;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\com\adventure\school\basic\Institute;
-use App\com\adventure\school\program\PLevel;
+use App\com\adventure\school\program\PLabel;
+use App\com\adventure\school\program\Group;
+use App\com\adventure\school\program\LabelGroup;
 use App\com\adventure\school\menu\Menu;
 class PLabelControler extends Controller
 {
@@ -16,41 +18,76 @@ class PLabelControler extends Controller
     public function createLabel(Request $request){
         // die("Die Here");
         $aMenu=new Menu();
-        $hasMenu=$aMenu->hasMenu('course');
+        $hasMenu=$aMenu->hasMenu('plabel');
         if($hasMenu==false){
             return redirect('error');
         }
+        $sidebarMenu=$aMenu->getSidebarMenu();
+        $pList=$aMenu->getPermissionOnMenu('plabel');
         if($request->isMethod('post')&&$request->btn_save=='btn_save'){
             $validatedData = $request->validate([
-                'courseCode' => 'required|unique:courses|max:255',
-                'programlavelid'=>'required',
+                'name' => 'name|unique:plabels|max:255',
                 ]);
-                 $courseName=$request->courseName;
-                 $courseCode=$request->courseCode;
-                 $programlavelid=$request->programlavelid;
-                 $aCourse=new PLevel();
-                 $aCourse->courseName=$courseName;
-                 $aCourse->courseCode=$courseCode;
-                 $aCourse->programlavelid=$programlavelid;
-                 $status=$aCourse->save();
+                 $name=$request->progamLabel;
+                 $groupidList=$request->groupid;
+                 $aPLabel=new PLabel();
+                 $aPLabel->name=$name;
+                 $status=\DB::transaction(function() use($aPLabel,$groupidList){
+                    try{
+                        if($groupidList!=null){
+                            $aPLabel->save();
+                            $lastPLabel=\DB::table('plabels')->orderBy('id', 'desc')->first();
+                        }else{
+                            return false;
+                        }
+                        foreach($groupidList as $groupid){
+                            $aLabelGroup=new LabelGroup();
+                            $aLabelGroup->programlabelid=$lastPLabel->id;
+                            $aLabelGroup->groupid=$groupid;
+                            $aLabelGroup->save();
+                        }
+                        return true;
+                    }catch(\Exception $e){
+                        return false;
+                    }
+                 });
                  if($status){
-                     $msg="Course Created Successfully";
+                     $msg="Class Label Created Successfully";
                   }else{
-                    $msg="Course not Created";
+                    $msg="Class Label not Created";
                 }
                 return redirect()->back()->with('msg',$msg);
         }
         if($request->isMethod('post')&&$request->btn_update=='btn_update'){
-            $validatedData = $request->validate([
-                'programlavelid'=>'required',
-            ]);
+            // $validatedData = $request->validate([
+            //     'programlavelid'=>'required',
+            // ]);
             $id=$request->id;
+            $name=$request->progamLabel;
+            $groupidList=$request->groupid;
             // dd($id);
-            $aCourse=Course::findOrfail($id);
-            $aCourse->courseName=$request->courseName;
-            $aCourse->courseCode=$request->courseCode;
-            $aCourse->programlavelid=$request->programlavelid;
-            $status=$aCourse->update();
+            $aPLabel=PLabel::findOrfail($id);
+            $aPLabel->name=$name;
+            $status=\DB::transaction(function()use($id,$aPLabel,$groupidList){
+                try{
+                    if($groupidList!=null){
+                        $aPLabel->update();
+                        \DB::table('label_groups')
+                        ->where('programlabelid', '=', $id)->delete();
+                    }
+                    foreach($groupidList as $groupid){
+                        $aLabelGroup=new LabelGroup();
+                        $aLabelGroup->programlabelid=$id;
+                        $aLabelGroup->groupid=$groupid;
+                        $aLabelGroup->save();
+                    }
+                    return true;
+                }catch(\Exception $e){
+                    \DB::rollback();
+                    return false;
+                }
+            });
+            // $status=$aPLabel->update();
             if($status){
                 $msg="Course Updated Successfully";
             }else{
@@ -58,22 +95,28 @@ class PLabelControler extends Controller
             }
             return redirect()->back()->with('msg',$msg);
         }
-        $sidebarMenu=$aMenu->getSidebarMenu();
-        $pList=$aMenu->getPermissionOnMenu('course');
-        $plavelList=PLevel::all();
+       
+        $aPLabel=new PLabel();
+        $plavelList=$aPLabel->getPLabels();
         $bean=null;
         $id=$request->id;
+        $editgroupList=null;
         if($id!=null){
             // if($pList[3]->id!=3){
             //     return redirect('error');
             // }
-            $bean=Course::findOrfail($id);
+            $obj=new LabelGroup();
+            $editgroupList=$obj->getGroupsOnLabel($id,"LEFT");
+            // dd($editgroupList);
+            $bean=PLabel::findOrfail($id);
         }
         $dataList=[
             'institute'=>Institute::getInstituteName(),
             'sidebarMenu'=>$sidebarMenu,
             'pList'=>$pList,
-            'plevelList'=>$plavelList,
+            "groupList"=>Group::all(),
+            'editgroupList'=>$editgroupList,
+            'result'=>$plavelList,
             'bean'=>$bean
         ];
     	return view('admin.programsettings.label.program_label',$dataList);

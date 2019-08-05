@@ -43,8 +43,8 @@ Route::resource('employees', 'com\adventure\school\employee\EmployeeController')
 // Program Settings
 Route::resource('session', 'com\adventure\school\program\SessionControler');
 Route::resource('dddddddd', 'com\adventure\school\program\PLabelControler');
-Route::match(['get','post'],'plevel', 'com\adventure\school\program\PLabelControler@createLabel');
-Route::match(['get','post'],'plevel/{id}', 'com\adventure\school\program\PLabelControler@createLabel');
+Route::match(['get','post'],'plabel', 'com\adventure\school\program\PLabelControler@createLabel');
+Route::match(['get','post'],'plabel/{id}', 'com\adventure\school\program\PLabelControler@createLabel');
 Route::resource('ddddd', 'com\adventure\school\program\ProgramControler');
 Route::match(['get','post'],'program', 'com\adventure\school\program\ProgramControler@createProgram');
 Route::match(['get','post'],'program/{id}', 'com\adventure\school\program\ProgramControler@createProgram');

@@ -7,12 +7,12 @@ use App\com\adventure\school\program\Session;
 class ProgramOffer extends Model
 {
     protected $table='programoffers';
-    protected $fillable = ['sessionid','programid','groupid','mediumid','shiftid','cordinator','seat','number_of_courses','status'];
+    protected $fillable = ['sessionid','programlabelid','programid','groupid','mediumid','shiftid','cordinator','seat','number_of_courses','status'];
 		public function getProgramOffer($id){
 			$sql="SELECT 
 			t1.*,
 			sessions.name AS sessionName,
-			programlevels.name AS levelName,
+            plabels.name AS programLabel,
 			programs.name AS programName,
 			groups.name AS groupName,
 			mediums.name AS mediumName,
@@ -22,9 +22,8 @@ class ProgramOffer extends Model
 			employees.last_name
 			FROM `programoffers` AS t1
 			INNER JOIN sessions ON t1.sessionid=sessions.id
+            INNER JOIN plabels ON t1.programlabelid=plabels.id
 			INNER JOIN programs ON t1.programid=programs.id
-			INNER JOIN level_programs on programs.id=level_programs.programid
-			INNER JOIN programlevels on level_programs.programlevelid=programlevels.id
 			INNER JOIN groups ON t1.groupid=groups.id
 			INNER JOIN mediums ON t1.mediumid=mediums.id
 			INNER JOIN shifts ON t1.shiftid=shifts.id
@@ -38,7 +37,7 @@ class ProgramOffer extends Model
 			$sql="SELECT 
 			t1.*,
 			sessions.name AS sessionName,
-			programlevels.name AS levelName,
+            plabels.name AS programLabel,
 			programs.name AS programName,
 			groups.name AS groupName,
 			mediums.name AS mediumName,
@@ -48,9 +47,8 @@ class ProgramOffer extends Model
 			employees.last_name
 			FROM `programoffers` AS t1
 			INNER JOIN sessions ON t1.sessionid=sessions.id
+            INNER JOIN plabels ON t1.programlabelid=plabels.id
 			INNER JOIN programs ON t1.programid=programs.id
-			INNER JOIN level_programs on programs.id=level_programs.programid
-			INNER JOIN programlevels on level_programs.programlevelid=programlevels.id
 			INNER JOIN groups ON t1.groupid=groups.id
 			INNER JOIN mediums ON t1.mediumid=mediums.id
 			INNER JOIN shifts ON t1.shiftid=shifts.id

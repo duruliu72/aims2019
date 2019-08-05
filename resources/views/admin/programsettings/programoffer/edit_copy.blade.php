@@ -46,7 +46,22 @@
                          @endforeach
                       </select>
                     </div>
-                    <label class="col-sm-2 control-label" for="programid">Program</label>
+                    <label class="col-sm-2 control-label" for="programlabelid">Class Label</label>
+                    <div class="col-sm-4">
+                      <select onchange="getChange(this,'programlabel')" class="form-control" name="programlabelid" id="programlabelid">
+                          <option  value="">SELECT</option>
+                         @foreach ($pLabelList as $x)
+                            @if($x->id==$bean->programlabelid)
+                               <option selected value="{{$x->id}}">{{$x->name}}</option>
+                            @else
+                              <option value="{{$x->id}}">{{$x->name}}</option>
+                            @endif
+                         @endforeach
+                      </select>
+                    </div>                      
+                  </div>
+                  <div class="form-group row">
+                  <label class="col-sm-2 control-label" for="programid">Program</label>
                     <div class="col-sm-4">
                       <select onchange="getChange(this,'program')" class="form-control" name="programid" id="programid">
                           <option  value="">SELECT</option>
@@ -58,9 +73,7 @@
                             @endif
                          @endforeach
                       </select>
-                    </div>                         
-                  </div>
-                  <div class="form-group row">
+                    </div>   
                     <label class="col-sm-2 control-label" for="mediumid">Medium</label>
                     <div class="col-sm-4">
                       <select class="form-control" name="mediumid" id="mediumid">
@@ -73,8 +86,10 @@
                             @endif
                          @endforeach
                       </select>
-                    </div>
-                    <label class="col-sm-2 control-label" for="shiftid">Shift</label>
+                    </div>                   
+                  </div>
+                  <div class="form-group row">
+                  <label class="col-sm-2 control-label" for="shiftid">Shift</label>
                     <div class="col-sm-4">
                       <select class="form-control" name="shiftid" id="shiftid">
                          <option value="">SELECT</option>
@@ -86,9 +101,7 @@
                             @endif
                          @endforeach
                       </select>
-                    </div>                        
-                  </div>
-                  <div class="form-group row">
+                    </div>     
                     <label class="col-sm-2 control-label" for="groupid">Group</label>
                     <div class="col-sm-4">
                       <select class="form-control" name="groupid" id="groupid">
@@ -101,8 +114,10 @@
                             @endif
                          @endforeach
                       </select>
-                    </div>
-                    <label class="col-sm-2 control-label" for="cordinator">Coordinator</label>
+                    </div>                              
+                  </div>
+                  <div class="form-group row">
+                  <label class="col-sm-2 control-label" for="cordinator">Coordinator</label>
                     <div class="col-sm-4">
                       <select class="form-control" name="cordinator" id="cordinator">
                          <option value="">SELECT</option>
@@ -114,12 +129,6 @@
                             @endif
                          @endforeach
                       </select>
-                    </div>                                
-                  </div>
-                  <div class="form-group row">
-                    <label class="col-sm-2 control-label" for="seat">Seat</label>
-                    <div class="col-sm-4">
-                        <input type="text" class="form-control" name="seat" id="seat" value="{{$bean->seat}}">
                     </div>
                     <label class="col-sm-2 control-label" for="number_of_courses">Number of courses</label>
                     <div class="col-sm-4">

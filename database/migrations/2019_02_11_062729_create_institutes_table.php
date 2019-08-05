@@ -17,6 +17,7 @@ class CreateInstitutesTable extends Migration
             $table->increments('id');
             $table->string('name',255);
             $table->string('ins_mobile_no',50)->nullable();
+            $table->string('contact_person',50)->nullable();
             $table->integer('institutetypeid')->length(11)->nullable();
             $table->integer('categoryid')->length(11)->nullable();
             $table->integer('subcategoryid')->length(11)->nullable();

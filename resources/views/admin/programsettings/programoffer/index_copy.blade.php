@@ -33,7 +33,8 @@
               <tr>
                 <th>SL NO</th>
                 <th>Session</th>
-                <th>Program</th>
+                <th>Class Label</th>
+                <th>Class</th>
                 <th>Medium</th>
                 <th>Shift</th>
                 <th>Group</th>
@@ -54,6 +55,7 @@
               <tr>
                 <td>{{++$id}}</td>
                 <td>{{$x->sessionName}}</td>
+                <td>{{$x->programLabel}}</td>
                 <td>{{$x->programName}}</td>
                 <td>{{$x->groupName}}</td>
                 <td>{{$x->mediumName}}</td>
@@ -86,7 +88,8 @@
               <tr>
                 <th>SL NO</th>
                 <th>Session</th>
-                <th>Program</th>
+                <th>Class Label</th>
+                <th>Class</th>
                 <th>Medium</th>
                 <th>Shift</th>
                 <th>Group</th>

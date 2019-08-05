@@ -8,8 +8,8 @@ use App\com\adventure\school\basic\Institute;
 use App\com\adventure\school\program\ProgramOffer;
 use App\com\adventure\school\courseoffer\SectionOffer;
 use App\com\adventure\school\program\Session;
-use App\com\adventure\school\program\PLevel;
-use App\com\adventure\school\program\LevelProgram;
+use App\com\adventure\school\program\PLabel;
+use App\com\adventure\school\program\LabelGroup;
 use App\com\adventure\school\program\Program;
 use App\com\adventure\school\program\Group;
 use App\com\adventure\school\program\Medium;
@@ -40,7 +40,7 @@ class ProgramOfferController extends Controller
             'pList'=>$pList,
             'result'=>$aList
         ];
-    	return view('admin.programsettings.programoffer.index',$dataList);
+    	return view('admin.programsettings.programoffer.index_copy',$dataList);
     }
     public function create(){
         $aMenu=new Menu();
@@ -54,11 +54,12 @@ class ProgramOfferController extends Controller
             return redirect('error');
         }
         $sessionList=Session::all();
-        $pLevelList=PLevel::all();
-        $programList=Program::getProgramsOnLevel();
+        $pLabelList=PLabel::all();
+        $aProgram=new Program();
+        $programList=$aProgram->getPrograms();
         $mediumList=Medium::all();
         $shiftList=Shift::all();
-        $groupList=Group::getGroupsOnProgram();
+        $groupList=Group::all();
         $aEmployee=new Employee();
         $employeeList=$aEmployee->getEmployees();
         $sectionList=Section::all();
@@ -66,7 +67,7 @@ class ProgramOfferController extends Controller
             'institute'=>Institute::getInstituteName(),
             'sidebarMenu'=>$sidebarMenu,
             'sessionList'=>$sessionList,
-            'pLevelList'=>$pLevelList,
+            'pLabelList'=>$pLabelList,
             'programList'=>$programList,
             'mediumList'=>$mediumList,
             'shiftList'=>$shiftList,
@@ -172,11 +173,14 @@ class ProgramOfferController extends Controller
             return redirect('error');
         }
         $aProgramOffer=ProgramOffer::findOrfail($id);
+        // dd($aProgramOffer);
         $sessionList=Session::all();
-        $programList=Program::getProgramsOnLevel();
+        $pLabelList=PLabel::all();
+        $aProgram=new Program();
+        $programList=$aProgram->getPrograms();
         $mediumList=Medium::all();
         $shiftList=Shift::all();
-        $groupList=Group::getGroupsOnProgram();
+        $groupList=Group::all();
         $aEmployee=new Employee();
         $employeeList=$aEmployee->getEmployees();
         $aSectionOffer=new SectionOffer();
@@ -185,6 +189,7 @@ class ProgramOfferController extends Controller
             'institute'=>Institute::getInstituteName(),
             'sidebarMenu'=>$sidebarMenu,
             'sessionList'=>$sessionList,
+            "pLabelList"=>$pLabelList,
             'programList'=>$programList,
             'groupList'=>$groupList,
             'mediumList'=>$mediumList,
@@ -322,36 +327,48 @@ class ProgramOfferController extends Controller
         $option=$request->option;
         $methodid=$request->methodid;
         $sessionid=$request->sessionid;
-        $programlevelid=$request->programlevelid;
+        $programlabelid=$request->programlabelid;
         $programid=$request->programid;
         $groupid=$request->groupid;
         $mediumid=$request->mediumid;
         $shiftid=$request->shiftid;
-        if($option=="programlevel"){
+        if($option=="programlabel"){
             if($methodid==1){
-                $this->getProgramOnProgramLavel($programlevelid);
-            }
-        }elseif($option=="program"){
-            if($methodid==1){
-                $this->getGroupsOnProgram($programid);
+                $this->getProgramsOnProgramLavel($programlabelid);
+            }elseif($methodid==2){
+                $this->getGroupsOnProgramLavel($programlabelid);
             }
         }
+        // elseif($option=="program"){
+        //     if($methodid==1){
+        //         $this->getGroupsOnProgram($programid);
+        //     }
+        // }
     }
-    private function getProgramOnProgramLavel($programlevelid){
+    private function getProgramsOnProgramLavel($programlabelid){
         $aProgram=new Program();
-        $result=$aProgram->getProgramOnLabelid($programlevelid);
+        $result=$aProgram->getProgramOnLabelid($programlabelid);
         $output="<option value=''>SELECT</option>";
         foreach($result as $x){
            $output.="<option value='$x->id'>$x->name</option>";
         }
         echo  $output;
     }
-    private function getGroupsOnProgram($programid){
-        $result=Group::getGroupsOnProgramID($programid);
+    private function getGroupsOnProgramLavel($programlabelid){
+        $aLabelGroup=new LabelGroup();
+        $result=$aLabelGroup->getGroupsOnLabel($programlabelid,"INNER");
         $output="<option value=''>SELECT</option>";
         foreach($result as $x){
            $output.="<option value='$x->id'>$x->name</option>";
         }
         echo  $output;
     }
+    // private function getGroupsOnProgram($programid){
+    //     $result=Group::getGroupsOnProgramID($programid);
+    //     $output="<option value=''>SELECT</option>";
+    //     foreach($result as $x){
+    //        $output.="<option value='$x->id'>$x->name</option>";
+    //     }
+    //     echo  $output;
+    // }
 }

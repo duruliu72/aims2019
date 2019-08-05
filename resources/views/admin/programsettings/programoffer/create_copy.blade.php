@@ -41,11 +41,11 @@
                          @endforeach
                       </select>
                     </div>
-                    <label class="col-sm-2 control-label" for="programlevelid">Class Label</label>
+                    <label class="col-sm-2 control-label" for="programlabelid">Class Label</label>
                     <div class="col-sm-4">
-                      <select onchange="getChange(this,'programlevel')" class="form-control" name="programlevelid" id="programlevelid">
+                      <select onchange="getChange(this,'programlabel')" class="form-control" name="programlabelid" id="programlabelid">
                           <option  value="">SELECT</option>
-                         @foreach ($pLevelList as $x)
+                         @foreach ($pLabelList as $x)
                            <option value="{{$x->id}}">{{$x->name}}</option>
                          @endforeach
                       </select>

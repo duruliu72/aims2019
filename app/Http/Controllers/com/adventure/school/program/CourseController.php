@@ -3,7 +3,7 @@ namespace App\Http\Controllers\com\adventure\school\program;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\com\adventure\school\basic\Institute;
-use App\com\adventure\school\program\PLevel;
+use App\com\adventure\school\program\PLabel;
 use App\com\adventure\school\program\Course;
 use App\com\adventure\school\menu\Menu;
 class CourseController extends Controller
@@ -41,14 +41,14 @@ class CourseController extends Controller
         }
         if($request->isMethod('post')&&$request->btn_update=='btn_update'){
             $validatedData = $request->validate([
-                'programlavelid'=>'required',
+                'programlabelid'=>'required',
             ]);
             $id=$request->id;
             // dd($id);
             $aCourse=Course::findOrfail($id);
             $aCourse->courseName=$request->courseName;
             $aCourse->courseCode=$request->courseCode;
-            $aCourse->programlavelid=$request->programlavelid;
+            $aCourse->programlabelid=$request->programlabelid;
             $status=$aCourse->update();
             if($status){
                 $msg="Course Updated Successfully";
@@ -61,7 +61,7 @@ class CourseController extends Controller
         $pList=$aMenu->getPermissionOnMenu('course');
         $aCourse=new Course();
         $courseList=$aCourse->getCourses();
-        $plavelList=PLevel::all();
+        $plavelList=PLabel::all();
         $bean=null;
         $id=$request->id;
         if($id!=null){

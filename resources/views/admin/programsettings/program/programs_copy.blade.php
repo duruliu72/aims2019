@@ -18,7 +18,7 @@
         </h3>
         <ol class="breadcrumb">
           @if($pList[2]->id==2)
-            <li><a href="{{URL::to('/course')}}">New</a></li>
+            <li><a href="{{URL::to('/program')}}">New</a></li>
           @endif
             @if($errors->any())
                 <span style="float: right;font-size: 15px;color:red;">{{$errors->all()[0] }}</span>
@@ -28,7 +28,7 @@
             {{ session()->get('msg') }}
             </span>
             @endif
-          <li>All Subject Info</li>
+          <li>All Class Info</li>
         </ol>
       </div>
     </div>
@@ -36,22 +36,22 @@
         @if($bean==null)
         <div class="row" style="margin:0px;padding:25px 0px;">
             <div class="col-md-12">
-                <form action="{{URL::to('course')}}" method="POST">
+                <form action="{{URL::to('program')}}" method="POST">
                     {{csrf_field()}}
                     <div class="row">
                         <div class="form-group col-md-4">
-                            <label class=" control-label" for="courseName">Subject Name</label>
-                            <input type="text" class="form-control" name="courseName" id="courseName">
+                            <label class=" control-label" for="name">Class</label>
+                            <input type="text" class="form-control" name="name" id="name">
                         </div>
                         <div class="form-group col-md-4">
-                            <label class=" control-label" for="courseCode">Subject Code</label>
-                            <input type="text" class="form-control" name="courseCode" id="courseCode">
+                            <label class=" control-label" for="programsign">Class ID</label>
+                            <input type="text" class="form-control" name="programsign" id="programsign">
                         </div>
                         <div class="form-group col-md-4">
                             <label class="control-label" for="programlabelid">Class/Program Lavel</label>
                             <select class="form-control" name="programlabelid" id="programlabelid">
                                 <option value="">SELECT</option>
-                                @foreach($plevelList as $x)
+                                @foreach($plabelList as $x)
                                 <option value="{{$x->id}}">{{$x->name}}</option>
                                 @endforeach
                             </select>
@@ -68,22 +68,22 @@
         @else
         <div class="row" style="margin:0px;padding:25px 0px;">
             <div class="col-md-12">
-                <form action="{{URL::to('course')}}/{{$bean->id}}" method="POST">
+                <form action="{{URL::to('program')}}/{{$bean->id}}" method="POST">
                     {{csrf_field()}}
                     <div class="row">
                         <div class="form-group col-md-4">
-                            <label class=" control-label" for="courseName">Subject Name</label>
-                            <input type="text" class="form-control" name="courseName" value="{{$bean->courseName}}" id="courseName">
+                            <label class=" control-label" for="name">Class</label>
+                            <input type="text" class="form-control" name="name" value="{{$bean->name}}" id="name">
                         </div>
                         <div class="form-group col-md-4">
-                            <label class=" control-label" for="courseCode">Subject Code</label>
-                            <input type="text" class="form-control" name="courseCode" value="{{$bean->courseCode}}" id="courseCode">
+                            <label class=" control-label" for="programsign">Class ID</label>
+                            <input type="text" class="form-control" name="programsign" value="{{$bean->programsign}}" id="programsign">
                         </div>
                         <div class="form-group col-md-4">
                             <label class="control-label" for="programlabelid">Class/Program Leve</label>
                             <select class="form-control" name="programlabelid" id="programlabelid">
                                 <option value="">SELECT</option>
-                                @foreach($plevelList as $x)
+                                @foreach($plabelList as $x)
                                     @if($x->id==$bean->programlabelid)
                                     <option selected value="{{$x->id}}">{{$x->name}}</option>
                                     @else
@@ -110,9 +110,9 @@
                             <thead>
                             <tr>
                                 <th>SL NO</th>
-                                <th>Subject Name</th>
-                                <th>Subject Code</th>
-                                <th>Subject Label</th>
+                                <th>Class</th>
+                                <th>Program Sign</th>
+                                <th>Label</th>
                                 @if($pList[3]->id==3)
                                 <th width="10px">Edit</th>
                                 @endif
@@ -123,15 +123,15 @@
                             </thead>
                             <tbody>
                             <?php $id=0; ?>
-                            @foreach($courseList as $x)
+                            @foreach($programList as $x)
                             <tr>
                                 <td>{{++$id}}</td>
-                                <td>{{$x->courseName}}</td>
-                                <td>{{$x->courseCode}}</td>
+                                <td>{{$x->name}}</td>
+                                <td>{{$x->programsign}}</td>
                                 <td>{{$x->programLabel}}</td>
                                 @if($pList[3]->id==3)
                                 <td> 
-                                <a href="{{URL::to('/course')}}/{{$x->id}}" class="tooltip-success" data-rel="tooltip" title="Edit">
+                                <a href="{{URL::to('/program')}}/{{$x->id}}" class="tooltip-success" data-rel="tooltip" title="Edit">
                                     <span class="green">
                                     <i class="ace-icon fa fa-pencil-square-o bigger-120"></i>
                                     </span>
@@ -153,9 +153,9 @@
                             <tfoot>
                             <tr>
                                 <th>SL NO</th>
-                                <th>Subject Name</th>
-                                <th>Subject Code</th>
-                                <th>Subject Label</th>
+                                <th>Class</th>
+                                <th>Program Sign</th>
+                                <th>Label</th>
                                 @if($pList[3]->id==3)
                                 <th width="10px">Edit</th>
                                 @endif

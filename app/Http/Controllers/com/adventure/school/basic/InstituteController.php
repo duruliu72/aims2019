@@ -6,14 +6,14 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\com\adventure\school\menu\Menu;
 use App\com\adventure\school\basic\Institute;
-use App\com\adventure\school\basic\InstituteLavel;
+use App\com\adventure\school\basic\InstituteLabel;
 use App\com\adventure\school\basic\Division;
 use App\com\adventure\school\basic\District;
 use App\com\adventure\school\basic\Thana;
 use App\com\adventure\school\basic\PostOffice;
 use App\com\adventure\school\basic\LocalGov;
 use App\com\adventure\school\basic\Address;
-use App\com\adventure\school\program\PLevel;
+use App\com\adventure\school\program\PLabel;
 class InstituteController extends Controller
 {
 	public function __construct()
@@ -57,7 +57,7 @@ class InstituteController extends Controller
             'thanaList'=>Thana::all(),
             'postofficeList'=>PostOffice::all(),
             'localgovList'=>LocalGov::all(),
-            'pLevel'=>PLevel::all()
+            'pLevel'=>PLabel::all()
         ];
         return view('admin.basic.institute.create',$dataList);
     }
@@ -65,13 +65,13 @@ class InstituteController extends Controller
      	$validatedData = $request->validate([
          'name' => 'required',
          ]);
-        $institute_lavelList=$request->programlevelid;
+        $institute_labelList=$request->programlabelid;
         $aInstitute=new Institute();
-        // $result=$aInstitute->getAllInstitute();
-        // if($result->count()>0){
-        //     $msg="Already Institute is Created. Please Update Your Institute Info";
-        //     return redirect()->back()->with('msg',$msg);
-        // }
+        $result=$aInstitute->getAllInstitute();
+        if($result->count()>0){
+            $msg="Already Institute is Created. Please Update Your Institute Info";
+            return redirect()->back()->with('msg',$msg);
+        }
         $aInstitute->ins_mobile_no=$request->ins_mobile_no;
      	$aInstitute->name=$request->name;
      	$aInstitute->institutetypeid=$request->institutetypeid;
@@ -99,21 +99,23 @@ class InstituteController extends Controller
         $aAddress->postcode=$request->postcode;
         $aAddress->localgovid=$request->localgovid;
         $aAddress->address=$request->address;
-        // dd($institute_lavelList);
-        $status=\DB::transaction(function () use($aInstitute,$aAddress,$institute_lavelList){
+        // dd($institute_labelList);
+        $status=\DB::transaction(function () use($aInstitute,$aAddress,$institute_labelList){
             try{
-                $aAddress->save();
-                $lastadd=\DB::table('addresses')->orderBy('id', 'desc')->first();
-                $aInstitute->addressid=$lastadd->id;
-                $aInstitute->save();
-                $last_institute=\DB::table('institutes')->orderBy('id', 'desc')->first();
-               
-                foreach($institute_lavelList as $ins_lavel){
-                    $aInstituteLavel=new InstituteLavel();
-                    $aInstituteLavel->instituteid=$last_institute->id;
-                    $aInstituteLavel->programlevelid=$ins_lavel;
-                    dd($institute_lavelList);
-                    // $aInstituteLavel->save();
+                if($institute_labelList!=null){
+                    $aAddress->save();
+                    $lastadd=\DB::table('addresses')->orderBy('id', 'desc')->first();
+                    $aInstitute->addressid=$lastadd->id;
+                    $aInstitute->save();
+                    $last_institute=\DB::table('institutes')->orderBy('id', 'desc')->first();
+                    foreach($institute_labelList as $programlabelid){
+                        $aInstituteLabel=new InstituteLabel();
+                        $aInstituteLabel->instituteid=$last_institute->id;
+                        $aInstituteLabel->programlabelid=$programlabelid;
+                        $aInstituteLabel->save();
+                    }
+                }else{
+                    return false;
                 }
                 return true;
             }catch(\Exception $e){
@@ -137,30 +139,34 @@ class InstituteController extends Controller
         $pList=$aMenu->getPermissionOnMenu('institute');
     	$aObj=Institute::findOrfail($id);
         $aInstitute=$aObj->getInstituteById($id);
-        if($pList[3]->id==3){
-        	$dataList=[
-                'institute'=>Institute::getInstituteName(),
-                'sidebarMenu'=>$sidebarMenu,
-                'divisionList'=>Division::all(),
-                'districtList'=>District::all(),
-                'thanaList'=>Thana::all(),
-                'postofficeList'=>PostOffice::all(),
-                'localgovList'=>LocalGov::all(),
-                'pLevel'=>PLevel::all(),
-                'bean'=>$aInstitute,
-            ];
-           	return view('admin.basic.institute.edit',$dataList); 
-       }else{
+        if($pList[3]->id!=3){
             return redirect('error');
-       }
-        
+        }
+        $aInstituteLabel=new InstituteLabel();
+        $plavelList=$aInstituteLabel->getLabelsOnInstitueid($id);
+        $dataList=[
+        'institute'=>Institute::getInstituteName(),
+        'sidebarMenu'=>$sidebarMenu,
+        'divisionList'=>Division::all(),
+        'districtList'=>District::all(),
+        'thanaList'=>Thana::all(),
+        'postofficeList'=>PostOffice::all(),
+        'localgovList'=>LocalGov::all(),
+        'pLevel'=>$plavelList,
+        'bean'=>$aInstitute,
+        ];
+        return view('admin.basic.institute.edit',$dataList); 
     }
     public function update(Request $request, $id){
      	$aInstitute=Institute::findOrfail($id);
      	$validatedData = $request->validate([
          'name' => 'required',
          ]);
+        $institute_labelList=$request->programlabelid;
+        // dd($institute_labelList);
         $aInstitute->name=$request->name;
+        $aInstitute->ins_mobile_no=$request->ins_mobile_no;
+        $aInstitute->contact_person=$request->contact_person;
         $aInstitute->institutetypeid=$request->institutetypeid;
         $aInstitute->categoryid=$request->categoryid;
         $aInstitute->subcategoryid=$request->subcategoryid;
@@ -187,9 +193,28 @@ class InstituteController extends Controller
         $aAddress->postcode=$request->postcode;
         $aAddress->localgovid=$request->localgovid;
         $aAddress->address=$request->address;
-        $status=\DB::transaction(function () use($aInstitute,$aAddress){
-            $aAddress->update();
-            return $aInstitute->update();
+        $status=\DB::transaction(function () use($id,$aInstitute,$aAddress,$institute_labelList){
+            try{
+                if($institute_labelList!=null){
+                    $aAddress->update();
+                    $aInstitute->update();
+                    \DB::table('institute_labels')
+                        ->where('instituteid', $id)
+                        ->delete();
+                    foreach($institute_labelList as $programlabelid){
+                        $aInstituteLabel=new InstituteLabel();
+                        $aInstituteLabel->instituteid=$id;
+                        $aInstituteLabel->programlabelid=$programlabelid;
+                        $aInstituteLabel->save();
+                    }
+                    return true;
+                }else{
+                    return false;
+                }
+            }catch(\Exception $e){
+                \DB::rollback();
+                return false;
+            }
         });
         if($status){
             $msg="Institute Update Successfully";

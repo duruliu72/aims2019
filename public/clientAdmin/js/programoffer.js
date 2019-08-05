@@ -1,14 +1,16 @@
 function getChange(thisref, option) {
     var id = thisref.getAttribute("id");
-    if (option == "programlevel") {
+    if (option == "programlabel") {
         getChangeOnProgramLavel(id, option, "#programid", 1);
-    } else if (option == "program") {
-        getChangeOnProgram(id, option, "#groupid", 1);
+        getChangeOnProgramLavel(id, option, "#groupid", 2);
     }
+    // else if (option == "program") {
+    //     getChangeOnProgram(id, option, "#groupid", 1);
+    // }
 }
 function getChangeOnProgramLavel(id, option, output, methodid) {
     var sessionid = $("#sessionid").val();
-    var programlevelid = $("#" + id).val();
+    var programlabelid = $("#" + id).val();
     var programid = 0;
     var groupid = 0;
     var mediumid = 0;
@@ -19,7 +21,7 @@ function getChangeOnProgramLavel(id, option, output, methodid) {
         dataType: "html",
         data: {
             sessionid: sessionid,
-            programlevelid: programlevelid,
+            programlabelid: programlabelid,
             programid: programid,
             groupid: groupid,
             mediumid: mediumid,
@@ -36,7 +38,7 @@ function getChangeOnProgramLavel(id, option, output, methodid) {
 }
 function getChangeOnProgram(id, option, output, methodid) {
     var sessionid = $("#sessionid").val();
-    var programlevelid = $("#programlevelid").val();
+    var programlabelid = $("#programlabelid").val();
     var programid = $("#" + id).val();
     var groupid = 0;
     var mediumid = 0;
@@ -47,7 +49,7 @@ function getChangeOnProgram(id, option, output, methodid) {
         dataType: "html",
         data: {
             sessionid: sessionid,
-            programlevelid: programlevelid,
+            programlabelid: programlabelid,
             programid: programid,
             groupid: groupid,
             mediumid: mediumid,

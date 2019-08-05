@@ -17,6 +17,7 @@ class CreateLabelGroupsTable extends Migration
             $table->increments('id');
             $table->integer('programlabelid')->length(5);
             $table->integer('groupid')->length(5);
+            $table->integer('status')->length(5)->default(0);
             $table->timestamps();
         });
     }
