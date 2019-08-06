@@ -16,6 +16,7 @@ class CreateProgramoffersTable extends Migration
         Schema::create('programoffers', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('sessionid')->length(11);
+            $table->integer('programlabelid')->length(11);
             $table->integer('programid')->length(11);
             $table->integer('groupid')->length(11);
             $table->integer('mediumid')->length(11);

@@ -80,13 +80,15 @@ class ProgramOfferController extends Controller
     public function store(Request $request){
      	$validatedData = $request->validate([
         'sessionid' => 'required|',
+        'programlabelid' => 'required|',
         'programid' => 'required|',
         'groupid' => 'required|',
         'mediumid' => 'required|',
         'shiftid' => 'required|',
         'number_of_courses'=>'required|'
         ]);
-     	$sessionid=$request->sessionid;
+        $sessionid=$request->sessionid;
+        $programlabelid=$request->programlabelid;
      	$programid=$request->programid;
      	$groupid=$request->groupid;
      	$mediumid=$request->mediumid;
@@ -117,12 +119,13 @@ class ProgramOfferController extends Controller
         // dd($total_std);
      	// Check Here. Is programoffer is Created
      	$aProgramOffer=new ProgramOffer();
-     	$hasSame=$aProgramOffer->checkValue($sessionid,$programid,$groupid,$mediumid,$shiftid);
+     	$hasSame=$aProgramOffer->checkValue($sessionid,$programlabelid,$programid,$groupid,$mediumid,$shiftid);
      	if($hasSame){
             $msg="This Program Offer has Already Created";
             return redirect()->back()->with('msg',$msg);
         }
-     	$aProgramOffer->sessionid=$sessionid;
+        $aProgramOffer->sessionid=$sessionid;
+        $aProgramOffer->programlabelid=$programlabelid;
      	$aProgramOffer->programid=$programid;
      	$aProgramOffer->groupid=$groupid;
      	$aProgramOffer->mediumid=$mediumid;
@@ -203,13 +206,15 @@ class ProgramOfferController extends Controller
     public function update(Request $request, $id){
     	$validatedData = $request->validate([
         'sessionid' => 'required|',
+        'programlabelid' => 'required|',
         'programid' => 'required|',
         'groupid' => 'required|',
         'mediumid' => 'required|',
         'shiftid' => 'required|',
         'number_of_courses'=>'required|'
     	]);
-     	$sessionid=$request->sessionid;
+        $sessionid=$request->sessionid;
+        $programlabelid=$request->programlabelid;
      	$programid=$request->programid;
      	$groupid=$request->groupid;
      	$mediumid=$request->mediumid;
@@ -245,17 +250,17 @@ class ProgramOfferController extends Controller
         }
      	// Check Here programoffer is Exist not
         $aProgramOffer=ProgramOffer::findOrfail($id);
-        $programofferid=$aProgramOffer->getProgramOfferId($sessionid,$programid,$groupid,$mediumid,$shiftid);
+        $programofferid=$aProgramOffer->getProgramOfferId($sessionid,$programlabelid,$programid,$groupid,$mediumid,$shiftid);
         // dd($id,$programofferid);
         if($programofferid!=$id){
-            $hasSame=$aProgramOffer->checkValue($sessionid,$programid,$groupid,$mediumid,$shiftid);
+            $hasSame=$aProgramOffer->checkValue($sessionid,$programlabelid,$programid,$groupid,$mediumid,$shiftid);
             if($hasSame){
                 $msg="This Program Offer has Already Exits";
                 return redirect()->back()->with('msg',$msg);
             }
         }
      	$aProgramOffer->sessionid=$sessionid;
-     	$aProgramOffer->programid=$programid;
+     	$aProgramOffer->programlabelid=$programlabelid;
      	$aProgramOffer->groupid=$groupid;
      	$aProgramOffer->mediumid=$mediumid;
         $aProgramOffer->shiftid=$shiftid;

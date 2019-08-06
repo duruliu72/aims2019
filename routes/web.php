@@ -91,7 +91,7 @@ Route::get('admissionresults', 'com\adventure\school\admission\AdmissionResultCo
 Route::post('admissionresults', 'com\adventure\school\admission\AdmissionResultController@resultDisplay');
 // Course offer settings
 Route::resource('mearges', 'com\adventure\school\courseoffer\MeargeController');
-Route::get('courseoffercreate/getValue','com\adventure\school\courseoffer\CourseOfferController@getValue');
+Route::get('courseoffer/getValue','com\adventure\school\courseoffer\CourseOfferController@getValue');
 Route::get('courseoffercreate','com\adventure\school\courseoffer\CourseOfferController@createCourseOffer');
 Route::post('courseoffercreate','com\adventure\school\courseoffer\CourseOfferController@createCourseOffer');
 Route::get('editcourseoffer','com\adventure\school\courseoffer\CourseOfferController@editCourseOffer');

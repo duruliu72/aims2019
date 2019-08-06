@@ -18,4 +18,16 @@ class Course extends Model
         $result=collect($qResult);
 		return $result;
     }
+    public function getCourseOnProgramoffer($programlabelid,$programofferid,$join){
+        $sql="SELECT c_table.*,
+        co_table.courseid,
+        co_table.coursemark
+        FROM(SELECT * FROM `courses`
+        WHERE programlabelid=?) AS c_table
+        ".$join." JOIN (SELECT * FROM `courseoffer`
+        WHERE programofferid=?) AS co_table ON c_table.id=co_table.courseid";
+        $qResult=\DB::select($sql,[$programlabelid,$programofferid]);
+        $result=collect($qResult);
+		return $result;
+    }
 }

@@ -22,15 +22,15 @@ class CourseController extends Controller
         if($request->isMethod('post')&&$request->btn_save=='btn_save'){
             $validatedData = $request->validate([
                 'courseCode' => 'required|unique:courses|max:255',
-                'programlavelid'=>'required',
+                'programlabelid'=>'required',
                 ]);
                  $courseName=$request->courseName;
                  $courseCode=$request->courseCode;
-                 $programlavelid=$request->programlavelid;
+                 $programlabelid=$request->programlabelid;
                  $aCourse=new Course();
                  $aCourse->courseName=$courseName;
                  $aCourse->courseCode=$courseCode;
-                 $aCourse->programlavelid=$programlavelid;
+                 $aCourse->programlabelid=$programlabelid;
                  $status=$aCourse->save();
                  if($status){
                      $msg="Course Created Successfully";

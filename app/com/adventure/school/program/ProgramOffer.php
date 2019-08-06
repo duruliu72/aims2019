@@ -58,15 +58,10 @@ class ProgramOffer extends Model
 			$result=collect($qResult);
 			return $result;
 		}
-		public function getProgramOfferId($sessionid,$programid,$groupid,$mediumid,$shiftid){
-			if($sessionid==0){
-				$yearName = date('Y');
-					$aSession=new Session();
-					$sessionid=$aSession->getSessionId($yearName);
-			}
+		public function getProgramOfferId($sessionid,$programlabelid,$programid,$groupid,$mediumid,$shiftid){
 			$sql="SELECT * FROM `programoffers`
-			WHERE sessionid=? AND programid=? AND groupid=?  AND mediumid=? AND shiftid=?";
-			$qresult=\DB::select($sql,[$sessionid,$programid,$groupid,$mediumid,$shiftid]);
+			WHERE sessionid=? AND programlabelid=? AND programid=? AND groupid=?  AND mediumid=? AND shiftid=?";
+			$qresult=\DB::select($sql,[$sessionid,$programlabelid,$programid,$groupid,$mediumid,$shiftid]);
 			$result = collect($qresult);
 			if($result->isNotEmpty()){
 				$programofferid=$result->first()->id;
@@ -74,33 +69,31 @@ class ProgramOffer extends Model
 			}
 			return 0;
 		} 
-    public function checkValue($sessionid,$programid,$groupid,$mediumid,$shiftid){
-			if($sessionid==0){
-				$yearName = date('Y');
-					$aSession=new Session();
-					$sessionid=$aSession->getSessionId($yearName);
-			}
+    public function checkValue($sessionid,$programlabelid,$programid,$groupid,$mediumid,$shiftid){
 			$sql="SELECT * FROM `programoffers`
-			WHERE sessionid=? AND programid=? AND groupid=?  AND mediumid=? AND shiftid=?";
-			$result=\DB::select($sql,[$sessionid,$programid,$groupid,$mediumid,$shiftid]);
+			WHERE sessionid=? AND programlabelid=? AND programid=? AND groupid=?  AND mediumid=? AND shiftid=?";
+			$result=\DB::select($sql,[$sessionid,$programlabelid,$programid,$groupid,$mediumid,$shiftid]);
 			if(count($result)!=0){
 				return true;
 			}
 			return false;
 	}
 
-		// ===============================================For Dorpdown ==============
-	public function getAllOnIDS($sessionid,$programid,$groupid,$mediumid,$shiftid,$tableName,$compareid){
-		if($sessionid==0){
-			$yearName = date('Y');
-			$aSession=new Session();
-			$sessionid=$aSession->getSessionId($yearName);
-		}
+	// ===============================================For Dorpdown ==============
+	public function getAllOnIDS($sessionid,$programlabelid,$programid,$groupid,$mediumid,$shiftid,$tableName,$compareid){
+		// dd($tableName);
 		$sql="SELECT t2.* FROM `programoffers` AS t1
-		INNER JOIN ".$tableName." as t2 ON  t1.".$compareid."=t2.id
-		WHERE sessionid=?";
+		INNER JOIN ".$tableName." AS t2 
+		ON t1.".$compareid."=t2.id";
 		$data=array();
-		array_push($data,$sessionid);
+		if($sessionid!=0){
+			$sql.=" WHERE sessionid=?";
+			array_push($data,$sessionid);
+		}
+		if($programlabelid!=0){
+			$sql.=" AND t1.programlabelid=?";
+			array_push($data,$programlabelid);
+		}
 		if($programid!=0){
 			$sql.=" AND programid=?";
 			array_push($data,$programid);

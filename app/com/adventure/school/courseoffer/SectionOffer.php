@@ -59,7 +59,8 @@ class SectionOffer extends Model
     }
     public function getSectionsOnPO($programofferid){
         $sql="SELECT 
-        sections.*
+        sections.*,
+        sectionoffer.section_std_num
         FROM `sections`
         INNER JOIN sectionoffer ON sectionoffer.sectionid=sections.id
         WHERE sectionoffer.programofferid =? ORDER BY sections.id";
