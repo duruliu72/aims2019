@@ -30,6 +30,16 @@
                 <form action="{{URL::to('employees')}}" onsubmit="return validate();" method="POST" enctype="multipart/form-data">
                   {{csrf_field()}}
                   <div class="row">
+                    <div class="form-group col-md-12">
+                      <label class="control-label">Class Level</label>
+                      <div>
+                        @foreach($pLevel as $pl)
+                          <label style="margin-right:10px;" for="programlabelid[{{$pl->id}}]"><input class="form-check-input" type="checkbox" name="programlabelid[{{$pl->id}}]" value="{{$pl->id}}" id="programlabelid[{{$pl->id}}]">{{$pl->name}}</label>
+                        @endforeach
+                      </div>                  
+                    </div>
+                  </div>
+                  <div class="row">
                     <div class="form-group col-md-4">
                       <label class="control-label" for="employeetypeid">Employee Type</label>
                       <select class="form-control" name="employeetypeid" id="employeetypeid">
@@ -175,7 +185,7 @@
                     </div>
                     <div class="form-group col-md-4">
                         <label class="control-label" for="signature">Employee Signature  </label>
-                        <input data-width="341" data-height="91" data-size="11293" type="file" value="{{old('signature')}}" class="form-control-file" name="signature" id="signature">
+                        <input data-width="341" data-height="91" data-size="50293" type="file" value="{{old('signature')}}" class="form-control-file" name="signature" id="signature">
                     </div>
                     <div class="form-group col-md-4">
                         <label class="control-label" for="indexno">Index No</label>

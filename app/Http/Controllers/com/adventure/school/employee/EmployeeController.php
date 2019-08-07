@@ -5,6 +5,7 @@ namespace App\Http\Controllers\com\adventure\school\employee;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\com\adventure\school\menu\Menu;
+use App\com\adventure\school\program\PLabel;
 use App\com\adventure\school\basic\EmployeeType;
 use App\com\adventure\school\basic\Designation;
 use App\com\adventure\school\basic\Department;
@@ -50,7 +51,8 @@ class EmployeeController extends Controller
         $sidebarMenu=$aMenu->getSidebarMenu();
         $pList=$aMenu->getPermissionOnMenu('employees');
         $datalist=[
-            'sidebarMenu'=>$sidebarMenu, 
+            'sidebarMenu'=>$sidebarMenu,
+            'pLevel'=>PLabel::all(),
             'employeetypeList'=>EmployeeType::all(),
             'designationList'=>Designation::all(),
             'departmentList'=>Department::all(),
@@ -62,15 +64,14 @@ class EmployeeController extends Controller
             'maritalStatusList'=>MaritalStatus::all(),
             'educationDegreeList'=>EducationDegree::all()
         ];
-        if($pList[2]->id==2){
-            return view('admin.employee.employee.create',$datalist);
-        }else{
+        if($pList[2]->id!=2){
             return redirect('error');
+        }else{
+            return view('admin.employee.employee.create',$datalist);
         }
     	
     }
     public function store(Request $request){
-        // 'avatar' => 'dimensions:ratio=3/2'
      	 $validatedData = $request->validate([
         'employeetypeid' => 'required',
         'designationid' => 'required',
@@ -102,7 +103,8 @@ class EmployeeController extends Controller
         'passingyear' => 'required',
         'board' => 'required',
         ]);
-        // die("Die Here");
+        die("Die Here");
+        dd($request);
         $aEmployee=new Employee();
         $aEmployee->employeeidno=$aEmployee->generateEmployeeIdNo();
         $aEmployee->employeetypeid=$request->employeetypeid;

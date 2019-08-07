@@ -129,6 +129,7 @@
                   <form action="{{URL::to('courseoffercreate')}}" method="POST">
                   {{csrf_field()}}
                   <input type="hidden" name="programofferid" value="{{$programofferinfo->id}}">
+                  <input type="hidden" name="programlabelid" value="{{$programofferinfo->programlabelid}}">
                   <input type="hidden" name="number_of_courses" value="{{$programofferinfo->number_of_courses}}">
                   <div class="row">
                     <div class="col-md-12 courseoffer">
@@ -145,13 +146,15 @@
                           </tr>
                         </thead>
                         <tbody>
-                          <?php $id=0; ?>
+                          <?php $id=0; $alreadySaved=0; ?>
                           @foreach($courseList as $x)
-                            @if($x->courseid==0)
+                            <input type="hidden" name="courseid[{{$x->id}}]" value="{{$x->id}}" />
+                            <input type="hidden" name="courseName[{{$x->id}}]" value="{{$x->courseName}}" />
+                            <input type="hidden" name="courseCode[{{$x->id}}]" value="{{$x->courseCode}}" />
                             <tr>
                               <td>{{++$id}}</td>                    
-                              <td><input type="hidden" name="courseid[{{$x->id}}]" value="{{$x->id}}" />{{sprintf("%s %s%s%s",$x->courseName,"(",$x->courseCode,")")}}</td>
-                              <td><div class="form-group"><input class="form-control" type="text" name="coursemarks[{{$x->id}}]" value="{{$x->coursemark}}" /></div></td>
+                              <td>{{sprintf("%s %s%s%s",$x->courseName,"(",$x->courseCode,")")}}</td>
+                              <td><div class="form-group"><input class="form-control" type="text" name="coursemarks[{{$x->id}}]" value="{{(old('coursemarks.'.$x->id))?old('coursemarks.'.$x->id):$x->coursemark}}" /></div></td>
                               @foreach($sectionList as $section)
                               <input type="hidden" name="cs_teacherid[{{$x->id}}][{{$section->id}}]">
                               <td><select class="form-control" name="teacherid[{{$x->id}}][{{$section->id}}]" id="teacherid">
@@ -162,27 +165,15 @@
                               </select>
                               </td>
                               @endforeach
-                              
-                              <td><input class="markcheck" type="checkbox" name="checkbox[{{$x->id}}]"></td>
-                            </tr>
-                            @else
-                            <tr>
-                              <td>{{++$id}}</td>
-                              <td>{{sprintf("%s %s%s%s",$x->courseName,"(",$x->courseCode,")")}}</td>
-                              @foreach($sectionList as $section)
-                              <td><select class="form-control" name="teacherid" id="teacherid">
-                                <option value="">SELECT</option>
-                                @foreach ($teacherList as $x)
-                                  <option value="{{$x->id}}">{{$x->firstName}}</option>
-                                @endforeach
-                              </select>
-                              </td>
-                              @endforeach
-                              <td>{{$x->coursemark}}</td>
+                              @if($x->courseid==0)
+                              <td><input class="markcheck" type="checkbox" name="checkbox[{{$x->id}}]" {{(old('checkbox.'.$x->id))?'checked':''}}></td>
+                              @else
+                              <?php $alreadySaved++; ?>
                               <td><span style='font-size:18px;'>&#10003;</span></td>      
+                              @endif
                             </tr>
-                            @endif
                           @endforeach
+                          <input type="hidden" name="alreadySaved" value="{{$alreadySaved}}" />
                         </tbody>
                       </table>
                     </div>
@@ -191,7 +182,7 @@
                       <div class="col-sm-12">
                         <div class="btn-container">
                           <button type="submit" class="btn btn-success result-btn" name="save_btn" value="save_btn">Save</button>
-                          <a class="btn btn-info refresh-btn" href="{{URL::to('admissionmarkentry')}}"><i class="ace-icon fa fa-refresh bigger-120"></i>Refresh</a>
+                          <a class="btn btn-info refresh-btn" href="{{URL::to('courseoffercreate')}}"><i class="ace-icon fa fa-refresh bigger-120"></i>Refresh</a>
                         </div>
                       </div>
                     </div>
