@@ -26,15 +26,18 @@ class MasterExamController extends Controller
         $pList=$aMenu->getPermissionOnMenu('masterexam');
         if($request->isMethod('post')){
             $validatedData = $request->validate([
-                'programid' => 'required|',
-                'groupid' => 'required|',
-                'mediumid' => 'required|',
-                'shiftid' => 'required|',
+                'sessionid' => 'required',
+                'programlabelid' => 'required',
+                'programid' => 'required',
+                'mediumid' => 'required',
+                'shiftid' => 'required',
+                'groupid' => 'required',
                 'examnameid'=>'required|',
                 'exhld_in_percentage'=>'required',
                 // 'cxm_in_percentage'=>'required'
             ]);
             $sessionid=$request->sessionid;
+            $programlabelid=$request->programlabelid;
             $programid=$request->programid;
             $groupid=$request->groupid;
             $mediumid=$request->mediumid;
@@ -46,7 +49,7 @@ class MasterExamController extends Controller
                 $cxm_in_percentage=$request->cxm_in_percentage;
             }
             $result_with_child=$request->result_with_child;
-            $programofferid=$aProgramOffer->getProgramOfferId(0,$programid,$groupid,$mediumid,$shiftid);
+            $programofferid=$aProgramOffer->getProgramOfferId($sessionid,$programlabelid,$programid,$groupid,$mediumid,$shiftid);
             if($request->btn=="save_btn"){
                 if($programofferid==0){
                     $msg="This Program Offer has not creared yet";
@@ -83,11 +86,15 @@ class MasterExamController extends Controller
                 return redirect()->back()->with('msg',$msg);
             }
         }
+        // die("Die");
         $aList=MasterExam::getAllMaster();
-        $programList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,"programs",'programid');
-        $mediumList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,"mediums",'mediumid');
-        $shiftList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,"shifts",'shiftid');
-        $groupList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,"groups",'groupid');
+        // sessionid ,programlabelid,programid,groupid,mediumid,shiftid,tableName and $compaireid
+        $sessionList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,0,"sessions",'sessionid');
+        $plabelList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,0,"plabels",'programlabelid');
+        $programList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,0,"programs",'programid');
+        $mediumList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,0,"mediums",'mediumid');
+        $shiftList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,0,"shifts",'shiftid');
+        $groupList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,0,"groups",'groupid');
         $masterExamNameList=ExamName::getExamName(1);
         $bean=null;
         if($request->id!=null){
@@ -97,6 +104,8 @@ class MasterExamController extends Controller
         $dataList=[
             'institute'=>Institute::getInstituteName(),
             'sidebarMenu'=>$sidebarMenu,
+            'sessionList'=>$sessionList,
+            "plabelList"=>$plabelList,
             'programList'=>$programList,
             'groupList'=>$groupList,
             'mediumList'=>$mediumList,

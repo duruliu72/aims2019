@@ -10,15 +10,12 @@
   <section class="wrapper">
     <div class="row">
       <div class="col-lg-12">
-        <h3 class="page-header"><i class="fa fa-laptop"></i>
-        @if($institute!=null)
-              {{$institute->name}}
-            @else
-              Dashboard
-            @endif
-      </h3>
+        <h3 class="page-header"><i class="fa fa-laptop"></i>Horinagor High School</h3>
         <ol class="breadcrumb">
-          <li>Mark Distribution &nbsp;&nbsp;&nbsp;<a href="{{URL::to('markdistribution')}}/{{'edit'}}">Edit</a></li>
+          <!-- @if($pList[2]->id==2)
+            <li><a href="{{URL::to('/meargeoffer')}}/{{'create'}}">New</a></li>
+          @endif -->
+          <li>Mark Distribution &nbsp;&nbsp;&nbsp;<a href="{{URL::to('markdistribution')}}">Create</a></li>
           @if ($errors->any())
                   <span style="float: right;font-size: 15px;">{{$errors->all()[0] }}</span>
               @endif
@@ -41,6 +38,26 @@
           <div class="top-section">
           <form action="{{URL::to('markdistribution')}}" method="POST">
                     {{csrf_field()}}
+                    <div class="form-group row">
+                    <label class="col-sm-2 control-label" for="sessionid">Session</label>
+                    <div class="col-sm-4">
+                      <select onchange="getChange(this,'session')" class="form-control" name="sessionid" id="sessionid">
+                          <option  value="">SELECT</option>
+                         @foreach ($sessionList as $x)
+                           <option value="{{$x->id}}">{{$x->name}}</option>
+                         @endforeach
+                      </select>
+                    </div>
+                    <label class="col-sm-2 control-label" for="programlabelid">Class Label</label>
+                    <div class="col-sm-4">
+                      <select onchange="getChange(this,'programlabel')" class="form-control" name="programlabelid" id="programlabelid">
+                         <option value="">SELECT</option>
+                         @foreach ($plabelList as $x)
+                           <option value="{{$x->id}}">{{$x->name}}</option>
+                         @endforeach
+                      </select>
+                    </div>                     
+                  </div>
                     <div class="form-group row">
                     <label class="col-sm-2 control-label" for="programid">Program</label>
                     <div class="col-sm-4">
@@ -73,7 +90,7 @@
                     </div>
                     <label class="col-sm-2 control-label" for="groupid">Group</label>
                     <div class="col-sm-4">
-                      <select class="form-control" name="groupid" id="groupid">
+                      <select  class="form-control" name="groupid" id="groupid">
                          <option value="">SELECT</option>
                          @foreach ($groupList as $x)
                            <option value="{{$x->id}}">{{$x->name}}</option>
@@ -85,7 +102,7 @@
                       <div class="col-sm-12">
                         <div class="btn-container">
                           <button type="submit" class="btn btn-success result-btn" name="search_btn" value="search_btn">Search</button>
-                          <a class="btn btn-info refresh-btn" href="{{URL::to('markdistribution')}}"><i class="ace-icon fa fa-refresh bigger-120"></i>Refresh</a>
+                          <a class="btn btn-info refresh-btn" href="{{URL::to('markdistribution')}}/{{'edit'}}"><i class="ace-icon fa fa-refresh bigger-120"></i>Refresh</a>
                         </div>
                       </div>
                     </div>
@@ -97,7 +114,7 @@
                         <span>Session: {{$programofferinfo->sessionName}}</span>
                     </div>
                     <div class="programofferinfo_item">
-                        <span>Class Level: {{$programofferinfo->levelName}}</span>
+                        <span>Class Level: {{$programofferinfo->programLabel}}</span>
                     </div>
                     <div class="programofferinfo_item">
                         <span>Class: {{$programofferinfo->programName}}</span>
@@ -132,22 +149,22 @@
                         </thead>
                         <tbody>
                         <?php $id=0; ?>
-                        @foreach($courseCodeList as $key=>$course)
-                          @if($course->mcoursecodeid!=0)
+                        @foreach($courseList as $key=>$course)
                           <tr id="subject_mark{{$key}}" class="subject_mark">
                             <td>{{++$id}}</td>         
                             <td>
-                              {{$course->name}}<br>Marks(<span class="coursemark">{{$course->coursemark}}</span>)
+                              {{$course->courseName}}<br>(<span class="coursemark">{{$course->coursemark}}</span>)
                             </td>
                             <?php
+                              $displayList=array();
                             ?>
                             @foreach($selectedlist[$course->id] as $cat)
                                 <td>
-                                  <div data-raw="subject_mark{{$key}}" class="course_subcat" style="text-align:center;" class="form-group">
+                                  <div data-raw="subject_mark{{$key}}" class="course_subcat">
                                     <input  class="percent" style="width:40px;" type="hidden" name="mark_in_percentage[{{$course->id}}][{{$cat->id}}]" value="{{$cat->mark_in_percentage}}">                                
-                                    <input class="inputfield input1" style="width:50px;"  type="text" name="cat_hld_mark[{{$course->id}}][{{$cat->id}}]" value="{{$cat->cat_hld_mark}}" placeholder="Mark" />
+                                    <input class="inputfield input1" style="width:40px;"  type="text" name="cat_hld_mark[{{$course->id}}][{{$cat->id}}]" value="{{$cat->cat_hld_mark}}" placeholder="Mark" />
                                     <input class="inputfield input2" style="width:60px;" type="text" name="percentage_mark[{{$course->id}}][{{$cat->id}}]" value="{{$cat->percentage_mark}}" placeholder="% Mark" />
-                                    <input class="resultfield input3" style="width:40px;" type="text" name="" value="" />
+                                    <input class="resultfield input3" style="width:50px;" type="text" name="" value="" />
                                   </div>
                                   <div style="text-align:center;">
                                     <input type="radio" <?php echo ($cat->mark_group_id==1) ? 'checked':''; ?> name="mark_group_id[{{$course->id}}][{{$cat->id}}]" value="1">1
@@ -158,36 +175,12 @@
                                 </td>
                             @endforeach
                             <td><input class="tot_mark" style="width:50px;" type="text" name="" value="" /></td>
-                            <td><span style='font-size:18px;'>&#10003;</span></td>    
-                          </tr>
-                          @else
-                          <tr>
-                            <td>{{++$id}}</td>         
-                            <td>
-                              {{$course->name}}<br>Marks({{$course->coursemark}})
-                            </td>
-                            <?php $passid=1; ?>
-                            @foreach($markCategoryList as $cat)
-                            <td>
-                              <div class="form-group">
-                                <input  class="percent" style="width:40px;" type="hidden" name="mark_in_percentage[{{$course->id}}][{{$cat->id}}]" value="{{$cat->mark_in_percentage}}"> 
-                                <input class="inputfield input1" style="width:50px;"  type="text" name="cat_hld_mark[{{$course->id}}][{{$cat->id}}]" value="{{$cat->cat_hld_mark}}" placeholder="Mark" />
-                                <input class="inputfield input2" style="width:60px;" type="text" name="percentage_mark[{{$course->id}}][{{$cat->id}}]" value="{{$cat->percentage_mark}}" placeholder="% Mark" />
-                                <input class="resultfield input3" style="width:40px;" type="text" name="" value="" />
-                              </div>
-                              <div style="text-align:center;">
-                                <input type="radio" <?php echo ($passid==1) ? 'checked':''; ?> name="mark_group_id[{{$course->id}}][{{$cat->id}}]" value="1">1
-                                <input type="radio" <?php echo ($passid==2) ? 'checked':''; ?> name="mark_group_id[{{$course->id}}][{{$cat->id}}]" value="2">2
-                                <input type="radio" <?php echo ($passid==3) ? 'checked':''; ?> name="mark_group_id[{{$course->id}}][{{$cat->id}}]" value="3">3
-                                <input type="radio" <?php echo ($passid==4) ? 'checked':''; ?> name="mark_group_id[{{$course->id}}][{{$cat->id}}]" value="4">4
-                              </div>
-                            </td>
-                            <?php $passid++; ?>
-                            @endforeach
-                            <td><input style="width:50px;" type="text" name="" value="0" /></td>
+                            @if($course->mdcourseid==0)
                             <td><input class="markcheck" type="checkbox" name="checkbox[{{$course->id}}]"></td>
-                            </tr>
-                          @endif
+                            @else
+                            <td><span style='font-size:18px;'>&#10003;</span></td>    
+                            @endif
+                          </tr>
                           @endforeach
                         </tbody>
                       </table>
@@ -197,7 +190,7 @@
                       <div class="col-sm-12">
                         <div class="btn-container">
                           <button type="submit" class="btn btn-success result-btn" name="save_btn" value="save_btn">Save</button>
-                          <a class="btn btn-info refresh-btn" href="{{URL::to('markdistribution')}}"><i class="ace-icon fa fa-refresh bigger-120"></i>Refresh</a>
+                          <a class="btn btn-info refresh-btn" href="{{URL::to('markdistribution')}}/{{'edit'}}"><i class="ace-icon fa fa-refresh bigger-120"></i>Refresh</a>
                         </div>
                       </div>
                     </div>

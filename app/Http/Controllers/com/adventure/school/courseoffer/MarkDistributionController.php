@@ -24,10 +24,6 @@ class MarkDistributionController extends Controller
     }
     public function createMarkdistribution(Request $request){
         $msg="";
-        $programid=$request->programid;
-        $groupid=$request->groupid;
-        $mediumid=$request->mediumid;
-        $shiftid=$request->shiftid;
         $aMenu=new Menu();
         $hasMenu=$aMenu->hasMenu('markdistribution');
         if($hasMenu==false){
@@ -38,32 +34,51 @@ class MarkDistributionController extends Controller
         $aProgramOffer=new ProgramOffer();
         $aCourseOffer=new CourseOffer();
         $programofferinfo=null;
-        $courseCodeList=null;
+        $courseList=null;
         $markCategoryList=null;
         $markdistributionList=null;
         $selectedlist=null;
-        // Have to check Programoffer
-        
-        // Have to check CourseOffer
-        $programofferid=$aProgramOffer->getProgramOfferId(0,$programid,$groupid,$mediumid,$shiftid);
         $markCategoryList=MarkCategory::all();
-      
-        if($request->isMethod('post')&&$request->search_btn=='search_btn' || $request->save_btn=='save_btn'){
+        if($request->isMethod('post')&&($request->search_btn=='search_btn'||$request->save_btn=='save_btn')){
             if($request->search_btn=='search_btn'){
                 $validatedData = $request->validate([
+                    'sessionid' => 'required|',
+                    'programlabelid' => 'required|',
                     'programid' => 'required|',
                     'groupid' => 'required|',
                     'mediumid' => 'required|',
                     'shiftid' => 'required|',
-                    ]);
+                ]);
+                $sessionid=$request->sessionid;
+                $programlabelid=$request->programlabelid;
+                $programid=$request->programid;
+                $groupid=$request->groupid;
+                $mediumid=$request->mediumid;
+                $shiftid=$request->shiftid;
+                if($markCategoryList->count()<1){
+                    $msg="Create Mark Category At first";
+                    return redirect()->back()->with('msg',$msg);
+                }
+                // Check Programoffer
+                $checkProgramoffer=$aProgramOffer->checkValue($sessionid,$programlabelid,$programid,$groupid,$mediumid,$shiftid);
+                // dd($checkProgramoffer);
+                if(!$checkProgramoffer){
+                    $msg="Program Offer is not created yet";
+                    return redirect()->back()->with('msg',$msg);
+                }
+                $programofferid=$aProgramOffer->getProgramOfferId($sessionid,$programlabelid,$programid,$groupid,$mediumid,$shiftid);
+                // dd($programofferid);
+                // Have to check CourseOffer
                 $isTrue=$aCourseOffer->hasCourseAssign($programofferid);
+                // dd($isTrue);
                 if($isTrue==false){
-                    $msg="Please course asssign first";
+                    $msg="Please Course Offer first";
                     return redirect()->back()->with('msg',$msg);
                 }
                 
             }
-            if($request->save_btn=='save_btn'){
+            if($request->isMethod('post')&&$request->save_btn=='save_btn'){
+                // dd("Save");
                 $programofferid=$request->programofferid;
                 $checkboxList=$request->checkbox;
                 $distribution_markList=$request->mark_in_percentage;
@@ -84,13 +99,14 @@ class MarkDistributionController extends Controller
                         foreach($markCategoryList as $catid){
                             $aMarkDistribution=new MarkDistribution();
                             $aMarkDistribution->programofferid=$programofferid;
-                            $aMarkDistribution->coursecodeid=$key;
+                            $aMarkDistribution->courseid=$key;
                             $aMarkDistribution->markcategoryid=$catid->id;
                             $aMarkDistribution->mark_in_percentage=$distribution_markList[$key][$catid->id];
-                            $cat_hld_mark=$cat_hld_mark_List[$key][$catid->id];
-                            $percentage_mark=$percentage_mark_List[$key][$catid->id];
+                            $aMarkDistribution->cat_hld_mark=$cat_hld_mark_List[$key][$catid->id];
+                            $aMarkDistribution->percentage_mark=$percentage_mark_List[$key][$catid->id];
                             $aMarkDistribution->mark_group_id=$mark_group_idList[$key][$catid->id];
                             $isSameCategory=$aMarkDistribution->isThereMarkCategory($programofferid,$key,$catid->id);
+                            // dd($isSameCategory)
                             if($distribution_markList[$key][$catid->id]!=null&&!$isSameCategory&&$totalPercentage[$key]==100){
                                 $aMarkDistribution->save();
                             }
@@ -102,26 +118,32 @@ class MarkDistributionController extends Controller
                 
             }
             $programofferinfo=$aProgramOffer->getProgramOffer($programofferid);
-            $courseCodeList=$aCourseOffer->getCourseCodesOnProgramOffer($programofferid);
-            // dd($courseCodeList);
+            $courseList=$aCourseOffer->getMdCourseOnProgramOffer($programofferid);
+            // dd($courseList);
             $aMarkDistribution=new MarkDistribution();
+            // dd("Die here");
             $markdistributionList=$aMarkDistribution->getMarkDistributionOnProgramOffer($programofferid);
-            // dd($selectedlist);
+            // dd($markdistributionList);
             $selectedlist=array();
-            foreach ($courseCodeList as $course) {
+            foreach ($courseList as $course) {
                 $selectedlist[$course->id]=$aMarkDistribution->getCourseCategoryOnCourse($programofferid,$course->id);
             }
         }
+       
         // dd($selectedlist);
         $aList=[];
         // sessionid,programid,groupid,mediumid,shiftid,tableName And last one compareid
-        $programList=$aCourseOffer->getAllOnIDS(0,0,0,0,0,"programs",'programid');
-        $mediumList=$aCourseOffer->getAllOnIDS(0,0,0,0,0,"mediums",'mediumid');
-        $shiftList=$aCourseOffer->getAllOnIDS(0,0,0,0,0,"shifts",'shiftid');
-        $groupList=$aCourseOffer->getAllOnIDS(0,0,0,0,0,"groups",'groupid');
+        $sessionList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,0,"sessions",'sessionid');
+        $plabelList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,0,"plabels",'programlabelid');
+        $programList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,0,"programs",'programid');
+        $mediumList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,0,"mediums",'mediumid');
+        $shiftList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,0,"shifts",'shiftid');
+        $groupList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,0,"groups",'groupid');
         $dataList=[         
             'institute'=>Institute::getInstituteName(),
             'sidebarMenu'=>$sidebarMenu,
+            'sessionList'=>$sessionList,
+            "plabelList"=>$plabelList,
             'programList'=>$programList,
             'groupList'=>$groupList,
             'mediumList'=>$mediumList,
@@ -129,7 +151,7 @@ class MarkDistributionController extends Controller
             'pList'=>$pList,
             'result'=>$aList,
             'programofferinfo'=>$programofferinfo,
-            'courseCodeList'=>$courseCodeList,
+            'courseList'=>$courseList,
             'markCategoryList'=>$markCategoryList,
             'selectedlist'=>$selectedlist,
             'msg'=>$msg
@@ -151,124 +173,157 @@ class MarkDistributionController extends Controller
         $pList=$aMenu->getPermissionOnMenu('markdistribution');
         $aProgramOffer=new ProgramOffer();
         $aCourseOffer=new CourseOffer();
+        $programofferid=0;
         $programofferinfo=null;
         $courseCodeList=null;
         $markCategoryList=null;
         $markdistributionList=null;
         $selectedlist=null;
-        $programofferid=$aProgramOffer->getProgramOfferId(0,$programid,$groupid,$mediumid,$shiftid);
         $markCategoryList=MarkCategory::all();
-        
-        if($request->isMethod('post')&&$request->search_btn=='search_btn' || $request->update_btn=='update_btn'){
-            if($request->search_btn=='search_btn'){
-                $validatedData = $request->validate([
-                    'programid' => 'required|',
-                    'groupid' => 'required|',
-                    'mediumid' => 'required|',
-                    'shiftid' => 'required|',
-                    ]);
+        if($request->isMethod('post')&&$request->search_btn=='search_btn'){
+            $validatedData = $request->validate([
+                'sessionid' => 'required|',
+                'programlabelid' => 'required|',
+                'programid' => 'required|',
+                'groupid' => 'required|',
+                'mediumid' => 'required|',
+                'shiftid' => 'required|',
+            ]);
+            $sessionid=$request->sessionid;
+            $programlabelid=$request->programlabelid;
+            $programid=$request->programid;
+            $groupid=$request->groupid;
+            $mediumid=$request->mediumid;
+            $shiftid=$request->shiftid;
+            if($markCategoryList->count()<1){
+                $msg="Create Mark Category At first";
+                return redirect()->back()->with('msg',$msg);
             }
-           
-            if($request->update_btn=='update_btn'){
-                $programofferid=$request->programofferid;
-                $checkboxList=$request->checkbox;
-                $distribution_markList=$request->mark_in_percentage;
-                $cat_hld_mark_List=$request->cat_hld_mark;
-                $percentage_mark_List=$request->percentage_mark;
-                $mark_group_idList=$request->mark_group_id;
-                if($checkboxList!=null){
-                    $totalPercentage=array();
-                    foreach($checkboxList as $key => $value){
-                        $totalPercentage[$key]=0;
-                        foreach($markCategoryList as $catid){
-                            if($distribution_markList[$key][$catid->id]!=null){
-                                $totalPercentage[$key]+=$distribution_markList[$key][$catid->id];
-                            }
+            // Check Programoffer
+            $checkProgramoffer=$aProgramOffer->checkValue($sessionid,$programlabelid,$programid,$groupid,$mediumid,$shiftid);
+            // dd($checkProgramoffer);
+            if(!$checkProgramoffer){
+                $msg="Program Offer is not created yet";
+                return redirect()->back()->with('msg',$msg);
+            }
+            $programofferid=$aProgramOffer->getProgramOfferId($sessionid,$programlabelid,$programid,$groupid,$mediumid,$shiftid);
+            // dd($programofferid);
+            // Have to check CourseOffer
+            $isTrue=$aCourseOffer->hasCourseAssign($programofferid);
+            // dd($isTrue);
+            if($isTrue==false){
+                $msg="Please Course Offer first";
+                return redirect()->back()->with('msg',$msg);
+            } 
+        }
+        if($request->isMethod('post')&&$request->update_btn=='update_btn'){
+            $programofferid=$request->programofferid;
+            $checkboxList=$request->checkbox;
+            $distribution_markList=$request->mark_in_percentage;
+            $cat_hld_mark_List=$request->cat_hld_mark;
+            $percentage_mark_List=$request->percentage_mark;
+            $mark_group_idList=$request->mark_group_id;
+            if($checkboxList!=null){
+                $totalPercentage=array();
+                foreach($checkboxList as $key => $value){
+                    $totalPercentage[$key]=0;
+                    foreach($markCategoryList as $catid){
+                        if($distribution_markList[$key][$catid->id]!=null){
+                            $totalPercentage[$key]+=$distribution_markList[$key][$catid->id];
                         }
                     }
-                    foreach($checkboxList as $key => $value){
-                        foreach($markCategoryList as $catid){
-                            $coursecodeid=$key;
-                            $markcategoryid=$catid->id;
-                            // Update only distribution_mark  and passtypeid
-                            $mark_in_percentage=$distribution_markList[$key][$catid->id];
-                            $cat_hld_mark=$cat_hld_mark_List[$key][$catid->id];
-                            $percentage_mark=$percentage_mark_List[$key][$catid->id];
-                            $mark_group_id=$mark_group_idList[$key][$catid->id];                            
-                            if($distribution_markList[$key][$catid->id]!=null){
-                                // Check Mark Category at  distribution_mark
-                                $aMarkDistribution=new MarkDistribution();
-                                $checkStatus=$aMarkDistribution->isThereMarkCategory($programofferid,$coursecodeid,$markcategoryid);
-                                if($checkStatus){
-                                    if($totalPercentage[$key]==100){
-                                        \DB::table('mark_distribution')
-                                        ->where('programofferid',$programofferid)
-                                        ->where('coursecodeid',$coursecodeid)
-                                        ->where('markcategoryid',$markcategoryid)
-                                        ->update([
-                                            'mark_in_percentage' => $mark_in_percentage,
-                                            'cat_hld_mark' => $cat_hld_mark,
-                                            'percentage_mark' => $percentage_mark,
-                                            'mark_group_id'=>$mark_group_id
-                                        ]);
-                                    }else{
-                                        // not save
-                                    }
-                                    
+                }
+                foreach($checkboxList as $key => $value){
+                    foreach($markCategoryList as $catid){
+                        $courseid=$key;
+                        $markcategoryid=$catid->id;
+                        // Update only distribution_mark  and passtypeid
+                        $mark_in_percentage=$distribution_markList[$key][$catid->id];
+                        $cat_hld_mark=$cat_hld_mark_List[$key][$catid->id];
+                        $percentage_mark=$percentage_mark_List[$key][$catid->id];
+                        $mark_group_id=$mark_group_idList[$key][$catid->id];                            
+                        if($distribution_markList[$key][$catid->id]!=null && $distribution_markList[$key][$catid->id]!="0"){
+                            // Check Mark Category at  distribution_mark
+                            $aMarkDistribution=new MarkDistribution();
+                            $checkStatus=$aMarkDistribution->isThereMarkCategory($programofferid,$courseid,$markcategoryid);
+                            if($checkStatus){
+                                if($totalPercentage[$key]==100){
+                                    \DB::table('mark_distribution')
+                                    ->where('programofferid',$programofferid)
+                                    ->where('courseid',$courseid)
+                                    ->where('markcategoryid',$markcategoryid)
+                                    ->update([
+                                        'mark_in_percentage' => $mark_in_percentage,
+                                        'cat_hld_mark' => $cat_hld_mark,
+                                        'percentage_mark' => $percentage_mark,
+                                        'mark_group_id'=>$mark_group_id
+                                    ]);
                                 }else{
-                                    if($totalPercentage[$key]==100){
-                                        $aMarkDistribution->programofferid=$programofferid;
-                                        $aMarkDistribution->coursecodeid=$coursecodeid;
-                                        $aMarkDistribution->markcategoryid=$markcategoryid;
-                                        $aMarkDistribution->mark_in_percentage=$mark_in_percentage;
-                                        $aMarkDistribution->cat_hld_mark=$cat_hld_mark;
-                                        $aMarkDistribution->percentage_mark=$percentage_mark;
-                                        $aMarkDistribution->mark_group_id=$mark_group_id;
-                                        $aMarkDistribution->save();
-                                    }else{
-                                        // not save
-                                    }
+                                    // not save
                                 }
                                 
                             }else{
-                                \DB::table('mark_distribution')
-                                ->where('programofferid',$programofferid)
-                                ->where('coursecodeid',$coursecodeid)
-                                ->where('markcategoryid',$markcategoryid)
-                                ->delete();
+                                if($totalPercentage[$key]==100){
+                                    $aMarkDistribution->programofferid=$programofferid;
+                                    $aMarkDistribution->courseid=$coursid;
+                                    $aMarkDistribution->markcategoryid=$markcategoryid;
+                                    $aMarkDistribution->mark_in_percentage=$mark_in_percentage;
+                                    $aMarkDistribution->cat_hld_mark=$cat_hld_mark;
+                                    $aMarkDistribution->percentage_mark=$percentage_mark;
+                                    $aMarkDistribution->mark_group_id=$mark_group_id;
+                                    $aMarkDistribution->save();
+                                }else{
+                                    // not save
+                                }
                             }
+                            
+                        }else{
+                            // dd($markcategoryid);
+                            // dd("Delete");
+                            \DB::table('mark_distribution')
+                            ->where('programofferid',$programofferid)
+                            ->where('courseid',$courseid)
+                            ->where('markcategoryid',$markcategoryid)
+                            ->delete();
                         }
-                        $msg="Update Successfully";
                     }
-                }else{
-                    $msg="Please select Course";
+                    $msg="Update Successfully";
                 }
-                
-            }
-            $programofferinfo=$aProgramOffer->getProgramOffer($programofferid);
-            $courseCodeList=$aCourseOffer->getCourseCodesOnProgramOffer($programofferid);
-            $aMarkDistribution=new MarkDistribution();
-            $markdistributionList=$aMarkDistribution->getMarkDistributionOnProgramOffer($programofferid);
-            $selectedlist=array();
-            foreach ($courseCodeList as $course) {
-                $selectedlist[$course->id]=$aMarkDistribution->getCourseCategoryOnCourse($programofferid,$course->id);
+            }else{
+                $msg="Please select Course";
             }
         }
+        $programofferinfo=$aProgramOffer->getProgramOffer($programofferid);
+        $courseList=$aCourseOffer->getMdCourseOnProgramOffer($programofferid);
+        // dd($courseList);
+        $aMarkDistribution=new MarkDistribution();
+        // dd("Die here");
+        $markdistributionList=$aMarkDistribution->getMarkDistributionOnProgramOffer($programofferid);
+        // dd($markdistributionList);
+        $selectedlist=array();
+        foreach ($courseList as $course) {
+            $selectedlist[$course->id]=$aMarkDistribution->getCourseCategoryOnCourse($programofferid,$course->id);
+        }
+        // dd($selectedlist);
         // sessionid,programid,groupid,mediumid,shiftid,tableName And last one compareid
-        $programList=$aCourseOffer->getAllOnIDS(0,0,0,0,0,"programs",'programid');
-        $mediumList=$aCourseOffer->getAllOnIDS(0,0,0,0,0,"mediums",'mediumid');
-        $shiftList=$aCourseOffer->getAllOnIDS(0,0,0,0,0,"shifts",'shiftid');
-        $groupList=$aCourseOffer->getAllOnIDS(0,0,0,0,0,"groups",'groupid');
+        $sessionList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,0,"sessions",'sessionid');
+        $plabelList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,0,"plabels",'programlabelid');
+        $programList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,0,"programs",'programid');
+        $mediumList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,0,"mediums",'mediumid');
+        $shiftList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,0,"shifts",'shiftid');
+        $groupList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,0,"groups",'groupid');
         $dataList=[
             'institute'=>Institute::getInstituteName(),
             'sidebarMenu'=>$sidebarMenu,
+            'sessionList'=>$sessionList,
+            "plabelList"=>$plabelList,
             'programList'=>$programList,
             'groupList'=>$groupList,
             'mediumList'=>$mediumList,
             'shiftList'=>$shiftList,
             'pList'=>$pList,
             'programofferinfo'=>$programofferinfo,
-            'courseCodeList'=>$courseCodeList,
+            'courseList'=>$courseList,
             'markCategoryList'=>$markCategoryList,
             'selectedlist'=>$selectedlist,
             'msg'=>$msg

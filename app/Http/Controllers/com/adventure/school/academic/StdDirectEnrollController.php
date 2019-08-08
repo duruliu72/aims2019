@@ -41,6 +41,8 @@ class StdDirectEnrollController extends Controller
         $programofferid=0;
         if($request->isMethod('post')&&$request->next_btn=='next_btn'){
             $validatedData = $request->validate([
+                'sessionid' => 'required',
+                'programlabelid' => 'required',
                 'programid' => 'required',
                 'mediumid' => 'required',
                 'shiftid' => 'required',
@@ -54,6 +56,8 @@ class StdDirectEnrollController extends Controller
                 // 'quotaid' => 'required',
                 ]);
             $request->flash();
+            $sessionid=$request->sessionid;
+            $programlabelid=$request->programlabelid;
             $programid=$request->programid;
             $groupid=$request->groupid;
             $mediumid=$request->mediumid;
@@ -69,12 +73,12 @@ class StdDirectEnrollController extends Controller
             $religionid=$request->religionid;
             $quotaid=$request->quotaid;
             // Check Program Offer Created Or Not
-            $checkProgramOffer=$aProgramOffer->checkValue(0,$programid,$groupid,$mediumid,$shiftid);
+            $checkProgramOffer=$aProgramOffer->checkValue($sessionid,$programlabelid,$programid,$groupid,$mediumid,$shiftid);
             if(!$checkProgramOffer){
                 $msg="Program Offer is not created yet";
                 return redirect()->back()->with('msg',$msg);
             }
-            $programofferid=$aProgramOffer->getProgramOfferId(0,$programid,$groupid,$mediumid,$shiftid);
+            $programofferid=$aProgramOffer->getProgramOfferId($sessionid,$programlabelid,$programid,$groupid,$mediumid,$shiftid);
             //    Check Section offer Created or Not
             $checkSectionoffer=$aSectionOffer->hasSectionAssign($programofferid);
             if(!$checkSectionoffer){
@@ -127,7 +131,6 @@ class StdDirectEnrollController extends Controller
             $aApplicant->genderid=$request->genderid;
             $aApplicant->religionid=$request->religionid;
             $aApplicant->quotaid=$request->quotaid;
-
             $upload_picture = $request->file('picture');
             if($upload_picture!=null){
                 $explode_picture=explode('.',$upload_picture->getClientOriginalName());
@@ -179,7 +182,7 @@ class StdDirectEnrollController extends Controller
                         foreach ($coursecheckList as $key => $value) {
                             $aStudentCourse= new StudentCourse();
                             $aStudentCourse->studentid=$studentid;
-                            $aStudentCourse->coursecodeid=$key;
+                            $aStudentCourse->courseid=$key;
                             $aStudentCourse->coursetypeid=$coursetypeidList[$key];
                             $aStudentCourse->save();
                         }
@@ -191,18 +194,23 @@ class StdDirectEnrollController extends Controller
             }
         }
         // sessionid,programid,groupid,mediumid,shiftid,tableName and $compaireid
-        $programList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,"programs",'programid');
-        $mediumList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,"mediums",'mediumid');
-        $shiftList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,"shifts",'shiftid');
-        $groupList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,"groups",'groupid');
+        $sessionList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,0,"sessions",'sessionid');
+        $plabelList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,0,"plabels",'programlabelid');
+        $programList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,0,"programs",'programid');
+        $mediumList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,0,"mediums",'mediumid');
+        $shiftList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,0,"shifts",'shiftid');
+        $groupList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,0,"groups",'groupid');
         $programofferinfo=$aProgramOffer->getProgramOffer($programofferid);
         // dd($programofferinfo);
         $sectionList=$aSectionOffer->getSectionsOnPO($programofferid);
-        $courseList=$aCourseOffer->getCoursesOnProgramOffer($programofferid);
+        $courseList=$aCourseOffer->getCourseOnProgramoffer($programofferid);
+        // dd($courseList);
         $courseTypeList=CourseType::all();
         $dataList=[
             'institute'=>Institute::getInstituteName(),
             'sidebarMenu'=>$sidebarMenu,
+            'sessionList'=>$sessionList,
+            "plabelList"=>$plabelList,
             'programList'=>$programList,
             'groupList'=>$groupList,
             'mediumList'=>$mediumList,

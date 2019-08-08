@@ -41,6 +41,26 @@
                     <form action="{{URL::to('directenroll')}}" method="POST" enctype="multipart/form-data">
                     {{csrf_field()}}
                     @if($programofferinfo==null)
+                    <div class="form-group row">
+                        <label class="col-sm-2 control-label" for="sessionid">Session<span class="star">*</span></label>
+                        <div class="col-sm-4">
+                            <select onchange="getChange(this,'session')"  class="form-control" name="sessionid" id="sessionid">
+                              <option value="">SELECT</option>
+                                  @foreach ($sessionList as $x)
+                                  <option <?php echo (old('sessionid')==$x->id)? 'selected':''; ?> value="{{$x->id}}">{{$x->name}}</option>
+                                  @endforeach
+                            </select>
+                        </div>
+                        <label class="col-sm-2 control-label" for="programlabelid">Class Label <span class="star">*</span></label>
+                        <div class="col-sm-4">
+                          <select onchange="getChange(this,'programlabel')" class="form-control" name="programlabelid" id="programlabelid">
+                            <option value="">SELECT</option>
+                            @foreach ($plabelList as $x)
+                              <option <?php echo (old('programlabelid')==$x->id)? 'selected':''; ?> value="{{$x->id}}">{{$x->name}}</option>
+                            @endforeach
+                          </select>
+                        </div>
+    				 		      </div>
                       <div class="form-group row">
                         <label class="col-sm-2 control-label" for="programid">Class<span class="star">*</span></label>
                         <div class="col-sm-4">
@@ -192,7 +212,7 @@
                                   @foreach($courseList as $course)
                                     <tr>
                                       <td>{{++$id}}</td>
-                                      <td>{{$course->courseNameWithCode}}</td>
+                                      <td>{{sprintf('%s(%s)',$course->courseName,$course->courseCode)}}</td>
                                       <td>
                                           <select class="form-control" name="coursetypeid[{{$course->id}}]" id="coursetypeid">
                                           @foreach($courseTypeList as $x)

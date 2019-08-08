@@ -34,6 +34,26 @@
                     <form action="{{URL::to('mstexammarkentry')}}" method="POST">
                     {{csrf_field()}}
                     <div class="form-group row">
+                      <label class="col-sm-2 control-label" for="sessionid">Session</label>
+                      <div class="col-sm-4">
+                        <select onchange="getChange(this,'session')" class="form-control" name="sessionid" id="sessionid">
+                            <option  value="">SELECT</option>
+                          @foreach ($sessionList as $x)
+                            <option value="{{$x->id}}">{{$x->name}}</option>
+                          @endforeach
+                        </select>
+                      </div> 
+                      <label class="col-sm-2 control-label" for="programlabelid">Class Label</label>
+                      <div class="col-sm-4">
+                        <select onchange="getChange(this,'programlabel')" class="form-control" name="programlabelid" id="programlabelid">
+                          <option value="">SELECT</option>
+                          @foreach ($plabelList as $x)
+                            <option value="{{$x->id}}">{{$x->name}}</option>
+                          @endforeach
+                        </select>
+                      </div>                   
+                    </div>
+                    <div class="form-group row">
                     <label class="col-sm-2 control-label" for="programid">Program</label>
                     <div class="col-sm-4">
                       <select onchange="getChange(this,'program')" class="form-control" name="programid" id="programid">

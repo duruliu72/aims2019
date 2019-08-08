@@ -8,12 +8,13 @@ class MasterExam extends Model
 {
     protected $table="master_exam";
     protected $fillable = ['programofferid','examnameid','exhld_in_percentage','mxm_in_percentage','cxm_in_percentage','result_with_child','status'];
+    //============================
     public static function getAllMaster(){
         $sql="SELECT 
         mxm.id,
         mxm.programofferid,
         sessions.name AS sessionName,
-        programlevels.name AS levelName,
+        sessions.name AS programLabel,
         programs.name AS programName,
         groups.name AS groupName,
         mediums.name AS mediumName,
@@ -31,9 +32,8 @@ class MasterExam extends Model
         INNER JOIN programoffers AS po ON mxm.programofferid=po.id
         INNER JOIN exam_name AS exn ON mxm.examnameid=exn.id
         INNER JOIN sessions ON po.sessionid=sessions.id
+        INNER JOIN plabels ON po.programlabelid=plabels.id
         INNER JOIN programs ON po.programid=programs.id
-        INNER JOIN level_programs on programs.id=level_programs.programid
-        INNER JOIN programlevels on level_programs.programlevelid=programlevels.id
         INNER JOIN groups ON po.groupid=groups.id
         INNER JOIN mediums ON po.mediumid=mediums.id
         INNER JOIN shifts ON po.shiftid=shifts.id
@@ -42,10 +42,12 @@ class MasterExam extends Model
         $result=collect($qResult);
         return $result;
     }
+    //=============================
     public static function getMasterExamId($id){
         $sql="SELECT 
         mex.*,
         po.sessionid,
+        po.programlabelid,
         po.programid,
         po.groupid,
         po.mediumid,

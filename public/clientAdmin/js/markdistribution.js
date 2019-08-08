@@ -128,67 +128,6 @@ function checkUncheck() {
 markcheckid.addEventListener("click", function(e) {
     checkUncheck();
 });
-
-// Mark distributon Form
-// function calMarkDistribution() {
-//     var subject_mark = document.getElementsByClassName("subject_mark");
-//     for (let index = 0; index < subject_mark.length; index++) {
-//         var obj = {};
-//         obj.coursemark = subject_mark[index].querySelector(
-//             ".coursemark"
-//         ).innerHTML;
-//         // console.log(obj);
-//         var course_subcat = subject_mark[index].querySelectorAll(
-//             ".course_subcat"
-//         );
-//         course_subcat.forEach(element => {
-//             var inputfields = element.querySelectorAll(".inputfield");
-//             var resultfield = element.querySelector(".resultfield");
-//             function cal() {
-//                 resultfield.value =
-//                     (parseInt(inputfields[0].value) *
-//                         parseInt(inputfields[1].value)) /
-//                     100;
-//                 if (resultfield.value == "NaN") {
-//                     resultfield.value = "";
-//                 }
-//                 var sumList = subject_mark[index].querySelectorAll(".resultfield");
-//                 var total = 0;
-//                 sumList.forEach(sum => {
-//                     if (sum.value == "") {
-//                         total = total + 0;
-//                     } else {
-//                         total = total + parseFloat(sum.value);
-//                     }
-//                     // console.log(total);
-//                 });
-//                 if (total > obj.coursemark) {
-//                     confirm(
-//                         "Mark Exceed limitation" +
-//                             obj.coursemark +
-//                             "sasa" +
-//                             total
-//                     );
-//                     total = 0;
-//                 }
-//                 subject_mark[index].querySelector(".tot_mark").value = total;
-//             }
-//             function reversecal() {}
-//             cal();
-//             resultfield.addEventListener("keyup", () => {
-//                 reversecal();
-//             });
-//             inputfields.forEach(input_field => {
-//                 input_field.addEventListener("keyup", v => {
-//                     cal();
-//                     console.log(v);
-//                 });
-//             });
-//         });
-//     }
-// }
-// calMarkDistribution();
-////////////////////////
 $(document).ready(function() {
     function dispaly() {
         var raws = $(".subject_mark");
@@ -230,7 +169,6 @@ $(document).ready(function() {
         var input2 = parent.find(".input2").val();
         var resultfield = parent.find(".resultfield");
         var percent = parent.find(".percent");
-
         var total = (input1 * input2) / 100;
         if (total == "NaN") {
             total = 0;

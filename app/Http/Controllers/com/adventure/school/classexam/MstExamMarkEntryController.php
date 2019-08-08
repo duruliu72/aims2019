@@ -7,7 +7,7 @@ use App\Http\Controllers\Controller;
 use App\com\adventure\school\basic\Institute;
 use App\com\adventure\school\menu\Menu;
 use App\com\adventure\school\program\ProgramOffer;
-use App\com\adventure\school\program\CourseCode;
+use App\com\adventure\school\program\Course;
 use App\com\adventure\school\program\Section;
 use App\com\adventure\school\program\MarkCategory;
 use App\com\adventure\school\employee\Employee;
@@ -25,6 +25,7 @@ class MstExamMarkEntryController extends Controller
         $this->middleware('auth');
     }
     public function marksentry(Request $request){
+        // die("Die Here");
         $msg="";
         $aMenu=new Menu();
         $hasMenu=$aMenu->hasMenu('mstexammarkentry');
@@ -33,12 +34,14 @@ class MstExamMarkEntryController extends Controller
         }
         $sidebarMenu=$aMenu->getSidebarMenu();
         ///////////////////////
+        $sessionid=$request->sessionid;
+        $programlabelid=$request->programlabelid;
         $programid=$request->programid;
         $groupid=$request->groupid;
         $mediumid=$request->mediumid;
         $shiftid=$request->shiftid;
         $sectionid=$request->sectionid;
-        $coursecodeid=$request->coursecodeid;
+        $courseid=$request->coursecodeid;
         $examnameid=$request->examnameid;
         $programofferinfo=null;
         $programofferid=null;
@@ -133,13 +136,15 @@ class MstExamMarkEntryController extends Controller
             }
         }
         $programofferinfo=$aProgramOffer->getProgramOffer($programofferid);
-        $mark_catList=$markDistObj->getMarkCategory($programofferid,$coursecodeid);
+        // dd($programofferinfo);
+        $mark_catList=$markDistObj->getMarkCategory($programofferid,$courseid);
         $aSection=new Section();
         $section=$aSection->getSection($sectionid);
-        $aCourseCode=new CourseCode();
-        $courseCode=$aCourseCode->getCourse($coursecodeid);
+        $aCourse=new Course();
+        $courseCode=$aCourse->getCourse($courseid);
+        // $courseCode=$aCourseCode->getCourse($coursecodeid);
         $aMstExamMarks=new MstExamMarks();
-        $studentList=$aMstExamMarks->getStudentsOnClsNSec($programofferid,$sectionid,$coursecodeid,$examnameid,'LEFT');     
+        $studentList=$aMstExamMarks->getStudentsOnClsNSec($programofferid,$sectionid,$courseid,$examnameid,'LEFT');     
         // dd($studentList);
         // sessionid,programid,groupid,mediumid,shiftid and tableName
         $programList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,"programs",'programid');
@@ -295,11 +300,13 @@ class MstExamMarkEntryController extends Controller
         $courseCode=$aCourseOffer->getCourseCode($programofferid,$coursecodeid);
         $studentList=$aMstExamMarks->getStudentsOnClsNSec($programofferid,$sectionid,$coursecodeid,$examnameid,'INNER');     
         // dd($studentList);
-        // sessionid,programid,groupid,mediumid,shiftid and tableName
-        $programList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,"programs",'programid');
-        $mediumList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,"mediums",'mediumid');
-        $shiftList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,"shifts",'shiftid');
-        $groupList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,"groups",'groupid');
+        // sessionid,programlabelid,programid,groupid,mediumid,shiftid and tableName
+        $sessionList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,0,"sessions",'sessionid');
+        $plabelList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,0,"plabels",'programlabelid');
+        $programList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,0,"programs",'programid');
+        $mediumList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,0,"mediums",'mediumid');
+        $shiftList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,0,"shifts",'shiftid');
+        $groupList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,0,"groups",'groupid');
         $courseList=$aCourseCode->getAllCourse();
         $aExamName=new ExamName();
         $exam=$aExamName->getExamONID($examnameid);
@@ -308,6 +315,8 @@ class MstExamMarkEntryController extends Controller
         $dataList=[
             'institute'=>Institute::getInstituteName(),
             'sidebarMenu'=>$sidebarMenu,
+            'sessionList'=>$sessionList,
+            "plabelList"=>$plabelList,
             'programList'=>$programList,
             'groupList'=>$groupList,
             'mediumList'=>$mediumList,

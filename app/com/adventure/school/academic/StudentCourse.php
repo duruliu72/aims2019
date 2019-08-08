@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class StudentCourse extends Model
 {
     protected  $table='student_courses';
-    protected $fillable = ['studentid','coursecodeid','coursetypeid','status'];
+    protected $fillable = ['studentid','courseid','coursetypeid','status'];
     public function getStudentCourses($studentid){
         $sql="SELECT * FROM `student_courses`
         WHERE studentid=?";

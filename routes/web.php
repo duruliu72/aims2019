@@ -105,8 +105,8 @@ Route::resource('sectionoffer', 'com\adventure\school\courseoffer\SectionOfferCo
 Route::get('markdistribution/getValue','com\adventure\school\courseoffer\MarkDistributionController@getValue');
 Route::get('markdistribution','com\adventure\school\courseoffer\MarkDistributionController@createMarkdistribution');
 Route::post('markdistribution','com\adventure\school\courseoffer\MarkDistributionController@createMarkdistribution');
-Route::get('markdistribution/edit','com\adventure\school\courseoffer\MarkDistributionController@editMarkdistribution');
-Route::post('markdistribution/edit','com\adventure\school\courseoffer\MarkDistributionController@editMarkdistribution');
+Route::get('editmarkdistribution','com\adventure\school\courseoffer\MarkDistributionController@editMarkdistribution');
+Route::post('editmarkdistribution','com\adventure\school\courseoffer\MarkDistributionController@editMarkdistribution');
 // Academic Settings
 Route::get('student', 'com\adventure\school\academic\StudentController@applicantSearch');
 Route::get('student/create', 'com\adventure\school\academic\StudentController@goback');

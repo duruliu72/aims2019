@@ -39,6 +39,26 @@
             @if($editObj==null)
             <form action="{{URL::to('masterexam')}}" method="POST">
               {{csrf_field()}}
+            <div class="form-group row">
+                <label class="col-sm-2 control-label" for="sessionid">Session</label>
+                <div class="col-sm-4">
+                  <select onchange="getChange(this,'session')" class="form-control" name="sessionid" id="sessionid">
+                      <option  value="">SELECT</option>
+                    @foreach ($sessionList as $x)
+                      <option value="{{$x->id}}">{{$x->name}}</option>
+                    @endforeach
+                  </select>
+                </div> 
+                <label class="col-sm-2 control-label" for="programlabelid">Class Label</label>
+                <div class="col-sm-4">
+                  <select onchange="getChange(this,'programlabel')" class="form-control" name="programlabelid" id="programlabelid">
+                    <option value="">SELECT</option>
+                    @foreach ($plabelList as $x)
+                      <option value="{{$x->id}}">{{$x->name}}</option>
+                    @endforeach
+                  </select>
+                </div>                   
+              </div>
               <div class="form-group row">
                 <label class="col-sm-2 control-label" for="programid">Program</label>
                 <div class="col-sm-4">
@@ -57,8 +77,7 @@
                         <option value="{{$x->id}}">{{$x->name}}</option>
                     @endforeach
                   </select>
-                </div>
-                                   
+                </div>                    
               </div>
               <div class="form-group row">
                 <label class="col-sm-2 control-label" for="shiftid">Shift</label>
@@ -118,6 +137,34 @@
             <form action="{{URL::to('masterexam')}}" method="POST">
               <input type="hidden" name="id1" value="{{$editObj->id}}">
               {{csrf_field()}}
+              <div class="form-group row">
+                  <label class="col-sm-2 control-label" for="sessionid">Session</label>
+                  <div class="col-sm-4">
+                    <select onchange="getChange(this,'session')" class="form-control" name="sessionid" id="sessionid">
+                        <option  value="">SELECT</option>
+                      @foreach ($sessionList as $x)
+                        @if($editObj->sessionid==$x->id)
+                        <option selected value="{{$x->id}}">{{$x->name}}</option>
+                        @else
+                        <option value="{{$x->id}}">{{$x->name}}</option>
+                        @endif
+                      @endforeach
+                    </select>
+                  </div> 
+                  <label class="col-sm-2 control-label" for="programlabelid">Class Label</label>
+                  <div class="col-sm-4">
+                    <select onchange="getChange(this,'programlabel')" class="form-control" name="programlabelid" id="programlabelid">
+                      <option value="">SELECT</option>
+                      @foreach ($plabelList as $x)
+                        @if($editObj->programlabelid==$x->id)
+                        <option selected value="{{$x->id}}">{{$x->name}}</option>
+                        @else
+                        <option value="{{$x->id}}">{{$x->name}}</option>
+                        @endif
+                      @endforeach
+                    </select>
+                  </div>                   
+              </div>
               <div class="form-group row">
                 <label class="col-sm-2 control-label" for="programid">Program</label>
                 <div class="col-sm-4">
@@ -228,6 +275,7 @@
                 <th>Marks(%)</th>
                 <th>Master Exam(%)</th>
                 <th>Child Exam(%)</th>
+                <th>Result With Child</th>
                 @if($pList[3]->id==3)
                 <th width="10px">Edit</th>
                 @endif
@@ -246,6 +294,11 @@
                 <td>{{$x->exhld_in_percentage}}</td>
                 <td>{{$x->differ_mxm_in_percentage}}</td>
                 <td>{{$x->cxm_in_percentage}}</td>
+                @if($x->result_with_child==1)
+                  <td>Yes</td>
+                @elseif($x->result_with_child==2)
+                  <td>No</td>
+                @endif
                 @if($pList[3]->id==3)
                 <td> 
                   <a href="{{URL::to('/masterexam')}}/{{$x->id}}/{{'edit'}}" class="tooltip-success" data-rel="tooltip" title="Edit">
@@ -275,6 +328,7 @@
                 <th>Marks(%)</th>
                 <th>Master Exam(%)</th>
                 <th>Child Exam(%)</th>
+                <th>Result With Child</th>
                 @if($pList[3]->id==3)
                 <th width="10px">Edit</th>
                 @endif

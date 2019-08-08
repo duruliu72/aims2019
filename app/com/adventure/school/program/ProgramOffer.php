@@ -8,7 +8,8 @@ class ProgramOffer extends Model
 {
     protected $table='programoffers';
     protected $fillable = ['sessionid','programlabelid','programid','groupid','mediumid','shiftid','cordinator','seat','number_of_courses','status'];
-		public function getProgramOffer($id){
+	//=====================================
+	public function getProgramOffer($id){
 			$sql="SELECT 
 			t1.*,
 			sessions.name AS sessionName,

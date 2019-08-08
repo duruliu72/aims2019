@@ -19,98 +19,6 @@ class CourseOffer extends Model
         }
         return false;
     }
-    //============================
-    public function getOfferedCourses($programofferid){
-        $sql="SELECT * FROM courseoffer
-        WHERE programofferid=?";
-        $qResult=\DB::select($sql,[$programofferid]);
-        $result=collect($qResult);
-        return $result;
-    }
-    public function isSameCourse($programofferid,$courseid){
-        $sql="SELECT * FROM `courseoffer` WHERE programofferid=? AND coursecodeid=?";
-        $qResult=\DB::select($sql,[$programofferid,$coursecodeid]);
-        if(collect($qResult)->count()>0){
-            return true;
-        }
-        return false;
-    }
-
-    public function getCourseCode($programofferid,$coursecodeid){
-        $sql="SELECT 
-        course_codes.* ,
-        courses.name AS courseName,
-        courseoffer.coursemark
-        FROM `courseoffer`
-        INNER JOIN course_codes on courseoffer.coursecodeid=course_codes.id
-        INNER JOIN courses ON course_codes.courseid=courses.id
-        WHERE programofferid=? && coursecodeid=?";
-        $qResult=\DB::select($sql,[$programofferid,$coursecodeid]);
-        $courseCode=collect($qResult)->first();
-        return $courseCode;
-    }
-    public function getCourseMarks($programofferid,$coursecodeid){
-        $sql="SELECT
-        course_codes.* ,
-        courses.name AS courseName,
-        co.coursemark,
-        SUM(md.cat_hld_mark) AS tot_hld_mark
-        FROM `courseoffer` AS co
-        INNER JOIN mark_distribution as md 
-        ON co.programofferid=md.programofferid  && co.coursecodeid=md.coursecodeid
-        INNER JOIN course_codes on co.coursecodeid=course_codes.id
-        INNER JOIN courses ON course_codes.courseid=courses.id
-        WHERE co.programofferid=? && co.coursecodeid=? GROUP BY co.coursecodeid";
-        $qResult=\DB::select($sql,[$programofferid,$coursecodeid]);
-        $courseCode=collect($qResult)->first();
-        return $courseCode;
-    }
-    public function getCoursesOnProgramOffer($programofferid){
-        $sql="SELECT 
-        course_codes.id,
-        courses.name as courseName,
-        course_codes.name as courseCode,
-        CONCAT(courses.name,' (',course_codes.name,')') AS courseNameWithCode
-        FROM `courseoffer`
-        INNER JOIN course_codes ON courseoffer.coursecodeid=course_codes.id
-        INNER JOIN courses ON course_codes.courseid=courses.id
-        WHERE programofferid=?";
-        $qResult=\DB::select($sql,[$programofferid]);
-        return collect($qResult);
-    }
-     // +++++++++++++++++++
-     public function getCourseCodes($sessionid){
-        if($sessionid==0){
-			$yearName = date('Y');
-	    	$aSession=new Session();
-	    	$sessionid=$aSession->getSessionId($yearName);
-		}
-        $sql="SELECT
-        course_codes.id,
-        CONCAT(courses.name,' (',course_codes.name,')') AS name
-        FROM `courseoffer`
-        INNER JOIN course_codes ON courseoffer.coursecodeid=course_codes.id
-        INNER JOIN courses ON course_codes.courseid=courses.id
-        INNER JOIN programoffers ON courseoffer.programofferid=programoffers.id
-        WHERE programoffers.sessionid=? GROUP BY course_codes.id";
-        $qResult=\DB::select($sql,[$sessionid]);
-        return collect($qResult);
-    }
-    public function getCourseCodesOnProgramOffer($programofferid){
-        $sql="SELECT
-        course_codes.id,
-        CONCAT(courses.name,' (',course_codes.name,')') AS name,
-        courseoffer.coursemark,
-        IFNULL(mark_distribution.coursecodeid,0) AS mcoursecodeid
-        FROM courseoffer
-        INNER JOIN course_codes ON courseoffer.coursecodeid=course_codes.id
-        INNER JOIN courses ON course_codes.courseid=courses.id
-        LEFT JOIN mark_distribution ON courseoffer.programofferid=mark_distribution.programofferid 
-        AND courseoffer.coursecodeid=mark_distribution.coursecodeid
-        WHERE courseoffer.programofferid=?  GROUP BY courseoffer.coursecodeid ORDER BY  courseoffer.coursecodeid";
-        $qResult=\DB::select($sql,[$programofferid]);
-        return collect($qResult);
-    }
     public function hasCourseAssign($programofferid){
         $sql="SELECT * FROM `courseoffer`
         WHERE programofferid=?";
@@ -121,15 +29,120 @@ class CourseOffer extends Model
         }
         return false;
     }
-    public function getMinimumCourses($programofferid){
-        $sql="SELECT 
-        COUNT(coursecodeid) num_of_courses
-        FROM `courseoffer`
-        WHERE programofferid=?";
+    public function getCourseOnProgramoffer($programofferid){
+        $sql="SELECT courses.*,
+        courseoffer.coursemark,
+        courseoffer.meargeid,
+        courseoffer.mearge_name
+        FROM courses
+        INNER JOIN courseoffer ON courses.id=courseoffer.courseid
+        WHERE courseoffer.programofferid=?";
         $qResult=\DB::select($sql,[$programofferid]);
-        $result=collect($qResult)->first();
-        return $result->num_of_courses;
+        $result=collect($qResult);
+		return $result;
     }
+    public function getMdCourseOnProgramOffer($programofferid){
+        $sql="SELECT
+        courses.id,
+        courses.courseName,
+        courses.courseCode,
+        courseoffer.coursemark,
+        IFNULL(mark_distribution.courseid,0) AS mdcourseid
+        FROM courseoffer
+        INNER JOIN courses ON courseoffer.courseid=courses.id
+        LEFT JOIN mark_distribution ON courseoffer.programofferid=mark_distribution.programofferid 
+        AND courseoffer.courseid=mark_distribution.courseid
+        WHERE courseoffer.programofferid=?  GROUP BY courseoffer.courseid";
+        $qResult=\DB::select($sql,[$programofferid]);
+        return collect($qResult);
+    }
+    //============================
+    // public function getOfferedCourses($programofferid){
+    //     $sql="SELECT * FROM courseoffer
+    //     WHERE programofferid=?";
+    //     $qResult=\DB::select($sql,[$programofferid]);
+    //     $result=collect($qResult);
+    //     return $result;
+    // }
+    // public function isSameCourse($programofferid,$courseid){
+    //     $sql="SELECT * FROM `courseoffer` WHERE programofferid=? AND coursecodeid=?";
+    //     $qResult=\DB::select($sql,[$programofferid,$coursecodeid]);
+    //     if(collect($qResult)->count()>0){
+    //         return true;
+    //     }
+    //     return false;
+    // }
+
+    // public function getCourseCode($programofferid,$coursecodeid){
+    //     $sql="SELECT 
+    //     course_codes.* ,
+    //     courses.name AS courseName,
+    //     courseoffer.coursemark
+    //     FROM `courseoffer`
+    //     INNER JOIN course_codes on courseoffer.coursecodeid=course_codes.id
+    //     INNER JOIN courses ON course_codes.courseid=courses.id
+    //     WHERE programofferid=? && coursecodeid=?";
+    //     $qResult=\DB::select($sql,[$programofferid,$coursecodeid]);
+    //     $courseCode=collect($qResult)->first();
+    //     return $courseCode;
+    // }
+    // public function getCourseMarks($programofferid,$coursecodeid){
+    //     $sql="SELECT
+    //     course_codes.* ,
+    //     courses.name AS courseName,
+    //     co.coursemark,
+    //     SUM(md.cat_hld_mark) AS tot_hld_mark
+    //     FROM `courseoffer` AS co
+    //     INNER JOIN mark_distribution as md 
+    //     ON co.programofferid=md.programofferid  && co.coursecodeid=md.coursecodeid
+    //     INNER JOIN course_codes on co.coursecodeid=course_codes.id
+    //     INNER JOIN courses ON course_codes.courseid=courses.id
+    //     WHERE co.programofferid=? && co.coursecodeid=? GROUP BY co.coursecodeid";
+    //     $qResult=\DB::select($sql,[$programofferid,$coursecodeid]);
+    //     $courseCode=collect($qResult)->first();
+    //     return $courseCode;
+    // }
+    // public function getCoursesOnProgramOffer($programofferid){
+    //     $sql="SELECT 
+    //     course_codes.id,
+    //     courses.name as courseName,
+    //     course_codes.name as courseCode,
+    //     CONCAT(courses.name,' (',course_codes.name,')') AS courseNameWithCode
+    //     FROM `courseoffer`
+    //     INNER JOIN course_codes ON courseoffer.coursecodeid=course_codes.id
+    //     INNER JOIN courses ON course_codes.courseid=courses.id
+    //     WHERE programofferid=?";
+    //     $qResult=\DB::select($sql,[$programofferid]);
+    //     return collect($qResult);
+    // }
+     // +++++++++++++++++++
+    //  public function getCourseCodes($sessionid){
+    //     if($sessionid==0){
+	// 		$yearName = date('Y');
+	//     	$aSession=new Session();
+	//     	$sessionid=$aSession->getSessionId($yearName);
+	// 	}
+    //     $sql="SELECT
+    //     course_codes.id,
+    //     CONCAT(courses.name,' (',course_codes.name,')') AS name
+    //     FROM `courseoffer`
+    //     INNER JOIN course_codes ON courseoffer.coursecodeid=course_codes.id
+    //     INNER JOIN courses ON course_codes.courseid=courses.id
+    //     INNER JOIN programoffers ON courseoffer.programofferid=programoffers.id
+    //     WHERE programoffers.sessionid=? GROUP BY course_codes.id";
+    //     $qResult=\DB::select($sql,[$sessionid]);
+    //     return collect($qResult);
+    // }
+    
+    // public function getMinimumCourses($programofferid){
+    //     $sql="SELECT 
+    //     COUNT(coursecodeid) num_of_courses
+    //     FROM `courseoffer`
+    //     WHERE programofferid=?";
+    //     $qResult=\DB::select($sql,[$programofferid]);
+    //     $result=collect($qResult)->first();
+    //     return $result->num_of_courses;
+    // }
     //===========================For Dorpdown ==============
 	public function getAllOnIDS($sessionid,$programid,$groupid,$mediumid,$shiftid,$tableName,$compareid){
 		if($sessionid==0){
