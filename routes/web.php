@@ -135,6 +135,7 @@ Route::get('childexam/{id}/edit', 'com\adventure\school\exam\ChildExamController
 Route::post('childexam/{id}/edit', 'com\adventure\school\exam\ChildExamController@childExamEdit');
 Route::get('childexam/getValue', 'com\adventure\school\exam\ChildExamController@getValue');
 // Mark Entry
+Route::get('mstexammark/getValue', 'com\adventure\school\classexam\MstExamMarkEntryController@getValue');
 Route::get('mstexammarkentry', 'com\adventure\school\classexam\MstExamMarkEntryController@marksentry');
 Route::post('mstexammarkentry', 'com\adventure\school\classexam\MstExamMarkEntryController@marksentry');
 Route::get('mstexammarkedit', 'com\adventure\school\classexam\MstExamMarkEntryController@marksedit');
@@ -177,3 +178,7 @@ Route::post('/admission/admissionresult','com\adventure\school\admission\Admissi
 Route::get('/admission/getValue','com\adventure\school\admission\AdmissionController@getValue');
 Route::get('/admission/changeAddress','com\adventure\school\admission\AdmissionController@changeAddress');
 Route::resource('admission', 'com\adventure\school\admission\AdmissionController');
+
+
+//for finger print
+Route::get('/fp', 'FingerPrintController@take_attendance');

@@ -41,6 +41,18 @@ class CourseOffer extends Model
         $result=collect($qResult);
 		return $result;
     }
+    public function getCoursesOnProgramoffer($programofferid){
+        $sql="SELECT courses.*,
+        courseoffer.coursemark,
+        courseoffer.meargeid,
+        courseoffer.mearge_name
+        FROM courses
+        INNER JOIN courseoffer ON courses.id=courseoffer.courseid
+        WHERE courseoffer.programofferid=?";
+        $qResult=\DB::select($sql,[$programofferid]);
+        $result=collect($qResult);
+		return $result;
+    }
     public function getMdCourseOnProgramOffer($programofferid){
         $sql="SELECT
         courses.id,
@@ -143,35 +155,35 @@ class CourseOffer extends Model
     //     $result=collect($qResult)->first();
     //     return $result->num_of_courses;
     // }
-    //===========================For Dorpdown ==============
-	public function getAllOnIDS($sessionid,$programid,$groupid,$mediumid,$shiftid,$tableName,$compareid){
-		if($sessionid==0){
-			$yearName = date('Y');
-			$aSession=new Session();
-            $sessionid=$aSession->getSessionId($yearName);
-        }
-        $sql="SELECT t2.* 
-        FROM `courseoffer`
-        INNER JOIN programoffers ON courseoffer.programofferid=programoffers.id
-        INNER JOIN ".$tableName." AS t2 ON programoffers.".$compareid."=t2.id 
-        WHERE programoffers.sessionid=?";
+    // ========================For Dorpdown ==============
+	public function getAllOnIDS($sessionid,$programlabelid,$programid,$groupid,$mediumid,$shiftid,$tableName,$compareid){
+		$sql="SELECT t2.* FROM `programoffers` AS t1
+        INNER JOIN(SELECT programofferid FROM `courseoffer` GROUP BY programofferid) AS co ON t1.id=co.programofferid
+        INNER JOIN ".$tableName." AS t2 ON t1.".$compareid."=t2.id ";
 		$data=array();
-		array_push($data,$sessionid);
+		if($sessionid!=0){
+			$sql.=" WHERE sessionid=?";
+			array_push($data,$sessionid);
+		}
+		if($programlabelid!=0){
+			$sql.=" AND t1.programlabelid=?";
+			array_push($data,$programlabelid);
+		}
 		if($programid!=0){
-			array_push($data,$programid);
 			$sql.=" AND programid=?";
+			array_push($data,$programid);
 		}
 		if($groupid!=0){
-			array_push($data,$groupid);
 			$sql.=" AND groupid=?";
+			array_push($data,$groupid);
 		}
 		if($mediumid!=0){
-			array_push($data,$mediumid);
 			$sql.=" AND mediumid=?";
+			array_push($data,$mediumid);
 		}
 		if($shiftid!=0){
-			array_push($data,$shiftid);
 			$sql.=" AND shiftid=?";
+			array_push($data,$shiftid);
 		}
 		$sql.=" GROUP BY t2.id";
 		$qResult=\DB::select($sql,$data);

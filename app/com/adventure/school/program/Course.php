@@ -18,6 +18,13 @@ class Course extends Model
         $result=collect($qResult);
 		return $result;
     }
+    public function getCourse($id){
+        $sql="SELECT * FROM `courses`
+        WHERE id=?";
+   		$qResult=\DB::select($sql,[$id]);
+		$course=collect($qResult)->first();
+		return $course;
+    }
     public function getCourseOnProgramoffer($programlabelid,$programofferid,$join){
         $sql="SELECT c_table.*,
         co_table.courseid,

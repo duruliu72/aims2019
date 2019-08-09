@@ -7,7 +7,7 @@ use App\com\adventure\school\academic\StudentCourse;
 class Student extends Model
 {
     protected  $table='students';
-    protected $fillable = ['programofferid','sectionid','applicantid','classroll','fromclass','fromsection','studenttype','currentclass','status'];
+    protected $fillable = ['studentid','programofferid','sectionid','applicantid','classroll','fromclass','fromsection','studenttype','currentclass','status'];
     public function getLastID(){
         $sql="SELECT * FROM `students` ORDER BY id DESC";
         $qResult=\DB::select($sql);

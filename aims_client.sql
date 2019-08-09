@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 08, 2019 at 02:30 PM
+-- Generation Time: Aug 09, 2019 at 02:34 PM
 -- Server version: 10.1.36-MariaDB
 -- PHP Version: 7.2.10
 
@@ -578,6 +578,33 @@ CREATE TABLE `employmentstatus` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `emp_event_log`
+--
+
+CREATE TABLE `emp_event_log` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `device_id` int(11) NOT NULL,
+  `emp_id` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `date_time` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `event_log`
+--
+
+CREATE TABLE `event_log` (
+  `sl` int(10) UNSIGNED NOT NULL,
+  `device_id` int(11) NOT NULL,
+  `programOfferId` int(11) NOT NULL,
+  `student_id` int(11) NOT NULL,
+  `date_time` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `exam_name`
 --
 
@@ -1006,7 +1033,8 @@ INSERT INTO `menus` (`id`, `name`, `url`, `parentid`, `menuorder`, `status`, `cr
 (45, 'Master Mark Entry', 'mstexammarkentry', 44, 100, 0, '2019-08-08 04:36:04', '2019-08-08 04:36:04'),
 (46, 'Exam Settings', NULL, 0, 4, 0, '2019-08-08 05:33:22', '2019-08-08 05:33:22'),
 (47, 'Exam Name', 'examname', 46, 100, 0, '2019-08-08 05:36:05', '2019-08-08 05:36:05'),
-(48, 'Master Exam', 'masterexam', 46, 2, 0, '2019-08-08 05:41:22', '2019-08-08 05:41:22');
+(48, 'Master Exam', 'masterexam', 46, 2, 0, '2019-08-08 05:41:22', '2019-08-08 05:41:22'),
+(49, 'Master Mark Edit', 'mstexammarkedit', 44, 100, 0, '2019-08-09 05:45:33', '2019-08-09 05:45:33');
 
 -- --------------------------------------------------------
 
@@ -1090,7 +1118,10 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (64, '2019_08_05_104441_create_institute_labels_table', 1),
 (65, '2019_08_06_092647_create_section_course_teachers_table', 1),
 (66, '2019_03_25_091043_create_mark_distribution_table', 2),
-(67, '2019_08_07_102513_create_employee_labels_table', 2);
+(67, '2019_08_07_102513_create_employee_labels_table', 2),
+(68, '2019_08_09_061500_add_stdid_to_students', 3),
+(69, '2019_08_09_063943_create_event_log_table', 3),
+(70, '2019_08_09_064444_create_emp_event_log_table', 3);
 
 -- --------------------------------------------------------
 
@@ -1104,7 +1135,7 @@ CREATE TABLE `mst_exam_marks` (
   `sectionid` int(11) NOT NULL,
   `teacherid` int(11) DEFAULT NULL,
   `studentid` int(11) NOT NULL,
-  `coursecodeid` int(11) NOT NULL,
+  `courseid` int(11) NOT NULL,
   `examnameid` int(11) NOT NULL,
   `examtypeid` int(11) DEFAULT NULL,
   `markcategoryid` int(11) DEFAULT NULL,
@@ -1113,6 +1144,33 @@ CREATE TABLE `mst_exam_marks` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `mst_exam_marks`
+--
+
+INSERT INTO `mst_exam_marks` (`id`, `programofferid`, `sectionid`, `teacherid`, `studentid`, `courseid`, `examnameid`, `examtypeid`, `markcategoryid`, `marks`, `status`, `created_at`, `updated_at`) VALUES
+(1, 2, 1, NULL, 1, 1, 1, 1, 1, 65.00, 0, '2019-08-09 04:30:33', '2019-08-09 04:30:33'),
+(2, 2, 1, NULL, 1, 1, 1, 1, 2, 65.00, 0, '2019-08-09 04:30:33', '2019-08-09 04:30:33'),
+(3, 2, 1, NULL, 1, 1, 1, 1, 4, 55.00, 0, '2019-08-09 04:30:33', '2019-08-09 04:30:33'),
+(4, 2, 1, NULL, 2, 1, 1, 1, 1, 25.00, 0, '2019-08-09 04:30:33', '2019-08-09 04:30:33'),
+(5, 2, 1, NULL, 2, 1, 1, 1, 2, 50.00, 0, '2019-08-09 04:30:33', '2019-08-09 04:30:33'),
+(6, 2, 1, NULL, 2, 1, 1, 1, 4, 50.00, 0, '2019-08-09 04:30:33', '2019-08-09 04:30:33'),
+(7, 2, 1, NULL, 3, 1, 1, 1, 1, 49.00, 0, '2019-08-09 04:30:33', '2019-08-09 04:30:33'),
+(8, 2, 1, NULL, 3, 1, 1, 1, 2, 30.00, 0, '2019-08-09 04:30:33', '2019-08-09 04:30:33'),
+(9, 2, 1, NULL, 3, 1, 1, 1, 4, 55.00, 0, '2019-08-09 04:30:34', '2019-08-09 04:30:34'),
+(10, 2, 1, NULL, 4, 1, 1, 1, 1, 34.00, 0, '2019-08-09 04:30:34', '2019-08-09 04:30:34'),
+(11, 2, 1, NULL, 4, 1, 1, 1, 2, 56.00, 0, '2019-08-09 04:30:34', '2019-08-09 04:30:34'),
+(12, 2, 1, NULL, 4, 1, 1, 1, 4, 12.00, 0, '2019-08-09 04:30:34', '2019-08-09 04:30:34'),
+(13, 2, 1, NULL, 5, 1, 1, 1, 1, 8.00, 0, '2019-08-09 04:30:34', '2019-08-09 04:30:34'),
+(14, 2, 1, NULL, 5, 1, 1, 1, 2, 37.00, 0, '2019-08-09 04:30:34', '2019-08-09 04:30:34'),
+(15, 2, 1, NULL, 5, 1, 1, 1, 4, 6.00, 0, '2019-08-09 04:30:34', '2019-08-09 04:30:34'),
+(16, 2, 1, NULL, 6, 1, 1, 1, 1, 34.00, 0, '2019-08-09 04:30:34', '2019-08-09 04:30:34'),
+(17, 2, 1, NULL, 6, 1, 1, 1, 2, 34.00, 0, '2019-08-09 04:30:34', '2019-08-09 04:30:34'),
+(18, 2, 1, NULL, 6, 1, 1, 1, 4, 52.00, 0, '2019-08-09 04:30:34', '2019-08-09 04:30:34'),
+(19, 2, 1, NULL, 7, 1, 1, 1, 1, 33.00, 0, '2019-08-09 04:30:34', '2019-08-09 04:30:34'),
+(20, 2, 1, NULL, 7, 1, 1, 1, 2, 27.00, 0, '2019-08-09 04:30:34', '2019-08-09 04:30:34'),
+(21, 2, 1, NULL, 7, 1, 1, 1, 4, 20.00, 0, '2019-08-09 04:30:34', '2019-08-09 04:30:34');
 
 -- --------------------------------------------------------
 
@@ -1239,7 +1297,8 @@ CREATE TABLE `programoffers` (
 
 INSERT INTO `programoffers` (`id`, `sessionid`, `programlabelid`, `programid`, `groupid`, `mediumid`, `shiftid`, `cordinator`, `seat`, `number_of_courses`, `status`, `created_at`, `updated_at`) VALUES
 (1, 1, 4, 2, 1, 1, 1, NULL, 250, 12, 0, '2019-08-06 05:04:46', '2019-08-06 05:06:41'),
-(2, 1, 4, 1, 1, 1, 1, NULL, 210, 12, 0, '2019-08-06 05:14:14', '2019-08-06 05:45:22');
+(2, 1, 4, 1, 1, 1, 1, NULL, 210, 12, 0, '2019-08-06 05:14:14', '2019-08-06 05:45:22'),
+(3, 1, 4, 1, 1, 1, 2, NULL, 100, 12, 0, '2019-08-09 00:07:19', '2019-08-09 00:07:19');
 
 -- --------------------------------------------------------
 
@@ -1481,6 +1540,53 @@ INSERT INTO `role_menu` (`roleid`, `menuid`, `permissionid`) VALUES
 (1, 34, 2),
 (1, 34, 3),
 (1, 34, 4),
+(1, 35, 1),
+(1, 35, 2),
+(1, 35, 3),
+(1, 35, 4),
+(1, 36, 0),
+(1, 37, 1),
+(1, 37, 2),
+(1, 37, 3),
+(1, 37, 4),
+(1, 38, 1),
+(1, 38, 2),
+(1, 38, 3),
+(1, 38, 4),
+(1, 39, 1),
+(1, 39, 2),
+(1, 39, 3),
+(1, 39, 4),
+(1, 40, 1),
+(1, 40, 2),
+(1, 40, 3),
+(1, 40, 4),
+(1, 41, 1),
+(1, 41, 2),
+(1, 41, 3),
+(1, 41, 4),
+(1, 42, 1),
+(1, 42, 2),
+(1, 42, 3),
+(1, 42, 4),
+(1, 43, 1),
+(1, 43, 2),
+(1, 43, 3),
+(1, 43, 4),
+(1, 44, 0),
+(1, 45, 1),
+(1, 45, 2),
+(1, 45, 3),
+(1, 45, 4),
+(1, 46, 0),
+(1, 47, 1),
+(1, 47, 2),
+(1, 47, 3),
+(1, 47, 4),
+(1, 48, 1),
+(1, 48, 2),
+(1, 48, 3),
+(1, 48, 4),
 (2, 1, 0),
 (2, 2, 1),
 (2, 2, 2),
@@ -1538,6 +1644,21 @@ INSERT INTO `role_menu` (`roleid`, `menuid`, `permissionid`) VALUES
 (2, 34, 1),
 (2, 34, 2),
 (2, 34, 3),
+(2, 35, 1),
+(2, 35, 2),
+(2, 35, 3),
+(2, 38, 1),
+(2, 38, 2),
+(2, 38, 3),
+(2, 39, 1),
+(2, 39, 2),
+(2, 39, 3),
+(2, 40, 1),
+(2, 40, 2),
+(2, 40, 3),
+(2, 42, 1),
+(2, 42, 2),
+(2, 42, 3),
 (2, 5, 0),
 (2, 11, 1),
 (2, 11, 2),
@@ -1561,57 +1682,31 @@ INSERT INTO `role_menu` (`roleid`, `menuid`, `permissionid`) VALUES
 (2, 25, 1),
 (2, 25, 2),
 (2, 25, 3),
+(2, 41, 1),
+(2, 41, 2),
+(2, 41, 3),
+(2, 43, 1),
+(2, 43, 2),
+(2, 43, 3),
 (2, 26, 0),
 (2, 27, 1),
 (2, 27, 2),
 (2, 27, 3),
-(1, 35, 1),
-(1, 35, 2),
-(1, 35, 3),
-(1, 35, 4),
-(1, 36, 0),
-(1, 37, 1),
-(1, 37, 2),
-(1, 37, 3),
-(1, 37, 4),
-(1, 38, 1),
-(1, 38, 2),
-(1, 38, 3),
-(1, 38, 4),
-(1, 39, 1),
-(1, 39, 2),
-(1, 39, 3),
-(1, 39, 4),
-(1, 40, 1),
-(1, 40, 2),
-(1, 40, 3),
-(1, 40, 4),
-(1, 41, 1),
-(1, 41, 2),
-(1, 41, 3),
-(1, 41, 4),
-(1, 42, 1),
-(1, 42, 2),
-(1, 42, 3),
-(1, 42, 4),
-(1, 43, 1),
-(1, 43, 2),
-(1, 43, 3),
-(1, 43, 4),
-(1, 44, 0),
-(1, 45, 1),
-(1, 45, 2),
-(1, 45, 3),
-(1, 45, 4),
-(1, 46, 0),
-(1, 47, 1),
-(1, 47, 2),
-(1, 47, 3),
-(1, 47, 4),
-(1, 48, 1),
-(1, 48, 2),
-(1, 48, 3),
-(1, 48, 4);
+(2, 36, 0),
+(2, 37, 1),
+(2, 37, 2),
+(2, 37, 3),
+(2, 46, 0),
+(2, 47, 1),
+(2, 47, 2),
+(2, 47, 3),
+(2, 48, 1),
+(2, 48, 2),
+(2, 48, 3),
+(1, 49, 1),
+(1, 49, 2),
+(1, 49, 3),
+(1, 49, 4);
 
 -- --------------------------------------------------------
 
@@ -1661,7 +1756,8 @@ INSERT INTO `sectionoffer` (`id`, `programofferid`, `sectionid`, `section_std_nu
 (3, 1, 3, 50, NULL, 0, '2019-08-06 05:06:41', '2019-08-06 05:06:41'),
 (4, 2, 1, 100, NULL, 0, '2019-08-06 05:14:14', '2019-08-06 05:14:14'),
 (5, 2, 2, 50, NULL, 0, '2019-08-06 05:43:05', '2019-08-06 05:43:05'),
-(6, 2, 3, 60, NULL, 0, '2019-08-06 05:45:22', '2019-08-06 05:45:22');
+(6, 2, 3, 60, NULL, 0, '2019-08-06 05:45:22', '2019-08-06 05:45:22'),
+(7, 3, 1, 100, NULL, 0, '2019-08-09 00:07:19', '2019-08-09 00:07:19');
 
 -- --------------------------------------------------------
 
@@ -1854,6 +1950,7 @@ INSERT INTO `shifts` (`id`, `name`, `startTime`, `endTime`, `status`, `created_a
 
 CREATE TABLE `students` (
   `id` int(10) UNSIGNED NOT NULL,
+  `studentid` int(11) NOT NULL,
   `programofferid` int(11) NOT NULL,
   `sectionid` int(11) NOT NULL,
   `applicantid` int(11) NOT NULL,
@@ -1871,14 +1968,14 @@ CREATE TABLE `students` (
 -- Dumping data for table `students`
 --
 
-INSERT INTO `students` (`id`, `programofferid`, `sectionid`, `applicantid`, `classroll`, `fromclass`, `fromsection`, `studenttype`, `currentclass`, `status`, `created_at`, `updated_at`) VALUES
-(1, 2, 1, 19100001, 1, 0, 0, 1, 1, 0, '2019-08-07 23:47:49', '2019-08-07 23:47:49'),
-(2, 2, 1, 19100002, 2, 0, 0, 1, 1, 0, '2019-08-07 23:55:50', '2019-08-07 23:55:50'),
-(3, 2, 1, 19100003, 3, 0, 0, 1, 1, 0, '2019-08-07 23:56:20', '2019-08-07 23:56:20'),
-(4, 2, 1, 19100004, 4, 0, 0, 1, 1, 0, '2019-08-07 23:56:36', '2019-08-07 23:56:36'),
-(5, 2, 1, 19100005, 5, 0, 0, 1, 1, 0, '2019-08-08 00:02:01', '2019-08-08 00:02:01'),
-(6, 2, 1, 19100006, 6, 0, 0, 1, 1, 0, '2019-08-08 00:08:09', '2019-08-08 00:08:09'),
-(7, 2, 1, 19100007, 7, 0, 0, 1, 1, 0, '2019-08-08 00:08:14', '2019-08-08 00:08:14');
+INSERT INTO `students` (`id`, `studentid`, `programofferid`, `sectionid`, `applicantid`, `classroll`, `fromclass`, `fromsection`, `studenttype`, `currentclass`, `status`, `created_at`, `updated_at`) VALUES
+(1, 0, 2, 1, 19100001, 1, 0, 0, 1, 1, 0, '2019-08-07 23:47:49', '2019-08-07 23:47:49'),
+(2, 0, 2, 1, 19100002, 2, 0, 0, 1, 1, 0, '2019-08-07 23:55:50', '2019-08-07 23:55:50'),
+(3, 0, 2, 1, 19100003, 3, 0, 0, 1, 1, 0, '2019-08-07 23:56:20', '2019-08-07 23:56:20'),
+(4, 0, 2, 1, 19100004, 4, 0, 0, 1, 1, 0, '2019-08-07 23:56:36', '2019-08-07 23:56:36'),
+(5, 0, 2, 1, 19100005, 5, 0, 0, 1, 1, 0, '2019-08-08 00:02:01', '2019-08-08 00:02:01'),
+(6, 0, 2, 1, 19100006, 6, 0, 0, 1, 1, 0, '2019-08-08 00:08:09', '2019-08-08 00:08:09'),
+(7, 0, 2, 1, 19100007, 7, 0, 0, 1, 1, 0, '2019-08-08 00:08:14', '2019-08-08 00:08:14');
 
 -- --------------------------------------------------------
 
@@ -2098,8 +2195,8 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `remember_token`, `created_at`, `updated_at`) VALUES
-(1, 'Supper Admin', 'developer@gmail.com', NULL, '$2y$10$ND.vdRSrW30S3J6LEtAyb./PHHC8Z.6lDbZ9vZYqeVD3wTj/TkkJK', NULL, '2019-08-06 03:58:21', '2019-08-06 03:58:21'),
-(2, 'School(Admin)', 'school@gmail.com', NULL, '$2y$10$N8OvxtpiQ0BObJSa03.jEe4BV8qoO9QqUsW4yvumodeqa.Dno6682', 'V1cHQlGiLqZFFAwrP1dK1Do125BtQwBMYWqD33p2NnN6eMccOXvbmgNQeih6', '2019-08-06 04:54:52', '2019-08-06 04:54:52');
+(1, 'Supper Admin', 'developer@gmail.com', NULL, '$2y$10$ND.vdRSrW30S3J6LEtAyb./PHHC8Z.6lDbZ9vZYqeVD3wTj/TkkJK', 'UoWdajkjG0mMTXsZIZaloDeAAhx4xI5jn8GDkTSVhcHYOIzUl5p4pi9uia78', '2019-08-06 03:58:21', '2019-08-06 03:58:21'),
+(2, 'School(Admin)', 'school@gmail.com', NULL, '$2y$10$N8OvxtpiQ0BObJSa03.jEe4BV8qoO9QqUsW4yvumodeqa.Dno6682', 'SajEtXrrww8PXlDdbWdCY36zdalK8X4WP5EzR0pfBnu3CMn6rSS5wHzMoXuN', '2019-08-06 04:54:52', '2019-08-06 04:54:52');
 
 --
 -- Indexes for dumped tables
@@ -2247,6 +2344,18 @@ ALTER TABLE `employee_labels`
 --
 ALTER TABLE `employmentstatus`
   ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `emp_event_log`
+--
+ALTER TABLE `emp_event_log`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `event_log`
+--
+ALTER TABLE `event_log`
+  ADD PRIMARY KEY (`sl`);
 
 --
 -- Indexes for table `exam_name`
@@ -2642,6 +2751,18 @@ ALTER TABLE `employmentstatus`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `emp_event_log`
+--
+ALTER TABLE `emp_event_log`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `event_log`
+--
+ALTER TABLE `event_log`
+  MODIFY `sl` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `exam_name`
 --
 ALTER TABLE `exam_name`
@@ -2741,13 +2862,13 @@ ALTER TABLE `mediums`
 -- AUTO_INCREMENT for table `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=68;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=71;
 
 --
 -- AUTO_INCREMENT for table `mst_exam_marks`
 --
 ALTER TABLE `mst_exam_marks`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT for table `nationalities`
@@ -2771,7 +2892,7 @@ ALTER TABLE `postoffices`
 -- AUTO_INCREMENT for table `programoffers`
 --
 ALTER TABLE `programoffers`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `programs`
@@ -2807,7 +2928,7 @@ ALTER TABLE `roles`
 -- AUTO_INCREMENT for table `sectionoffer`
 --
 ALTER TABLE `sectionoffer`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `sections`

@@ -85,7 +85,7 @@
                     </div>
                     <label class="col-sm-2 control-label" for="groupid">Group</label>
                     <div class="col-sm-4">
-                      <select  class="form-control" name="groupid" id="groupid">
+                      <select onchange="getChange(this,'group')"  class="form-control" name="groupid" id="groupid">
                          <option value="">SELECT</option>
                          @foreach ($groupList as $x)
                            <option value="{{$x->id}}">{{$x->name}}</option>
@@ -103,26 +103,26 @@
                          @endforeach
                       </select>
                     </div>
-                    <label class="col-sm-2 control-label" for="coursecodeid">Subject</label>
+                    <label class="col-sm-2 control-label" for="mstexamnameid">Exam</label>
                     <div class="col-sm-4">
-                      <select  class="form-control" name="coursecodeid" id="coursecodeid">
-                         <option value="">SELECT</option>
-                         @foreach ($courseList as $x)
-                           <option value="{{$x->id}}">{{sprintf('%s %s%s%s',$x->courseName,'(',$x->name,')')}}</option>
-                         @endforeach
-                      </select>
-                    </div>                              
-                  </div>
-                  <div class="form-group row">
-                     <label class="col-sm-2 control-label" for="examnameid">Exam</label>
-                    <div class="col-sm-4">
-                      <select class="form-control" name="examnameid" id="examnameid">
+                      <select onchange="getChange(this,'mstexam')" class="form-control" name="mstexamnameid" id="mstexamnameid">
                          <option value="">SELECT</option>
                          @foreach ($examNameList as $x)
                            <option value="{{$x->id}}">{{$x->name}}</option>
                          @endforeach
                       </select>
-                    </div>                           
+                    </div>                            
+                  </div>
+                  <div class="form-group row">
+                      <label class="col-sm-2 control-label" for="courseid">Subject</label>
+                      <div class="col-sm-4">
+                        <select  class="form-control" name="courseid" id="courseid">
+                          <option value="">SELECT</option>
+                          @foreach ($courseList as $x)
+                            <option value="{{$x->id}}">{{sprintf('%s %s%s%s',$x->courseName,'(',$x->courseCode,')')}}</option>
+                          @endforeach
+                        </select>
+                      </div>                        
                   </div>
                     <div class="row">
                       <div class="col-sm-12">
@@ -140,7 +140,7 @@
                         <span>Session: {{$programofferinfo->sessionName}}</span>
                     </div>
                     <div class="programofferinfo_item">
-                        <span>Class Level: {{$programofferinfo->levelName}}</span>
+                        <span>Class Level: {{$programofferinfo->programLabel}}</span>
                     </div>
                     <div class="programofferinfo_item">
                         <span>Class: {{$programofferinfo->programName}}</span>
@@ -158,7 +158,7 @@
                         <span>Section: {{$section->name}}</span>
                     </div>
                     <div class="programofferinfo_item">
-                        <span>Subject: {{sprintf('%s %s%s%s',$courseCode->courseName,'(',$courseCode->name,')')}}</span>
+                        <span>Subject: {{sprintf('%s %s%s%s',$course->courseName,'(',$course->courseCode,')')}}</span>
                     </div>
                 </div>
                 <div class="bottom_form markentry-form">
@@ -166,8 +166,8 @@
                     {{csrf_field()}}
                     <input type="hidden" name="programofferid" value="{{$programofferinfo->id}}">
                     <input type="hidden" name="sectionid" value="{{$section->id}}">
-                    <input type="hidden" name="coursecodeid" value="{{$courseCode->id}}">
-                    <input type="hidden" name="examnameid" value="{{$exam->id}}">
+                    <input type="hidden" name="courseid" value="{{$course->id}}">
+                    <input type="hidden" name="mstexamnameid" value="{{$exam->id}}">
                     <div class="row">
                       <div class="col-sm-12">
                         <table class="table table-striped table-bordered table-hover customtable" id="markentry">
@@ -177,7 +177,7 @@
                               <th>Student Name</th>
                               <th>Class Roll</th>
                               @foreach($mark_catList as $x)
-                              <th>{{$x->name}}(<span class="categorymarks">{{$x->categorymarks}}</span>)</th>
+                              <th>{{$x->name}}(<span class="categorymarks">{{$x->cat_hld_mark}}</span>)</th>
                               @endforeach
                               <th width="2%"><input id="markcheckid" type="checkbox"></th>
                             </tr>
@@ -185,28 +185,22 @@
                           <tbody>
                           <?php $id=0; ?>
                             @foreach($studentList as $student)
-                            @if($student->studentid==0)
                             <tr>
                               <td>{{++$id}}</td>
                               <td>{{sprintf('%s %s %s',$student->firstName,$student->middleName,$student->lastName)}}</td>
                               <td>{{$student->classroll}}</td>
-                              @foreach($mark_catList as $y)
-                                <td class="id1"><input class="form-control" type="text" name="marks[{{$student->id}}][{{$y->id}}]" /></td>
-                              @endforeach
-                              <td><input class="markcheck" type="checkbox" name="checkbox[{{$student->id}}]"></td>
-                              <!-- <td><span style='font-size:18px;'>&#10003;</span></td>      -->
-                            </tr>
-                            @else
-                            <tr>
-                              <td>{{++$id}}</td>
-                              <td>{{sprintf('%s %s %s',$student->firstName,$student->middleName,$student->lastName)}}</td>
-                              <td>{{$student->classroll}}</td>
+                              @if($student->studentid==0)
+                                @foreach($mark_catList as $y)
+                                  <td class="id1"><input class="form-control" type="text" name="marks[{{$student->id}}][{{$y->id}}]" /></td>
+                                @endforeach
+                                <td><input class="markcheck" type="checkbox" name="checkbox[{{$student->id}}]"></td>
+                              @else
                               @foreach($student->markList as $y)
-                                <td>{{$y->marks}}</td>
+                                <td>{{$y->marks}}</td>   
                               @endforeach
-                              <td><span style='font-size:18px;'>&#10003;</span></td>     
+                              <td><span style='font-size:18px;'>&#10003;</span></td> 
+                              @endif
                             </tr>
-                            @endif
                             @endforeach
                           </tbody>
                         </table>

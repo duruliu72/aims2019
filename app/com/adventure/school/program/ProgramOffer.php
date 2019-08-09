@@ -80,9 +80,8 @@ class ProgramOffer extends Model
 			return false;
 	}
 
-	// ===============================================For Dorpdown ==============
+	// ========================For Dorpdown ==============
 	public function getAllOnIDS($sessionid,$programlabelid,$programid,$groupid,$mediumid,$shiftid,$tableName,$compareid){
-		// dd($tableName);
 		$sql="SELECT t2.* FROM `programoffers` AS t1
 		INNER JOIN ".$tableName." AS t2 
 		ON t1.".$compareid."=t2.id";

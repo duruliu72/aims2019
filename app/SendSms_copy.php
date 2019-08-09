@@ -4,17 +4,11 @@ namespace App;
 class SendSms {
     public function MessageSend($to="", $message="Error")
     {
-        $status = false;
-
-        //$to = '01746736936';
-        //$message = 'TTTTTTTT';
-
-        $user = 'bd01612302124';
-        $password = 'ABCDabc12!@';
-        $sender = '8804445647841';
+        $user = '01612302124';
+        $password = 'ABCDabcd1234';
+        $sender = '+8804445647831';
         $SMSText = $message;
         $GSM = '88'.$to;
-        //$GSM = '8801746736936';
         $type = 'longSMS';
         $param='';
         $url = "http://api.zaman-it.com/api/v3/sendsms/plain?";
@@ -37,28 +31,7 @@ class SendSms {
             $response = curl_exec($curl);
             $err = curl_error($curl);
             curl_close($curl);
-
-
-        $messageid = '';
-        try {
-            $xml = simplexml_load_string($response); 
-            $messageid = (string) ($xml->result->messageid ?? '');
-        } catch (\Exception $e) {
-            $messageid = '';
-        }
-
-        //dd($to, $message, $response);
-
-        if ( !empty($messageid) ) {
-            $status = true;
-        }
-
-        //dd( $response, $xml, $mssid );
-
-        return $status;
-
-
-        //http://api.zaman-it.com/api/v3/sendsms/plain?&user=bd01612302124&password=ABCDabc12!@&sender=8804445647841&SMSText=123456789&GSM=8801746736936&type=longSMS&datacoding=8
+        return json_encode($ajax);
     }
 }
 ?>
