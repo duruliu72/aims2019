@@ -30,6 +30,9 @@ class InstituteController extends Controller
         $pList=$aMenu->getPermissionOnMenu('institute');
         $aInstitute=new Institute();
         $aList=$aInstitute->getAllInstitute();
+        $aInstitute=new Institute();
+        $instituteObj=$aInstitute->getInstituteById(1);
+        // dd($instituteObj);
         $dataList=[
             'institute'=>Institute::getInstituteName(),
             'sidebarMenu'=>$sidebarMenu,
@@ -228,26 +231,38 @@ class InstituteController extends Controller
    public function changeAddress(Request $request){
     $option=$request->option;
     $methodid=$request->methodid;
-    $id=$request->id;
+    $divisonid=$request->divisonid;
+    $districtid=$request->districtid;
+    $thanaid=$request->thanaid;
     if($option=="division"){
         if($methodid==1){
-			$this->getDropDownValue("districts","divisionid",$id);
+			$this->getDropDownValue($divisonid,"districts","divisionid");
+        }elseif($methodid==2){
+            $this->getDropDownValue(0,"thanas","districtid");
+        }elseif($methodid==3){
+            $this->getDropDownValue(0,"localgovs","thanaid");
+        }elseif($methodid==4){
+            $this->getDropDownValue(0,"postoffices","thanaid");
         }
     }elseif($option=="district"){
-        if($methodid==1){
-			$this->getDropDownValue("thanas","districtid",$id);
+        if($methodid==2){
+			$this->getDropDownValue($districtid,"thanas","districtid");
+        }elseif($methodid==3){
+            $this->getDropDownValue(0,"localgovs","thanaid");
+        }elseif($methodid==4){
+            $this->getDropDownValue(0,"postoffices","thanaid");
         }
     }elseif($option=="thana"){
-        if($methodid==1){
-			$this->getDropDownValue("postoffices","thanaid",$id);
-        }elseif($methodid==2){
-			$this->getDropDownValue("localgovs","thanaid",$id);
+        if($methodid==3){
+            $this->getDropDownValue($thanaid,"localgovs","thanaid");
+        }elseif($methodid==4){
+			$this->getDropDownValue($thanaid,"postoffices","thanaid");
 		}
 	}
 }
-private function getDropDownValue($tableName,$conditionid,$id){
+private function getDropDownValue($conditionid,$tableName,$conditionField){
     $aAddress=new Address();
-    $result=$aAddress->getDropDownValue($tableName,$conditionid,$id);
+    $result=$aAddress->getDropDownValue($conditionid,$tableName,$conditionField);
     $output="<option value=''>SELECT</option>";
     foreach($result as $x){
         $output.="<option value='$x->id'>$x->name</option>";

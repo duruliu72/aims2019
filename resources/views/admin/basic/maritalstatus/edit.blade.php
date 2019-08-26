@@ -4,7 +4,6 @@
       <section class="wrapper">
         <div class="row">
           <div class="col-lg-12">
-          <h3 class="page-header"><i class="fa fa-laptop"></i>{{$institute->name}}</h3>
             <ol class="breadcrumb">
               <li><a href="{{URL::to('/maritalstatus')}}">All</a></li>
               <li>Marital Status</li>

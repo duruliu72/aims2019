@@ -187,7 +187,9 @@ class ProgramOfferController extends Controller
         $aEmployee=new Employee();
         $employeeList=$aEmployee->getEmployees();
         $aSectionOffer=new SectionOffer();
+        // dd($id);
         $sectionList=$aSectionOffer->getSectionOfferOnPO($id);
+        // dd($sectionList);
         $dataList=[
             'institute'=>Institute::getInstituteName(),
             'sidebarMenu'=>$sidebarMenu,
@@ -222,16 +224,16 @@ class ProgramOfferController extends Controller
         $cordinator=$request->cordinator;
         // $seat=$request->seat;
         $number_of_courses=$request->number_of_courses;
-         // For section table
-         $sectionidList=$request->sectionid;
-         $section_nameList=$request->section_name;
-         $section_student_numberList=$request->section_student_number;
-         $section_teacher_List=$request->section_teacher;
-         $checkboxList=$request->checkbox;
-         if($checkboxList==null){
-             $msg="Select Section";
-             return redirect()->back()->with('msg',$msg)->withInput($request->input());
-         }
+        // For section table
+        $sectionidList=$request->sectionid;
+        $section_nameList=$request->section_name;
+        $section_student_numberList=$request->section_student_number;
+        $section_teacher_List=$request->section_teacher;
+        $checkboxList=$request->checkbox;
+        if($checkboxList==null){
+            $msg="Select Section";
+            return redirect()->back()->with('msg',$msg)->withInput($request->input());
+        }
         // check Checked section student number field
         $count=0;
         foreach($checkboxList as $key=>$x){

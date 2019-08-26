@@ -113,25 +113,25 @@
           </div>
           @if(isset($programofferinfo))
           <div class="programofferinfo programofferinfo--markdistribution">
-                    <div class="programofferinfo_item">
-                        <span>Session: {{$programofferinfo->sessionName}}</span>
-                    </div>
-                    <div class="programofferinfo_item">
-                        <span>Class Level: {{$programofferinfo->programLabel}}</span>
-                    </div>
-                    <div class="programofferinfo_item">
-                        <span>Class: {{$programofferinfo->programName}}</span>
-                    </div>
-                    <div class="programofferinfo_item">
-                        <span>Medium: {{$programofferinfo->mediumName}}</span>
-                    </div>
-                    <div class="programofferinfo_item">
-                        <span>Group: {{$programofferinfo->groupName}}</span>
-                    </div>
-                    <div class="programofferinfo_item">
-                        <span>Shift: {{$programofferinfo->shiftName}}</span>
-                    </div>
-                </div>
+              <div class="programofferinfo_item">
+                  <span>Session: {{$programofferinfo->sessionName}}</span>
+              </div>
+              <div class="programofferinfo_item">
+                  <span>Class Level: {{$programofferinfo->programLabel}}</span>
+              </div>
+              <div class="programofferinfo_item">
+                  <span>Class: {{$programofferinfo->programName}}</span>
+              </div>
+              <div class="programofferinfo_item">
+                  <span>Medium: {{$programofferinfo->mediumName}}</span>
+              </div>
+              <div class="programofferinfo_item">
+                  <span>Group: {{$programofferinfo->groupName}}</span>
+              </div>
+              <div class="programofferinfo_item">
+                  <span>Shift: {{$programofferinfo->shiftName}}</span>
+              </div>
+            </div>
           <div class="middle-section middle-section--markdistribution">
           <form action="{{URL::to('markdistribution')}}" method="POST">
               {{csrf_field()}}

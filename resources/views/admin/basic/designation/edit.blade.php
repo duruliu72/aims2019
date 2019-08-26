@@ -4,10 +4,9 @@
       <section class="wrapper">
         <div class="row">
           <div class="col-lg-12">
-            <h3 class="page-header"><i class="fa fa-laptop"></i>{{$institute->name}}</h3>
             <ol class="breadcrumb">
-              <li><a href="{{URL::to('/employeetypes')}}">All</a></li>
-              <li>Employee Types</li>
+              <li><a href="{{URL::to('/designations')}}">All</a></li>
+              <li>Designatios</li>
               @if ($errors->any())
                   <span style="float: right;font-size: 15px;">{{$errors->all()[0] }}</span>
               @endif
@@ -24,7 +23,7 @@
           <div class="col-lg-12">
             <section class="panel">
               <div class="panel-body">
-                <form action="{{URL::to('employeetypes')}}/{{$bean->id}}" method="POST">
+                <form action="{{URL::to('designations')}}/{{$bean->id}}" method="POST">
                   @method('PUT')
                   {{csrf_field()}}
                    <div class="form-group row">

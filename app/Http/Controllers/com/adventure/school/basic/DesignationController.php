@@ -70,14 +70,14 @@ class DesignationController extends Controller
         }
         $sidebarMenu=$aMenu->getSidebarMenu();
         $pList=$aMenu->getPermissionOnMenu('designations');
-    	$aEmployeeType=EmployeeType::findOrfail($id);
+    	$aDesignation=Designation::findOrfail($id);
         if($pList[3]->id!=3){
             return redirect('error');
         }
         $dataList=[
             'institute'=>Institute::getInstituteName(),
             'sidebarMenu'=>$sidebarMenu,
-            'bean'=>$aEmployeeType
+            'bean'=>$aDesignation
         ];
         return view('admin.basic.designation.edit',$dataList); 
     }

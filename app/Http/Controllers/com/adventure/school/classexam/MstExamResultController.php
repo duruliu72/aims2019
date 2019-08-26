@@ -12,6 +12,7 @@ use App\com\adventure\school\classexam\MstExamResult;
 use App\com\adventure\school\exam\ExamName;
 use App\com\adventure\school\courseoffer\CourseOffer;
 use App\com\adventure\school\program\GradePoint;
+use App\com\adventure\school\academic\Student;
 class MstExamResultController extends Controller
 {
     public function __construct()
@@ -134,43 +135,59 @@ class MstExamResultController extends Controller
         $aMasterExam =new MasterExam();
         $aMstExamResult=new MstExamResult();
         $aExamName=new ExamName();
+        $aStudent=new Student();
         $programofferinfo=null;
         $exam_result=null;
         $exam=null;
         if($request->isMethod('post')&&$request->search_btn=='search_btn'){
+            $sessionid=$request->sessionid;
+            $programlabelid=$request->programlabelid;
             $programid=$request->programid;
             $mediumid=$request->mediumid;
             $shiftid=$request->shiftid;
             $groupid=$request->groupid;
             $examnameid=$request->examnameid;
             //    Check Program offer Created or Not
-            $checkProgramoffer=$aProgramOffer->checkValue(0,$programid,$groupid,$mediumid,$shiftid);
+            $checkProgramoffer=$aProgramOffer->checkValue($sessionid,$programlabelid,$programid,$groupid,$mediumid,$shiftid);
             if(!$checkProgramoffer){
                 $msg="Program Offer is not created yet";
                 return redirect()->back()->with('msg',$msg);
             }
-            $programofferid=$aProgramOffer->getProgramOfferId(0,$programid,$groupid,$mediumid,$shiftid);
+            $programofferid=$aProgramOffer->getProgramOfferId($sessionid,$programlabelid,$programid,$groupid,$mediumid,$shiftid);
             // Check Master Exam Setup Or Not
             $checkMasterExam=$aMasterExam->hasItem($programofferid,$examnameid);
             if(!$checkMasterExam){
                 $msg="Plese SetUp Master Exam";
                 return redirect()->back()->with('msg',$msg);
             }
+            $aGradePoint=new GradePoint();
+            // Check Grdade point setUp or not
+            $hasValue=$aGradePoint->hasValue($programofferid);
+            if(!$hasValue){
+                $msg="Plese SetUp Grade Point";
+                return redirect()->back()->with('msg',$msg);
+            }
+             //    Check Student 
+             $checkStudensAdmit=$aStudent->checkStudentOnPO($programofferid);
+             if(!$checkStudensAdmit){
+                 $msg="Student Not Admitted Yet";
+                 return redirect()->back()->with('msg',$msg);
+             }
             $exam_result=$aMstExamResult->getMstExamResult($programofferid,$examnameid);
-            // dd($exam_result);
-            //  dd($exam_result_copy);
-            // dd($exam_result_copy->where("applicantid",19100003));
+            
             $programofferinfo=$aProgramOffer->getProgramOffer($programofferid);
             // dd($programofferinfo);
             $exam=$aExamName->getExamONID($examnameid);
             //  dd($exam);
         }
         
-        // sessionid,programid,groupid,mediumid,shiftid and tableName
-        $programList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,"programs",'programid');
-        $mediumList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,"mediums",'mediumid');
-        $shiftList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,"shifts",'shiftid');
-        $groupList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,"groups",'groupid');
+        // sessionid,programlabelid,programid,groupid,mediumid,shiftid and tableName
+        $sessionList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,0,"sessions",'sessionid');
+        $plabelList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,0,"plabels",'programlabelid');
+        $programList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,0,"programs",'programid');
+        $mediumList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,0,"mediums",'mediumid');
+        $shiftList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,0,"shifts",'shiftid');
+        $groupList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,0,"groups",'groupid');
         $examNameList=$aExamName->getExamName(1);
         $aInstitute=new Institute();
         $instituteObj=$aInstitute->getInstituteById(1);
@@ -178,6 +195,8 @@ class MstExamResultController extends Controller
         $dataList=[
             'institute'=>Institute::getInstituteName(),
             'sidebarMenu'=>$sidebarMenu,
+            'sessionList'=>$sessionList,
+            "plabelList"=>$plabelList,
             'programList'=>$programList,
             'groupList'=>$groupList,
             'mediumList'=>$mediumList,
@@ -189,6 +208,6 @@ class MstExamResultController extends Controller
             'instituteObj'=>$instituteObj,
             'msg'=>$msg
         ];
-        return view('admin.classexam.examresult.mstexamresult_copy',$dataList);
+        return view('admin.classexam.examresult.mstexamresult',$dataList);
     }
 }

@@ -28,9 +28,9 @@ class Address extends Model
 		$result=collect($qresult)->first();
 		return $result;
 	   }
-	   public function getDropDownValue($tableName,$conditionid,$id){
-			$sql="SELECT * FROM ".$tableName." WHERE ".$conditionid."=?";
-			$qresult=\DB::select($sql,[$id]);
+	   public function getDropDownValue($conditionid,$tableName,$conditionField){
+			$sql="SELECT * FROM ".$tableName." WHERE ".$conditionField."=?";
+			$qresult=\DB::select($sql,[$conditionid]);
 			$result=collect($qresult);
 			return $result;
 	   }

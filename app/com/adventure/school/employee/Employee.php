@@ -39,9 +39,10 @@ class Employee extends Model
         $sql="SELECT * FROM `employees` ORDER BY `employeeidno` DESC";
         $qResult=\DB::select($sql);
         $result=collect($qResult);
+        $employeeidno=0;
         if($result->count()!=0){
             $employeeidno=$result->first()->employeeidno;
-            $employeeidno=$employeeid+1;
+            $employeeidno=$employeeidno+1;
         }else{
             $employeeidno=(int)(substr(date("Y"), 2)."00001");
         }

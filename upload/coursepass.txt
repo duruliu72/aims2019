@@ -1,0 +1,51 @@
+SELECT 
+programofferid,
+sectionid,
+studentid,
+courseid,
+meargeid,
+mark_group_id,
+courseName,
+courseCode,
+coursemark,
+sum(mark_in_percentage) AS tot_percentage,
+SUM(cat_hld_mark) AS course_hld_mark,
+(coursemark*sum(mark_in_percentage))/100 AS tot_course_mark,
+sum(std_input_mark) AS tot_input_mark,
+(((coursemark*sum(mark_in_percentage))/100)*33)/100 AS coursepass,
+ROUND((((coursemark*sum(mark_in_percentage))/100)*33)/100,0) AS round_coursepass,
+(((coursemark*sum(mark_in_percentage))/100)*sum(std_input_mark))/SUM(cat_hld_mark) as std_course_obt_mark,
+ROUND((((coursemark*sum(mark_in_percentage))/100)*sum(std_input_mark))/SUM(cat_hld_mark),0) AS round_std_course_obt_mark,
+CASE
+         WHEN ROUND((((coursemark*sum(mark_in_percentage))/100)*sum(std_input_mark))/SUM(cat_hld_mark),0)>=ROUND((((coursemark*sum(mark_in_percentage))/100)*33)/100,0) THEN 1
+         else 0
+     end as course_pass_status
+FROM (SELECT
+        mxm.programofferid,
+        mxm.sectionid,
+        mxm.studentid,
+        mxm.courseid,
+        courseoffer.meargeid,
+        md.markcategoryid,
+        md.mark_group_id,
+        courses.courseName,
+        courses.courseCode,
+        courseoffer.mearge_name,
+        courseoffer.coursemark,
+        md.mark_in_percentage,
+        md.cat_hld_mark,
+        mxm.marks AS std_input_mark,
+        (courseoffer.coursemark* md.mark_in_percentage)/100 AS cat_mark,
+        (((courseoffer.coursemark* md.mark_in_percentage)/100)*33)/100 AS pass_mark,
+        ROUND((((courseoffer.coursemark* md.mark_in_percentage)/100)*33)/100,0) AS round_pass_mark,
+        (((courseoffer.coursemark* md.mark_in_percentage)/100)*mxm.marks)/md.cat_hld_mark AS std_obt_mark,
+        ROUND((((courseoffer.coursemark* md.mark_in_percentage)/100)*mxm.marks)/md.cat_hld_mark,0) AS round_std_obt_mark,
+        CASE
+         WHEN  ROUND((((courseoffer.coursemark* md.mark_in_percentage)/100)*mxm.marks)/md.cat_hld_mark,0)>=ROUND((((courseoffer.coursemark* md.mark_in_percentage)/100)*33)/100,0) THEN 1
+         else 0
+        end as cat_pass_status
+        FROM mst_exam_marks AS mxm
+        INNER JOIN courseoffer ON mxm.programofferid=courseoffer.programofferid && mxm.courseid=courseoffer.courseid
+        INNER JOIN mark_distribution as md on mxm.programofferid=md.programofferid && mxm.courseid=md.courseid && mxm.markcategoryid=md.markcategoryid
+        INNER JOIN courses ON mxm.courseid=courses.id
+  GROUP BY mxm.programofferid,mxm.sectionid,mxm.studentid,mxm.courseid,md.markcategoryid,md.mark_group_id) AS course group BY programofferid,sectionid,studentid,courseid

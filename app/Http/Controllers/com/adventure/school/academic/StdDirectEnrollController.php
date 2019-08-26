@@ -118,6 +118,10 @@ class StdDirectEnrollController extends Controller
             $picture=$request->picture;
             $signature=$request->signature;            
             $aApplicant=new Applicant();
+            $aStudent=new Student();
+            // Make Student Id
+            $r_studentid=$aStudent->makeStudentid($programofferid);
+            // Make Applicantid
             $applicantid=$aApplicant->makeAppicantid($programofferid);
             $aApplicant->applicantid=$applicantid;
             $aApplicant->pin_code=$this->pingenerate();
@@ -159,8 +163,8 @@ class StdDirectEnrollController extends Controller
                 $coursetypeidList=$request->coursetypeid;
                 $sectionid=$request->sectionid;
                 $classroll=$request->classroll;
-
-                $aStudent=new Student();
+                // Student Proparties
+                $aStudent->r_studentid=$r_studentid;
                 $aStudent->programofferid=$programofferid;
                 $aStudent->sectionid=$sectionid;
                 $aStudent->applicantid=$applicantid;

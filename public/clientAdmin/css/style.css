@@ -516,7 +516,8 @@ table tr th { color: #688a7e;}
 
     position: fixed;
 
-    background: #394a59;
+    /* background: #394a59; */
+    background: #f8f8f8;
 
 }
 
@@ -566,8 +567,8 @@ ul.sidebar-menu {
 
 ul.sidebar-menu li ul.sub li{
 
-    background: #394a59;
-
+    background: #fff;
+    
     margin-bottom: 0;
 
     margin-left: 0;
@@ -608,8 +609,8 @@ ul.sidebar-menu li ul.sub li a {
 
     transition: all 0.3s ease;
 
-    color: #d0d8df;
-
+    /* color: #d0d8df; */
+    color: #000000;
     font-size: 14px;
 
 }
@@ -618,7 +619,7 @@ ul.sidebar-menu li ul.sub li a {
 
 ul.sidebar-menu li ul.sub li a:hover, ul.sidebar-menu li ul.sub li.active a {
 
-    color: #fff;
+    color: #528a0f;
 
     -webkit-transition: all 0.3s ease;
 
@@ -676,8 +677,8 @@ ul.sidebar-menu li a span{
 
 ul.sidebar-menu li a{
 
-    color: #d0d8df;
-
+    /* color: #d0d8df; */
+    color: #000000;
     text-decoration: none;
 
     display: block;
@@ -716,9 +717,9 @@ ul.sidebar-menu li a{
 
 ul.sidebar-menu li.active a, ul.sidebar-menu li a:hover, ul.sidebar-menu li a:focus {
 
-    background: #2e3b46;
+    background: #ffffff;
 
-    color: #fff;
+    color: #90BD59;
 
     display: block;
 
@@ -978,7 +979,7 @@ ul.sidebar-menu li.active a i {
 
 .header, .footer {
 
-    min-height: 60px;
+    min-height: 53px;
 
     padding: 0 15px;
 
@@ -1050,7 +1051,7 @@ ul.sidebar-menu li.active a i {
 
 a.logo {
 
-    font-size: 22px;
+    /* font-size: 22px; */
 
     font-weight: 300;
 
@@ -1058,12 +1059,14 @@ a.logo {
 
     float: left;
 
-    margin-top: 15px;
+    /* margin-top: 15px; */
 
     text-transform: uppercase;
 
 }
-
+.logo_copy img{
+    width: 50px;
+}
 
 
 a.logo:hover, a.logo:focus {
@@ -1079,10 +1082,12 @@ a.logo:hover, a.logo:focus {
 a.logo span {
 
     color: #688a7e;
-
 }
 
-
+.version{
+    color: #fff !important;
+    font-size: 13px;
+}
 
 
 
@@ -1512,7 +1517,7 @@ div[data-role="editor-toolbar"] {
 
 .top-nav  {
 
-    margin-top: 7px;
+    margin-top: 0px;
 
 }
 
@@ -3576,7 +3581,7 @@ div[data-role="editor-toolbar"] {
 
     padding-right: 15px;
 
-    margin-top: 20px;
+    margin-top: 14px;
 
 }
 
@@ -3589,6 +3594,7 @@ div[data-role="editor-toolbar"] {
     display: inline-block;
 
     font-size: 20px;
+    color: #fff;
 
 }
 
@@ -10062,4 +10068,14 @@ span.customSelect.changed {
 }
 .bg-white {
     background: #ffffff;
+}
+.pmb{
+    margin-bottom: 5px;
+    border-width: 2px;
+    border-left-color: transparent;
+    border-right-color: transparent;
+}
+.student-list{
+    margin-bottom: 0px !important;
+    padding-bottom: 0px !important;
 }

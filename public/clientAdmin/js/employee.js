@@ -46,7 +46,6 @@ function validate() {
         confirm(data[0].message);
         return false;
     }
-    // console.log(data);
     return true;
 }
 

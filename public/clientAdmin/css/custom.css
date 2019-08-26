@@ -336,8 +336,7 @@ th {
 .print-btn {
     cursor: pointer;
     color: #007bff;
-    position: absolute;
-    right: 20px;
+
     padding: 0px 5px;
     border-style: none;
     background: #ffffff;
@@ -467,4 +466,8 @@ th {
 }
 .child-exam-wrapper {
     padding: 25px 15px;
+}
+.msg {
+    float: right;
+    font-size: 15px;
 }

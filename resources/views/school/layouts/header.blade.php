@@ -19,7 +19,7 @@
                     </div>
                     <div class="mini-menu">
                         <ul>
-                            <li><a href="{{URL::to('/login')}}">System Login</a></li>
+                            <li><a target="_blank" href="{{URL::to('/login')}}">System Login</a></li>
                         </ul>
                     </div>
                     <div></div>

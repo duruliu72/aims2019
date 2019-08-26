@@ -60,21 +60,14 @@ class CourseOfferController extends Controller
             $teacherList=$request->teacherid;
             $coursemarksList=$request->coursemarks;
             $checkboxList=$request->checkbox;
-            // dd($checkboxList);
             $request->flash();
             $fieldinCourses=0;
-            if($checkboxList!=null && (count($checkboxList)+$alreadySaved)>=$nocourses){
+            if($checkboxList!=null){
                 ["fieldinCourses"=>$fieldinCourses,"msg"=>$msg]=$this->MarkFieldCheck($checkboxList,$coursemarksList,$courseNameList,$courseCodeList);
                 // dd($fieldinCourses);
             }else{
-                $msg="Please Select At least ".$nocourses." Subjects";
+                $msg="Please Select At least One  Subjects";
             }
-            // dd($fieldinCourses);
-            // die("Die Here");
-            // $diff=$fieldinCourses-$nocourses;
-            // if($diff<0){
-            //     $diff=0;
-            // }
             if($fieldinCourses==count($checkboxList)){
             //    dd($fieldinCourses,count($checkboxList));
                 $status=\DB::transaction(function() use($programofferid,$nocourses,$checkboxList,$courseidList,$coursemarksList,$teacherList){
@@ -84,6 +77,7 @@ class CourseOfferController extends Controller
                             $aCourseOffer->programofferid=$programofferid;
                             $aCourseOffer->courseid=$courseidList[$cb_courseid];
                             $aCourseOffer->coursemark=$coursemarksList[$cb_courseid];
+                            $aCourseOffer->meargeid=$courseidList[$cb_courseid];
                             // $check Course Assign Or Not
                             $checkCourse=$aCourseOffer->checkCouseOffer($programofferid,$courseidList[$cb_courseid]);
                             if(!$checkCourse){
@@ -115,6 +109,7 @@ class CourseOfferController extends Controller
         $programofferinfo=$aProgramOffer->getProgramOffer($programofferid);
         $aSectionOffer=new SectionOffer();
         $sectionList=$aSectionOffer->getSectionsOnPO($programofferid);
+        // dd($programlabelid,$programofferid);
         $courseList=$aCourse->getCourseOnProgramoffer($programlabelid,$programofferid,"LEFT");
         // sessionid,programlabelid,programid,groupid,mediumid,shiftid and tableName
         $sessionList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,0,"sessions",'sessionid');
@@ -124,8 +119,11 @@ class CourseOfferController extends Controller
         $shiftList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,0,"shifts",'shiftid');
         $groupList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,0,"groups",'groupid');
         $teacherList=Employee::all();
+        // dd($teacherList);
+        $aSCTeacher=new SectionCourseTeacher();
+        $scteacherList=$aSCTeacher->getSectionCourseTeacher($programofferid);
+        // dd($scteacherList);
         $dataList=[
-            'institute'=>Institute::getInstituteName(),
             'sidebarMenu'=>$sidebarMenu,
             'sessionList'=>$sessionList,
             "plabelList"=>$plabelList,
@@ -137,6 +135,7 @@ class CourseOfferController extends Controller
             'programofferinfo'=>$programofferinfo,
             "sectionList"=>$sectionList,
             'courseList'=>$courseList,
+            'scteacherList'=>$scteacherList,
             'msg'=>$msg
         ];
         return view('admin.courseoffer.courseoffer.create',$dataList);
@@ -217,7 +216,7 @@ class CourseOfferController extends Controller
                         }
                         return true;
                     }catch(\Exception $e){
-                        dd($e);
+                        // dd($e);
                         \DB::rollback();
                         return false;
                     }
@@ -242,6 +241,10 @@ class CourseOfferController extends Controller
         $shiftList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,0,"shifts",'shiftid');
         $groupList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,0,"groups",'groupid');
         $teacherList=Employee::all();
+        // dd($teacherList);
+        $aSCTeacher=new SectionCourseTeacher();
+        $scteacherList=$aSCTeacher->getSectionCourseTeacher($programofferid);
+        // dd($scteacherList);
         $dataList=[
             'institute'=>Institute::getInstituteName(),
             'sidebarMenu'=>$sidebarMenu,
@@ -255,6 +258,7 @@ class CourseOfferController extends Controller
             'programofferinfo'=>$programofferinfo,
             "sectionList"=>$sectionList,
             'courseList'=>$courseList,
+            'scteacherList'=>$scteacherList,
             'msg'=>$msg
         ];
         return view('admin.courseoffer.courseoffer.edit',$dataList);

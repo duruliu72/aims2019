@@ -7,7 +7,7 @@ use App\com\adventure\school\academic\StudentCourse;
 class Student extends Model
 {
     protected  $table='students';
-    protected $fillable = ['studentid','programofferid','sectionid','applicantid','classroll','fromclass','fromsection','studenttype','currentclass','status'];
+    protected $fillable = ['r_studentid','programofferid','sectionid','applicantid','classroll','fromclass','fromsection','studenttype','currentclass','status'];
     public function getLastID(){
         $sql="SELECT * FROM `students` ORDER BY id DESC";
         $qResult=\DB::select($sql);
@@ -86,6 +86,7 @@ class Student extends Model
         $students=collect($qResult);
         return $students;
     }
+    // =========================
     public function getStudentsOnProgramofferID($programofferid){
         $sql="SELECT 
         students.*,
@@ -93,6 +94,11 @@ class Student extends Model
         applicants.middleName,
         applicants.lastName,
         students.classroll,
+        applicants.dob,
+        applicants.fatherName,
+        applicants.father_Phone,
+        applicants.motherName,
+        applicants.mother_Phone,
         applicants.picture,
         applicants.signature,
         applicants.genderid,
@@ -113,4 +119,28 @@ class Student extends Model
         $students=collect($qResult);
         return $students;
     }
+   
+    public function makeStudentid($programofferid){
+        $sql="SELECT 
+		concat(substr(sessions.name,3),programs.programsign,'0000') AS startpoint
+		FROM `programoffers`
+		INNER JOIN sessions ON programoffers.sessionid=sessions.id
+		 INNER JOIN programs ON programoffers.programid=programs.id
+		WHERE programoffers.id=?";
+		$qresult=\DB::select($sql,[$programofferid]);
+		$result=collect($qresult);
+        $r_studentid=$result->first()->startpoint;
+        $substr=substr($r_studentid, 0,4);
+        $r_studentid++;
+        $sql="SELECT * FROM `students` WHERE students.r_studentid LIKE concat($substr,'%%%%') ORDER BY id DESC";
+		$qresult=\DB::select($sql);
+		$result=collect($qresult);
+		if($result->count()>0){
+			$r_studentid=$result->first()->r_studentid;
+            $r_studentid++;
+			return $r_studentid;
+        }
+		return $r_studentid;
+    }
+    // =================================
 }

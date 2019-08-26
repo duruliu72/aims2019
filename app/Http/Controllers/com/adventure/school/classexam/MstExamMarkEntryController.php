@@ -262,7 +262,7 @@ class MstExamMarkEntryController extends Controller
             }
             
         }
-        if($request->isMethod('post')&&$request->save_btn=='save_btn'){
+        if($request->isMethod('post')&&$request->update_btn=='update_btn'){
             $programofferid=$request->programofferid;
             $sectionid=$request->sectionid;
             $courseid=$request->courseid;
@@ -281,17 +281,35 @@ class MstExamMarkEntryController extends Controller
                     if($isRowValFill==true){
                         foreach($courseCatsMarks as $markcatid=>$catMark){
                             $aMstExamMarks=new MstExamMarks();
-                            $aMstExamMarks->programofferid=$programofferid;
-                            $aMstExamMarks->sectionid=$sectionid;
-                            $aMstExamMarks->studentid=$studentid;
-                            $aMstExamMarks->courseid=$courseid;
-                            $aMstExamMarks->examnameid=$mstexamnameid;
-                            $aMstExamMarks->examtypeid=1;  
-                            $aMstExamMarks->markcategoryid=$markcatid;
-                            $aMstExamMarks->marks=$catMark;
+                            $programofferid=$programofferid;
+                            $sectionid=$sectionid;
+                            $studentid=$studentid;
+                            $courseid=$courseid;
+                            $examnameid=$mstexamnameid;
+                            $examtypeid=1;  
+                            $markcategoryid=$markcatid;
+                            $marks=$catMark;
                             $checkentry=$aMstExamMarks->checkEntry($programofferid,$courseid,$studentid,$markcatid);
-                            if($checkentry==false){
-                                $aMstExamMarks->save();
+                            // dd($checkentry);
+                            if($checkentry){
+                                \DB::table('mst_exam_marks')
+                                ->where('programofferid', $programofferid)
+                                ->where('studentid', $studentid)
+                                ->where('courseid', $courseid)
+                                ->where('examnameid', $examnameid)
+                                ->where('markcategoryid', $markcatid)
+                                ->update(['marks' => $marks]);
+                            }else{
+                                // $aMstExamMarks=new MstExamMarks();
+                                // $aMstExamMarks->programofferid=$programofferid;
+                                // $aMstExamMarks->sectionid=$sectionid;
+                                // $aMstExamMarks->studentid=$studentid;
+                                // $aMstExamMarks->courseid=$courseid;
+                                // $aMstExamMarks->examnameid=$mstexamnameid;
+                                // $aMstExamMarks->examtypeid=1;  
+                                // $aMstExamMarks->markcategoryid=$markcatid;
+                                // $aMstExamMarks->marks=$catMark;
+                                // $aMstExamMarks->save();
                             }
                         }
                     }

@@ -7,9 +7,8 @@
       <section class="wrapper">
         <div class="row">
           <div class="col-lg-12">
-            <h3 class="page-header"><i class="fa fa-laptop"></i>Horinagor High School</h3>
              <ol class="breadcrumb">
-                <li>Mark Entry Form</li>
+                <li>Mark Edit Form</li>
                 @if($msg!="")
                   <span style="float: right;font-size: 15px;">
                   {{ $msg }}
@@ -185,22 +184,16 @@
                           <tbody>
                           <?php $id=0; ?>
                             @foreach($studentList as $student)
-                            <tr>
-                              <td>{{++$id}}</td>
-                              <td>{{sprintf('%s %s %s',$student->firstName,$student->middleName,$student->lastName)}}</td>
-                              <td>{{$student->classroll}}</td>
-                              @if($student->studentid==0)
-                                @foreach($mark_catList as $y)
-                                  <td class="id1"><input class="form-control" type="text" name="marks[{{$student->id}}][{{$y->id}}]" /></td>
+                              <tr>
+                                <td>{{++$id}}</td>
+                                <td>{{sprintf('%s %s %s',$student->firstName,$student->middleName,$student->lastName)}}</td>
+                                <td>{{$student->classroll}}</td>
+                                @foreach($student->markList as $y)
+                                  <td class="id1"><input class="form-control" type="text" name="marks[{{$student->id}}][{{$y->markcatid}}]" value="{{$y->marks}}" /></td>
                                 @endforeach
+                                  <!-- <td class="item"><label>0</label></td> -->
                                 <td><input class="markcheck" type="checkbox" name="checkbox[{{$student->id}}]"></td>
-                              @else
-                              @foreach($student->markList as $y)
-                                <td>{{$y->marks}}</td>   
-                              @endforeach
-                              <td><span style='font-size:18px;'>&#10003;</span></td> 
-                              @endif
-                            </tr>
+                              </tr>
                             @endforeach
                           </tbody>
                         </table>
@@ -209,7 +202,7 @@
                     <div class="row">
                       <div class="col-sm-12">
                         <div class="btn-container">
-                          <button type="submit" class="btn btn-success result-btn" name="save_btn" value="save_btn">Save</button>
+                          <button type="submit" class="btn btn-success result-btn" name="update_btn" value="update_btn">Update</button>
                           <a class="btn btn-info refresh-btn" href="{{URL::to('mstexammarkentry')}}"><i class="ace-icon fa fa-refresh bigger-120"></i>Refresh</a>
                         </div>
                       </div>

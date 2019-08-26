@@ -7,7 +7,6 @@
       <section class="wrapper">
         <div class="row">
           <div class="col-lg-12">
-            <h3 class="page-header"><i class="fa fa-laptop"></i>Horinagor High School</h3>
             <ol class="breadcrumb">
               <li><a href="{{URL::to('/courseoffercreate')}}">New</a></li>
               <li>Course Offer</li>
@@ -159,8 +158,16 @@
                               <input type="hidden" name="cs_teacherid[{{$x->id}}][{{$section->id}}]">
                               <td><select class="form-control" name="teacherid[{{$x->id}}][{{$section->id}}]" id="teacherid">
                                 <option value="">SELECT</option>
-                                @foreach ($teacherList as $x)
-                                  <option value="{{$x->id}}">{{$x->firstName}}</option>
+                                @foreach ($teacherList as $teacher)
+                                @if($x->courseid!=0)
+                                  @if($scteacherList[$x->id][$section->id]==$teacher->id)
+                                  <option selected value="{{$teacher->id}}">{{sprintf('%s %s %s',$teacher->first_name,$teacher->middle_name,$teacher->last_name)}}</option>
+                                  @else
+                                  <option value="{{$teacher->id}}">{{sprintf('%s %s %s',$teacher->first_name,$teacher->middle_name,$teacher->last_name)}}</option>
+                                  @endif
+                                @else
+                                   <option value="{{$teacher->id}}">{{sprintf('%s %s %s',$teacher->first_name,$teacher->middle_name,$teacher->last_name)}}</option>
+                                @endif
                                 @endforeach
                               </select>
                               </td>

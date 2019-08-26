@@ -66,8 +66,8 @@ Route::resource('markcategory', 'com\adventure\school\program\MarkCategoryContro
 Route::resource('gradeletter', 'com\adventure\school\program\GradeLetterController');
 Route::get('gradepoint', 'com\adventure\school\program\GradePointController@createGratePoint');
 Route::post('gradepoint', 'com\adventure\school\program\GradePointController@createGratePoint');
-Route::get('gradepoint/edit', 'com\adventure\school\program\GradePointController@editGratePoint');
-Route::post('gradepoint/edit', 'com\adventure\school\program\GradePointController@editGratePoint');
+Route::get('editgradepoint', 'com\adventure\school\program\GradePointController@editGratePoint');
+Route::post('editgradepoint', 'com\adventure\school\program\GradePointController@editGratePoint');
 Route::get('gradepoint/getValue', 'com\adventure\school\program\GradePointController@getValue');
 Route::resource('coursetype', 'com\adventure\school\program\CourseTypeController');
 
@@ -111,9 +111,11 @@ Route::post('editmarkdistribution','com\adventure\school\courseoffer\MarkDistrib
 Route::get('student', 'com\adventure\school\academic\StudentController@applicantSearch');
 Route::get('student/create', 'com\adventure\school\academic\StudentController@goback');
 Route::post('student/create', 'com\adventure\school\academic\StudentController@studentReg');
+Route::get('students', 'com\adventure\school\academic\StudentController@allStudents');
+Route::post('students', 'com\adventure\school\academic\StudentController@allStudents');
 Route::get('students/getValue','com\adventure\school\academic\StudentController@getValue');
-Route::get('students', 'com\adventure\school\academic\StudentController@allStudentReg');
-Route::post('students', 'com\adventure\school\academic\StudentController@allStudentReg');
+// Route::get('students', 'com\adventure\school\academic\StudentController@allStudentReg');
+// Route::post('students', 'com\adventure\school\academic\StudentController@allStudentReg');
 Route::get('editstudents', 'com\adventure\school\academic\StudentController@editStudentsSubjects');
 Route::post('editstudents', 'com\adventure\school\academic\StudentController@editStudentsSubjects');
 Route::get('directenroll', 'com\adventure\school\academic\StdDirectEnrollController@stdDirectEroll');

@@ -1,0 +1,29 @@
+SELECT
+        mxm.programofferid,
+        mxm.sectionid,
+        mxm.studentid,
+        mxm.courseid,
+        courseoffer.meargeid,
+        md.markcategoryid,
+        md.mark_group_id,
+        courses.courseName,
+        courses.courseCode,
+        courseoffer.mearge_name,
+        courseoffer.coursemark,
+        md.mark_in_percentage,
+        md.cat_hld_mark,
+        mxm.marks AS std_input_mark,
+        (courseoffer.coursemark* md.mark_in_percentage)/100 AS cat_mark,
+        (((courseoffer.coursemark* md.mark_in_percentage)/100)*33)/100 AS pass_mark,
+        ROUND((((courseoffer.coursemark* md.mark_in_percentage)/100)*33)/100,0) AS round_pass_mark,
+        (((courseoffer.coursemark* md.mark_in_percentage)/100)*mxm.marks)/md.cat_hld_mark AS std_obt_mark,
+        ROUND((((courseoffer.coursemark* md.mark_in_percentage)/100)*mxm.marks)/md.cat_hld_mark,0) AS round_std_obt_mark,
+        CASE
+         WHEN  ROUND((((courseoffer.coursemark* md.mark_in_percentage)/100)*mxm.marks)/md.cat_hld_mark,0)>=ROUND((((courseoffer.coursemark* md.mark_in_percentage)/100)*33)/100,0) THEN 1
+         else 0
+        end as cat_pass_status
+        FROM mst_exam_marks AS mxm
+        INNER JOIN courseoffer ON mxm.programofferid=courseoffer.programofferid && mxm.courseid=courseoffer.courseid
+        INNER JOIN mark_distribution as md on mxm.programofferid=md.programofferid && mxm.courseid=md.courseid && mxm.markcategoryid=md.markcategoryid
+        INNER JOIN courses ON mxm.courseid=courses.id
+  GROUP BY mxm.programofferid,mxm.sectionid,mxm.studentid,mxm.courseid,md.markcategoryid

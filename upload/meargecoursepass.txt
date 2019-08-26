@@ -1,0 +1,73 @@
+SELECT 
+ sectionid,
+        studentid,
+        meargeid,
+        mark_group_id,
+        courseName,
+        courseCode,
+       	IFNULL(mearge_name,courseName) mc_name,
+        mg_coursemark AS mc_coursemark,
+        sum(mg_mark_in_percentage) AS mc_mark_in_percentage,
+        sum(mg_cat_hld_mark) AS mc_cat_hld_mark,
+        sum(mg_std_input_mark) AS mc_std_input_mark,
+        (mg_coursemark*sum(mg_mark_in_percentage))/100 AS mc_mark,
+        (((mg_coursemark*sum(mg_mark_in_percentage))/100)*33)/100 as mc_pass_mark,
+        ROUND((((mg_coursemark*sum(mg_mark_in_percentage))/100)*33)/100,0) as round_mc_pass_mark,
+        (sum(mg_std_input_mark)*((mg_coursemark*sum(mg_mark_in_percentage))/100))/sum(mg_cat_hld_mark) AS mc_std_obt_mark,
+        ROUND((sum(mg_std_input_mark)*((mg_coursemark*sum(mg_mark_in_percentage))/100))/sum(mg_cat_hld_mark),0) AS round_mc_std_obt_mark,
+         CASE
+         WHEN  ROUND((sum(mg_std_input_mark)*((mg_coursemark*sum(mg_mark_in_percentage))/100))/sum(mg_cat_hld_mark),0)>=ROUND((((mg_coursemark*sum(mg_mark_in_percentage))/100)*33)/100,0) THEN 1
+         else 0
+        end as mc_pass_status
+FROM (SELECT
+ programofferid,
+        sectionid,
+        studentid,
+        meargeid,
+        mark_group_id,
+        courseName,
+        courseCode,
+        mearge_name,
+sum(coursemark) AS mg_coursemark,
+g_mark_in_percentage as mg_mark_in_percentage,
+sum(g_cat_hld_mark) AS mg_cat_hld_mark,
+sum(g_std_input_mark) AS mg_std_input_mark,
+(sum(coursemark)*g_mark_in_percentage)/100 AS mg_cat_mark,
+((((sum(coursemark)*g_mark_in_percentage)/100)*33)/100) AS mg_pass_mark,
+ROUND(((((sum(coursemark)*g_mark_in_percentage)/100)*33)/100),0) AS round_mg_pass_mark,
+(sum(g_std_input_mark)*((sum(coursemark)*g_mark_in_percentage)/100))/sum(g_cat_hld_mark) as mg_std_obt_mark,
+round((sum(g_std_input_mark)*((sum(coursemark)*g_mark_in_percentage)/100))/sum(g_cat_hld_mark)) AS round_mg_std_obt_mark,
+case
+ WHEN  round((sum(g_std_input_mark)*((sum(coursemark)*g_mark_in_percentage)/100))/sum(g_cat_hld_mark))>=ROUND(((((sum(coursemark)*g_mark_in_percentage)/100)*33)/100),0) THEN 1
+         else 0
+        end as mg_cat_pass_status
+FROM(SELECT
+        mxm.programofferid,
+        mxm.sectionid,
+        mxm.studentid,
+        mxm.courseid,
+        meargeid,
+        mark_group_id,
+        courseName,
+        courseCode,
+        mearge_name,
+        coursemark,
+        sum(md.mark_in_percentage) AS g_mark_in_percentage,
+        sum(md.cat_hld_mark) AS g_cat_hld_mark,
+        sum(mxm.marks) AS g_std_input_mark,
+        sum((courseoffer.coursemark* md.mark_in_percentage)/100) AS g_cat_mark,
+        sum((((courseoffer.coursemark* md.mark_in_percentage)/100)*33)/100) AS g_pass_mark,
+        ROUND(sum((((courseoffer.coursemark* md.mark_in_percentage)/100)*33)/100),0) AS g_round_pass_mark,
+        sum((((courseoffer.coursemark* md.mark_in_percentage)/100)*mxm.marks)/md.cat_hld_mark) AS g_std_obt_mark,
+        ROUND(sum((((courseoffer.coursemark* md.mark_in_percentage)/100)*mxm.marks)/md.cat_hld_mark),0) AS g_round_std_obt_mark,
+        CASE
+         WHEN  ROUND(sum((((courseoffer.coursemark* md.mark_in_percentage)/100)*mxm.marks)/md.cat_hld_mark),0)>=ROUND(sum((((courseoffer.coursemark* md.mark_in_percentage)/100)*33)/100),0) THEN 1
+         else 0
+        end as g_cat_pass_status
+        FROM mst_exam_marks AS mxm
+        INNER JOIN courseoffer ON mxm.programofferid=courseoffer.programofferid && mxm.courseid=courseoffer.courseid
+        INNER JOIN mark_distribution as md on mxm.programofferid=md.programofferid && mxm.courseid=md.courseid && mxm.markcategoryid=md.markcategoryid
+        INNER JOIN courses ON mxm.courseid=courses.id
+  GROUP BY mxm.programofferid,mxm.sectionid,mxm.studentid,mxm.courseid,md.mark_group_id) AS mgtable
+  group BY programofferid,sectionid,studentid,meargeid,mark_group_id) AS mg_course
+  GROUP BY programofferid,sectionid,studentid,meargeid

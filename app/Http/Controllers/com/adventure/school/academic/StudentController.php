@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\com\adventure\school\basic\Institute;
 use App\com\adventure\school\menu\Menu;
 use App\com\adventure\school\program\Session;
+use App\com\adventure\school\program\Section;
 use App\com\adventure\school\program\ProgramOffer;
 use App\com\adventure\school\courseoffer\CourseOffer;
 use App\com\adventure\school\courseoffer\SectionOffer;
@@ -97,11 +98,13 @@ class StudentController extends Controller
             $courseList=$aCourseOffer->getCoursesOnProgramOffer($programofferid);
         }
         // dd($courseList);
-        // sessionid,programid,groupid,mediumid,shiftid,tableName and $compaireid
-        $programList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,"programs",'programid');
-        $mediumList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,"mediums",'mediumid');
-        $shiftList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,"shifts",'shiftid');
-        $groupList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,"groups",'groupid');
+        // sessionid,programlabelid,programid,groupid,mediumid,shiftid and tableName
+        $sessionList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,0,"sessions",'sessionid');
+        $plabelList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,0,"plabels",'programlabelid');
+        $programList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,0,"programs",'programid');
+        $mediumList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,0,"mediums",'mediumid');
+        $shiftList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,0,"shifts",'shiftid');
+        $groupList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,0,"groups",'groupid');
         $dataList=[
             'institute'=>Institute::getInstituteName(),
             'sidebarMenu'=>$sidebarMenu,
@@ -299,48 +302,159 @@ class StudentController extends Controller
         ];
         return view('admin.academic.student.search',$dataList);
     }
-        // For Ajax Call ===============
-   //    ================================================================
-   public function getValue(Request $request){
-    $option=$request->option;
-    $methodid=$request->methodid;
-    $programid=$request->programid;
-    $groupid=$request->groupid;
-    $mediumid=$request->mediumid;
-    $shiftid=$request->shiftid;
-    if($option=="program"){
-        if($methodid==1){
-            $this->getAllOnIDS(0,$programid,0,0,0,"mediums",'mediumid');
-        }elseif($methodid==2){
-            $this->getAllOnIDS(0,$programid,0,0,0,"shifts",'shiftid');
-        }elseif($methodid==3){
-            $this->getAllOnIDS(0,$programid,0,0,0,"groups",'groupid');
+    public function allStudents(Request $request){
+        $msg="";
+        $aMenu=new Menu();
+        $hasMenu=$aMenu->hasMenu('students');
+        if($hasMenu==false){
+            return redirect('error');
         }
-    }elseif($option=="group"){
-        // if($methodid==1){
-        //     $this->getMediumsOnSessionAndPrograAndGroup($programid,$groupid);
-        // }elseif($methodid==2){
-        //     $this->getShiftsOnSessionAndPrograAndGroup($programid,$groupid);
-        // }
-    }elseif($option=="medium"){
-        if($methodid==1){
-            $this->getAllOnIDS(0,$programid,0,$mediumid,0,"shifts",'shiftid');
-        }elseif($methodid==2){
-            $this->getAllOnIDS(0,$programid,0,$mediumid,0,"groups",'groupid');
+        $sidebarMenu=$aMenu->getSidebarMenu();
+        ///////////////////////////////////
+        $aProgramOffer=new ProgramOffer();
+        $aStudent=new Student();
+        $programofferid=0;
+        $programofferinfo=null;
+        $students=null;
+        if($request->isMethod('post')&&$request->search_btn=='search_btn'){
+            $validatedData = $request->validate([
+                'sessionid' => 'required',
+                'programlabelid' => 'required',
+                'programid' => 'required',
+                'mediumid' => 'required',
+                'shiftid' => 'required',
+                'groupid' => 'required',
+            ]);
+            $request->flash();
+            $sessionid=$request->sessionid;
+            $programlabelid=$request->programlabelid;
+            $programid=$request->programid;
+            $groupid=$request->groupid;
+            $mediumid=$request->mediumid;
+            $shiftid=$request->shiftid;
+            // Check Program Offer Created Or Not
+            $checkProgramOffer=$aProgramOffer->checkValue($sessionid,$programlabelid,$programid,$groupid,$mediumid,$shiftid);
+            if(!$checkProgramOffer){
+                $msg="Program Offer is not created yet";
+                return redirect()->back()->with('msg',$msg);
+            }
+            $programofferid=$aProgramOffer->getProgramOfferId($sessionid,$programlabelid,$programid,$groupid,$mediumid,$shiftid);
+            // check sectionOffer
+            $programofferinfo=$aProgramOffer->getProgramOffer($programofferid);
+            $students=$aStudent->getStudentsOnProgramofferID($programofferid);
+            // dd($students);
         }
-    }elseif($option=="shift"){
-        if($methodid==1){
-            $this->getAllOnIDS(0,$programid,0,$mediumid,$shiftid,"groups",'groupid');
+        $sessionList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,0,"sessions",'sessionid');
+        $plabelList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,0,"plabels",'programlabelid');
+        $programList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,0,"programs",'programid');
+        $mediumList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,0,"mediums",'mediumid');
+        $shiftList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,0,"shifts",'shiftid');
+        $groupList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,0,"groups",'groupid');
+        $sectionList=Section::all();
+        $dataList=[
+            'institute'=>Institute::getInstituteName(),
+            'sidebarMenu'=>$sidebarMenu,
+            'sessionList'=>$sessionList,
+            "plabelList"=>$plabelList,
+            'programList'=>$programList,
+            'groupList'=>$groupList,
+            'mediumList'=>$mediumList,
+            'shiftList'=>$shiftList,
+            'sectionList'=>$sectionList,
+            'programofferinfo'=>$programofferinfo,
+            'students'=>$students,
+            'msg'=>$msg
+        ];
+        return view('admin.academic.studentList.studentlist',$dataList);
+    }
+ // For Ajax Call ===============
+    //    ================================================================
+    public function getValue(Request $request){
+        $option=$request->option;
+        $methodid=$request->methodid;
+        $sessionid=$request->sessionid;
+        $programlabelid=$request->programlabelid;
+        $programid=$request->programid;
+        $groupid=$request->groupid;
+        $mediumid=$request->mediumid;
+        $shiftid=$request->shiftid;
+        $sectionid=$request->sectionid;
+        $mstexamnameid=$request->mstexamnameid;
+        if($option=="session"){
+            //session plabel program group medium shift
+            if($methodid==1){
+                $this->getAllOnIDS($sessionid,0,0,0,0,0,"plabels",'programlabelid');
+            }elseif($methodid==2){
+                $this->getAllOnIDS($sessionid,0,0,0,0,0,"programs",'programid');
+            }elseif($methodid==3){
+                $this->getAllOnIDS($sessionid,0,0,0,0,0,"groups",'groupid');
+            }elseif($methodid==4){
+                $this->getAllOnIDS($sessionid,0,0,0,0,0,"mediums",'mediumid');
+            }elseif($methodid==5){
+                $this->getAllOnIDS($sessionid,0,0,0,0,0,"shifts",'shiftid');
+            }elseif($methodid==6){
+                $this->getSections($sessionid,0,0,0,0,0);
+            }
+        }else if($option=="programlabel"){
+            if($methodid==2){
+                $this->getAllOnIDS($sessionid,$programlabelid,0,0,0,0,"programs",'programid');
+            }elseif($methodid==3){
+                $this->getAllOnIDS($sessionid,$programlabelid,0,0,0,0,"groups",'groupid');
+            }elseif($methodid==4){
+                $this->getAllOnIDS($sessionid,$programlabelid,0,0,0,0,"mediums",'mediumid');
+            }elseif($methodid==5){
+                $this->getAllOnIDS($sessionid,$programlabelid,0,0,0,0,"shifts",'shiftid');
+            }elseif($methodid==6){
+                $this->getSections($sessionid,$programlabelid,0,0,0,0);
+            }
+        }else if($option=="program"){
+            if($methodid==3){
+                $this->getAllOnIDS($sessionid,$programlabelid,$programid,0,0,0,"groups",'groupid');
+            }elseif($methodid==4){
+                $this->getAllOnIDS($sessionid,$programlabelid,$programid,0,0,0,"mediums",'mediumid');
+            }elseif($methodid==5){
+                $this->getAllOnIDS($sessionid,$programlabelid,$programid,0,0,0,"shifts",'shiftid');
+            }elseif($methodid==6){
+                $this->getSections($sessionid,$programlabelid,$programid,0,0,0);
+            }
+        }elseif($option=="group"){
+            if($methodid==6){
+                $this->getSections($sessionid,$programlabelid,$programid,$groupid,$mediumid,$shiftid);
+            }
+        }else if($option=="medium"){
+            if($methodid==3){
+                $this->getAllOnIDS($sessionid,$programlabelid,$programid,0,$mediumid,0,"groups",'groupid');
+            }elseif($methodid==5){
+                $this->getAllOnIDS($sessionid,$programlabelid,$programid,0,$mediumid,0,"shifts",'shiftid');
+            }elseif($methodid==6){
+                $this->getSections($sessionid,$programlabelid,$programid,0,$mediumid,0);
+            }
+        }else if($option=="shift"){
+            if($methodid==3){
+                $this->getAllOnIDS($sessionid,$programlabelid,$programid,0,$mediumid,$shiftid,"groups",'groupid');
+            }elseif($methodid==6){
+                $this->getSections($sessionid,$programlabelid,$programid,0,$mediumid,$shiftid);
+            }
         }
     }
-}
-private function getAllOnIDS($sessionid,$programid,$groupid,$mediumid,$shiftid,$tableName,$compareid){
+    private function getAllOnIDS($sessionid,$programlabelid,$programid,$groupid,$mediumid,$shiftid,$tableName,$compareid){
         $aProgramOffer=new ProgramOffer();
-        $result=$aProgramOffer->getAllOnIDS($sessionid,$programid,$groupid,$mediumid,$shiftid,$tableName,$compareid);
+        $result=$aProgramOffer->getAllOnIDS($sessionid,$programlabelid,$programid,$groupid,$mediumid,$shiftid,$tableName,$compareid);
         $output="<option value=''>SELECT</option>";
         foreach($result as $x){
             $output.="<option value='$x->id'>$x->name</option>";
         }
         echo  $output;
-}
+    }
+    private function getSections($sessionid,$programlabelid,$programid,$groupid,$mediumid,$shiftid){
+        $aProgramOffer=new ProgramOffer();
+        $programofferid=$aProgramOffer->getProgramOfferId($sessionid,$programlabelid,$programid,$groupid,$mediumid,$shiftid);
+        $aSectionOffer=new SectionOffer();
+        $result=$aSectionOffer->getSectionsOnPO($programofferid);
+        $output="<option value=''>SELECT</option>";
+        foreach($result as $x){
+            $output.="<option value='$x->id'>$x->name</option>";
+        }
+        echo  $output;
+    }
 }

@@ -17,7 +17,6 @@ class CreateMstExamMarksTable extends Migration
             $table->increments('id');
             $table->integer('programofferid')->length(11);
             $table->integer('sectionid')->length(11);
-            $table->integer('teacherid')->length(11)->nullable();
             $table->integer('studentid')->length(11);
             $table->integer('coursecodeid')->length(11);
             $table->integer('examnameid')->length(11);

@@ -9,7 +9,6 @@
   <section class="wrapper">
     <div class="row">
       <div class="col-lg-12">
-        <h3 class="page-header"><i class="fa fa-laptop"></i>Horinagor High School</h3>
         <ol class="breadcrumb">
           @if($pList[2]->id==2)
             <li><a href="{{URL::to('/employees')}}/{{'create'}}">New</a></li>
@@ -47,8 +46,7 @@
                 <td>{{$x->mobileno}}</td>
                 <td><span>{{$x->designationName}}</span><br><span>{{$x->departmentName}}</span></td>
                 <td><span>{{$x->employeeName}}</span><br><span>{{$x->employmentstatusName}}</span></td>
-                <th style="text-align:center;position:relative;height:49px;width:49px"><img style="width:77px;height:65px;position:absolute;top:0px;left:0px;" alt="{{$x->name}}" src="{{asset('clientAdmin./image/employee/picture9245f82794.png')}}"></th>
-               
+                <th style="text-align:center;position:relative;height:49px;width:49px"><img style="width:77px;height:65px;position:absolute;top:0px;left:0px;" alt="{{$x->name}}" src="{{asset('clientAdmin./image/employee/')}}/{{$x->picture}}"></th>
                 <td style="text-align:center"> 
                   @if($pList[3]->id==3)
                   <a href="{{URL::to('/employees')}}/{{$x->id}}/{{'edit'}}" class="tooltip-success" data-rel="tooltip" title="Edit">

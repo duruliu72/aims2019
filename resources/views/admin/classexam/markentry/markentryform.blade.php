@@ -7,7 +7,6 @@
       <section class="wrapper">
         <div class="row">
           <div class="col-lg-12">
-            <h3 class="page-header"><i class="fa fa-laptop"></i>Horinagor High School</h3>
              <ol class="breadcrumb">
                 <li>Mark Entry Form</li>
                 @if($msg!="")

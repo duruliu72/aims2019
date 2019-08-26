@@ -42,6 +42,7 @@ class Institute extends Model
 		   addresses.thanaid,
 		   thanas.name AS thanaName,
 		   addresses.postofficeid,
+           postoffices.name AS postOfficeName,
 		   addresses.postcode,
 		   addresses.localgovid,
 		   localgovs.name as localgovName,
@@ -52,6 +53,7 @@ class Institute extends Model
 		   INNER JOIN districts ON addresses.districtid=districts.id
 		   INNER JOIN thanas ON addresses.thanaid=thanas.id
 			INNER JOIN localgovs ON addresses.localgovid=localgovs.id
+            INNER JOIN postoffices ON addresses.postofficeid=postoffices.id
 		   WHERE t1.id=?";
 		$qresult=\DB::select($sql,[$id]);
 		$result=collect($qresult)->first();

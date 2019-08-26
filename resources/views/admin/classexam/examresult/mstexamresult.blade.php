@@ -8,24 +8,18 @@
       <section class="wrapper no-padding no-margin">
         <div class="row no-print">
           <div class="col-lg-12">
-            <h3 class="page-header"><i class="fa fa-laptop"></i>
-            @if($institute!=null)
-              {{$institute->name}}
-            @else
-              Dashboard
-            @endif</h3>
              <ol class="breadcrumb">
                 <li>Academic Result</li>
                 @if($msg!="")
-                  <span style="float: right;font-size: 15px;">
+                  <span class="msg">
                   {{ $msg }}
                   </span>
                 @endif
                 @if ($errors->any())
-                <span style="float: right;font-size: 15px;">{{$errors->all()[0] }}</span>
+                <span class="msg">{{$errors->all()[0] }}</span>
                 @endif
                 @if(session()->has('msg'))
-                <span style="float: right;font-size: 15px;">
+                <span class="msg">
                   {{ session()->get('msg') }}
                 </span>
                 @endif
@@ -41,6 +35,26 @@
                 <div class="top_form">
                     <form action="{{URL::to('mstexamresult')}}" method="POST">
                     {{csrf_field()}}
+                    <div class="form-group row">
+                      <label class="col-sm-2 control-label" for="sessionid">Session</label>
+                      <div class="col-sm-4">
+                        <select onchange="getChange(this,'session')" class="form-control" name="sessionid" id="sessionid">
+                            <option  value="">SELECT</option>
+                          @foreach ($sessionList as $x)
+                            <option value="{{$x->id}}">{{$x->name}}</option>
+                          @endforeach
+                        </select>
+                      </div> 
+                      <label class="col-sm-2 control-label" for="programlabelid">Class Label</label>
+                      <div class="col-sm-4">
+                        <select onchange="getChange(this,'programlabel')" class="form-control" name="programlabelid" id="programlabelid">
+                          <option value="">SELECT</option>
+                          @foreach ($plabelList as $x)
+                            <option value="{{$x->id}}">{{$x->name}}</option>
+                          @endforeach
+                        </select>
+                      </div>                   
+                    </div>
                     <div class="form-group row">
                     <label class="col-sm-2 control-label" for="programid">Program</label>
                     <div class="col-sm-4">
@@ -161,13 +175,13 @@
                             <td>{{$item->applicantid}}</td>
                             <td>{{sprintf("%s %s %s",$item->firstName,$item->middleName,$item->lastName)}}</td>
                             <td>{{$item->classroll}}</td>
-                            <td>{{$item->grand_marks}}</td>
-                            <td>{{$item->grand_obt_marks}}</td>
-                            <td>{{sprintf("%.2f",$item->std_gpa)}}</td>
+                            <td>{{$item->common_marks}}</td>
+                            <td>{{sprintf('%.2f',$item->obt_common_marks)}}</td>
+                            <td>{{$item->gpa}}</td>
                             @if($item->student_pass_status)
-                            <td>{{$item->std_letter}}</td>
+                            <td>{{$item->letter}}</td>
                             @else
-                            <td class="fail_status">{{$item->std_letter}}</td>
+                            <td class="fail_status">{{$item->letter}}</td>
                             @endif
                             <td>{{$item->class_position}}</td>
                             <td>{{$item->section_position}}</td>

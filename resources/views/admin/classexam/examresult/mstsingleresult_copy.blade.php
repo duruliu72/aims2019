@@ -8,12 +8,6 @@
       <section class="wrapper no-padding no-margin">
         <div class="row no-print">
           <div class="col-lg-12">
-            <h3 class="page-header"><i class="fa fa-laptop"></i>
-            @if($institute!=null)
-              {{$institute->name}}
-            @else
-              Dashboard
-            @endif</h3>
              <ol class="breadcrumb">
                 <li>Academic Result</li>
                 @if($msg!="")

@@ -17,6 +17,7 @@ use App\com\adventure\school\basic\BloodGroup;
 use App\com\adventure\school\basic\MaritalStatus;
 use App\com\adventure\school\basic\EducationDegree;
 use App\com\adventure\school\basic\EducationInfo;
+use App\com\adventure\school\basic\EmployeeLabel;
 use App\com\adventure\school\employee\Employee;
 
 class EmployeeController extends Controller
@@ -66,10 +67,8 @@ class EmployeeController extends Controller
         ];
         if($pList[2]->id!=2){
             return redirect('error');
-        }else{
-            return view('admin.employee.employee.create',$datalist);
         }
-    	
+        return view('admin.employee.employee.create',$datalist);
     }
     public function store(Request $request){
      	 $validatedData = $request->validate([
@@ -103,8 +102,10 @@ class EmployeeController extends Controller
         'passingyear' => 'required',
         'board' => 'required',
         ]);
-        die("Die Here");
-        dd($request);
+        // die("Die Here");
+        // dd($request);
+        $programlabelidList=$request->programlabelid;
+        // dd($programlabelidList);
         $aEmployee=new Employee();
         $aEmployee->employeeidno=$aEmployee->generateEmployeeIdNo();
         $aEmployee->employeetypeid=$request->employeetypeid;
@@ -193,6 +194,12 @@ class EmployeeController extends Controller
                     $aEducationInfo->save();
                 }
             }
+            foreach($programlabelidList as $programlabelid){
+                $aEmployeeLabel=new EmployeeLabel();
+                $aEmployeeLabel->employeeid=$lastOne->id;
+                $aEmployeeLabel->programlabelid=$programlabelid;
+                $aEmployeeLabel->save();
+            }
             if($status){
                 $aMenu->fileUpload($uploads_dir,$picture,$picturepropaties,$unique_picture);
                 $aMenu->fileUpload($uploads_dir,$signature,$signatureproperties,$unique_signature);
@@ -214,13 +221,31 @@ class EmployeeController extends Controller
         }
         $sidebarMenu=$aMenu->getSidebarMenu();
         $pList=$aMenu->getPermissionOnMenu('employeetypes');
-    	$aEmployeeStatus=EmployeeStatus::findOrfail($id);
-        if($pList[3]->id==3){
-           return view('admin.basic.employeestatus.edit',['sidebarMenu'=>$sidebarMenu,'bean'=>$aEmployeeStatus]); 
-       }else{
+    	$employee=Employee::findOrfail($id);
+        if($pList[3]->id!=3){
             return redirect('error');
        }
-        
+       $aEmployeeLabel=new EmployeeLabel();
+       $pLabelList=$aEmployeeLabel->getLabels($id);
+       $aEducationInfo=new EducationInfo();
+       $educationinfo=$aEducationInfo->getEducationInfo($id);
+       $dataList=[
+        'sidebarMenu'=>$sidebarMenu,
+        'pLevel'=>$pLabelList,
+        'employeetypeList'=>EmployeeType::all(),
+        'designationList'=>Designation::all(),
+        'departmentList'=>Department::all(),
+        'employmentStatusList'=>EmploymentStatus::all(),
+        'employeeStatusList'=>EmployeeStatus::all(),
+        'genderList'=>Gender::all(),
+        'nationalityList'=>Nationality::all(),
+        'bloodGroupList'=>BloodGroup::all(),
+        'maritalStatusList'=>MaritalStatus::all(),
+        'educationDegreeList'=>EducationDegree::all(),
+        "educationinfo"=>$educationinfo,
+        'bean'=>$employee
+    ];
+       return view('admin.employee.employee.edit',$dataList);         
     }
     public function update(Request $request, $id){
     	$validatedData = $request->validate([

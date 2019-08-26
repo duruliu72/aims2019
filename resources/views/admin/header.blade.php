@@ -1,20 +1,24 @@
-  <header class="header dark-bg headernoprint">
+  <header class="header headernoprint" style="background: #528a0f;">
       <div class="toggle-nav">
         <div class="icon-reorder tooltips" data-original-title="Toggle Navigation" data-placement="bottom"><i class="icon_menu"></i></div>
       </div>
       <!--logo start-->
-      <a href="{{URL::to('/home')}}" class="logo">AIMS <span class="lite">(VR : 4.0.1)</span></a>
+      <div style="float:left;">
+      <a href="{{URL::to('/home')}}" class="logo"><span style="display:block;font-size: 22px;margin-top: 4px;color:#fff">AIMS</span></a>
+      </div>
       <!--logo end-->
+      <div style="float:left;margin-left:70px;">
+        <div class="logo_copy" style="float:left;">
+          <img src="{{asset('clientAdmin/image/logo/')}}/{{Session::get('institutelogo')}}">
+        </div>
+        <h2 style="margin:12px 0px 0px 0px;text-transform: uppercase;float:left;margin-left:15px;font-size:25px;color:#fff"><?php echo Session::get("institute_name"); ?></h2>
+      </div>
       <div class="top-nav notification-row">
         <!-- notificatoin dropdown start-->
         <ul class="nav pull-right top-menu">
 
           <!-- task notificatoin start -->
           <li id="task_notificatoin_bar" class="dropdown">
-            <a data-toggle="dropdown" class="dropdown-toggle" href="#">
-                            <i class="icon-task-l"></i>
-                            <span class="badge bg-important">6</span>
-                        </a>
             <ul class="dropdown-menu extended tasks-bar">
               <div class="notify-arrow notify-arrow-blue"></div>
               <li>

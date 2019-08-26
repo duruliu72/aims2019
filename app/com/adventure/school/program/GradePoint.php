@@ -16,6 +16,14 @@ class GradePoint extends Model
         }
         return false;
     }
+    public function hasValue($programofferid){
+        $sql="SELECT * FROM `grade_point` WHERE programofferid=?";
+        $qResult=\DB::select($sql,[$programofferid]);
+        if(collect($qResult)->count()>0){
+            return true;
+        }
+        return false;
+    }
     public function getGradeLetter($programofferid){
         $sql="SELECT t1.* ,
         IFNULL(t2.gradeletterid,0) AS gradeletterid,
@@ -64,5 +72,4 @@ class GradePoint extends Model
         $qResult=\DB::select($sql,[$programofferid]);
         return collect($qResult);
     }
-    
 }

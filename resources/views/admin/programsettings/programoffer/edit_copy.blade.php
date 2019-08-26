@@ -4,13 +4,6 @@
       <section class="wrapper">
         <div class="row">
           <div class="col-lg-12">
-            <h3 class="page-header"><i class="fa fa-laptop"></i>
-              @if($institute!=null)
-                {{$institute->name}}
-              @else
-                Dashboard
-              @endif
-            </h3>
             <ol class="breadcrumb">
               <li><a href="{{URL::to('/programoffer')}}">All</a></li>
               <li>Program Offer</li>
@@ -157,7 +150,7 @@
                                     <select class="form-control" name="section_teacher[{{$x->id}}]">
                                         <option value="">SELECT</option>
                                         @foreach ($employeeList as $emp)
-                                            @if($emp->id==$bean->section_teacher)
+                                            @if($emp->id==$x->section_teacher)
                                                 <option selected value="{{$emp->id}}">{{$emp->name}}</option>
                                             @else
                                                 <option value="{{$emp->id}}">{{$emp->name}}</option>

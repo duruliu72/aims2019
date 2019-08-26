@@ -145,16 +145,6 @@ function getChangeOnMedium(id, option, output, methodid) {
     var groupid = 0;
     var mediumid = $("#" + id).val();
     var shiftid = 0;
-    console.log(
-        sessionid,
-        programlabelid,
-        programid,
-        groupid,
-        mediumid,
-        shiftid,
-        output,
-        methodid
-    );
     $.ajax({
         type: "get",
         url: baseUrl + "courseoffer/getValue",
