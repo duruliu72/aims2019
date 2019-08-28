@@ -49,7 +49,7 @@ class MstExamResultController extends Controller
             'instituteObj'=>$instituteObj,
             'msg'=>$msg
         ];
-        return view('admin.classexam.examresult.mstsingleresult_copy',$dataList);
+        return view('admin.classexam.examresult.mstsingleresult',$dataList);
     }
     public function getTranscripts(Request $request){
         $msg="";

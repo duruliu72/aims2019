@@ -8,12 +8,6 @@
       <section class="wrapper no-padding no-margin">
         <div class="row no-print">
           <div class="col-lg-12">
-            <h3 class="page-header"><i class="fa fa-laptop"></i>
-            @if($institute!=null)
-              {{$institute->name}}
-            @else
-              Dashboard
-            @endif</h3>
              <ol class="breadcrumb">
                 <li>Academic Result</li>
                 @if($msg!="")
@@ -108,7 +102,7 @@
                   </div>
                   <div class="academic-transcript__result">
                     <div class="compulsory">
-                        <table>
+                      <table>
                         <thead>
                           <tr>
                             <th>Sl No.</th>
@@ -120,155 +114,180 @@
                             <th>L.G.</th>
                             <th>GP</th>
                           </tr>
-                          </thead>
-                          <tbody>
-                            <?php $id=0; ?>
-                            @foreach($student->meargeCourseList as $key=>$m_course)
-                            <?php 
-                              $courseSpan=false;
-                              $grade_latterSpan=false;
-                              if($m_course->meargecount>1){
-                                $courseSpan=true;
-                                $grade_latterSpan=true;
-                              }
-                            ?>
-                            @if($m_course->coursetypeid==1)
-                            @foreach($m_course->courses as $c)
-                            <tr>
-                              <td>{{++$id}}</td>
-                              <?php 
-                                  if($courseSpan && $m_course->meargecount>1){ ?>
-                                      <td rowspan="2">{{$m_course->courseName}}</td>
-                                 <?php   $courseSpan=false;
-                                  }elseif($m_course->meargecount==1){ ?>
-                                        <td>{{$m_course->courseName}}</td>
-                               <?php }
-                              ?>
-                              <td>{{$c->courseCode}}</td>
-                              <td>{{$c->course_marks}}</td>
-                              <td>
-                                @foreach($c->markCategories as $mark_c)
-                                {{sprintf("%s %s %.2f",$mark_c->markcatName,":",$mark_c->obt_marks)}}
-                                @endforeach
-                              </td>
-                              <td>{{$c->obt_course_marks}}</td>
-                              <?php 
-                                  if($grade_latterSpan && $m_course->meargecount>1){ ?>
-                                      @if($m_course->mearge_pass_status)
-                                        <td rowspan="2">{{$m_course->mearge_letter}}</td>
-                                      @else
-                                        <td class="fail_status" rowspan="2">{{$m_course->mearge_letter}}</td>
-                                      @endif
-                                      <td rowspan="2">{{$m_course->mearge_point}}</td>
-                                 <?php   $grade_latterSpan=false;
-                                  }elseif($m_course->meargecount==1){ ?>
-                                        @if($m_course->mearge_pass_status)
-                                        <td>{{$m_course->mearge_letter}}</td>
+                        </thead>
+                        <tbody>
+                          <?php $id=0; ?>
+                            <!-- Start compalsary subject -->
+                              @foreach($student->m_courses as $key=>$mc)
+                                  <?php 
+                                    $cellspread=false;
+                                    $print=true;
+                                    if($mc->course_frequency>1){
+                                      $cellspread=true;
+                                    }
+                                  ?>
+                                  @if($mc->coursetypeid==1)
+                                  @foreach($mc->courses as $course)
+                                    <tr>
+                                      <td>{{++$id}}</td>
+                                      @if($print)
+                                        @if($cellspread)
+                                          <td rowspan="2">{{$mc->mc_name}}</td>
                                         @else
-                                        <td class="fail_status">{{$m_course->mearge_letter}}</td>
+                                          <td>{{$mc->mc_name}}</td>
                                         @endif
-                                       
-                                        <td>{{$m_course->mearge_point}}</td>
-                               <?php }
-                              ?>
-                            </tr>
-                            @endforeach
-                            @endif
-                            @endforeach
+                                      @endif
+                                      <td>{{$course->courseCode}}</td>
+                                      <td>{{$course->tot_course_mark}}</td>
+                                      <td>
+                                      @foreach($course->categories as $cat)
+                                        @if($cat->cat_pass_status==1)
+                                        <span>{{$cat->markcatName}}{{":"}} {{$cat->round_std_obt_mark}}</span>
+                                        @else
+                                        <span style="color:red;">{{$cat->markcatName}}{{":"}} {{$cat->round_std_obt_mark}}</span>
+                                        @endif
+                                      @endforeach
+                                      </td>
+                                      @if($course->coursepass_status==1)
+                                        <td>{{$course->round_std_course_obt_mark}}</td>
+                                      @else
+                                        <td style="color:red;">{{$course->round_std_course_obt_mark}}</td>
+                                      @endif
+                                      @if($print)
+                                        @if($cellspread)
+                                          <td rowspan="2">{{$mc->mcourse_grade_letter}}</td>
+                                          <td rowspan="2">{{$mc->mcourse_grade_point}}</td>
+                                        @else
+                                          <td>{{$mc->mcourse_grade_letter}}</td>
+                                          <td>{{$mc->mcourse_grade_point}}</td>
+                                        @endif
+                                      @endif
+                                      
+                                    </tr>
+                                    <?php 
+                                    $print=false;
+                                  ?>
+                                  @endforeach
+                                  @endif
+                              @endforeach
+                            <!-- End compalsary subject -->
                             <tr>
-                            <td colspan="8" style="text-align: left;">Optional Subject:</td>
+                              <td colspan="8" style="text-align: left;">Optional Subject:</td>
                             </tr>
-                            @foreach($student->meargeCourseList as $key=>$m_course)
-                            <?php 
-                              $courseSpan=false;
-                              $grade_latterSpan=false;
-                              if($m_course->meargecount>1){
-                                $courseSpan=true;
-                                $grade_latterSpan=true;
-                              }
-                            ?>
-                            @if($m_course->coursetypeid==2)
-                            @foreach($m_course->courses as $c)
+                            
+                            <!-- Start Optional subject -->
+                            @foreach($student->m_courses as $key=>$mc)
+                                  <?php 
+                                    $cellspread=false;
+                                    $print=true;
+                                    if($mc->course_frequency>1){
+                                      $cellspread=true;
+                                    }
+                                  ?>
+                                  @if($mc->coursetypeid==2)
+                                  @foreach($mc->courses as $course)
+                                    <tr>
+                                      <td>{{++$id}}</td>
+                                      @if($print)
+                                        @if($cellspread)
+                                          <td rowspan="2">{{$mc->mc_name}}</td>
+                                        @else
+                                          <td>{{$mc->mc_name}}</td>
+                                        @endif
+                                      @endif
+                                      <td>{{$course->courseCode}}</td>
+                                      <td>{{$course->tot_course_mark}}</td>
+                                      <td>
+                                      @foreach($course->categories as $cat)
+                                        @if($cat->cat_pass_status==1)
+                                        <span>{{$cat->markcatName}}{{":"}} {{$cat->round_std_obt_mark}}</span>
+                                        @else
+                                        <span style="color:red;">{{$cat->markcatName}}{{":"}} {{$cat->round_std_obt_mark}}</span>
+                                        @endif
+                                      @endforeach
+                                      </td>
+                                      @if($course->coursepass_status==1)
+                                        <td>{{$course->round_std_course_obt_mark}}</td>
+                                      @else
+                                        <td style="color:red;">{{$course->round_std_course_obt_mark}}</td>
+                                      @endif
+                                      @if($print)
+                                        @if($cellspread)
+                                          <td rowspan="2">{{$mc->mcourse_grade_letter}}</td>
+                                          <td rowspan="2">{{$mc->mcourse_grade_point}}</td>
+                                        @else
+                                          <td>{{$mc->mcourse_grade_letter}}</td>
+                                          <td>{{$mc->mcourse_grade_point}}</td>
+                                        @endif
+                                      @endif
+                                      
+                                    </tr>
+                                    <?php 
+                                    $print=false;
+                                  ?>
+                                  @endforeach
+                                  @endif
+                              @endforeach
+                            <!-- End Optional subject -->
                             <tr>
-                              <td>{{++$id}}</td>
-                              <?php 
-                                  if($courseSpan && $m_course->meargecount>1){ ?>
-                                      <td rowspan="2">{{$m_course->courseName}}</td>
-                                 <?php   $courseSpan=false;
-                                  }elseif($m_course->meargecount==1){ ?>
-                                        <td>{{$m_course->courseName}}</td>
-                               <?php }
-                              ?>
-                              <td>{{$c->courseCode}}</td>
-                              <td>{{$c->course_marks}}</td>
-                              <td>
-                                @foreach($c->marks_cats as $mark_cat)
-                                {{sprintf("%s %s %.0f",$mark_cat->markcatName,":",$mark_c->obt_marks)}}
-                                @endforeach
-                              </td>
-                              <td>{{$c->obt_course_marks}}</td>
-                              <?php 
-                                  if($grade_latterSpan && $m_course->meargecount>1){ ?>
-                                      <td rowspan="2">{{$m_course->mearge_letter}}</td>
-                                      <td rowspan="2">{{$m_course->mearge_point}}</td>
-                                 <?php   $grade_latterSpan=false;
-                                  }elseif($m_course->meargecount==1){ ?>
-                                        <td>{{$m_course->mearge_letter}}</td>
-                                        <td>{{$m_course->mearge_point}}</td>
-                               <?php }
-                              ?>
+                              <td colspan="8" style="text-align: left;">Additional Subject:</td>
                             </tr>
-                            @endforeach
-                            @endif
-                            @endforeach
-                            <tr>
-                            <td colspan="8" style="text-align: left;">Additional Subject:</td>
-                            </tr>
-                             @foreach($student->meargeCourseList as $key=>$m_course)
-                            <?php 
-                              $courseSpan=false;
-                              $grade_latterSpan=false;
-                              if($m_course->meargecount>1){
-                                $courseSpan=true;
-                                $grade_latterSpan=true;
-                              }
-                            ?>
-                            @if($m_course->coursetypeid==3)
-                            @foreach($m_course->courses as $c)
-                            <tr>
-                              <td>{{++$id}}</td>
-                              <?php 
-                                  if($courseSpan && $m_course->meargecount>1){ ?>
-                                      <td rowspan="2">{{$m_course->courseName}}</td>
-                                 <?php   $courseSpan=false;
-                                  }elseif($m_course->meargecount==1){ ?>
-                                        <td>{{$m_course->courseName}}</td>
-                               <?php }
-                              ?>
-                              <td>{{$c->courseCode}}</td>
-                              <td>{{$c->course_marks}}</td>
-                              <td>
-                                @foreach($c->markCategories as $mark_c)
-                                {{sprintf("%s %s %.0f",$mark_c->markcatName,":",$mark_c->obt_marks)}}
-                                @endforeach
-                              </td>
-                              <td>{{$c->obt_course_marks}}</td>
-                              <?php 
-                                  if($grade_latterSpan && $m_course->meargecount>1){ ?>
-                                      <td rowspan="2">{{$m_course->mearge_letter}}</td>
-                                      <td rowspan="2">{{$m_course->mearge_point}}</td>
-                                 <?php   $grade_latterSpan=false;
-                                  }elseif($m_course->meargecount==1){ ?>
-                                        <td>{{$m_course->mearge_letter}}</td>
-                                        <td>{{$m_course->mearge_point}}</td>
-                               <?php }
-                              ?>
-                            </tr>
-                            @endforeach
-                            @endif
-                            @endforeach
-                          </tbody>
-                        </table>
+                            <!-- Start Additional subject -->
+                            @foreach($student->m_courses as $key=>$mc)
+                                  <?php 
+                                    $cellspread=false;
+                                    $print=true;
+                                    if($mc->course_frequency>1){
+                                      $cellspread=true;
+                                    }
+                                  ?>
+                                  @if($mc->coursetypeid==3)
+                                  @foreach($mc->courses as $course)
+                                    <tr>
+                                      <td>{{++$id}}</td>
+                                      @if($print)
+                                        @if($cellspread)
+                                          <td rowspan="2">{{$mc->mc_name}}</td>
+                                        @else
+                                          <td>{{$mc->mc_name}}</td>
+                                        @endif
+                                      @endif
+                                      <td>{{$course->courseCode}}</td>
+                                      <td>{{$course->tot_course_mark}}</td>
+                                      <td>
+                                      @foreach($course->categories as $cat)
+                                        @if($cat->cat_pass_status==1)
+                                        <span>{{$cat->markcatName}}{{":"}} {{$cat->round_std_obt_mark}}</span>
+                                        @else
+                                        <span style="color:red;">{{$cat->markcatName}}{{":"}} {{$cat->round_std_obt_mark}}</span>
+                                        @endif
+                                      @endforeach
+                                      </td>
+                                      @if($course->coursepass_status==1)
+                                        <td>{{$course->round_std_course_obt_mark}}</td>
+                                      @else
+                                        <td style="color:red;">{{$course->round_std_course_obt_mark}}</td>
+                                      @endif
+                                      @if($print)
+                                        @if($cellspread)
+                                          <td rowspan="2">{{$mc->mcourse_grade_letter}}</td>
+                                          <td rowspan="2">{{$mc->mcourse_grade_point}}</td>
+                                        @else
+                                          <td>{{$mc->mcourse_grade_letter}}</td>
+                                          <td>{{$mc->mcourse_grade_point}}</td>
+                                        @endif
+                                      @endif
+                                      
+                                    </tr>
+                                    <?php 
+                                    $print=false;
+                                  ?>
+                                  @endforeach
+                                  @endif
+                              @endforeach
+                            <!-- End Additional subject -->
+                        </tbody>
+                      </table>
                     </div>
                   </div>
                   <div class="academic-transcript__grand-result">
@@ -284,13 +303,13 @@
                           <tbody>
                             <tr>
                               <td>Total Common Marks</td>
-                              <td>{{$student->common_marks}}</td>
-                              <td>{{$student->obt_common_marks}}</td>
+                              <td>{{sprintf('%.0f',$student->common_marks)}}</td>
+                              <td>{{sprintf('%.0f',$student->common_obt_marks)}}</td>
                             </tr>
                             <tr>
                               <td>Grand Total Marks</td>
-                              <td>{{$student->grand_marks}}</td>
-                              <td>{{$student->grand_obt_marks}}</td>
+                              <td>{{sprintf('%.0f',$student->tot_common_marks)}}</td>
+                              <td>{{sprintf('%.0f',$student->tot_common_obt_marks)}}</td>
                             </tr>
                           </tbody>
                         </table>
@@ -304,15 +323,15 @@
                           <tbody>
                             <tr>
                               <td>GPA</td>
-                              <td>{{sprintf("%.2f",$student->std_gpa)}}</td>
+                              <td>{{sprintf("%.2f",$student->grade_point)}}</td>
                             </tr>
                             <tr>
                               <td>Letter Grade</td>
-                              <td>{{$student->std_letter}}</td>
+                              <td>{{$student->grade_letter}}</td>
                             </tr>
                             <tr>
                               <td>Percentage Marks</td>
-                              <td>{{sprintf("%.2f",$student->percentage_mark)}}%</td>
+                              <td>{{sprintf("%.0f",0)}}%</td>
                             </tr>
                             <tr>
                               <td>Failed Subject</td>

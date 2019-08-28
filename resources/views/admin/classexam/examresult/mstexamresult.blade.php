@@ -176,13 +176,9 @@
                             <td>{{sprintf("%s %s %s",$item->firstName,$item->middleName,$item->lastName)}}</td>
                             <td>{{$item->classroll}}</td>
                             <td>{{$item->common_marks}}</td>
-                            <td>{{sprintf('%.2f',$item->obt_common_marks)}}</td>
-                            <td>{{$item->gpa}}</td>
-                            @if($item->student_pass_status)
-                            <td>{{$item->letter}}</td>
-                            @else
-                            <td class="fail_status">{{$item->letter}}</td>
-                            @endif
+                            <td>{{sprintf('%.0f',$item->common_obt_marks)}}</td>
+                            <td>{{sprintf("%.2f",$item->grade_point)}}</td>
+                            <td>{{$item->grade_letter}}</td>
                             <td>{{$item->class_position}}</td>
                             <td>{{$item->section_position}}</td>
                             <td class="no-print"><a target="_blank" href="{{URL::to('/mstexamresult')}}/{{$programofferinfo->id}}/{{$exam->id}}/{{$item->studentid}}">Print</a></td>
