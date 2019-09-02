@@ -16,8 +16,14 @@ class Student extends Model
     }
     public function checkStudent($programofferid,$applicantid){
         $sql="SELECT * FROM `students`
-        WHERE programofferid=? && applicantid=?";
-        $qResult=\DB::select($sql,[$programofferid,$applicantid]);
+        WHERE applicantid=?";
+        $data=array();
+		array_push($data,$applicantid);
+		if($programofferid!=0){
+			$sql.=" && programofferid=?";
+			array_push($data,$programofferid);
+		}
+        $qResult=\DB::select($sql,$data);
         $result=collect($qResult);
         if($result->count()>0){
             return true;
@@ -87,7 +93,7 @@ class Student extends Model
         return $students;
     }
     // =========================
-    public function getStudentsOnProgramofferID($programofferid){
+    public function getStudentsOnProgramofferID($programofferid,$sectionid=0){
         $sql="SELECT 
         students.*,
         applicants.firstName,
@@ -115,7 +121,13 @@ class Student extends Model
         LEFT JOIN nationalities ON applicants.`nationalityid`=nationalities.id
         LEFT JOIN quotas ON applicants.`quotaid`=quotas.id
         WHERE students.programofferid=?";
-        $qResult=\DB::select($sql,[$programofferid]);
+        $data=array();
+        array_push($data,$programofferid);
+        if($sectionid!=0){
+            $sql.=" AND sectionid=?";
+            array_push($data,$sectionid);
+        }
+        $qResult=\DB::select($sql,$data);
         $students=collect($qResult);
         return $students;
     }

@@ -124,6 +124,11 @@ Route::get('studentimport', 'com\adventure\school\academic\StudentImportControll
 Route::post('studentimport', 'com\adventure\school\academic\StudentImportController@studentImport');
 Route::get('studentimport/export', 'com\adventure\school\academic\StudentImportController@export');
 Route::get('studentimport/index', 'com\adventure\school\academic\StudentImportController@index');
+//Student Course Assign
+Route::get('editassigncourse', 'com\adventure\aims\academic\CourseAssignController@students');
+Route::post('editassigncourse', 'com\adventure\aims\academic\CourseAssignController@students');
+Route::get('editassigncourse/{programofferid}/{sectionid}/{studentid}', 'com\adventure\aims\academic\CourseAssignController@assignCourses');
+Route::post('editassigncourse/{programofferid}/{sectionid}/{studentid}', 'com\adventure\aims\academic\CourseAssignController@assignCourses');
 // Class Exam Settings
 Route::resource('examname', 'com\adventure\school\exam\ExamNameController');
 Route::get('masterexam/getValue', 'com\adventure\school\exam\MasterExamController@getValue');
@@ -155,6 +160,8 @@ Route::post('transcripts', 'com\adventure\school\classexam\MstExamResultControll
 Route::get('mstexamresult/{id1}/{id2}/{id3}', 'com\adventure\school\classexam\MstExamResultController@mstSingleResult');
 Route::get('transfer_certificate', 'com\adventure\school\classexam\TransferCertificateController@transfer_certificate');
 Route::post('transfer_certificate', 'com\adventure\school\classexam\TransferCertificateController@transfer_certificate');
+Route::get('tabulation_sheet', 'com\adventure\school\classexam\MstExamResultController@tatabulationSheet');
+Route::post('tabulation_sheet', 'com\adventure\school\classexam\MstExamResultController@tatabulationSheet');
 Route::get('childexamresult', 'com\adventure\school\classexam\ChildExamResultController@childExamResults');
 Route::post('childexamresult', 'com\adventure\school\classexam\ChildExamResultController@childExamResults');
 Route::get('childexamresult/getValue', 'com\adventure\school\classexam\ChildExamResultController@getValue');

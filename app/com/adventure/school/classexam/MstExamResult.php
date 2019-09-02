@@ -3,6 +3,8 @@
 namespace App\com\adventure\school\classexam;
 
 use Illuminate\Database\Eloquent\Model;
+use App\com\adventure\school\courseoffer\CourseOffer;
+use App\com\adventure\school\courseoffer\MarkDistribution;
 use App\com\adventure\school\program\GradePoint;
 
 class MstExamResult extends Model
@@ -14,9 +16,12 @@ class MstExamResult extends Model
         return $student;
     }
     public function getMstExamResult($programofferid,$examnameid){
+        $aCourseOffer=new CourseOffer();
         $students=$this->getStudents($programofferid,$examnameid);
+        $tot_courses=$aCourseOffer->getTotalCourses($programofferid);
         // 1.
         // dd($students);
+        $course_highest_mark=array();
         foreach($students as $student){
             $common_marks=0;
             $common_obt_marks=0;
@@ -25,81 +30,84 @@ class MstExamResult extends Model
             $tot_grade_point=0;
             $common_pass_sub=0;
             $common_fail_sub=0;
-            $student_pass_status=true;
+            $student_pass_status=1;
             $grade_point=0;
             $grade_letter="";
             $mearge_courses=$this->getMeargeCourse($programofferid,$examnameid,$student->id);
             // 2.
             // dd($mearge_courses);
+            $tot_mcourse_grade_point=0;
+            $tot_mcourse=0;
             foreach($mearge_courses as $mc){
                 //Mearge course group for pass check
                 $mearge_course_groups=$this->getMeargeGroupCourse($programofferid,$examnameid,$student->id,$mc->meargeid);
-                foreach($mearge_course_groups as $mcg){
-                    if($mcg->mg_cat_pass_status==1){
-                        $mc->mc_pass_status=1;
-                    }
-                }
+                // 3.
                 $courses=$this->getCourses($programofferid,$examnameid,$student->id,$mc->meargeid);
                 // 4.
                 // dd($courses);
                 $m_tot_point=0;
                 foreach($courses as $course){
-                    if($mc->mc_pass_status==1){
-                        $course->course_pass_status=1;
-                    }
-                    $group_categories=$this->getGroupCategory($programofferid,$examnameid,$student->id,$course->courseid);
-                    $categories=$this->getCategories($programofferid,$examnameid,$student->id,$course->courseid);
-                    foreach($categories as $cat){
-                        if($course->course_pass_status==1){
-                            $cat->cat_pass_status=1;
-                        }
-                    }
-                    foreach($group_categories as $g_cat){
-                        if($course->course_pass_status==1){
-                            $g_cat->g_cat_pass_status=1;
-                        }
-                    }
-                    // dd($categories);
                     $course_grade_point=0;
                     $course_grade_letter="";
                     $gradepoint=$this->getGradePoint($programofferid,$course->round_std_course_obt_mark,$course->tot_course_mark);
+                    $m_tot_point=$m_tot_point+$gradepoint['grade_point'];
+                    if(!isset($course_highest_mark[$course->courseid])){
+                        $course_highest_mark[$course->courseid]=array();
+                    }
+                    array_push($course_highest_mark[$course->courseid],$course->round_std_course_obt_mark);
                     // =================
+                    $group_categories=$this->getGroupCategory($programofferid,$examnameid,$student->id,$course->courseid);
+                    // 5.
+                    foreach($group_categories as $gc){
+                        if($gc->g_cat_pass_status==0){
+                            $course->course_pass_status=0;
+                        }
+                    }
                     if($course->coursetypeid==1){
+                        if($course->course_pass_status==0){
+                            $common_fail_sub++;
+                            // dd($common_fail_sub);
+                        }
                         $common_marks=$common_marks+$course->tot_course_mark;
                         $common_obt_marks=$common_obt_marks+$course->round_std_course_obt_mark;
-                        $m_tot_point=$m_tot_point+$gradepoint['grade_point'];
                         $common_pass_sub++;
                         $tot_grade_point=$tot_grade_point+$gradepoint['grade_point'];
                     }elseif($course->coursetypeid==2){
-
+                        $mark_40_percent=($course->tot_course_mark*40)/100;
+                        $grade_point_c=2;
+                        if($gradepoint['grade_point']>$grade_point_c){
+                            $diff_point=$gradepoint['grade_point']-$grade_point_c;
+                            $tot_grade_point=$tot_grade_point+$diff_point;
+                            if($tot_grade_point>$common_pass_sub*5){
+                                $tot_grade_point=$common_pass_sub*5;
+                            }
+                        }
+                        if($course->round_std_course_obt_mark>$mark_40_percent){
+                            $diff=$course->round_std_course_obt_mark-$mark_40_percent;
+                            $common_obt_marks=$common_obt_marks+$diff;
+                            if($common_obt_marks>$common_marks){
+                                $common_obt_marks=$common_marks;
+                            }
+                        }
                     }
                     $tot_common_marks=$tot_common_marks+$course->tot_course_mark;
                     $tot_common_obt_marks=$tot_common_obt_marks+$course->round_std_course_obt_mark;
                     // =================
                     // course group categories for pass check
-
-                   
-                    // 5.
-                    // dd($group_categories);
-                    $coursepass_status=true;
-                    foreach($group_categories as $g_cat){
-                        if($g_cat->g_cat_pass_status==0){
-                            $coursepass_status=false;
-                        }
-                    }
-                   
+                    // $group_categories=$this->getGroupCategory($programofferid,$examnameid,$student->id,$course->courseid);
+                    // // 5.
+                    // foreach($group_categories as $gc){
+                    //     if($gc->g_cat_pass_status==0){
+                    //         $course->course_pass_status=0;
+                    //     }
+                    // }
+                    $categories=$this->getCategories($programofferid,$examnameid,$student->id,$course->courseid);
                     // 6.
                     // dd($categories);
-                    // Add properties to course
-                    $course->coursepass_status=$coursepass_status;
-                    if($course->coursetypeid==1){
-                        if($course->coursepass_status==false){
-                            $common_fail_sub++;
-                        }
-                    }
                     $course->categories=$categories;
                     $course->course_grade_point=$gradepoint['grade_point'];
                     $course->course_grade_letter=$gradepoint['grade_letter'];
+                    // dd($course);
                 }
                 foreach($mearge_course_groups as $mcg){
                     if($mcg->mg_cat_pass_status==0){
@@ -110,23 +118,69 @@ class MstExamResult extends Model
                     $m_averagepoint=$m_tot_point/$mc->course_frequency;
                 }else{
                     $m_averagepoint=0;
-                    $student_pass_status=false;
+                }
+                if($mc->coursetypeid==1 && $mc->mc_pass_status==0){
+                    $student_pass_status=0;
                 }
                 $m_point_letter=$this->getGradeLetter($programofferid,$m_averagepoint);
                 $mc->mcourse_grade_point=$m_point_letter['gradepoint'];
+                if($mc->coursetypeid==1){
+                    $tot_mcourse_grade_point=$tot_mcourse_grade_point+$m_point_letter['gradepoint'];
+                    $tot_mcourse++;
+                }elseif($mc->coursetypeid==2){
+                    if($m_point_letter['gradepoint']>2){
+                        $tot_mcourse_grade_point=$tot_mcourse_grade_point+$m_point_letter['gradepoint']-2;
+                        if($tot_mcourse_grade_point>$tot_mcourse*5){
+                            $tot_mcourse_grade_point=$tot_mcourse*5;
+                        }
+                    }
+                }
                 $mc->mcourse_grade_letter=$m_point_letter['grade_letter'];
                 $mc->courses=$courses;
+                $mc->mcg=$mearge_course_groups;
+                // reset course and categories status if student pass
+                if($student_pass_status==1){
+                    $reset_course=$this->getCourses($programofferid,$examnameid,$student->id,$mc->meargeid);
+                    foreach($reset_course as $course){
+                        $course_grade_point=0;
+                        $course_grade_letter="";
+                        $gradepoint=$this->getGradePoint($programofferid,$course->round_std_course_obt_mark,$course->tot_course_mark);
+                        $re_group_categories=$this->getGroupCategory($programofferid,$examnameid,$student->id,$course->courseid);
+                        $categories=$this->getCategories($programofferid,$examnameid,$student->id,$course->courseid);
+                        if($course->coursetypeid==1){
+                            $course->course_pass_status=1;
+                            foreach($categories as $c_cat){
+                                $c_cat->cat_pass_status=1;
+                            }
+                        }else{
+                            foreach($re_group_categories as $gc){
+                                if($gc->g_cat_pass_status==0){
+                                    $course->course_pass_status=0;
+                                }
+                            }
+                        }
+                        $course->course_grade_point=$gradepoint['grade_point'];
+                        $course->course_grade_letter=$gradepoint['grade_letter'];
+                        $course->categories=$categories;
+                    }
+                    $mc->courses=$reset_course;
+                }
+                // =======End reset=========
             }
+            $student->tot_mcourse_grade_point=$tot_mcourse_grade_point;
+            $student->tot_mcourse=$tot_mcourse;
+            // dd($tot_mcourse_grade_point);
             $temp_tot_avg_point=0;
+            $std_percentage_marks=0;
             if($student_pass_status==1){
-                $temp_tot_avg_point=$tot_grade_point/$common_pass_sub;
+                $temp_tot_avg_point=$tot_mcourse_grade_point/$tot_mcourse;
+                $std_percentage_marks=($common_obt_marks*100)/$common_marks;
             }
             $tot_point_letter=$this->getGradeLetter($programofferid,$temp_tot_avg_point);
-            // dd($tot_point_letter);
-            $student->temp_tot_avg_point=$temp_tot_avg_point;
             $student->m_courses=$mearge_courses;
             $student->common_marks=$common_marks;
             $student->common_obt_marks=$common_obt_marks;
+            $student->std_percentage_marks=$std_percentage_marks;
             $student->tot_common_marks=$tot_common_marks;
             $student->tot_common_obt_marks=$tot_common_obt_marks;
             $student->tot_grade_point=$tot_grade_point;
@@ -134,23 +188,36 @@ class MstExamResult extends Model
             $student->grade_letter=$tot_point_letter['grade_letter'];
             $student->common_pass_sub=$common_pass_sub;
             $student->common_fail_sub=$common_fail_sub;
+            $student->student_pass_status=$student_pass_status;
             $student->class_position=0;
-            $student->section_position=0;
-            // sorting for position
-            $students=$students->sortByDesc("grade_point")->sortByDesc("common_obt_marks");
-            $position=1;
-            foreach ($students as $std){
-                $std->class_position=$position++;
-            }
-            $student_on_section=$students->groupBy("sectionid");
-            foreach ($student_on_section as $section_item) {
+            $student->section_position=0; 
+            // dd($student); 
+        }
+        // dd($students);
+        // Calcuate Highest Mark
+        $highest_course_mark=array();
+        foreach($course_highest_mark as $k=>$v){
+            $highest_course_mark[$k]=max($v);
+        }
+        // dd($highest_course_mark);
+        // sorting for position
+        $students=$students
+        ->sortByDesc("student_pass_status")
+        ->sortByDesc("common_obt_marks")
+        ->sortByDesc("grade_point");
+        $position=1;
+        foreach ($students as $std){
+            $std->class_position=$position++;
+            $std->highest_course_mark=$highest_course_mark;
+        }
+        $student_on_section=$students->groupBy("sectionid");
+        foreach ($student_on_section as $section_item) {
             $i=1;
             foreach($section_item as $std){
                     $std->section_position=$i++;
             }
-            }
-            $students=$student_on_section->collapse();
         }
+        $students=$student_on_section->collapse();
         // dd($students);
         return $students;
     }
@@ -304,7 +371,7 @@ class MstExamResult extends Model
                 INNER JOIN courseoffer ON mxm.programofferid=courseoffer.programofferid && mxm.courseid=courseoffer.courseid
                 INNER JOIN mark_distribution as md on mxm.programofferid=md.programofferid && mxm.courseid=md.courseid && mxm.markcategoryid=md.markcategoryid
                 INNER JOIN courses ON mxm.courseid=courses.id
-          GROUP BY mxm.programofferid,mxm.sectionid,mxm.studentid,mxm.courseid,md.markcategoryid,md.mark_group_id) AS course group BY programofferid,sectionid,studentid,courseid) AS course_table
+          GROUP BY mxm.programofferid,mxm.examnameid,mxm.sectionid,mxm.studentid,mxm.courseid,md.markcategoryid,md.mark_group_id) AS course group BY programofferid,sectionid,studentid,courseid) AS course_table
          WHERE programofferid=? && examnameid=? && studentid=? && meargeid=?";
         $qResult=\DB::select($sql,[$programofferid,$examnameid,$studentid,$meargeid]);
         $result=collect($qResult);
@@ -522,9 +589,9 @@ class MstExamResult extends Model
                 INNER JOIN courseoffer ON mxm.programofferid=courseoffer.programofferid && mxm.courseid=courseoffer.courseid
                 INNER JOIN mark_distribution as md on mxm.programofferid=md.programofferid && mxm.courseid=md.courseid && mxm.markcategoryid=md.markcategoryid
                 INNER JOIN courses ON mxm.courseid=courses.id
-          GROUP BY mxm.programofferid,mxm.sectionid,mxm.studentid,mxm.courseid,md.mark_group_id) AS mgtable
-          group BY programofferid,sectionid,studentid,meargeid,mark_group_id) AS mg_course
-          GROUP BY programofferid,sectionid,studentid,meargeid) AS mearge_course
+          GROUP BY mxm.programofferid,mxm.examnameid,mxm.sectionid,mxm.studentid,mxm.courseid,md.mark_group_id) AS mgtable
+          group BY programofferid,examnameid,sectionid,studentid,meargeid,mark_group_id) AS mg_course
+          GROUP BY programofferid,examnameid,sectionid,studentid,meargeid) AS mearge_course
           WHERE programofferid=? && examnameid=? && studentid=?";
           $qResult=\DB::select($sql,[$programofferid,$examnameid,$studentid]);
           $result=collect($qResult);
@@ -594,11 +661,22 @@ class MstExamResult extends Model
                 INNER JOIN courseoffer ON mxm.programofferid=courseoffer.programofferid && mxm.courseid=courseoffer.courseid
                 INNER JOIN mark_distribution as md on mxm.programofferid=md.programofferid && mxm.courseid=md.courseid && mxm.markcategoryid=md.markcategoryid
                 INNER JOIN courses ON mxm.courseid=courses.id
-          GROUP BY mxm.programofferid,mxm.sectionid,mxm.studentid,mxm.courseid,md.mark_group_id) AS mgtable
-          group BY programofferid,sectionid,studentid,meargeid,mark_group_id) AS mearge_group
+          GROUP BY mxm.programofferid,mxm.examnameid,mxm.sectionid,mxm.studentid,mxm.courseid,md.mark_group_id) AS mgtable
+          group BY programofferid,examnameid,sectionid,studentid,meargeid,mark_group_id) AS mearge_group
           WHERE programofferid=? && examnameid=? && studentid=? && meargeid=?";
         $qResult=\DB::select($sql,[$programofferid,$examnameid,$studentid,$meargeid]);
         $result=collect($qResult);
         return $result;
+    }
+    public function getCoursesWithCategories($programofferid){
+        $aCourseOffer=new CourseOffer();
+        $aMarkDistribution=new MarkDistribution();
+        $courses=$aCourseOffer->getCoursesOnProgramoffer($programofferid);
+        // dd($courses);
+        foreach($courses as $course){
+            $categories=$aMarkDistribution->getMarkCategory($programofferid,$course->id);
+            $course->categories=$categories;
+        }
+        return $courses;
     }
 }

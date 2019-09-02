@@ -83,9 +83,9 @@
                         <table>
                             <thead>
                                 <tr>
-                                  <th>GL</th>
+                                  <th>Grade Letter</th>
                                   <th>Marks</th>
-                                  <th>GP</th>
+                                  <th>Grade Point</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -111,6 +111,7 @@
                             <th>Full Marks</th>
                             <th>Marks Obtained</th>
                             <th>Marks</th>
+                            <th>Highest</th>
                             <th>L.G.</th>
                             <th>GP</th>
                           </tr>
@@ -137,8 +138,8 @@
                                           <td>{{$mc->mc_name}}</td>
                                         @endif
                                       @endif
-                                      <td>{{$course->courseCode}}</td>
-                                      <td>{{$course->tot_course_mark}}</td>
+                                      <td style="text-align: center;">{{$course->courseCode}}</td>
+                                      <td style="text-align: center;">{{$course->tot_course_mark}}</td>
                                       <td>
                                       @foreach($course->categories as $cat)
                                         @if($cat->cat_pass_status==1)
@@ -148,18 +149,19 @@
                                         @endif
                                       @endforeach
                                       </td>
-                                      @if($course->coursepass_status==1)
-                                        <td>{{$course->round_std_course_obt_mark}}</td>
+                                      @if($course->course_pass_status==1)
+                                        <td style="text-align: center;">{{$course->round_std_course_obt_mark}}</td>
                                       @else
-                                        <td style="color:red;">{{$course->round_std_course_obt_mark}}</td>
+                                        <td style="color:red;text-align: center;">{{$course->round_std_course_obt_mark}}</td>
                                       @endif
+                                      <td style="text-align: center;">{{$student->highest_course_mark[$course->courseid]}}</td>
                                       @if($print)
                                         @if($cellspread)
-                                          <td rowspan="2">{{$mc->mcourse_grade_letter}}</td>
-                                          <td rowspan="2">{{$mc->mcourse_grade_point}}</td>
+                                          <td rowspan="2" style="text-align: center;">{{$mc->mcourse_grade_letter}}</td>
+                                          <td rowspan="2" style="text-align: center;">{{$mc->mcourse_grade_point}}</td>
                                         @else
-                                          <td>{{$mc->mcourse_grade_letter}}</td>
-                                          <td>{{$mc->mcourse_grade_point}}</td>
+                                          <td style="text-align: center;">{{$mc->mcourse_grade_letter}}</td>
+                                          <td style="text-align: center;">{{$mc->mcourse_grade_point}}</td>
                                         @endif
                                       @endif
                                       
@@ -172,7 +174,7 @@
                               @endforeach
                             <!-- End compalsary subject -->
                             <tr>
-                              <td colspan="8" style="text-align: left;">Optional Subject:</td>
+                              <td colspan="9" style="text-align: left;">Optional Subject:</td>
                             </tr>
                             
                             <!-- Start Optional subject -->
@@ -195,8 +197,8 @@
                                           <td>{{$mc->mc_name}}</td>
                                         @endif
                                       @endif
-                                      <td>{{$course->courseCode}}</td>
-                                      <td>{{$course->tot_course_mark}}</td>
+                                      <td style="text-align: center;">{{$course->courseCode}}</td>
+                                      <td style="text-align: center;">{{$course->tot_course_mark}}</td>
                                       <td>
                                       @foreach($course->categories as $cat)
                                         @if($cat->cat_pass_status==1)
@@ -206,21 +208,21 @@
                                         @endif
                                       @endforeach
                                       </td>
-                                      @if($course->coursepass_status==1)
-                                        <td>{{$course->round_std_course_obt_mark}}</td>
+                                      @if($course->course_pass_status==1)
+                                        <td style="text-align: center;">{{$course->round_std_course_obt_mark}}</td>
                                       @else
-                                        <td style="color:red;">{{$course->round_std_course_obt_mark}}</td>
+                                        <td style="color:red;text-align: center;">{{$course->round_std_course_obt_mark}}</td>
                                       @endif
+                                      <td style="text-align: center;">{{$student->highest_course_mark[$course->courseid]}}</td>
                                       @if($print)
                                         @if($cellspread)
-                                          <td rowspan="2">{{$mc->mcourse_grade_letter}}</td>
-                                          <td rowspan="2">{{$mc->mcourse_grade_point}}</td>
+                                          <td rowspan="2" style="text-align: center;">{{$mc->mcourse_grade_letter}}</td>
+                                          <td rowspan="2" style="text-align: center;">{{$mc->mcourse_grade_point}}</td>
                                         @else
-                                          <td>{{$mc->mcourse_grade_letter}}</td>
-                                          <td>{{$mc->mcourse_grade_point}}</td>
+                                          <td style="text-align: center;">{{$mc->mcourse_grade_letter}}</td>
+                                          <td style="text-align: center;">{{$mc->mcourse_grade_point}}</td>
                                         @endif
                                       @endif
-                                      
                                     </tr>
                                     <?php 
                                     $print=false;
@@ -230,7 +232,7 @@
                               @endforeach
                             <!-- End Optional subject -->
                             <tr>
-                              <td colspan="8" style="text-align: left;">Additional Subject:</td>
+                              <td colspan="9" style="text-align: left;">Additional Subject:</td>
                             </tr>
                             <!-- Start Additional subject -->
                             @foreach($student->m_courses as $key=>$mc)
@@ -252,8 +254,8 @@
                                           <td>{{$mc->mc_name}}</td>
                                         @endif
                                       @endif
-                                      <td>{{$course->courseCode}}</td>
-                                      <td>{{$course->tot_course_mark}}</td>
+                                      <td style="text-align: center;">{{$course->courseCode}}</td>
+                                      <td style="text-align: center;">{{$course->tot_course_mark}}</td>
                                       <td>
                                       @foreach($course->categories as $cat)
                                         @if($cat->cat_pass_status==1)
@@ -263,18 +265,19 @@
                                         @endif
                                       @endforeach
                                       </td>
-                                      @if($course->coursepass_status==1)
-                                        <td>{{$course->round_std_course_obt_mark}}</td>
+                                      @if($course->course_pass_status==1)
+                                        <td style="text-align: center;">{{$course->round_std_course_obt_mark}}</td>
                                       @else
-                                        <td style="color:red;">{{$course->round_std_course_obt_mark}}</td>
+                                        <td style="color:red;text-align: center">{{$course->round_std_course_obt_mark}}</td>
                                       @endif
+                                      <td style="text-align: center;">{{$student->highest_course_mark[$course->courseid]}}</td>
                                       @if($print)
                                         @if($cellspread)
-                                          <td rowspan="2">{{$mc->mcourse_grade_letter}}</td>
-                                          <td rowspan="2">{{$mc->mcourse_grade_point}}</td>
+                                          <td rowspan="2" style="text-align: center;">{{$mc->mcourse_grade_letter}}</td>
+                                          <td rowspan="2" style="text-align: center;">{{$mc->mcourse_grade_point}}</td>
                                         @else
-                                          <td>{{$mc->mcourse_grade_letter}}</td>
-                                          <td>{{$mc->mcourse_grade_point}}</td>
+                                          <td style="text-align: center;">{{$mc->mcourse_grade_letter}}</td>
+                                          <td style="text-align: center;">{{$mc->mcourse_grade_point}}</td>
                                         @endif
                                       @endif
                                       
@@ -302,12 +305,12 @@
                           </thead>
                           <tbody>
                             <tr>
-                              <td>Total Common Marks</td>
+                              <td style="text-align: left;">Total Common Marks</td>
                               <td>{{sprintf('%.0f',$student->common_marks)}}</td>
                               <td>{{sprintf('%.0f',$student->common_obt_marks)}}</td>
                             </tr>
                             <tr>
-                              <td>Grand Total Marks</td>
+                              <td style="text-align: left;">Grand Total Marks</td>
                               <td>{{sprintf('%.0f',$student->tot_common_marks)}}</td>
                               <td>{{sprintf('%.0f',$student->tot_common_obt_marks)}}</td>
                             </tr>
@@ -326,15 +329,15 @@
                               <td>{{sprintf("%.2f",$student->grade_point)}}</td>
                             </tr>
                             <tr>
-                              <td>Letter Grade</td>
+                              <td style="text-align: left;">Letter Grade</td>
                               <td>{{$student->grade_letter}}</td>
                             </tr>
                             <tr>
-                              <td>Percentage Marks</td>
-                              <td>{{sprintf("%.0f",0)}}%</td>
+                              <td style="text-align: left;">Percentage Marks</td>
+                              <td>{{sprintf("%.2f",$student->std_percentage_marks)}}%</td>
                             </tr>
                             <tr>
-                              <td>Failed Subject</td>
+                              <td style="text-align: left;">Failed Subject</td>
                               <td>{{$student->common_fail_sub}}</td>
                             </tr>
                           </tbody>

@@ -32,10 +32,12 @@ class TransferCertificateController extends Controller
         if($request->isMethod('post')&&$request->create=='create'){
             $applicantid=$request->applicantid;
             $pin_code=$request->pin_code;
-            $applicant=$apObj->getApplicant($applicantid);
+            $applicant=$apObj->getApplicant($applicantid,$pin_code);
             if($applicant!=null){
-                $student=$stdObj->getCurrentStudent($applicantid);
-                if($student!=null){
+                $checkstatus=$stdObj->checkStudent(0,$applicantid);
+                // dd($checkstatus);
+                if($checkstatus!=false){
+                    $student=$stdObj->getCurrentStudent($applicantid);
                     $programofferinfo=$aProgramOffer->getProgramOffer($student->programofferid);
                 }else{
                     $msg="Invalid Student";
@@ -46,7 +48,6 @@ class TransferCertificateController extends Controller
         }
         $aInstitute=new Institute();
         $instituteObj=$aInstitute->getInstituteById(1);
-        // dd($instituteObj);
         $dataList=[
             'institute'=>Institute::getInstituteName(),
             'instituteObj'=>$instituteObj,

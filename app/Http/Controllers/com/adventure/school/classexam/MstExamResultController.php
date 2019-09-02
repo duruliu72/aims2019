@@ -210,4 +210,36 @@ class MstExamResultController extends Controller
         ];
         return view('admin.classexam.examresult.mstexamresult',$dataList);
     }
+    public function tatabulationSheet(Request $request){
+        $programofferid=1;
+        $examnameid=1;
+        $msg="";
+        $aMenu=new Menu();
+        $hasMenu=$aMenu->hasMenu('mstexamresult');
+        if($hasMenu==false){
+            return redirect('error');
+        }
+        $sidebarMenu=$aMenu->getSidebarMenu();
+        // ==========================
+        $aProgramOffer=new ProgramOffer();
+        $aMstExamResult=new MstExamResult();
+        $aExamName=new ExamName();
+        $programofferinfo=$aProgramOffer->getProgramOffer($programofferid);
+        $exam=$aExamName->getExamONID($examnameid);
+        $courses=$aMstExamResult->getCoursesWithCategories($programofferid);
+        $exam_result=$aMstExamResult->getMstExamResult($programofferid,$examnameid);
+        // dd($courses);
+        $dataList=[
+            'sidebarMenu'=>$sidebarMenu,
+            "exam"=>$exam,
+            'programofferinfo'=>$programofferinfo,
+            'courses'=>$courses,
+            'exam_result'=>$exam_result,
+            'msg'=>$msg
+        ];
+        return view('admin.classexam.tabulation.tabulation_sheet',$dataList);
+    }
+    public function summaryResult(Request $request){
+
+    }
 }

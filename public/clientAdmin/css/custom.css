@@ -217,7 +217,7 @@ th {
     height: 100%;
 }
 .academic-transcript__student .student-info {
-    width: 50%;
+    width: 46%;
     font-size: 20px;
     font-family: Segoe UI Semibold;
     font-weight: bold;
@@ -235,6 +235,9 @@ th {
     border: 3px solid #cccccc;
     margin-right: 8px;
     border-collapse: collapse;
+}
+.academic-transcript__student .grade-letter table tr th {
+    padding: 2px;
 }
 .academic-transcript__student .grade-letter table tr td {
     padding: 0px;
@@ -470,4 +473,45 @@ th {
 .msg {
     float: right;
     font-size: 15px;
+}
+/* Tabulation sheet */
+.tabulation-sheet {
+}
+.tabulation-sheet__heading {
+    text-align: center;
+}
+.tabulation-sheet__content {
+}
+.tabulation-sheet__poinfo ul {
+    padding: 0px;
+    text-align: center;
+}
+.tabulation-sheet__poinfo ul::after {
+    content: "";
+    display: block;
+    clear: both;
+}
+.tabulation-sheet__poinfo ul li {
+    display: inline-block;
+    margin: 0px 15px;
+    font-size: 18px;
+    font-weight: 500;
+}
+.tabulation-sheet__poinfo {
+}
+.tabulation-sheet__data {
+}
+.ts-table_wrapper {
+    overflow-x: scroll;
+}
+.ts-table_wrapper tr th {
+    text-align: center;
+    vertical-align: middle !important;
+}
+.ts-table_wrapper tr td {
+    text-align: center;
+    vertical-align: middle !important;
+}
+.tabulation-sheet__footer p {
+    text-align: center;
 }

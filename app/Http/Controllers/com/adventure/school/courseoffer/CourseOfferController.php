@@ -196,6 +196,9 @@ class CourseOfferController extends Controller
             if($fieldinCourses>0){
                 $status=\DB::transaction(function() use($programofferid,$nocourses,$checkboxList,$courseidList,$coursemarksList,$teacherList){
                     try{
+                        \DB::table('section_course_teachers')
+                        ->where('programofferid', $programofferid)
+                        ->delete();
                         foreach($checkboxList as $cb_courseid=>$val){
                             // $check Course Assign Or Not
                             $aCourseOffer=new CourseOffer();
@@ -205,12 +208,20 @@ class CourseOfferController extends Controller
                                 ->where('programofferid',$programofferid)
                                 ->where('courseid', $courseidList[$cb_courseid])
                                 ->update(['coursemark' => $coursemarksList[$cb_courseid]]);
+                                // dd($programofferid,$courseidList[$cb_courseid]);
+                               
                                 foreach($teacherList[$cb_courseid] as $key_sectionid=>$teacherid){
-                                    \DB::table('section_course_teachers')
-                                    ->where('programofferid',$programofferid)
-                                    ->where('sectionid', $key_sectionid)
-                                    ->where('courseid', $courseidList[$cb_courseid])
-                                    ->update(['teacherid' => $teacherid]);
+                                    // \DB::table('section_course_teachers')
+                                    // ->where('programofferid',$programofferid)
+                                    // ->where('sectionid', $key_sectionid)
+                                    // ->where('courseid', $courseidList[$cb_courseid])
+                                    // ->update(['teacherid' => $teacherid]);
+                                    $scTeacher=new SectionCourseTeacher();
+                                    $scTeacher->programofferid=$programofferid;
+                                    $scTeacher->sectionid=$key_sectionid;
+                                    $scTeacher->courseid=$courseidList[$cb_courseid];
+                                    $scTeacher->teacherid=$teacherid;
+                                    $scTeacher->save();
                                 }
                             }
                         }

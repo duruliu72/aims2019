@@ -8,7 +8,7 @@
         <div class="row">
           <div class="col-lg-12">
             <ol class="breadcrumb">
-              <li>All Students</li>
+              <li> Assign Subject Information</li>
               @if ($errors->any())
                   <span style="float: right;font-size: 15px;">{{$errors->all()[0] }}</span>
               @endif
@@ -31,7 +31,7 @@
               <div class="panel-body">
                 @if(!isset($programofferinfo))
                 <div class="top_form">
-                    <form action="{{URL::to('students')}}" method="POST">
+                    <form action="{{URL::to('editassigncourse')}}" method="POST">
                     {{csrf_field()}}
                     <div class="form-group row">
                       <label class="col-sm-2 control-label" for="sessionid">Session</label>
@@ -115,19 +115,7 @@
                   </form>
                 </div>
                 @else
-                <div class="academic-result student-list">
-                  <div class="academic-transcript__heading academic-result__heading">
-                      <div class="institute-logo">
-                        <img src="{{asset('clientAdmin/image/logo/')}}/{{Session::get('institutelogo')}}">
-                      </div>
-                      <div class="institute-title">
-                        <h2 class="institute-name">{{Session::get("institute_name")}}</h2>
-                        <p class="institute-add">{{sprintf("%s, %s, %s, %s",Session::get("localgovName"),Session::get("thanaName"),Session::get("districtName"),Session::get("divisionName"))}}</p>
-                        <h3 class="std-transcript">STUDENT LIST</h3>
-                      </div>
-                  </div>
-                </div>
-                <div class="programofferinfo pmb">
+                  <div class="programofferinfo pmb ">
                     <div class="programofferinfo_item">
                         <span>Session: {{$programofferinfo->sessionName}}</span>
                     </div>
@@ -156,10 +144,10 @@
                             <th>Student Id</th>
                             <th>Student Name</th>
                             <th>Roll No</th>
-                            <th>Birth Date/ Gender</th>
-                            <th>Father Info</th>
-                            <th>Mother Info</th>
-                            <th>Image</th>
+                            <th>Common</th>
+                            <th>Group Main</th>
+                            <th>Optional</th>
+                            <th>Extra</th>
                             <th>action</th>
                         </tr>
                     </thead>
@@ -172,17 +160,41 @@
                             <td>{{$std->r_studentid}}</td>
                             <td>{{sprintf("%s %s %s",$std->firstName,$std->middleName,$std->lastName)}}</td>
                             <td>{{$std->classroll}}</td>
-                            <td>{{$std->dob}}<br>{{$std->genderName}}</td>
-                            <td>{{$std->fatherName}}<br>{{$std->father_Phone}}</td>
-                            <td>{{$std->motherName}}<br>{{$std->mother_Phone}}</td>
-                            <td style="padding:0px;"><img style="width:60px;" src="{{asset('clientAdmin/admission/student/')}}/{{$std->picture}}" alt=""></td>
+                            <td>
+                              @foreach($std->courses as $course)
+                                @if($course->coursetypeid!=null && $course->coursetypeid==1)
+                                  {{$course->courseCode}}
+                                @endif
+                              @endforeach
+                            </td>
+                            <td>
+                              @foreach($std->courses as $course)
+                                @if($course->coursetypeid!=null && $course->coursetypeid==4)
+                                  {{$course->courseCode}}
+                                @endif
+                              @endforeach
+                            </td>
+                            <td>
+                              @foreach($std->courses as $course)
+                                @if($course->coursetypeid!=null && $course->coursetypeid==2)
+                                  {{$course->courseCode}}
+                                @endif
+                              @endforeach
+                            </td>
+                            <td>
+                              @foreach($std->courses as $course)
+                                @if($course->coursetypeid!=null && $course->coursetypeid==3)
+                                  {{$course->courseCode}}
+                                @endif
+                              @endforeach
+                            </td>
                             <td>
                                 <a href="" class="tooltip-error" data-rel="tooltip" title="Delete">
                                     <span class="red" style="color:green">
                                     <i class="ace-icon fa fa-eye bigger-120"></i>
                                     </span>
                                 </a>
-                                <a href="{{URL::to('/menu')}}{{'edit'}}" class="tooltip-success" data-rel="tooltip" title="Edit">
+                                <a target="_bladk" href="{{URL::to('/editassigncourse')}}/{{$std->programofferid}}/{{$std->sectionid}}/{{$std->id}}" class="tooltip-success" data-rel="tooltip" title="Edit">
                                     <span class="green" style="color:blue">
                                     <i class="ace-icon fa fa-pencil-square-o bigger-120"></i>
                                     </span>
@@ -198,16 +210,16 @@
                     </tbody>
                     <tfoot>
                         <tr>
-                            <th>SL NO</th>
-                            <th>Applicant Id</th>
-                            <th>Student Id</th>
-                            <th>Student Name</th>
-                            <th>Roll No</th>
-                            <th>Birth Date/ Gender</th>
-                            <th>Father Info</th>
-                            <th>Mother Info</th>
-                            <th>Image</th>
-                            <th>action</th>
+                          <th>SL NO</th>
+                          <th>Applicant Id</th>
+                          <th>Student Id</th>
+                          <th>Student Name</th>
+                          <th>Roll No</th>
+                          <th>Common</th>
+                          <th>Group Main</th>
+                          <th>Optional</th>
+                          <th>Extra</th>
+                          <th>action</th>
                         </tr>
                     </tfoot>
                 </table>

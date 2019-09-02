@@ -68,6 +68,13 @@ class CourseOffer extends Model
         $qResult=\DB::select($sql,[$programofferid]);
         return collect($qResult);
     }
+    public function getTotalCourses($programofferid){
+        $sql="SELECT COUNT(courseid) AS tot_course FROM `courseoffer`
+        WHERE programofferid=?";
+        $qResult=\DB::select($sql,[$programofferid]);
+        $result=collect($qResult)->first();
+        return $result->tot_course;
+    }
     //============================
     // public function getOfferedCourses($programofferid){
     //     $sql="SELECT * FROM courseoffer

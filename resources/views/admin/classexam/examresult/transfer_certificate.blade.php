@@ -6,22 +6,17 @@
 @section('content')
 <section id="main-content">
       <section class="wrapper">
+        @if($student!=null)
         <div class="row no-print">
           <div class="col-lg-12">
-              <h3 class="page-header"><i class="fa fa-laptop"></i>
-                @if($institute!=null)
-                  {{$institute->name}}
-                @else
-                  Dashboard
-                @endif
-            </h3>
             <button class="print-btn tc-top" onclick="Print()">Print</button>
           </div>
         </div>
+        @endif
         <div class="row">
           <div class="col-lg-12">
             <section class="transfer_certificate_wrapper">
-            @if($student==null)
+            @if($programofferinfo==null)
               <div class="transfer_certificate">
                 <form action="{{URL::to('transfer_certificate')}}" method="POST">
                   {{csrf_field()}}

@@ -67,6 +67,7 @@ class MarkDistribution extends Model
         $qResult=\DB::select($sql,[$programofferid,$courseid]);
         return collect($qResult);
     }
+    
     //=========================================
    
 }

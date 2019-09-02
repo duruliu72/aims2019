@@ -86,7 +86,7 @@ class FingerPrintController extends Controller
 
         $po_result = DB::table('students')
         	->select('programofferid')
-        	->where('studentid', $student_id)
+        	->where('r_studentid', $student_id)
         	->where('currentclass', 1);
 
         $programOfferId = 0;

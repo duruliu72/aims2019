@@ -10079,3 +10079,34 @@ span.customSelect.changed {
     margin-bottom: 0px !important;
     padding-bottom: 0px !important;
 }
+.widget-box{
+    border: 1px solid #CCC;
+}
+.widget-box .widget-heading{
+    padding-left: 15px;
+    background: #F7F7F7;
+}
+.widget-box .widget-heading h4{
+    margin: 0px;
+    padding: 15px 0px;
+}
+.widget-box .course_assign{
+    padding: 0px;
+    padding-left: 15px;
+}
+.widget-box .course_assign li{
+    margin-bottom: 5px;
+    position: relative;
+}
+.widget-box .course_assign li span:first-child{
+    position: absolute;
+    width: 20px;
+    height: 1px;
+    display: inline-block;
+    background:#dd5a43;
+    top:50%;
+    transform: translateY(-50%);
+}
+.widget-box .course_assign li span:nth-child(2){
+    margin-left: 25px;
+}

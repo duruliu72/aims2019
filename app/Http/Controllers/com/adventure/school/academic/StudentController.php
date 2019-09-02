@@ -332,6 +332,7 @@ class StudentController extends Controller
             $groupid=$request->groupid;
             $mediumid=$request->mediumid;
             $shiftid=$request->shiftid;
+            $sectionid=$request->sectionid;
             // Check Program Offer Created Or Not
             $checkProgramOffer=$aProgramOffer->checkValue($sessionid,$programlabelid,$programid,$groupid,$mediumid,$shiftid);
             if(!$checkProgramOffer){
@@ -341,7 +342,7 @@ class StudentController extends Controller
             $programofferid=$aProgramOffer->getProgramOfferId($sessionid,$programlabelid,$programid,$groupid,$mediumid,$shiftid);
             // check sectionOffer
             $programofferinfo=$aProgramOffer->getProgramOffer($programofferid);
-            $students=$aStudent->getStudentsOnProgramofferID($programofferid);
+            $students=$aStudent->getStudentsOnProgramofferID($programofferid,$sectionid);
             // dd($students);
         }
         $sessionList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,0,"sessions",'sessionid');
