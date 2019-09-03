@@ -7,6 +7,8 @@ use App\Http\Controllers\Controller;
 use App\com\adventure\school\basic\Institute;
 use App\com\adventure\school\menu\Menu;
 use App\com\adventure\school\program\ProgramOffer;
+use App\com\adventure\school\program\Section;
+use App\com\adventure\school\courseoffer\SectionOffer;
 use App\com\adventure\school\exam\MasterExam;
 use App\com\adventure\school\classexam\MstExamResult;
 use App\com\adventure\school\exam\ExamName;
@@ -211,8 +213,6 @@ class MstExamResultController extends Controller
         return view('admin.classexam.examresult.mstexamresult',$dataList);
     }
     public function tatabulationSheet(Request $request){
-        $programofferid=1;
-        $examnameid=1;
         $msg="";
         $aMenu=new Menu();
         $hasMenu=$aMenu->hasMenu('mstexamresult');
@@ -222,15 +222,83 @@ class MstExamResultController extends Controller
         $sidebarMenu=$aMenu->getSidebarMenu();
         // ==========================
         $aProgramOffer=new ProgramOffer();
+        $aSectionOffer=new SectionOffer();
+        $aCourseOffer=new CourseOffer();
+        $aStudent=new Student();
         $aMstExamResult=new MstExamResult();
         $aExamName=new ExamName();
-        $programofferinfo=$aProgramOffer->getProgramOffer($programofferid);
-        $exam=$aExamName->getExamONID($examnameid);
-        $courses=$aMstExamResult->getCoursesWithCategories($programofferid);
-        $exam_result=$aMstExamResult->getMstExamResult($programofferid,$examnameid);
-        // dd($courses);
+        $aMasterExam=new MasterExam();
+        $programofferinfo=null;
+        $exam=null;
+        $courses=null;
+        $exam_result=null;
+        if($request->isMethod('post')&&$request->search_btn=='search_btn'){
+            $sessionid=$request->sessionid;
+            $programlabelid=$request->programlabelid;
+            $programid=$request->programid;
+            $groupid=$request->groupid;
+            $mediumid=$request->mediumid;
+            $shiftid=$request->shiftid;
+            $sectionid=$request->sectionid;
+            $mstexamnameid=$request->mstexamnameid;
+             //    Check Program offer Created or Not
+             $checkProgramoffer=$aProgramOffer->checkValue($sessionid,$programlabelid,$programid,$groupid,$mediumid,$shiftid);
+             if(!$checkProgramoffer){
+                 $msg="Program Offer is not created yet";
+                 return redirect()->back()->with('msg',$msg);
+             }
+             $programofferid=$aProgramOffer->getProgramOfferId($sessionid,$programlabelid,$programid,$groupid,$mediumid,$shiftid);
+             //    Check Section offer Created or Not
+            
+             $checkSectionoffer=$aSectionOffer->hasSectionAssign($programofferid);
+             if(!$checkSectionoffer){
+                 $msg="Section not Assign yet to Program offer";
+                 return redirect()->back()->with('msg',$msg);
+             }
+             //    Check Course offer Created or Not
+             $checkCourseOffer=$aCourseOffer->hasCourseAssign($programofferid);
+             if(!$checkCourseOffer){
+                 $msg="Course not Assign yet to Program offer";
+                 return redirect()->back()->with('msg',$msg);
+             }
+             // Check Master Exam Setup Or Not
+             $checkMasterExam=$aMasterExam->hasItem($programofferid,$mstexamnameid);
+             if(!$checkMasterExam){
+                 $msg="Plese SetUp Master Exam";
+                 return redirect()->back()->with('msg',$msg);
+             }
+              // Check Teacher Assign or Not
+            
+            //    Check Student 
+            $checkStudensAdmit=$aStudent->checkStudentOnPO($programofferid);
+            if(!$checkStudensAdmit){
+                $msg="Student Not Admitted Yet";
+                return redirect()->back()->with('msg',$msg);
+            }
+            $programofferinfo=$aProgramOffer->getProgramOffer($programofferid);
+            $exam=$aExamName->getExamONID($mstexamnameid);
+            $courses=$aMstExamResult->getCoursesWithCategories($programofferid);
+            $exam_result=$aMstExamResult->getMstExamResult($programofferid,$mstexamnameid);
+        }
+        // sessionid,programlabelid,programid,groupid,mediumid,shiftid and tableName
+        $sessionList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,0,"sessions",'sessionid');
+        $plabelList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,0,"plabels",'programlabelid');
+        $programList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,0,"programs",'programid');
+        $mediumList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,0,"mediums",'mediumid');
+        $shiftList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,0,"shifts",'shiftid');
+        $groupList=$aProgramOffer->getAllOnIDS(0,0,0,0,0,0,"groups",'groupid');
+        $sectionList=Section::all();
+        $examNameList=$aExamName->getExamName(1);
         $dataList=[
             'sidebarMenu'=>$sidebarMenu,
+            'sessionList'=>$sessionList,
+            "plabelList"=>$plabelList,
+            'programList'=>$programList,
+            'groupList'=>$groupList,
+            'mediumList'=>$mediumList,
+            'shiftList'=>$shiftList,
+            'sectionList'=>$sectionList,
+            'examNameList'=>$examNameList,
             "exam"=>$exam,
             'programofferinfo'=>$programofferinfo,
             'courses'=>$courses,
@@ -240,6 +308,115 @@ class MstExamResultController extends Controller
         return view('admin.classexam.tabulation.tabulation_sheet',$dataList);
     }
     public function summaryResult(Request $request){
-
+    }
+    public function tabulationSheetAajax(Request $request){
+        $option=$request->option;
+        $methodid=$request->methodid;
+        $sessionid=$request->sessionid;
+        $programlabelid=$request->programlabelid;
+        $programid=$request->programid;
+        $groupid=$request->groupid;
+        $mediumid=$request->mediumid;
+        $shiftid=$request->shiftid;
+        if($option=="session"){
+            //session plabel program group medium shift
+            if($methodid==1){
+                $this->getAllOnIDS($sessionid,0,0,0,0,0,"plabels",'programlabelid');
+            }elseif($methodid==2){
+                $this->getAllOnIDS($sessionid,0,0,0,0,0,"programs",'programid');
+            }elseif($methodid==3){
+                $this->getAllOnIDS($sessionid,0,0,0,0,0,"groups",'groupid');
+            }elseif($methodid==4){
+                $this->getAllOnIDS($sessionid,0,0,0,0,0,"mediums",'mediumid');
+            }elseif($methodid==5){
+                $this->getAllOnIDS($sessionid,0,0,0,0,0,"shifts",'shiftid');
+            }elseif($methodid==6){
+                $this->getSectionOnProgramoffer($sessionid,0,0,0,0,0);
+            }elseif($methodid==7){
+                $this->getMasterExams($sessionid,0,0,0,0,0);
+            }
+        }else if($option=="programlabel"){
+            if($methodid==2){
+                $this->getAllOnIDS($sessionid,$programlabelid,0,0,0,0,"programs",'programid');
+            }elseif($methodid==3){
+                $this->getAllOnIDS($sessionid,$programlabelid,0,0,0,0,"groups",'groupid');
+            }elseif($methodid==4){
+                $this->getAllOnIDS($sessionid,$programlabelid,0,0,0,0,"mediums",'mediumid');
+            }elseif($methodid==5){
+                $this->getAllOnIDS($sessionid,$programlabelid,0,0,0,0,"shifts",'shiftid');
+            }elseif($methodid==6){
+                $this->getSectionOnProgramoffer($sessionid,$programlabelid,0,0,0,0);
+            }elseif($methodid==7){
+                $this->getMasterExams($sessionid,$programlabelid,0,0,0,0);
+            }
+        }else if($option=="program"){
+            if($methodid==3){
+                $this->getAllOnIDS($sessionid,$programlabelid,$programid,0,0,0,"groups",'groupid');
+            }elseif($methodid==4){
+                $this->getAllOnIDS($sessionid,$programlabelid,$programid,0,0,0,"mediums",'mediumid');
+            }elseif($methodid==5){
+                $this->getAllOnIDS($sessionid,$programlabelid,$programid,0,0,0,"shifts",'shiftid');
+            }elseif($methodid==6){
+                $this->getSectionOnProgramoffer($sessionid,$programlabelid,$programid,0,0,0);
+            }elseif($methodid==7){
+                $this->getMasterExams($sessionid,$programlabelid,$programid,0,0,0);
+            }
+        }else if($option=="group"){
+            if($methodid==6){
+                $this->getSectionOnProgramoffer($sessionid,$programlabelid,$programid,$groupid,$mediumid,$shiftid);
+            }elseif($methodid==7){
+                $this->getMasterExams($sessionid,$programlabelid,$programid,$groupid,$mediumid,$shiftid);
+            }
+        }else if($option=="medium"){
+            if($methodid==3){
+                $this->getAllOnIDS($sessionid,$programlabelid,$programid,0,$mediumid,0,"groups",'groupid');
+            }elseif($methodid==5){
+                $this->getAllOnIDS($sessionid,$programlabelid,$programid,0,$mediumid,0,"shifts",'shiftid');
+            }elseif($methodid==6){
+                $this->getSectionOnProgramoffer($sessionid,$programlabelid,$programid,0,$mediumid,0);
+            }elseif($methodid==7){
+                $this->getMasterExams($sessionid,$programlabelid,$programid,0,$mediumid,0);
+            }
+        }else if($option=="shift"){
+            if($methodid==3){
+                $this->getAllOnIDS($sessionid,$programlabelid,$programid,0,$mediumid,$shiftid,"groups",'groupid');
+            }elseif($methodid==6){
+                $this->getSectionOnProgramoffer($sessionid,$programlabelid,$programid,0,$mediumid,$shiftid);
+            }elseif($methodid==7){
+                $this->getMasterExams($sessionid,$programlabelid,$programid,0,$mediumid,$shiftid);
+            }
+        }
+    }
+    private function getAllOnIDS($sessionid,$programlabelid,$programid,$groupid,$mediumid,$shiftid,$tableName,$compareid){
+        // $aProgramOffer=new ProgramOffer();
+        $aCourseOffer=new CourseOffer();
+        $result=$aCourseOffer->getAllOnIDS($sessionid,$programlabelid,$programid,$groupid,$mediumid,$shiftid,$tableName,$compareid);
+        $output="<option value=''>SELECT</option>";
+        foreach($result as $x){
+            $output.="<option value='$x->id'>$x->name</option>";
+        }
+        echo  $output;
+    }
+    private function getSectionOnProgramoffer($sessionid,$programlabelid,$programid,$groupid,$mediumid,$shiftid){
+        $aProgramOffer=new ProgramOffer();
+        $programofferid=$aProgramOffer->getProgramOfferId($sessionid,$programlabelid,$programid,$groupid,$mediumid,$shiftid);
+        $aSectionOffer=new SectionOffer();
+        $result=$aSectionOffer->getSectionsOnPO($programofferid);
+        $output="<option value=''>SELECT</option>";
+        foreach($result as $x){
+            $output.="<option value='$x->id'>$x->name</option>";
+        }
+        echo  $output;
+    }
+    private function getMasterExams($sessionid,$programlabelid,$programid,$groupid,$mediumid,$shiftid){
+        $aProgramOffer=new ProgramOffer();
+        $programofferid=$aProgramOffer->getProgramOfferId($sessionid,$programlabelid,$programid,$groupid,$mediumid,$shiftid);
+        $aMasterExam=new MasterExam();
+        $result=$aMasterExam->getMasterExamOnPO($programofferid);
+        $output="<option value=''>SELECT</option>";
+        foreach($result as $x){
+            $output.="<option value='$x->id'>$x->name</option>";
+        }
+        echo  $output;
     }
 }

@@ -4,6 +4,7 @@ namespace App\com\adventure\school\classexam;
 
 use Illuminate\Database\Eloquent\Model;
 use App\com\adventure\school\courseoffer\CourseOffer;
+use App\com\adventure\school\academic\StudentCourse;
 use App\com\adventure\school\courseoffer\MarkDistribution;
 use App\com\adventure\school\program\GradePoint;
 
@@ -16,6 +17,9 @@ class MstExamResult extends Model
         return $student;
     }
     public function getMstExamResult($programofferid,$examnameid){
+        // $aStudentCourse=new StudentCourse();
+        // $student_courses=$aStudentCourse->getStudentCourses(1);
+        // dd($student_courses);
         $aCourseOffer=new CourseOffer();
         $students=$this->getStudents($programofferid,$examnameid);
         $tot_courses=$aCourseOffer->getTotalCourses($programofferid);
@@ -673,10 +677,13 @@ class MstExamResult extends Model
         $aMarkDistribution=new MarkDistribution();
         $courses=$aCourseOffer->getCoursesOnProgramoffer($programofferid);
         // dd($courses);
+        $result_array=array();
         foreach($courses as $course){
             $categories=$aMarkDistribution->getMarkCategory($programofferid,$course->id);
             $course->categories=$categories;
+            $result_array[$course->id]=$course;
         }
-        return $courses;
+        // dd($result_array);
+        return $result_array;
     }
 }

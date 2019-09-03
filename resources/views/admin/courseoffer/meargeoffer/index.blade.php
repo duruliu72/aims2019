@@ -10,11 +10,7 @@
   <section class="wrapper">
     <div class="row">
       <div class="col-lg-12">
-        <h3 class="page-header"><i class="fa fa-laptop"></i>Horinagor High School</h3>
         <ol class="breadcrumb">
-          <!-- @if($pList[2]->id==2)
-            <li><a href="{{URL::to('/meargeoffer')}}/{{'create'}}">New</a></li>
-          @endif -->
           <li>Subject Mearging</li>
           @if ($errors->any())
                   <span style="float: right;font-size: 15px;">{{$errors->all()[0] }}</span>
@@ -33,6 +29,26 @@
           <div class="top-section top_form row">
             <form action="{{URL::to('meargeoffer')}}" method="POST">
                 {{csrf_field()}}
+                  <div class="form-group row">
+                      <label class="col-sm-2 control-label" for="sessionid">Session</label>
+                      <div class="col-sm-4">
+                        <select onchange="getChange(this,'session')" class="form-control" name="sessionid" id="sessionid">
+                            <option  value="">SELECT</option>
+                          @foreach ($sessionList as $x)
+                            <option value="{{$x->id}}">{{$x->name}}</option>
+                          @endforeach
+                        </select>
+                      </div> 
+                      <label class="col-sm-2 control-label" for="programlabelid">Class Label</label>
+                      <div class="col-sm-4">
+                        <select onchange="getChange(this,'programlabel')" class="form-control" name="programlabelid" id="programlabelid">
+                          <option value="">SELECT</option>
+                          @foreach ($plabelList as $x)
+                            <option value="{{$x->id}}">{{$x->name}}</option>
+                          @endforeach
+                        </select>
+                      </div>                   
+                  </div>
                   <div class="col-sm-4 form-group">
                     <label class="control-label" for="programid">Program</label>
                     <select onchange="getChange(this,'program')" class="form-control" name="programid" id="programid">
@@ -74,7 +90,7 @@
                       <select class="form-control" name="firstsubjectcodeid" id="firstsubjectcodeid">
                          <option value="">SELECT</option>
                          @foreach ($courseCodeList as $x)
-                           <option value="{{$x->id}}">{{$x->name}}</option>
+                           <option value="{{$x->id}}">{{$x->courseName}}</option>
                          @endforeach
                       </select>
                     </div>
@@ -86,7 +102,7 @@
                       <select class="form-control" name="secondsubjectcodeid" id="secondsubjectcodeid">
                          <option value="">SELECT</option>
                          @foreach ($courseCodeList as $x)
-                           <option value="{{$x->id}}">{{$x->name}}</option>
+                           <option value="{{$x->id}}">{{$x->courseName}}</option>
                          @endforeach
                       </select>
                     </div>                           

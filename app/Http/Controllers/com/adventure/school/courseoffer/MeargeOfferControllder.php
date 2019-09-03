@@ -5,7 +5,6 @@ namespace App\Http\Controllers\com\adventure\school\courseoffer;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\com\adventure\school\basic\Institute;
-use App\com\adventure\school\courseoffer\Mearge;
 use App\com\adventure\school\courseoffer\CourseOffer;
 use App\com\adventure\school\courseoffer\MeargeOffer;
 use App\com\adventure\school\program\ProgramOffer;
@@ -24,9 +23,6 @@ class MeargeOfferControllder extends Controller
     }
     public function index(Request $request){
         $msg="";
-        $yearName = date('Y');
-        $aSession=new Session();
-        $sessionid=$aSession->getSessionId($yearName);
         $programid=$request->programid;
         $groupid=$request->groupid;
         $mediumid=$request->mediumid;
@@ -39,17 +35,22 @@ class MeargeOfferControllder extends Controller
         $sidebarMenu=$aMenu->getSidebarMenu();
         $pList=$aMenu->getPermissionOnMenu('meargeoffer');
         $aMeargeOffer=new MeargeOffer();
-        // sessionid,programid,groupid,mediumid,shiftid and tableName
-        $programList=$aMeargeOffer->getAllOnIDS(0,0,0,0,0,"programs",'programid');
-        $mediumList=$aMeargeOffer->getAllOnIDS(0,0,0,0,0,"mediums",'mediumid');
-        $shiftList=$aMeargeOffer->getAllOnIDS(0,0,0,0,0,"shifts",'shiftid');
-        $groupList=$aMeargeOffer->getAllOnIDS(0,0,0,0,0,"groups",'groupid');
-        $courseCodeList=$aMeargeOffer->getCourseCodes($sessionid);
+        $aCourseOffer =new CourseOffer();
+        // sessionid,programlabelid,programid,groupid,mediumid,shiftid and tableName
+        $sessionList=$aCourseOffer->getAllOnIDS(0,0,0,0,0,0,"sessions",'sessionid');
+        $plabelList=$aCourseOffer->getAllOnIDS(0,0,0,0,0,0,"plabels",'programlabelid');
+        $programList=$aCourseOffer->getAllOnIDS(0,0,0,0,0,0,"programs",'programid');
+        $mediumList=$aCourseOffer->getAllOnIDS(0,0,0,0,0,0,"mediums",'mediumid');
+        $shiftList=$aCourseOffer->getAllOnIDS(0,0,0,0,0,0,"shifts",'shiftid');
+        $groupList=$aCourseOffer->getAllOnIDS(0,0,0,0,0,0,"groups",'groupid');
+        
+        $courseCodeList=$aMeargeOffer->getCourses(1);
         $aList=$aMeargeOffer->meargeDetails();
         // dd($aList);
         $dataList=[
-            'institute'=>Institute::getInstituteName(),
             'sidebarMenu'=>$sidebarMenu,
+            'sessionList'=>$sessionList,
+            "plabelList"=>$plabelList,
             'programList'=>$programList,
             'groupList'=>$groupList,
             'mediumList'=>$mediumList,

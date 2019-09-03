@@ -8,10 +8,27 @@ class StudentCourse extends Model
 {
     protected  $table='student_courses';
     protected $fillable = ['studentid','courseid','coursetypeid','status'];
-    public function getStudentCourses($studentid){
-        $sql="SELECT * FROM `student_courses`
+    public function getStudentCourses($studentid,$programofferid=0){
+        $sql="SELECT
+        students.id,
+        students.programofferid,
+        students.sectionid,
+        student_courses.studentid,
+        student_courses.courseid,
+        courses.courseName,
+        courses.courseCode,
+        student_courses.coursetypeid
+        FROM `students`
+        INNER JOIN student_courses ON students.id=student_courses.studentid
+        INNER JOIN courses ON student_courses.courseid=courses.id
         WHERE studentid=?";
-        $qResult=\DB::select($sql,[$studentid]);
+        $data=array();
+		array_push($data,$studentid);
+        if($programofferid!=0){
+			$sql.=" && t1.programofferid=?";
+			array_push($data,$programofferid);
+		}
+        $qResult=\DB::select($sql,$data);
         $result=collect($qResult);
         return $result;
     }

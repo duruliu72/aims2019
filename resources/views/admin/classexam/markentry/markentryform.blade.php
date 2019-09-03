@@ -53,24 +53,24 @@
                       </div>                   
                     </div>
                     <div class="form-group row">
-                    <label class="col-sm-2 control-label" for="programid">Program</label>
-                    <div class="col-sm-4">
-                      <select onchange="getChange(this,'program')" class="form-control" name="programid" id="programid">
-                          <option  value="">SELECT</option>
-                         @foreach ($programList as $x)
-                           <option value="{{$x->id}}">{{$x->name}}</option>
-                         @endforeach
-                      </select>
-                    </div> 
-                    <label class="col-sm-2 control-label" for="mediumid">Medium</label>
-                    <div class="col-sm-4">
-                      <select onchange="getChange(this,'medium')" class="form-control" name="mediumid" id="mediumid">
-                         <option value="">SELECT</option>
-                         @foreach ($mediumList as $x)
-                           <option value="{{$x->id}}">{{$x->name}}</option>
-                         @endforeach
-                      </select>
-                    </div>                   
+                      <label class="col-sm-2 control-label" for="programid">Program</label>
+                      <div class="col-sm-4">
+                        <select onchange="getChange(this,'program')" class="form-control" name="programid" id="programid">
+                            <option  value="">SELECT</option>
+                          @foreach ($programList as $x)
+                            <option value="{{$x->id}}">{{$x->name}}</option>
+                          @endforeach
+                        </select>
+                      </div> 
+                      <label class="col-sm-2 control-label" for="mediumid">Medium</label>
+                      <div class="col-sm-4">
+                        <select onchange="getChange(this,'medium')" class="form-control" name="mediumid" id="mediumid">
+                          <option value="">SELECT</option>
+                          @foreach ($mediumList as $x)
+                            <option value="{{$x->id}}">{{$x->name}}</option>
+                          @endforeach
+                        </select>
+                      </div>                   
                   </div>
                   <div class="form-group row">
                      <label class="col-sm-2 control-label" for="shiftid">Shift</label>
