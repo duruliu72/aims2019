@@ -19,6 +19,7 @@ class MstExamResultController extends Controller
 {
     public function __construct()
     {
+
         $this->middleware('auth');
     }
     public function mstSingleResult($programofferid,$examnameid,$studentid){
@@ -309,7 +310,8 @@ class MstExamResultController extends Controller
     }
     public function summaryResult(Request $request){
     }
-    public function tabulationSheetAajax(Request $request){
+    public function getValue(Request $request){
+        header('Access-Control-Allow-Origin', '*');
         $option=$request->option;
         $methodid=$request->methodid;
         $sessionid=$request->sessionid;

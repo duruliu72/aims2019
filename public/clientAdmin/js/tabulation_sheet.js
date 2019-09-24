@@ -44,7 +44,7 @@ function getChangeOnSession(id, option, output, methodid) {
     var shiftid = 0;
     $.ajax({
         type: "get",
-        url: baseUrl + "tabulationSheetAajax",
+        url: baseUrl + "mstexamresult/getValue",
         dataType: "html",
         data: {
             sessionid: sessionid,
@@ -72,7 +72,7 @@ function getChangeOnPLabel(id, option, output, methodid) {
     var shiftid = 0;
     $.ajax({
         type: "get",
-        url: baseUrl + "tabulationSheetAajax",
+        url: baseUrl + "mstexamresult/getValue",
         dataType: "html",
         data: {
             sessionid: sessionid,
@@ -100,7 +100,7 @@ function getChangeOnProgram(id, option, output, methodid) {
     var shiftid = 0;
     $.ajax({
         type: "get",
-        url: baseUrl + "tabulationSheetAajax",
+        url: baseUrl + "mstexamresult/getValue",
         dataType: "html",
         data: {
             sessionid: sessionid,
@@ -128,7 +128,7 @@ function getChangeOnGroup(id, option, output, methodid) {
     var shiftid = $("#shiftid").val();
     $.ajax({
         type: "get",
-        url: baseUrl + "tabulationSheetAajax",
+        url: baseUrl + "mstexamresult/getValue",
         dataType: "html",
         data: {
             sessionid: sessionid,
@@ -156,7 +156,7 @@ function getChangeOnMedium(id, option, output, methodid) {
     var shiftid = 0;
     $.ajax({
         type: "get",
-        url: baseUrl + "tabulationSheetAajax",
+        url: baseUrl + "mstexamresult/getValue",
         dataType: "html",
         data: {
             sessionid: sessionid,
@@ -184,7 +184,7 @@ function getChangeOnShift(id, option, output, methodid) {
     var shiftid = $("#" + id).val();
     $.ajax({
         type: "get",
-        url: baseUrl + "tabulationSheetAajax",
+        url: baseUrl + "mstexamresult/getValue",
         dataType: "html",
         data: {
             sessionid: sessionid,

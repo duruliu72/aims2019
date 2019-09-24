@@ -165,7 +165,7 @@ Route::post('tabulation_sheet', 'com\adventure\school\classexam\MstExamResultCon
 Route::get('childexamresult', 'com\adventure\school\classexam\ChildExamResultController@childExamResults');
 Route::post('childexamresult', 'com\adventure\school\classexam\ChildExamResultController@childExamResults');
 Route::get('childexamresult/getValue', 'com\adventure\school\classexam\ChildExamResultController@getValue');
-Route::get('tabulationSheetAajax', 'com\adventure\school\classexam\MstExamResultController@tabulationSheetAajax');
+Route::get('mstexamresult/getValue', 'com\adventure\school\classexam\MstExamResultController@getValue');
 // Menu Settings
 Route::resource('menu', 'com\adventure\school\menu\MenuController');
 
